@@ -13,8 +13,8 @@ export function MatchRow({ match, href, children, className }: { match: Match; h
   const body = (
     <div className="flex items-center gap-3">
       <div className="flex flex-col gap-1.5">
-        <TeamCrest code={match.home.code} />
-        <TeamCrest code={match.away.code} />
+        <TeamCrest code={match.home.code} colors={match.home.colors} />
+        <TeamCrest code={match.away.code} colors={match.away.colors} />
       </div>
       <div className="flex flex-1 flex-col gap-1.5">
         {[match.home, match.away].map((t, i) => (

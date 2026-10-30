@@ -5,7 +5,11 @@
 import type { Outcome } from "@/components/footon/form-bars";
 import type { LiveQuestion } from "@/components/footon/question-card";
 
-export type Team = { code: string; name: string };
+/** `colors` = [shirt, trim]; drives the placeholder crest. */
+export type Team = { code: string; name: string; colors?: [string, string] };
+
+export type MatchEvent = { minute: number; side: "home" | "away"; player: string; kind: "goal" };
+export type MatchStat = { label: string; home: number; away: number; unit?: string };
 
 export type Match = {
   id: string;
@@ -16,6 +20,8 @@ export type Match = {
   score?: [number, number];
   kickoff?: string;
   caption: string;
+  events?: MatchEvent[];
+  stats?: MatchStat[];
 };
 
 export const wallet = { coins: 2450 };
@@ -25,17 +31,26 @@ export const recentForm: Outcome[] = ["W", "W", "L", "W", "V", "L"];
 export const matches: Match[] = [
   {
     id: "liv-mci",
-    home: { code: "LIV", name: "Liverpool" },
-    away: { code: "MCI", name: "Man City" },
+    home: { code: "LIV", name: "Liverpool", colors: ["#C8102E", "#F6EB61"] },
+    away: { code: "MCI", name: "Man City", colors: ["#6CABDD", "#1C2C5B"] },
     status: "live",
     minute: 67,
     score: [1, 1],
     caption: "Sunday Rivals · limit 500",
+    events: [
+      { minute: 23, side: "home", player: "Salah", kind: "goal" },
+      { minute: 58, side: "away", player: "Haaland", kind: "goal" },
+    ],
+    stats: [
+      { label: "Possession", home: 54, away: 46, unit: "%" },
+      { label: "Shots", home: 11, away: 9 },
+      { label: "Corners", home: 4, away: 3 },
+    ],
   },
   {
     id: "ars-che",
-    home: { code: "ARS", name: "Arsenal" },
-    away: { code: "CHE", name: "Chelsea" },
+    home: { code: "ARS", name: "Arsenal", colors: ["#EF0107", "#FFFFFF"] },
+    away: { code: "CHE", name: "Chelsea", colors: ["#034694", "#FFFFFF"] },
     status: "upcoming",
     kickoff: "21:00",
     caption: "Tonight",

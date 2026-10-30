@@ -1,0 +1,195 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+/*
+ * Footon design tokens.
+ * Footon is dark-only. Values live on :root; `.dark` mirrors them so
+ * shadcn components that check for the class still behave.
+ * Read AGENTS.md before adding or changing a token.
+ */
+:root,
+.dark {
+  color-scheme: dark;
+  --radius: 1rem;
+
+  /* Ground and surfaces (zinc, from darkest to lightest) */
+  --background: #09090b;
+  --surface: #111114; /* cards, list groups */
+  --surface-2: #18181b; /* raised: floating cards, pills, dock */
+  --surface-3: #232328; /* secondary buttons, chat bubbles */
+  --line: #1e1e23; /* hairline border on surface */
+  --line-strong: #2e2e35; /* border on surface-2 / raised */
+
+  /* Text */
+  --foreground: #fafafa;
+  --muted-foreground: #a1a1aa; /* secondary text — passes 4.5:1 on all surfaces */
+  --subtle: #71717a; /* decoration and large text only (fails 4.5:1 at small sizes) */
+  --nav-muted: #8e8e97; /* inactive dock items */
+
+  /* Brand: lime. Only the main action, wins, and "you" */
+  --primary: #c8f542;
+  --primary-foreground: #0b0f02;
+  --primary-soft: rgb(200 245 66 / 0.12); /* selected chips, tabs, toggles */
+  --primary-line: rgb(200 245 66 / 0.35);
+
+  /* Live: amber. Live minute, timers, coins, boosts */
+  --live: #ffb547;
+  --live-foreground: #3b2300;
+  --live-soft: rgb(255 181 71 / 0.12);
+
+  /* Outcomes */
+  --win: var(--primary);
+  --loss: #f87171;
+  --loss-soft: #2a1416;
+
+  /* Pitch (Team screen only) */
+  --pitch: #0f1a12;
+  --pitch-2: #122016;
+  --pitch-line: rgb(255 255 255 / 0.09);
+
+  /* shadcn semantic aliases */
+  --card: var(--surface);
+  --card-foreground: var(--foreground);
+  --popover: var(--surface-2);
+  --popover-foreground: var(--foreground);
+  --secondary: var(--surface-3);
+  --secondary-foreground: var(--foreground);
+  --muted: var(--surface-2);
+  --accent: var(--surface-3);
+  --accent-foreground: var(--foreground);
+  --destructive: var(--loss);
+  --border: var(--line);
+  --input: #26262c;
+  --ring: #52525b;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-surface-3: var(--surface-3);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-subtle: var(--subtle);
+  --color-nav-muted: var(--nav-muted);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary-soft: var(--primary-soft);
+  --color-primary-line: var(--primary-line);
+  --color-live: var(--live);
+  --color-live-foreground: var(--live-foreground);
+  --color-live-soft: var(--live-soft);
+  --color-win: var(--win);
+  --color-loss: var(--loss);
+  --color-loss-soft: var(--loss-soft);
+  --color-pitch: var(--pitch);
+  --color-pitch-2: var(--pitch-2);
+  --color-pitch-line: var(--pitch-line);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  /* Radius scale: chips 10, buttons 14, cards 18–22, sheets 28 */
+  --radius-sm: 0.625rem; /* 10px */
+  --radius-md: 0.875rem; /* 14px */
+  --radius-lg: 1rem; /* 16px */
+  --radius-xl: 1.125rem; /* 18px */
+  --radius-2xl: 1.375rem; /* 22px */
+  --radius-3xl: 1.75rem; /* 28px */
+
+  /* Type: Geist for UI, Geist Mono for codes, Barlow Condensed for scores and coins */
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+  --font-display: var(--font-barlow), "Arial Narrow", sans-serif;
+}
+
+@theme {
+  /* Motion tokens */
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-spring-soft: cubic-bezier(0.34, 1.25, 0.64, 1);
+  --ease-out-soft: cubic-bezier(0.2, 0.8, 0.2, 1);
+
+  --animate-live-pulse: live-pulse 1.8s ease-out infinite;
+  --animate-shimmer: shimmer 2.2s linear infinite;
+  --animate-in-up: in-up 0.4s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+
+  @keyframes live-pulse {
+    0% { box-shadow: 0 0 0 0 rgb(255 181 71 / 0.6); }
+    70% { box-shadow: 0 0 0 7px rgb(255 181 71 / 0); }
+    100% { box-shadow: 0 0 0 0 rgb(255 181 71 / 0); }
+  }
+  @keyframes shimmer {
+    from { background-position: 150% 0; }
+    to { background-position: -50% 0; }
+  }
+  @keyframes in-up {
+    from { opacity: 0; transform: translateY(8px); filter: blur(4px); }
+    to { opacity: 1; transform: none; filter: none; }
+  }
+}
+
+/* Dotted canvas behind hero moments (onboarding deck, invite ticket) */
+@utility bg-dots {
+  background-image: radial-gradient(#1f1f24 1px, transparent 1px);
+  background-size: 14px 14px;
+}
+
+/* Shimmering status text, e.g. "Waiting for 75'…" */
+@utility text-shimmer {
+  background: linear-gradient(90deg, var(--subtle) 20%, var(--foreground) 50%, var(--subtle) 80%);
+  background-size: 200% 100%;
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  animation: var(--animate-shimmer);
+}
+
+/* Glass surface for the dock and bottom sheets */
+@utility glass {
+  background: rgb(24 24 27 / 0.8);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  html {
+    background: var(--background);
+  }
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+    font-feature-settings: "ss01", "cv11";
+  }
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  .text-shimmer {
+    color: var(--muted-foreground);
+    background: none;
+  }
+}

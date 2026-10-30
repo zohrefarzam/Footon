@@ -2,7 +2,7 @@ import Link from "next/link";
 import { ChevronLeft } from "lucide-react";
 
 import { AppShell } from "@/components/footon/app-shell";
-import { ChatSheet } from "@/components/footon/chat-sheet";
+import { ChatSheet, ChatSheetSpacer } from "@/components/footon/chat-sheet";
 import { LiveMinute } from "@/components/footon/live";
 import { QuestionCard } from "@/components/footon/question-card";
 import { TeamCrest } from "@/components/footon/team-crest";
@@ -124,6 +124,7 @@ export default function PlayPage() {
 
       <div className="min-h-6 flex-1" />
 
+      <ChatSheetSpacer />
       <ChatSheet chat={chat} members={league.standings} />
     </AppShell>
   );

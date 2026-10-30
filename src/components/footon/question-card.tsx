@@ -24,14 +24,18 @@ export type LiveQuestion = {
  * The live question, dealt on top of a stack (two cards peek behind it).
  * Before answering: Yes (lime) / No (secondary). After: crowd split bar, a drawn
  * check, and shimmering "Waiting for …" status.
+ * `compact` folds it into a one-row widget (ring · question · Yes/No) while the
+ * chat has the screen; the answer survives the switch.
  */
 export function QuestionCard({
   question,
   onAnswer,
+  compact = false,
   className,
 }: {
   question: LiveQuestion;
   onAnswer?: (a: Answer) => void;
+  compact?: boolean;
   className?: string;
 }) {
   const [answer, setAnswer] = useState<Answer | null>(null);
@@ -51,6 +55,61 @@ export function QuestionCard({
 
   const r = 18;
   const c = 2 * Math.PI * r;
+  const ring = (
+    <span className={cn("relative flex shrink-0 items-center justify-center", compact ? "size-8" : "size-10")} aria-label={`${left} seconds left`}>
+      <svg viewBox="0 0 40 40" className="absolute inset-0 size-full -rotate-90" aria-hidden="true">
+        <circle cx="20" cy="20" r={r} fill="none" stroke="#27272a" strokeWidth="3" />
+        <circle
+          cx="20"
+          cy="20"
+          r={r}
+          fill="none"
+          stroke="var(--live)"
+          strokeWidth="3"
+          strokeLinecap="round"
+          strokeDasharray={c}
+          strokeDashoffset={c * (1 - left / question.seconds)}
+          className="transition-[stroke-dashoffset] duration-1000 ease-linear"
+        />
+      </svg>
+      <span aria-hidden="true" className={cn("font-display font-bold text-live", compact ? "text-xs" : "text-sm")}>
+        {left}s
+      </span>
+    </span>
+  );
+
+  if (compact) {
+    return (
+      <section
+        aria-label={`Question ${question.index} of ${question.total}`}
+        className={cn("flex items-center gap-3 rounded-2xl border border-[#34343b] bg-surface-2 py-2.5 ps-2.5 pe-2", className)}
+      >
+        {ring}
+        <div className="min-w-0 flex-1">
+          <p className="text-[11px] font-semibold tracking-[0.08em] text-muted-foreground">
+            Q{question.index}/{question.total}
+          </p>
+          <p className="truncate text-[15px] font-semibold">{question.text}</p>
+        </div>
+        {answer ? (
+          <span className="shrink-0 rounded-full bg-primary-soft px-2.5 py-1 text-xs font-semibold text-primary" aria-live="polite">
+            You said {answer === "yes" ? "Yes" : "No"}
+          </span>
+        ) : left === 0 ? (
+          <span className="shrink-0 text-xs font-semibold text-muted-foreground">Locked</span>
+        ) : (
+          <div className="flex shrink-0 gap-1.5">
+            <Button size="sm" className="h-9 rounded-sm px-3.5" onClick={() => pick("yes")}>
+              Yes
+            </Button>
+            <Button size="sm" variant="secondary" className="h-9 rounded-sm px-3.5" onClick={() => pick("no")}>
+              No
+            </Button>
+          </div>
+        )}
+      </section>
+    );
+  }
 
   return (
     <div className={cn("relative pt-3.5", className)}>
@@ -67,26 +126,7 @@ export function QuestionCard({
           <span className="text-[11px] font-semibold tracking-[0.08em] text-muted-foreground">
             QUESTION {question.index} OF {question.total}
           </span>
-          <span className="relative flex size-10 items-center justify-center" aria-label={`${left} seconds left`}>
-            <svg width="40" height="40" viewBox="0 0 40 40" className="absolute inset-0 -rotate-90" aria-hidden="true">
-              <circle cx="20" cy="20" r={r} fill="none" stroke="#27272a" strokeWidth="3" />
-              <circle
-                cx="20"
-                cy="20"
-                r={r}
-                fill="none"
-                stroke="var(--live)"
-                strokeWidth="3"
-                strokeLinecap="round"
-                strokeDasharray={c}
-                strokeDashoffset={c * (1 - left / question.seconds)}
-                className="transition-[stroke-dashoffset] duration-1000 ease-linear"
-              />
-            </svg>
-            <span aria-hidden="true" className="font-display text-sm font-bold text-live">
-              {left}s
-            </span>
-          </span>
+          {ring}
         </div>
 
         <h2 className="mt-1.5 text-[26px] leading-[1.15] font-bold tracking-[-0.03em] text-balance">{question.text}</h2>

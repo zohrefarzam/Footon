@@ -41,7 +41,7 @@ src/
     ui/                   shadcn primitives, restyled (button, badge, card, input, label,
                           switch, slider, avatar, separator, progress)
     footon/               product components (app-shell, dock, live-island, question-card,
-                          match-row, segmented-tabs, coin, number-ticker, form-bars,
+                          match-row, segmented-tabs, live-focus, coin, number-ticker, form-bars,
                           progress-ring, team-crest, live, empty-state, match-filter)
   lib/
     utils.ts              cn()
@@ -168,7 +168,8 @@ Rules:
 | `AppShell` | Mobile column + dock. `dock={false}` for focus mode (live match, create flow). |
 | `Dock` | Floating glass nav, 5 slots, lime "+" in the centre = create league. Active item: white label + lime dot. |
 | `LiveIsland` | Top-centre live activity; expands to a quick answer. Only when the user has a live match. |
-| `QuestionCard` | The live question. Yes/No → crowd split + drawn check + shimmer. Timer ring is amber. |
+| `QuestionCard` | The live question. Yes/No → crowd split + drawn check + shimmer. Timer ring is amber. `compact` = one-row widget. |
+| `LiveFocus` | Live-match layout: full-height column, chat fills the rest; dragging the chat handle folds the match details away and compacts the question. |
 | `MatchRow` | Fixture row inside a list card; status column shows amber LIVE minute or kickoff time. Accepts children (e.g. an invite row). |
 | `SegmentedTabs` | 2–4 filters with sliding lime pill. |
 | `CoinBadge` / `Coin` | Wallet pill. Coins are always amber with an "F". |
@@ -184,7 +185,7 @@ Rules:
 - **Onboarding:** dealt card stack on a dotted canvas with one real sample question; three steps as a single numbered row; lime CTA "Claim 10,000 coins" with an inset arrow; "Skip to Home" as a text link.
 - **Home:** island → greeting + coin badge → form card → segmented filter → one card listing matches (invites inline with ✕ / Join) → dashed fantasy-unlock row → dock.
 - **Create league:** close button, a live **invite ticket** (lime, notched, dashed tear line) that updates as you edit; name input, stake slider, mode switches, reward note, then `Copy` (secondary) + `Create and share` (lime).
-- **Live match (focus mode, no dock):** back + league + LIVE minute; huge display score; match progress bar; 3 standings tiles (yours soft-lime); question card stack; glass chat sheet with message bubbles, a friend's question as an inline Yes/No card, quick-reaction chips, a soft "+" ask button and input.
+- **Live match (focus mode, no dock):** back + league + LIVE minute; huge display score; match progress bar; 3 standings tiles (yours soft-lime); question card stack; chat panel filling the rest of the screen (drag its handle up to fold the match details and compact the question) with message bubbles (yours right, soft-lime), a friend's question as an inline Yes/No card, quick-reaction chips, a soft "+" ask button and input.
 - **Full time:** ticking `+450`, streak pill with lime "Next match 2x", podium (yours lime-soft, tallest), match-timeline of calls (lime filled dots = right, red rings = wrong), rematch chat replies, lime "Rematch with same friends".
 - **My team:** stats header (display 56), striped pitch with shirt tokens (selected = lime, captain = amber "C"), captain + transfers list, lime "Save lineup".
 - **Profile:** silver league card (light zinc, dotted, slight 3D tilt on hover) with score + 30-tick rank strip, amber boost tokens, achievement tiles, collection list (locked rows muted with a lock).

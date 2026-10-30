@@ -83,7 +83,13 @@ export const liveQuestion: LiveQuestion = {
 };
 
 export const chat = {
-  messages: [{ from: "Sara", initial: "S", text: "You will miss that one." }],
+  messages: [
+    { from: "Omid", initial: "O", text: "Haaland again. Unreal." },
+    { from: "You", initial: "Y", text: "City are all over them now", you: true },
+    { from: "Sara", initial: "S", text: "Liverpool get a corner in the next 5, watch" },
+    { from: "You", initial: "Y", text: "Going No on that one", you: true },
+    { from: "Sara", initial: "S", text: "You will miss that one." },
+  ],
   friendQuestion: { from: "Omid", initial: "O", text: "Yellow card before 80'?", closes: "80'" },
   reactions: ["VAR!", "Offside", "What a save"],
 };

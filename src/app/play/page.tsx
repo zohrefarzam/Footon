@@ -1,11 +1,11 @@
 import Link from "next/link";
-import { ArrowUp, ChevronLeft, Plus } from "lucide-react";
+import { ChevronLeft } from "lucide-react";
 
 import { AppShell } from "@/components/footon/app-shell";
+import { ChatSheet } from "@/components/footon/chat-sheet";
 import { LiveMinute } from "@/components/footon/live";
 import { QuestionCard } from "@/components/footon/question-card";
 import { TeamCrest } from "@/components/footon/team-crest";
-import { Avatar, AvatarFallback, AvatarGroup } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { chat, league, liveQuestion, matches } from "@/lib/mock-data";
@@ -124,72 +124,7 @@ export default function PlayPage() {
 
       <div className="min-h-6 flex-1" />
 
-      <section aria-label="League chat" className="glass mx-2 flex flex-col gap-2.5 rounded-3xl border border-line-strong px-3.5 pt-2 pb-3.5">
-        <span aria-hidden="true" className="h-1 w-9 self-center rounded-full bg-[#3f3f46]" />
-        <div className="flex items-center justify-between">
-          <span className="text-sm font-semibold">Chat</span>
-          <div className="flex items-center gap-1.5">
-            <AvatarGroup className="[&>[data-slot=avatar]]:ring-surface-2">
-              {league.standings.map((p) => (
-                <Avatar key={p.name} className="size-[22px]">
-                  <AvatarFallback className={cn("text-[10px]", p.you && "bg-primary text-primary-foreground")}>{p.initial}</AvatarFallback>
-                </Avatar>
-              ))}
-            </AvatarGroup>
-            <span className="text-xs text-muted-foreground">{league.standings.length} watching</span>
-          </div>
-        </div>
-
-        {chat.messages.map((msg, i) => (
-          <div key={i} className="flex items-end gap-2">
-            <Avatar className="size-[26px]">
-              <AvatarFallback>{msg.initial}</AvatarFallback>
-            </Avatar>
-            <p className="rounded-[16px_16px_16px_4px] bg-[#27272a] px-3 py-2 text-sm">{msg.text}</p>
-          </div>
-        ))}
-
-        <div className="flex items-start gap-2">
-          <Avatar className="size-[26px]">
-            <AvatarFallback className="bg-[#27272a]">{chat.friendQuestion.initial}</AvatarFallback>
-          </Avatar>
-          <div className="flex flex-1 items-center gap-2.5 rounded-[16px] border border-line-strong bg-surface py-2.5 pr-2.5 pl-3">
-            <div className="min-w-0 flex-1">
-              <p className="text-[11px] text-muted-foreground">
-                {chat.friendQuestion.from} asks · closes {chat.friendQuestion.closes}
-              </p>
-              <p className="mt-0.5 text-sm font-semibold">{chat.friendQuestion.text}</p>
-            </div>
-            <Button size="sm" className="h-[34px] rounded-sm">Yes</Button>
-            <Button size="sm" variant="secondary" className="h-[34px] rounded-sm border-0">No</Button>
-          </div>
-        </div>
-
-        <div className="flex gap-1.5">
-          {chat.reactions.map((r) => (
-            <Button key={r} variant="outline" size="sm" className="h-[30px] text-xs text-[#d4d4d8]">
-              {r}
-            </Button>
-          ))}
-        </div>
-
-        <form className="flex gap-2">
-          <Button type="button" variant="soft" size="icon" aria-label="Ask friends a prediction">
-            <Plus strokeWidth={2.4} />
-          </Button>
-          <label htmlFor="chat-input" className="sr-only">
-            Message
-          </label>
-          <input
-            id="chat-input"
-            placeholder="Say something…"
-            className="h-11 min-w-0 flex-1 rounded-md border border-line-strong bg-surface px-3.5 text-sm outline-none placeholder:text-subtle focus-visible:border-ring"
-          />
-          <Button type="submit" variant="secondary" size="icon" aria-label="Send message" className="border-0 bg-[#27272a]">
-            <ArrowUp />
-          </Button>
-        </form>
-      </section>
+      <ChatSheet chat={chat} members={league.standings} />
     </AppShell>
   );
 }

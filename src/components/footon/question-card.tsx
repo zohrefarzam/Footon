@@ -61,7 +61,7 @@ export function QuestionCard({
         animate={{ y: 0, rotate: 0, opacity: 1 }}
         transition={{ type: "spring", stiffness: 300, damping: 24 }}
         aria-label={`Question ${question.index} of ${question.total}`}
-        className="relative flex min-h-[272px] flex-col rounded-2xl border border-[#34343b] bg-surface-2 p-[18px] shadow-[0_24px_48px_-20px_rgb(0_0_0/0.9)]"
+        className="relative flex flex-col rounded-2xl border border-[#34343b] bg-surface-2 p-4 shadow-[0_24px_48px_-20px_rgb(0_0_0/0.9)]"
       >
         <div className="flex items-center justify-between">
           <span className="text-[11px] font-semibold tracking-[0.08em] text-muted-foreground">
@@ -89,27 +89,34 @@ export function QuestionCard({
           </span>
         </div>
 
-        <h2 className="mt-2.5 text-[26px] leading-[1.15] font-bold tracking-[-0.03em] text-balance">{question.text}</h2>
+        <h2 className="mt-1.5 text-[26px] leading-[1.15] font-bold tracking-[-0.03em] text-balance">{question.text}</h2>
         {question.hint && <p className="mt-1.5 text-[13px] text-muted-foreground">{question.hint}</p>}
 
-        <div className="flex-1" />
-
         <AnimatePresence mode="wait" initial={false}>
-          {!answer ? (
+          {!answer && left === 0 ? (
+            <motion.p
+              key="missed"
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="mt-4 flex h-12 items-center justify-center rounded-md bg-surface-3 text-sm font-semibold text-muted-foreground"
+              aria-live="polite"
+            >
+              Answers locked. You missed this one.
+            </motion.p>
+          ) : !answer ? (
             <motion.div
               key="ask"
               exit={{ opacity: 0, y: 6, filter: "blur(4px)" }}
-              className="grid grid-cols-2 gap-2"
+              className="mt-4 grid grid-cols-2 gap-2"
             >
-              <Button size="lg" className="h-14 text-[17px] font-bold" onClick={() => pick("yes")} disabled={left === 0}>
+              <Button size="lg" className="h-12 text-base font-bold" onClick={() => pick("yes")}>
                 Yes
               </Button>
               <Button
                 size="lg"
                 variant="secondary"
-                className="h-14 text-[17px] font-bold"
+                className="h-12 text-base font-bold"
                 onClick={() => pick("no")}
-                disabled={left === 0}
               >
                 No
               </Button>
@@ -119,7 +126,7 @@ export function QuestionCard({
               key="locked"
               initial={{ opacity: 0, y: 8, filter: "blur(4px)" }}
               animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-              className="flex flex-col gap-2.5"
+              className="mt-4 flex flex-col gap-2.5"
               aria-live="polite"
             >
               <div className="flex justify-between text-[13px] font-semibold">

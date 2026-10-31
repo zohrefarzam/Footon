@@ -35,18 +35,19 @@ Adding shadcn components: `npx shadcn@latest add <name>`, then **restyle it to t
 
 ```
 src/
-  app/                    routes (/, /play, /league/new, /team, /me, /styleguide)
+  app/                    routes (/, /welcome, /play, /league/new, /team, /me, /styleguide)
     globals.css           ALL design tokens, utilities, keyframes
   components/
     ui/                   shadcn primitives, restyled (button, badge, card, input, label,
                           switch, slider, avatar, separator, progress)
     footon/               product components (app-shell, dock, live-island, question-card,
                           match-row, segmented-tabs, live-focus, coin, number-ticker, form-bars,
-                          progress-ring, team-crest, live, empty-state, match-filter)
+                          progress-ring, team-crest, live, empty-state, match-filter, football, splash)
   lib/
     utils.ts              cn()
     mock-data.ts          typed mock data mirroring the canvas — replace with API, keep types
   fonts/                  Barlow Condensed woff2
+  proxy.ts                first-run redirect: `/` → `/welcome` until `footon_onboarded` is set
 ```
 
 Rules:
@@ -179,10 +180,13 @@ Rules:
 | `TeamCrest` | 3-letter code placeholder until real crests are licensed. |
 | `LiveDot` / `LiveMinute` | Pulsing amber dot / "● LIVE 67'". |
 | `EmptyState` | Dotted canvas, title, one line, one secondary action. |
+| `Football` | The ball mark. `FootballPattern` (spins) + `FootballShade` (static light) for animation. Neutral, never lime. |
+| `Splash` | First-run brand moment: ball drops, bounces, rolls into the wordmark as the first O (~2.6s). Reduced motion: static wordmark. |
 
 ### Screen patterns (from the canvas)
 
-- **Onboarding:** dealt card stack on a dotted canvas with one real sample question; three steps as a single numbered row; lime CTA "Claim 10,000 coins" with an inset arrow; "Skip to Home" as a text link.
+- **Splash → Onboarding (`/welcome`):** splash, then 3 steps with a segmented progress bar, back button and wallet badge (ticks to 10,000 on claim). 1) Try one: dealt card stack; the sample question resolves to a right/wrong result; Continue is `secondary` until answered, then lime. 2) Pick clubs: crest tiles with `aria-pressed`, soft-lime when selected. 3) Claim: coin stack + ticking amount, the three numbered steps, lime "Claim 10,000 coins". Claiming or "Skip to Home" sets the `footon_onboarded` cookie. Links to `/` from here use `prefetch={false}` so a pre-cookie redirect isn't cached.
+- **Onboarding (canvas):** dealt card stack on a dotted canvas with one real sample question; three steps as a single numbered row; lime CTA "Claim 10,000 coins" with an inset arrow; "Skip to Home" as a text link.
 - **Home:** island → greeting + coin badge → form card → segmented filter → one card listing matches (invites inline with ✕ / Join) → dashed fantasy-unlock row → dock.
 - **Create league:** close button, a live **invite ticket** (lime, notched, dashed tear line) that updates as you edit; name input, stake slider, mode switches, reward note, then `Copy` (secondary) + `Create and share` (lime).
 - **Live match (focus mode, no dock):** back + league + LIVE minute; huge display score; match progress bar; 3 standings tiles (yours soft-lime); question card stack; chat panel filling the rest of the screen (drag its handle up to fold the match details and compact the question) with message bubbles (yours right, soft-lime), a friend's question as an inline Yes/No card, quick-reaction chips, a soft "+" ask button and input.

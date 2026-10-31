@@ -93,3 +93,33 @@ export const chat = {
   friendQuestion: { from: "Omid", initial: "O", text: "Yellow card before 80'?", closes: "80'" },
   reactions: ["VAR!", "Offside", "What a save"],
 };
+
+/** Onboarding: the starting stack, the sample question and the club picker. */
+export const onboarding = {
+  startingCoins: 10000,
+  sample: {
+    match: "LIV 1–1 MCI",
+    minute: 67,
+    text: "Next corner before 75'?",
+    yesShare: 62,
+    /** How the sample resolves, so the demo can show a real outcome. */
+    outcome: "yes" as "yes" | "no",
+    resolvedLabel: "Corner at 71'",
+    reward: 50,
+  },
+  steps: [
+    { title: "Pick a match", body: "Now or upcoming" },
+    { title: "Invite friends", body: "Share one link" },
+    { title: "Answer live", body: "Top the table" },
+  ],
+  clubs: [
+    { code: "LIV", name: "Liverpool", colors: ["#C8102E", "#F6EB61"] },
+    { code: "MCI", name: "Man City", colors: ["#6CABDD", "#1C2C5B"] },
+    { code: "ARS", name: "Arsenal", colors: ["#EF0107", "#FFFFFF"] },
+    { code: "CHE", name: "Chelsea", colors: ["#034694", "#FFFFFF"] },
+    { code: "MUN", name: "Man United", colors: ["#DA291C", "#FBE122"] },
+    { code: "TOT", name: "Tottenham", colors: ["#132257", "#FFFFFF"] },
+    { code: "NEW", name: "Newcastle", colors: ["#241F20", "#FFFFFF"] },
+    { code: "AVL", name: "Aston Villa", colors: ["#670E36", "#95BFE5"] },
+  ] satisfies Team[],
+};

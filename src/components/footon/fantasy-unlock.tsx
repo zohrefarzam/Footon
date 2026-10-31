@@ -7,137 +7,131 @@ import { ChevronRight } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 
-const PITCH = 30; // one face link + one edge link
-const CAP = 5.5; // half the face-link stroke (round caps add this at each end)
-const OVERHANG = 24; // card padding (16) + 8px past the edge // chain runs past each card edge, as if wrapped round it
-const CY = 14; // chain centre line inside its 28px-tall SVG
+const PITCH = 16; // one link + one joint
+const LINK = 10; // link length
+const WRAP = 5; // bend radius where the chain turns round the card edge
+const DROP = 30; // how far it runs down the side before it's gone
 
-/** Straight chain from x=0 to x=w: hollow capsule links joined by edge links. */
-function Chain({ w, tone }: { w: number; tone: "locked" | "open" }) {
-  const unit = w / Math.max(4, Math.round(w / PITCH));
-  const face = unit * 0.62;
-  const d = `M0 ${CY}H${w}`;
-  const faceDash = `${face - CAP * 2} ${unit - face + CAP * 2}`;
+/** A minimal chain along `d`: hollow capsule links (round caps) with thin joints between. */
+function ChainPath({ d }: { d: string }) {
+  const gap = PITCH - LINK;
   return (
     <g fill="none" strokeLinecap="round">
-      <path
-        d={d}
-        stroke={tone === "open" ? "var(--primary)" : "#4a4a52"}
-        strokeWidth={CAP * 2}
-        strokeDasharray={faceDash}
-        strokeDashoffset={-CAP}
-      />
-      <path d={d} stroke="var(--surface)" strokeWidth={3.5} strokeDasharray={faceDash} strokeDashoffset={-CAP} />
-      <path
-        d={d}
-        stroke={tone === "open" ? "var(--primary)" : "#60606a"}
-        strokeWidth={4}
-        strokeDasharray={`${unit - face + 6} ${face - 6}`}
-        strokeDashoffset={-(face - 3)}
-      />
+      <path d={d} stroke="#4a4a52" strokeWidth={5} strokeDasharray={`${LINK - 5} ${gap + 5}`} />
+      <path d={d} stroke="var(--surface)" strokeWidth={1.75} strokeDasharray={`${LINK - 5} ${gap + 5}`} />
+      <path d={d} stroke="#4a4a52" strokeWidth={1.75} strokeDasharray={`${gap + 2} ${LINK - 2}`} strokeDashoffset={-(LINK - 3.5)} />
     </g>
   );
 }
 
 /**
- * Locked Fantasy, on Home. One chain runs across the card, wrapped over both
- * edges, with a padlock hanging in the middle; a stepped lime bar below shows
- * predictions made. At full, the chain snaps in two and falls away, and the
- * padlock opens lime. Links to the Team tab.
+ * Locked Fantasy, on Home. A thin chain is wrapped round the card: straight
+ * across the front, bending round both side edges and running down out of
+ * sight, with a small padlock on it. A stepped lime bar shows predictions made.
+ * At full, the chain falls away and the padlock opens lime. Links to Team.
  */
 export function FantasyUnlock({ done, total, href = "/team" }: { done: number; total: number; href?: string }) {
   const reduce = useReducedMotion();
-  const row = useRef<HTMLDivElement>(null);
-  const [w, setW] = useState(0);
+  const card = useRef<HTMLAnchorElement>(null);
+  const strap = useRef<HTMLDivElement>(null);
+  const [box, setBox] = useState<{ w: number; y: number } | null>(null);
   const d = Math.min(done, total);
   const left = total - d;
   const open = left === 0;
 
   useEffect(() => {
-    const el = row.current;
-    if (!el) return;
-    const ro = new ResizeObserver(() => setW(el.offsetWidth + OVERHANG * 2));
+    const el = card.current;
+    const s = strap.current;
+    if (!el || !s) return;
+    const ro = new ResizeObserver(() => setBox({ w: el.offsetWidth, y: s.offsetTop + s.offsetHeight / 2 }));
     ro.observe(el);
     return () => ro.disconnect();
   }, []);
 
-  const half = w / 2;
+  // front run, and the two ends turning round the side edges (masked to fade: they go behind)
+  const paths = box && {
+    front: `M1 ${box.y}H${box.w - 1}`,
+    left: `M1 ${box.y}A${WRAP} ${WRAP} 0 0 0 ${1 - WRAP} ${box.y + WRAP}V${box.y + DROP}`,
+    right: `M${box.w - 1} ${box.y}A${WRAP} ${WRAP} 0 0 1 ${box.w - 1 + WRAP} ${box.y + WRAP}V${box.y + DROP}`,
+  };
 
   return (
     <Link
+      ref={card}
       href={href}
       className={cn(
         "group relative flex flex-col rounded-[20px] border p-4 outline-none transition-colors duration-300 focus-visible:ring-[3px] focus-visible:ring-ring/60",
         open ? "border-primary-line bg-primary-soft" : "border-line bg-surface hover:bg-[#141417]",
       )}
     >
-      <p className="text-[11px] font-semibold tracking-[0.08em] text-muted-foreground">
-        {open ? "FANTASY · UNLOCKED" : "FANTASY · LOCKED"}
-      </p>
-      <p className="mt-1 text-[17px] font-bold tracking-[-0.02em]">{open ? "Unchained. Build your squad." : "Break the chain"}</p>
-      <p className="mt-0.5 text-[13px] text-muted-foreground">
-        {open ? "Fantasy is open for you." : `${left} more ${left === 1 ? "prediction" : "predictions"} to unlock your squad`}
-      </p>
+      <AnimatePresence>
+        {paths && box && !open && (
+          <motion.svg
+            key="chain"
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-0 size-full overflow-visible"
+            initial={reduce ? false : { opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={reduce ? { opacity: 0 } : { opacity: 0, y: 10 }}
+            transition={{ duration: 0.35, ease: [0.2, 0.8, 0.2, 1] }}
+          >
+            <defs>
+              <linearGradient id="fantasy-chain-fade" gradientUnits="userSpaceOnUse" x1="0" y1={box.y} x2="0" y2={box.y + DROP}>
+                <stop offset="0" stopColor="#fff" />
+                <stop offset="1" stopColor="#fff" stopOpacity="0" />
+              </linearGradient>
+              <mask id="fantasy-chain-behind" maskUnits="userSpaceOnUse" x={-40} y={box.y - 10} width={box.w + 80} height={DROP + 20}>
+                <rect x={-40} y={box.y - 10} width={box.w + 80} height={DROP + 20} fill="url(#fantasy-chain-fade)" />
+              </mask>
+            </defs>
+            <g mask="url(#fantasy-chain-behind)">
+              <ChainPath d={paths.left} />
+              <ChainPath d={paths.right} />
+            </g>
+            <ChainPath d={paths.front} />
+          </motion.svg>
+        )}
+      </AnimatePresence>
 
-      {/* the chain across the card, padlock hanging in the middle */}
-      <div ref={row} className="relative my-3 h-14" aria-hidden="true">
-        <AnimatePresence>
-          {w > 0 && !open && (
-            <motion.div key="chain" className="absolute top-1 -rotate-2" style={{ insetInline: -OVERHANG }} exit={{ opacity: 0 }}>
-              {/* two halves, so it can snap at the lock */}
-              {[0, 1].map((side) => (
-                <motion.svg
-                  key={side}
-                  width={half}
-                  height={28}
-                  viewBox={`${side * half} 0 ${half} 28`}
-                  className="absolute top-0 overflow-visible"
-                  style={{ insetInlineStart: side * half, transformOrigin: side ? "100% 50%" : "0% 50%" }}
-                  initial={reduce ? false : { opacity: 0, y: -6 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={reduce ? { opacity: 0 } : { y: 18, rotate: side ? -14 : 14, opacity: 0 }}
-                  transition={{ duration: 0.4, ease: [0.2, 0.8, 0.2, 1] }}
-                >
-                  <Chain w={w} tone="locked" />
-                </motion.svg>
-              ))}
-            </motion.div>
-          )}
-        </AnimatePresence>
+      <div className="flex items-start justify-between gap-3">
+        <div className="min-w-0">
+          <p className="text-[15px] font-semibold">{open ? "Fantasy is open" : "Fantasy is locked"}</p>
+          <p className="mt-0.5 text-[13px] text-muted-foreground">
+            {open ? "Build your squad." : `${left} more ${left === 1 ? "prediction" : "predictions"} to unlock`}
+          </p>
+        </div>
+        <ChevronRight
+          className="mt-0.5 size-4 shrink-0 text-muted-foreground transition-transform duration-200 ease-spring group-hover:translate-x-0.5 rtl:rotate-180"
+          aria-hidden="true"
+        />
+      </div>
 
-        {/* padlock: shackle loops over the chain, body hangs below */}
-        <motion.svg
-          viewBox="0 0 36 48"
-          className="absolute top-0 left-1/2 h-14 w-[42px] -translate-x-1/2"
-          initial={reduce ? false : { rotate: 0 }}
-          animate={{ rotate: open ? 0 : [0, 6, -4, 2, 0] }}
-          transition={reduce ? { duration: 0 } : { duration: 0.9, delay: 0.3, ease: "easeOut" }}
-          style={{ transformOrigin: "50% 10%" }}
-        >
+      {/* the line the chain runs along, with the padlock on it */}
+      <div ref={strap} className="relative my-3 flex h-7 items-center justify-center" aria-hidden="true">
+        <svg viewBox="0 0 24 28" className="relative h-7 w-6">
           <motion.path
-            d="M10 22V13a8 8 0 0 1 16 0v9"
+            d="M7 13V9a5 5 0 0 1 10 0v4"
             fill="none"
-            stroke={open ? "var(--primary)" : "#71717a"}
-            strokeWidth={4}
+            stroke={open ? "var(--primary)" : "#52525b"}
+            strokeWidth={2.5}
             strokeLinecap="round"
             initial={false}
-            animate={open ? { y: -5, rotate: 26 } : { y: 0, rotate: 0 }}
+            animate={open ? { y: -3, rotate: 24 } : { y: 0, rotate: 0 }}
             style={{ transformBox: "fill-box", transformOrigin: "100% 100%" }}
-            transition={reduce ? { duration: 0 } : { type: "spring", stiffness: 380, damping: 16, delay: 0.25 }}
+            transition={reduce ? { duration: 0 } : { type: "spring", stiffness: 380, damping: 16, delay: 0.2 }}
           />
           <rect
             x="3"
-            y="20"
-            width="30"
-            height="26"
-            rx="8"
+            y="12"
+            width="18"
+            height="15"
+            rx="4.5"
             fill={open ? "var(--primary)" : "var(--surface-3)"}
             stroke={open ? "var(--primary)" : "#52525b"}
-            strokeWidth="2"
+            strokeWidth="1.5"
           />
-          <circle cx="18" cy="31" r="3" fill={open ? "var(--primary-foreground)" : "var(--muted-foreground)"} />
-          <rect x="16.75" y="32" width="2.5" height="7" rx="1.25" fill={open ? "var(--primary-foreground)" : "var(--muted-foreground)"} />
-        </motion.svg>
+          <rect x="11" y="17" width="2" height="5" rx="1" fill={open ? "var(--primary-foreground)" : "var(--muted-foreground)"} />
+        </svg>
       </div>
 
       {/* stepped linear progress */}
@@ -149,7 +143,7 @@ export function FantasyUnlock({ done, total, href = "/team" }: { done: number; t
           aria-valuemax={total}
           aria-valuenow={d}
           aria-valuetext={`${d} of ${total}`}
-          className="relative h-2.5 flex-1 overflow-hidden rounded-full bg-[#27272a]"
+          className="relative h-1.5 flex-1 overflow-hidden rounded-full bg-[#27272a]"
         >
           <motion.div
             className="h-full rounded-full bg-primary"
@@ -165,13 +159,9 @@ export function FantasyUnlock({ done, total, href = "/team" }: { done: number; t
             />
           ))}
         </div>
-        <p className="flex shrink-0 items-center font-display text-[22px] leading-none font-bold">
+        <p className="shrink-0 font-display text-base leading-none font-bold">
           <span className={cn(open && "text-primary")}>{d}</span>
-          <span className="text-base text-muted-foreground">/{total}</span>
-          <ChevronRight
-            className="ms-1.5 size-4 text-muted-foreground transition-transform duration-200 ease-spring group-hover:translate-x-0.5 rtl:rotate-180"
-            aria-hidden="true"
-          />
+          <span className="text-muted-foreground">/{total}</span>
         </p>
       </div>
     </Link>

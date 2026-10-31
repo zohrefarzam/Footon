@@ -182,7 +182,7 @@ Rules:
 | `CoinBadge` / `Coin` | Wallet pill. Coins are always amber with an "F". |
 | `NumberTicker` | Count-up for rewards. |
 | `FormBars` | Last-N results as bars (height + colour). `fill` stretches them across the width (Profile's recent-form card). |
-| `FantasyUnlock` | Home's locked-Fantasy card: title + "N more predictions", then one grey chain running across the card (slightly tilted, past both edges, as if wrapped round it) with a padlock hanging in the middle, then a stepped lime progress bar (`role="progressbar"`) + `3/5`. At full the chain snaps at the lock and falls away, the padlock opens lime and the card turns soft-lime: "Unchained. Build your squad." Not a border treatment. |
+| `FantasyUnlock` | Home's locked-Fantasy card, kept minimal: "Fantasy is locked" + "N more predictions to unlock", then a thin grey chain wrapped round the card (straight across the front, bending round both side edges and fading down out of sight) with a small padlock on it, then a thin stepped lime progress bar (`role="progressbar"`) + `3/5`. At full the chain falls away, the padlock opens lime and the card turns soft-lime ("Fantasy is open"). Not a border treatment. |
 | `ProgressRing` | Circular progress for compact spots. |
 | `TeamCrest` | 3-letter code placeholder until real crests are licensed. |
 | `LiveDot` / `LiveMinute` | Pulsing amber dot / "● LIVE 67'". |

@@ -19,7 +19,12 @@ export type Match = {
   minute?: number;
   score?: [number, number];
   kickoff?: string;
+  /** Day label for fixtures after today ("Sat"); absent = today. */
+  day?: string;
+  /** Short context line: your league on this match, or the competition. */
   caption: string;
+  /** Set when you play this match in one of your leagues. */
+  league?: string;
   events?: MatchEvent[];
   stats?: MatchStat[];
 };
@@ -37,6 +42,7 @@ export const matches: Match[] = [
     minute: 67,
     score: [1, 1],
     caption: "Sunday Rivals · limit 500",
+    league: "Sunday Rivals",
     events: [
       { minute: 23, side: "home", player: "Salah", kind: "goal" },
       { minute: 58, side: "away", player: "Haaland", kind: "goal" },
@@ -55,9 +61,58 @@ export const matches: Match[] = [
     kickoff: "21:00",
     caption: "Tonight",
   },
+  {
+    id: "new-tot",
+    home: { code: "NEW", name: "Newcastle", colors: ["#241F20", "#FFFFFF"] },
+    away: { code: "TOT", name: "Tottenham", colors: ["#132257", "#FFFFFF"] },
+    status: "upcoming",
+    kickoff: "19:30",
+    caption: "Premier League",
+  },
+  {
+    id: "bha-eve",
+    home: { code: "BHA", name: "Brighton", colors: ["#0057B8", "#FFFFFF"] },
+    away: { code: "EVE", name: "Everton", colors: ["#003399", "#FFFFFF"] },
+    status: "finished",
+    score: [2, 0],
+    caption: "Premier League",
+  },
+  {
+    id: "mun-liv",
+    home: { code: "MUN", name: "Man United", colors: ["#DA291C", "#FBE122"] },
+    away: { code: "LIV", name: "Liverpool", colors: ["#C8102E", "#F6EB61"] },
+    status: "upcoming",
+    kickoff: "13:30",
+    day: "Sat",
+    caption: "Premier League",
+  },
+  {
+    id: "che-mci",
+    home: { code: "CHE", name: "Chelsea", colors: ["#034694", "#FFFFFF"] },
+    away: { code: "MCI", name: "Man City", colors: ["#6CABDD", "#1C2C5B"] },
+    status: "upcoming",
+    kickoff: "16:30",
+    day: "Sun",
+    caption: "Premier League",
+  },
 ];
 
-export const invite = { from: "Sara", initial: "S", stakeLimit: 300, matchId: "ars-che" };
+export type Invite = {
+  id: string;
+  from: string;
+  initial: string;
+  league: string;
+  stakeLimit: number;
+  /** Who's already in, by initial. */
+  members: string[];
+  matchId: string;
+};
+
+export const invites: Invite[] = [
+  { id: "inv-1", from: "Sara", initial: "S", league: "Derby night", stakeLimit: 300, members: ["S", "M", "R"], matchId: "ars-che" },
+  { id: "inv-2", from: "Omid", initial: "O", league: "Office five", stakeLimit: 200, members: ["O", "K"], matchId: "new-tot" },
+  { id: "inv-3", from: "Lena", initial: "L", league: "North West", stakeLimit: 500, members: ["L", "J", "P", "A"], matchId: "mun-liv" },
+];
 
 export const fantasyProgress = { done: 3, total: 5 };
 

@@ -2,8 +2,10 @@ import Link from "next/link";
 import { Eye, Flame, Lock, Settings, Trophy, UserRound } from "lucide-react";
 
 import { AppShell } from "@/components/footon/app-shell";
+import { FormBars } from "@/components/footon/form-bars";
 import { Button } from "@/components/ui/button";
 import { Card, CardRow } from "@/components/ui/card";
+import { recentForm } from "@/lib/mock-data";
 import { cn } from "@/lib/utils";
 
 const RANK = 8;
@@ -23,6 +25,11 @@ const collection = [
 ];
 
 export default function MePage() {
+  const wins = recentForm.filter((r) => r === "W").length;
+  const losses = recentForm.filter((r) => r === "L").length;
+  const voids = recentForm.length - wins - losses;
+  const rate = Math.round((wins / Math.max(1, wins + losses)) * 100);
+
   return (
     <AppShell className="gap-5 pt-3.5">
       <header className="flex h-10 items-center justify-between">
@@ -69,6 +76,40 @@ export default function MePage() {
           </div>
         </section>
       </div>
+
+      <section className="flex flex-col gap-2.5">
+        <h2 className="text-[13px] font-medium text-muted-foreground">Recent form</h2>
+        <Card className="gap-4 p-4">
+          <div className="flex items-end justify-between gap-4">
+            <div>
+              <p className="font-display text-[56px] leading-[0.9] font-bold">
+                {rate}
+                <span className="text-[28px] text-muted-foreground">%</span>
+              </p>
+              <p className="mt-1 text-[13px] text-muted-foreground">Calls right, last {recentForm.length}</p>
+            </div>
+            <dl className="flex gap-4 text-center">
+              {[
+                { label: "Won", value: wins, tone: "text-win" },
+                { label: "Lost", value: losses, tone: "text-loss" },
+                { label: "Void", value: voids, tone: "text-muted-foreground" },
+              ].map((s) => (
+                <div key={s.label} className="flex flex-col-reverse">
+                  <dt className="mt-1 text-xs text-muted-foreground">{s.label}</dt>
+                  <dd className={cn("font-display text-[28px] leading-none font-bold", s.tone)}>{s.value}</dd>
+                </div>
+              ))}
+            </dl>
+          </div>
+          <div>
+            <FormBars results={recentForm} fill className="h-14" />
+            <div className="mt-2 flex justify-between text-[11px] font-medium text-muted-foreground" aria-hidden="true">
+              <span>Oldest</span>
+              <span>Latest</span>
+            </div>
+          </div>
+        </Card>
+      </section>
 
       <Card className="flex-row items-center gap-3.5 px-4 py-3.5">
         <div className="flex gap-1.5" aria-hidden="true">

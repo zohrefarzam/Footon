@@ -8,21 +8,31 @@ const label: Record<Outcome, string> = { W: "win", L: "loss", V: "void" };
  * Recent form as a tiny bar chart. Height carries the meaning as well as colour,
  * so it reads for colour-blind users: tall = win, short = loss, stub = void.
  */
-export function FormBars({ results, className }: { results: Outcome[]; className?: string }) {
+export function FormBars({
+  results,
+  fill = false,
+  className,
+}: {
+  results: Outcome[];
+  /** Bars share the full width (Profile). Height comes from `className` (default h-10). */
+  fill?: boolean;
+  className?: string;
+}) {
   return (
     <div
       role="img"
       aria-label={`Last ${results.length} predictions: ${results.map((r) => label[r]).join(", ")}`}
-      className={cn("flex h-10 items-end gap-[5px]", className)}
+      className={cn("flex h-10 items-end", fill ? "gap-1.5" : "gap-[5px]", className)}
     >
       {results.map((r, i) => (
         <span
           key={i}
           className={cn(
-            "w-2.5 rounded-[3px] origin-bottom animate-in fade-in slide-in-from-bottom-2 fill-mode-both",
-            r === "W" && "h-10 bg-win",
-            r === "L" && "h-4 bg-loss",
-            r === "V" && "h-1.5 bg-[#3f3f46]",
+            "origin-bottom animate-in fade-in slide-in-from-bottom-2 fill-mode-both",
+            fill ? "flex-1 rounded-[5px]" : "w-2.5 rounded-[3px]",
+            r === "W" && "h-full bg-win",
+            r === "L" && "h-2/5 bg-loss",
+            r === "V" && "h-[15%] min-h-1.5 bg-[#3f3f46]",
           )}
           style={{ animationDelay: `${i * 50}ms` }}
         />

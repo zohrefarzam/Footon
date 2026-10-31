@@ -1,6 +1,8 @@
 import { cn } from "@/lib/utils";
 
 const sizes = {
+  /** Shield only, no code: for dense rows that print the team name beside it. */
+  xs: "size-5",
   sm: "size-[30px] rounded-[9px] text-[11px]",
   md: "size-[34px] rounded-sm text-[13px]",
   lg: "size-10 rounded-[12px] text-sm",
@@ -31,12 +33,11 @@ export function TeamCrest({
           <path d="M20 2 37 8v14c0 11-7.5 18.5-17 22C10.5 40.5 3 33 3 22V8Z" fill={shirt} stroke={trim} strokeWidth="2.5" />
           <path d="M3 17h34" stroke={trim} strokeWidth="2" opacity=".5" />
         </svg>
-        <span
-          className="relative mt-[18%] font-display font-bold text-white"
-          style={{ textShadow: "0 1px 2px rgb(0 0 0 / 0.6)" }}
-        >
-          {code}
-        </span>
+        {size !== "xs" && (
+          <span className="relative mt-[18%] font-display font-bold text-white" style={{ textShadow: "0 1px 2px rgb(0 0 0 / 0.6)" }}>
+            {code}
+          </span>
+        )}
       </span>
     );
   }

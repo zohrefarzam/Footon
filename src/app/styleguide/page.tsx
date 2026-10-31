@@ -1,4 +1,5 @@
 import { CoinBadge } from "@/components/footon/coin";
+import { FantasyUnlock } from "@/components/footon/fantasy-unlock";
 import { FormBars } from "@/components/footon/form-bars";
 import { LiveDot, LiveMinute } from "@/components/footon/live";
 import { MatchFilter } from "@/components/footon/match-filter";
@@ -102,6 +103,10 @@ export default function StyleguidePage() {
           <ProgressRing value={3} max={5} />
           <TeamCrest code="LIV" />
           <TeamCrest code="MCI" size="lg" />
+        </div>
+        <div className="grid max-w-sm gap-3">
+          <FantasyUnlock done={3} total={5} />
+          <FantasyUnlock done={5} total={5} />
         </div>
       </Section>
 

@@ -15,11 +15,12 @@ export function AppShell({
   className?: string;
 }) {
   return (
-    <div className="min-h-dvh bg-background">
+    <div className={cn("bg-background", !dock && "min-h-dvh")}>
       <main
         className={cn(
-          "relative mx-auto flex min-h-dvh w-full max-w-[430px] flex-col gap-[18px] px-5 pt-3",
-          dock ? "pb-[calc(110px+env(safe-area-inset-bottom))]" : "pb-6",
+          "relative mx-auto flex w-full max-w-[430px] flex-col gap-[18px] px-5 pt-3",
+          // dock tabs sit under the sticky island from the (tabs) layout
+          dock ? "pb-[calc(110px+env(safe-area-inset-bottom))]" : "min-h-dvh pb-6",
           className,
         )}
       >

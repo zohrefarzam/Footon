@@ -182,7 +182,7 @@ Rules:
 | `CoinBadge` / `Coin` | Wallet pill. Coins are always amber with an "F". |
 | `NumberTicker` | Count-up for rewards. |
 | `FormBars` | Last-N results as bars (height + colour). `fill` stretches them across the width (Profile's recent-form card). |
-| `FantasyUnlock` | Home's locked-Fantasy card, kept minimal: "Fantasy is locked" + "N more predictions to unlock", then a thin grey chain wrapped round the card (straight across the front, bending round both side edges and fading down out of sight) with a small padlock on it, then a thin stepped lime progress bar (`role="progressbar"`) + `3/5`. At full the chain falls away, the padlock opens lime and the card turns soft-lime ("Fantasy is open"). Not a border treatment. |
+| `FantasyUnlock` | Home's Fantasy progress card: "Fantasy unlocks soon" + "N more predictions to build your squad", a display `3/5` (done count lime), and a segmented bar (`role="progressbar"`), one pill per prediction: made = lime, filling in one after another; next = soft-lime outline; rest = dark. At full the card turns soft-lime ("Fantasy is open"). No chains or padlocks. |
 | `ProgressRing` | Circular progress for compact spots. |
 | `TeamCrest` | 3-letter code placeholder until real crests are licensed. |
 | `LiveDot` / `LiveMinute` | Pulsing amber dot / "● LIVE 67'". |
@@ -195,7 +195,7 @@ Rules:
 
 - **Splash → Onboarding (`/welcome`):** the launch splash (from `SplashGate`), then 3 steps with a segmented progress bar, back button and wallet badge (ticks to 10,000 on claim). 1) Try one: dealt card stack; the sample question resolves to a right/wrong result; Continue is `secondary` until answered, then lime. 2) Pick clubs: crest tiles with `aria-pressed`, soft-lime when selected. 3) Claim: coin stack + ticking amount, the three numbered steps, lime "Claim 10,000 coins". Claiming or "Skip to Home" sets the `footon_onboarded` cookie. Links to `/` from here use `prefetch={false}` so a pre-cookie redirect isn't cached.
 - **Onboarding (canvas):** dealt card stack on a dotted canvas with one real sample question; three steps as a single numbered row; lime CTA "Claim 10,000 coins" with an inset arrow; "Skip to Home" as a text link.
-- **Home:** (sticky island from the tabs layout) → "Your matches" → invites strip → segmented filter → one card of one-line scoreboard rows → `FantasyUnlock` chain card → dock.
+- **Home:** (sticky island from the tabs layout) → "Your matches" → invites strip → segmented filter → one card of one-line scoreboard rows → `FantasyUnlock` progress card → dock.
 - **Match (`/match/[id]`, focus mode):** back + competition; dotted scoreboard (xl crests, display kickoff or score). Upcoming → `PrematchCalls`. Finished → "You scored +240", a `StreakFlame`, right/wrong bars (tall lime vs short red) and "5 of 6 calls right".
 - **Create league:** close button, a live **invite ticket** (lime, notched, dashed tear line) that updates as you edit; name input, stake slider, mode switches, reward note, then `Copy` (secondary) + `Create and share` (lime).
 - **Live match (focus mode, no dock):** back + league + LIVE minute; huge display score; match progress bar; 3 standings tiles (yours soft-lime); question card stack; chat panel filling the rest of the screen (drag its handle up to fold the match details and compact the question) with message bubbles (yours right, soft-lime), a friend's question as an inline Yes/No card, quick-reaction chips, a soft "+" ask button and input.

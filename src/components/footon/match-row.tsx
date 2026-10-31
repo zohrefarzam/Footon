@@ -1,29 +1,33 @@
 import Link from "next/link";
-import { ChevronRight, UsersRound } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 
 import { cn } from "@/lib/utils";
-import type { Match } from "@/lib/mock-data";
+import { HOT_STREAK, type Match } from "@/lib/mock-data";
 import { LiveDot } from "./live";
+import { StreakFlame } from "./streak";
 import { TeamCrest } from "./team-crest";
 
 /**
  * One-line fixture row, scoreboard style, inside a divided list Card (~60px):
  *   home name + shield · score or kickoff · shield + away name · marker
  * Under the score: amber live minute, the day for fixtures, FT for results. The
- * centre box is amber-soft while live. The end marker is a soft-lime "league" badge when you
- * play this match with friends, else a chevron when the row links somewhere.
+ * centre box is amber-soft while live. The end column is yours: points in lime and
+ * an amber flame for a hot streak (or calls made, before kickoff), else a chevron.
  * Names fall back to 3-letter codes on narrow screens.
  */
 export function MatchRow({ match, href, className }: { match: Match; href?: string; className?: string }) {
   const live = match.status === "live";
   const done = match.status === "finished";
+  const upcoming = match.status === "upcoming";
+  const you = match.you;
+  const hot = !!you && you.streak >= HOT_STREAK;
   const [h, a] = match.score ?? [0, 0];
   const lost = (i: 0 | 1) => done && h !== a && (i === 0 ? h < a : a < h);
 
   const status = live ? `Live, ${match.minute} minutes` : done ? "Full time" : `${match.day ?? "Today"} ${match.kickoff}`;
   const label = `${match.home.name} ${live || done ? `${h}, ${match.away.name} ${a}` : `v ${match.away.name}`}, ${status}${
     match.league ? `, in your league ${match.league}` : ""
-  }`;
+  }${you ? (upcoming ? `, you made ${you.calls} calls` : `, you scored ${you.points} points${hot ? `, ${you.streak} in a row` : ""}`) : ""}`;
 
   const team = (i: 0 | 1) => {
     const t = i === 0 ? match.home : match.away;
@@ -45,7 +49,7 @@ export function MatchRow({ match, href, className }: { match: Match; href?: stri
       {/* centre: score or kickoff, with the minute / day / FT underneath */}
       <span
         className={cn(
-          "flex h-11 w-16 flex-col items-center justify-center gap-0.5 rounded-sm",
+          "flex h-11 w-[58px] flex-col items-center justify-center gap-0.5 rounded-sm",
           live ? "bg-live-soft" : done ? "bg-surface-2" : "",
         )}
       >
@@ -76,19 +80,28 @@ export function MatchRow({ match, href, className }: { match: Match; href?: stri
 
       {team(1)}
 
-      <span className="flex justify-end">
-        {match.league ? (
-          <span className="flex size-5 items-center justify-center rounded-full border border-primary-line bg-primary-soft text-primary">
-            <UsersRound className="size-3" strokeWidth={2.4} />
-          </span>
+      {/* end: your stake if you're in (points + hot-streak flame, or calls made), else a chevron */}
+      <span className="flex flex-col items-end justify-center gap-1">
+        {you ? (
+          upcoming ? (
+            <>
+              <span className="font-display text-[15px] leading-none font-bold text-primary">{you.calls}</span>
+              <span className="text-[11px] leading-none text-muted-foreground">calls</span>
+            </>
+          ) : (
+            <>
+              <span className="font-display text-[15px] leading-none font-bold text-primary tabular-nums">+{you.points}</span>
+              {hot ? <StreakFlame count={you.streak} /> : <span className="text-[11px] leading-none text-muted-foreground">pts</span>}
+            </>
+          )
         ) : href ? (
-          <ChevronRight className="size-4 text-muted-foreground rtl:rotate-180" />
+          <ChevronRight className="size-4 text-muted-foreground rtl:rotate-180" aria-hidden="true" />
         ) : null}
       </span>
     </>
   );
 
-  const row = "grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)_20px] items-center gap-2 py-2 ps-3 pe-2.5";
+  const row = "grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)_38px] items-center gap-1.5 py-2 ps-2.5 pe-3";
 
   return (
     <div className={cn("[&+&]:border-t [&+&]:border-line", className)}>
@@ -96,7 +109,10 @@ export function MatchRow({ match, href, className }: { match: Match; href?: stri
         <Link
           href={href}
           aria-label={label}
-          className={cn(row, "outline-none transition-colors hover:bg-[#141417] focus-visible:ring-[3px] focus-visible:ring-inset focus-visible:ring-ring/60")}
+          className={cn(
+            row,
+            "outline-none transition-colors hover:bg-[#141417] focus-visible:ring-[3px] focus-visible:ring-inset focus-visible:ring-ring/60",
+          )}
         >
           {body}
         </Link>

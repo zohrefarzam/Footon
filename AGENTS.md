@@ -35,7 +35,7 @@ Adding shadcn components: `npx shadcn@latest add <name>`, then **restyle it to t
 
 ```
 src/
-  app/                    routes (/, /welcome, /play, /league/new, /team, /me, /styleguide)
+  app/                    routes (/, /welcome, /play, /match/[id], /league/new, /team, /me, /styleguide)
     (tabs)/               /, /team, /me — layout holds the sticky LiveIsland (persists across tabs)
     globals.css           ALL design tokens, utilities, keyframes
   components/
@@ -43,8 +43,8 @@ src/
                           switch, slider, avatar, separator, progress)
     footon/               product components (app-shell, dock, live-island, question-card,
                           match-row, segmented-tabs, live-focus, coin, number-ticker, form-bars,
-                          progress-ring, team-crest, live, empty-state, match-filter, match-list, invite-strip, football,
-                          splash, splash-gate)
+                          progress-ring, team-crest, live, empty-state, match-filter, match-list, invite-strip, streak,
+                          prematch-calls, football, splash, splash-gate)
   lib/
     utils.ts              cn()
     mock-data.ts          typed mock data mirroring the canvas — replace with API, keep types
@@ -173,9 +173,11 @@ Rules:
 | `LiveIsland` | Sticky top pill on every dock tab, rendered once by `app/(tabs)/layout.tsx`. Left: live minute, score and the open question (lime `Q4 open` chip, soft-lime `Q4 · Yes` once answered); tap to expand over the page and answer in place. Right: the wallet (coins → `/me`). Collapses on scroll, outside tap or Escape. With no live match it shows only the wallet. Pages don't render their own coin badge. |
 | `QuestionCard` | The live question. Yes/No → crowd split + drawn check + shimmer. Timer ring is amber. `compact` = one-row widget. |
 | `LiveFocus` | Live-match layout: full-height column, chat fills the rest; dragging the chat handle folds the match details away and compacts the question. |
-| `MatchRow` | One-line scoreboard row (~60px) inside a list card: home name + `xs` shield · centre box (score or kickoff, with amber live minute / day / FT under it; amber-soft while live) · shield + away name · end marker (soft-lime league badge if you play it with friends, else chevron when linked). Names become 3-letter codes under 360px. |
+| `MatchRow` | One-line scoreboard row (~60px) inside a list card: home name + `xs` shield · centre box (score or kickoff, with amber live minute / day / FT under it; amber-soft while live) · shield + away name · "you" column (lime `+points` and a `StreakFlame` for a hot streak, or calls made before kickoff; chevron if you're not in). Every row links: live → `/play`, others → `/match/[id]`. Names become 3-letter codes under 360px. |
 | `MatchList` | Now/Today/Upcoming `SegmentedTabs` that actually filter one divided list of `MatchRow`s. |
 | `InviteStrip` | All pending league invites as a swipeable row of cards on Home (who, league, stake, match, members; Decline / Join). Join is `secondary` since several show at once; joined cards turn soft-lime. |
+| `StreakFlame` | Hot streak (`streak ≥ HOT_STREAK`, 3): amber-soft pill, lucide `Flame` + count in display font. Amber because a streak is a boost. Pops in once, never loops. |
+| `PrematchCalls` | Pre-match questions on `/match/[id]`, each with a Yes/No toggle (soft-lime when picked) and one lime "Lock in N calls". |
 | `SegmentedTabs` | 2–4 filters with sliding lime pill. |
 | `CoinBadge` / `Coin` | Wallet pill. Coins are always amber with an "F". |
 | `NumberTicker` | Count-up for rewards. |
@@ -193,6 +195,7 @@ Rules:
 - **Splash → Onboarding (`/welcome`):** the launch splash (from `SplashGate`), then 3 steps with a segmented progress bar, back button and wallet badge (ticks to 10,000 on claim). 1) Try one: dealt card stack; the sample question resolves to a right/wrong result; Continue is `secondary` until answered, then lime. 2) Pick clubs: crest tiles with `aria-pressed`, soft-lime when selected. 3) Claim: coin stack + ticking amount, the three numbered steps, lime "Claim 10,000 coins". Claiming or "Skip to Home" sets the `footon_onboarded` cookie. Links to `/` from here use `prefetch={false}` so a pre-cookie redirect isn't cached.
 - **Onboarding (canvas):** dealt card stack on a dotted canvas with one real sample question; three steps as a single numbered row; lime CTA "Claim 10,000 coins" with an inset arrow; "Skip to Home" as a text link.
 - **Home:** (sticky island from the tabs layout) → "Your matches" → invites strip → segmented filter → one card of one-line scoreboard rows → dashed fantasy-unlock row → dock.
+- **Match (`/match/[id]`, focus mode):** back + competition; dotted scoreboard (xl crests, display kickoff or score). Upcoming → `PrematchCalls`. Finished → "You scored +240", a `StreakFlame`, right/wrong bars (tall lime vs short red) and "5 of 6 calls right".
 - **Create league:** close button, a live **invite ticket** (lime, notched, dashed tear line) that updates as you edit; name input, stake slider, mode switches, reward note, then `Copy` (secondary) + `Create and share` (lime).
 - **Live match (focus mode, no dock):** back + league + LIVE minute; huge display score; match progress bar; 3 standings tiles (yours soft-lime); question card stack; chat panel filling the rest of the screen (drag its handle up to fold the match details and compact the question) with message bubbles (yours right, soft-lime), a friend's question as an inline Yes/No card, quick-reaction chips, a soft "+" ask button and input.
 - **Full time:** ticking `+450`, streak pill with lime "Next match 2x", podium (yours lime-soft, tallest), match-timeline of calls (lime filled dots = right, red rings = wrong), rematch chat replies, lime "Rematch with same friends".

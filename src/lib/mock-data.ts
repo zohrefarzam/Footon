@@ -11,6 +11,14 @@ export type Team = { code: string; name: string; colors?: [string, string] };
 export type MatchEvent = { minute: number; side: "home" | "away"; player: string; kind: "goal" };
 export type MatchStat = { label: string; home: number; away: number; unit?: string };
 
+/**
+ * Your part in a match. `streak` = correct calls in a row right now; 3+ is a
+ * hot streak and gets the flame.
+ */
+export type MatchYou = { calls: number; right: number; points: number; streak: number };
+
+export const HOT_STREAK = 3;
+
 export type Match = {
   id: string;
   home: Team;
@@ -25,6 +33,8 @@ export type Match = {
   caption: string;
   /** Set when you play this match in one of your leagues. */
   league?: string;
+  /** Your stake in this match, when you've made calls on it. */
+  you?: MatchYou;
   events?: MatchEvent[];
   stats?: MatchStat[];
 };
@@ -43,6 +53,7 @@ export const matches: Match[] = [
     score: [1, 1],
     caption: "Sunday Rivals · limit 500",
     league: "Sunday Rivals",
+    you: { calls: 4, right: 3, points: 120, streak: 3 },
     events: [
       { minute: 23, side: "home", player: "Salah", kind: "goal" },
       { minute: 58, side: "away", player: "Haaland", kind: "goal" },
@@ -60,6 +71,7 @@ export const matches: Match[] = [
     status: "upcoming",
     kickoff: "21:00",
     caption: "Tonight",
+    you: { calls: 2, right: 0, points: 0, streak: 0 },
   },
   {
     id: "new-tot",
@@ -76,10 +88,11 @@ export const matches: Match[] = [
     status: "finished",
     score: [2, 0],
     caption: "Premier League",
+    you: { calls: 6, right: 5, points: 240, streak: 5 },
   },
   {
     id: "mun-liv",
-    home: { code: "MUN", name: "Man United", colors: ["#DA291C", "#FBE122"] },
+    home: { code: "MUN", name: "Man Utd", colors: ["#DA291C", "#FBE122"] },
     away: { code: "LIV", name: "Liverpool", colors: ["#C8102E", "#F6EB61"] },
     status: "upcoming",
     kickoff: "13:30",
@@ -178,3 +191,11 @@ export const onboarding = {
     { code: "AVL", name: "Aston Villa", colors: ["#670E36", "#95BFE5"] },
   ] satisfies Team[],
 };
+
+/** Calls you can make before kickoff. `{home}` / `{away}` are filled with team names. */
+export const prematchQuestions = [
+  { id: "pq-1", text: "Goal before 30'?" },
+  { id: "pq-2", text: "{home} ahead at 90'?" },
+  { id: "pq-3", text: "Both teams score by 90'?" },
+  { id: "pq-4", text: "Yellow card before 45'?" },
+];

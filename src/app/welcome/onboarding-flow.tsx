@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
@@ -8,7 +8,7 @@ import { ArrowRight, Check, ChevronLeft, X } from "lucide-react";
 
 import { Coin, CoinBadge } from "@/components/footon/coin";
 import { NumberTicker } from "@/components/footon/number-ticker";
-import { Splash } from "@/components/footon/splash";
+import { useSplashDone } from "@/components/footon/splash-gate";
 import { TeamCrest } from "@/components/footon/team-crest";
 import { Button } from "@/components/ui/button";
 import type { Team } from "@/lib/mock-data";
@@ -40,7 +40,7 @@ function markOnboarded() {
 }
 
 export function OnboardingFlow({ data }: { data: OnboardingData }) {
-  const [splash, setSplash] = useState(true);
+  const ready = useSplashDone();
   const [step, setStep] = useState(0);
   const [dir, setDir] = useState(1);
   const [answer, setAnswer] = useState<"yes" | "no" | null>(null);
@@ -49,7 +49,6 @@ export function OnboardingFlow({ data }: { data: OnboardingData }) {
   const router = useRouter();
   const reduce = useReducedMotion();
 
-  const endSplash = useCallback(() => setSplash(false), []);
   const go = (to: number) => {
     setDir(to > step ? 1 : -1);
     setStep(to);
@@ -69,8 +68,6 @@ export function OnboardingFlow({ data }: { data: OnboardingData }) {
 
   return (
     <>
-      <AnimatePresence>{splash && <Splash key="splash" onDone={endSplash} />}</AnimatePresence>
-
       <div className="mx-auto flex min-h-dvh w-full max-w-[430px] flex-col px-5 pt-3 pb-[calc(16px+env(safe-area-inset-bottom))]">
         {/* top bar: back · progress · wallet */}
         <header className="grid h-11 grid-cols-[1fr_auto_1fr] items-center gap-3">
@@ -104,27 +101,30 @@ export function OnboardingFlow({ data }: { data: OnboardingData }) {
           </div>
         </header>
 
+        {!ready && <div className="flex-1" />}
         <AnimatePresence mode="wait" custom={dir} initial={false}>
-          <motion.div
-            key={step}
-            custom={dir}
-            variants={slide}
-            initial="enter"
-            animate="center"
-            exit="exit"
-            transition={{ duration: 0.28, ease: [0.2, 0.8, 0.2, 1] }}
-            className="flex flex-1 flex-col"
-          >
-            {step === 0 && <TryStep sample={data.sample} answer={answer} onAnswer={setAnswer} />}
-            {step === 1 && (
-              <ClubsStep
-                clubs={data.clubs}
-                selected={clubs}
-                onToggle={(code) => setClubs((s) => (s.includes(code) ? s.filter((c) => c !== code) : [...s, code]))}
-              />
-            )}
-            {step === 2 && <ClaimStep coins={data.startingCoins} steps={data.steps} claimed={claimed} />}
-          </motion.div>
+          {ready && (
+            <motion.div
+              key={step}
+              custom={dir}
+              variants={slide}
+              initial="enter"
+              animate="center"
+              exit="exit"
+              transition={{ duration: 0.28, ease: [0.2, 0.8, 0.2, 1] }}
+              className="flex flex-1 flex-col"
+            >
+              {step === 0 && <TryStep sample={data.sample} answer={answer} onAnswer={setAnswer} />}
+              {step === 1 && (
+                <ClubsStep
+                  clubs={data.clubs}
+                  selected={clubs}
+                  onToggle={(code) => setClubs((s) => (s.includes(code) ? s.filter((c) => c !== code) : [...s, code]))}
+                />
+              )}
+              {step === 2 && <ClaimStep coins={data.startingCoins} steps={data.steps} claimed={claimed} />}
+            </motion.div>
+          )}
         </AnimatePresence>
 
         {/* footer: one action per step */}
@@ -206,15 +206,7 @@ function Headline({ title, sub }: { title: string; sub: string }) {
 
 /* ---------- Step 1: answer one real question ---------- */
 
-function TryStep({
-  sample,
-  answer,
-  onAnswer,
-}: {
-  sample: Sample;
-  answer: "yes" | "no" | null;
-  onAnswer: (a: "yes" | "no") => void;
-}) {
+function TryStep({ sample, answer, onAnswer }: { sample: Sample; answer: "yes" | "no" | null; onAnswer: (a: "yes" | "no") => void }) {
   const [resolved, setResolved] = useState(answer !== null);
   const reduce = useReducedMotion();
 
@@ -377,15 +369,7 @@ function TryStep({
 
 /* ---------- Step 2: pick clubs ---------- */
 
-function ClubsStep({
-  clubs,
-  selected,
-  onToggle,
-}: {
-  clubs: Team[];
-  selected: string[];
-  onToggle: (code: string) => void;
-}) {
+function ClubsStep({ clubs, selected, onToggle }: { clubs: Team[]; selected: string[]; onToggle: (code: string) => void }) {
   const reduce = useReducedMotion();
   return (
     <div className="flex flex-1 flex-col pt-6">
@@ -440,15 +424,7 @@ function ClubsStep({
 
 /* ---------- Step 3: claim the starting stack ---------- */
 
-function ClaimStep({
-  coins,
-  steps,
-  claimed,
-}: {
-  coins: number;
-  steps: { title: string; body: string }[];
-  claimed: boolean;
-}) {
+function ClaimStep({ coins, steps, claimed }: { coins: number; steps: { title: string; body: string }[]; claimed: boolean }) {
   const reduce = useReducedMotion();
   return (
     <div className="flex flex-1 flex-col">

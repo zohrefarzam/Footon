@@ -42,7 +42,8 @@ src/
                           switch, slider, avatar, separator, progress)
     footon/               product components (app-shell, dock, live-island, question-card,
                           match-row, segmented-tabs, live-focus, coin, number-ticker, form-bars,
-                          progress-ring, team-crest, live, empty-state, match-filter, football, splash)
+                          progress-ring, team-crest, live, empty-state, match-filter, football, splash,
+                          splash-gate)
   lib/
     utils.ts              cn()
     mock-data.ts          typed mock data mirroring the canvas — replace with API, keep types
@@ -181,11 +182,12 @@ Rules:
 | `LiveDot` / `LiveMinute` | Pulsing amber dot / "● LIVE 67'". |
 | `EmptyState` | Dotted canvas, title, one line, one secondary action. |
 | `Football` | The ball mark. `FootballPattern` (spins) + `FootballShade` (static light) for animation. Neutral, never lime. |
-| `Splash` | First-run brand moment: ball drops, bounces, rolls into the wordmark as the first O (~2.6s). Reduced motion: static wordmark. |
+| `Splash` | Launch brand moment: ball drops, bounces, rolls into the wordmark as the first O (~2.6s). Reduced motion: static wordmark. |
+| `SplashGate` | In the root layout: plays `Splash` on every app open (full page load, any route), never on in-app navigation. Page is `inert` until it lifts; `useSplashDone()` lets a screen hold its entrance animations until then. |
 
 ### Screen patterns (from the canvas)
 
-- **Splash → Onboarding (`/welcome`):** splash, then 3 steps with a segmented progress bar, back button and wallet badge (ticks to 10,000 on claim). 1) Try one: dealt card stack; the sample question resolves to a right/wrong result; Continue is `secondary` until answered, then lime. 2) Pick clubs: crest tiles with `aria-pressed`, soft-lime when selected. 3) Claim: coin stack + ticking amount, the three numbered steps, lime "Claim 10,000 coins". Claiming or "Skip to Home" sets the `footon_onboarded` cookie. Links to `/` from here use `prefetch={false}` so a pre-cookie redirect isn't cached.
+- **Splash → Onboarding (`/welcome`):** the launch splash (from `SplashGate`), then 3 steps with a segmented progress bar, back button and wallet badge (ticks to 10,000 on claim). 1) Try one: dealt card stack; the sample question resolves to a right/wrong result; Continue is `secondary` until answered, then lime. 2) Pick clubs: crest tiles with `aria-pressed`, soft-lime when selected. 3) Claim: coin stack + ticking amount, the three numbered steps, lime "Claim 10,000 coins". Claiming or "Skip to Home" sets the `footon_onboarded` cookie. Links to `/` from here use `prefetch={false}` so a pre-cookie redirect isn't cached.
 - **Onboarding (canvas):** dealt card stack on a dotted canvas with one real sample question; three steps as a single numbered row; lime CTA "Claim 10,000 coins" with an inset arrow; "Skip to Home" as a text link.
 - **Home:** island → greeting + coin badge → form card → segmented filter → one card listing matches (invites inline with ✕ / Join) → dashed fantasy-unlock row → dock.
 - **Create league:** close button, a live **invite ticket** (lime, notched, dashed tear line) that updates as you edit; name input, stake slider, mode switches, reward note, then `Copy` (secondary) + `Create and share` (lime).

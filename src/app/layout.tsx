@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
 import { GeistSans } from "geist/font/sans";
 import { GeistMono } from "geist/font/mono";
+import { SplashGate } from "@/components/footon/splash-gate";
 import "./globals.css";
 
 const barlow = localFont({
@@ -28,7 +29,9 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="en" className={`dark ${GeistSans.variable} ${GeistMono.variable} ${barlow.variable} h-full`}>
-      <body className="min-h-full">{children}</body>
+      <body className="min-h-full">
+        <SplashGate>{children}</SplashGate>
+      </body>
     </html>
   );
 }

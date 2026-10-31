@@ -1,171 +1,144 @@
 "use client";
 
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { motion, useReducedMotion } from "motion/react";
-import { ChevronRight } from "lucide-react";
+import { AnimatePresence, motion, useReducedMotion } from "motion/react";
+import { ChevronRight, Lock, LockOpen } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 
-/*
- * Chain geometry (SVG units). One face link per prediction needed, joined by
- * edge links, ending in a padlock. Face i spans [i*S, i*S + FW].
- */
-const S = 48; // pitch between face links
-const FW = 40; // face link width
-const CY = 24; // chain centre line
-const LOCKED = "#3f3f46";
-const LOCKED_EDGE = "#52525b";
+const INSET = 6; // chain centre line, from the card edge
+const RADIUS = 20; // card radius
+const PITCH = 27; // one face link + one edge link
+
+/** Rounded-rect path for the chain to follow, and its length. */
+function track(w: number, h: number) {
+  const [x0, y0, x1, y1] = [INSET, INSET, w - INSET, h - INSET];
+  const r = RADIUS - INSET;
+  const d = `M${x0 + r} ${y0}H${x1 - r}A${r} ${r} 0 0 1 ${x1} ${y0 + r}V${y1 - r}A${r} ${r} 0 0 1 ${x1 - r} ${y1}H${x0 + r}A${r} ${r} 0 0 1 ${x0} ${y1 - r}V${y0 + r}A${r} ${r} 0 0 1 ${x0 + r} ${y0}Z`;
+  const len = 2 * (x1 - x0 - 2 * r) + 2 * (y1 - y0 - 2 * r) + 2 * Math.PI * r;
+  return { d, len };
+}
 
 /**
- * Fantasy is chained shut until you make enough predictions. Each prediction
- * breaks one link (lime, pops free); the rest stay grey and lead into a padlock.
- * A stepped linear bar underneath carries the same progress. At full, the
- * shackle springs open. Links to the Team tab.
+ * Locked Fantasy, on Home. The card is wrapped in a chain with a padlock hung
+ * on it; a stepped lime bar inside shows predictions made. At full, the chain
+ * drops away and the padlock opens lime. Links to the Team tab.
  */
 export function FantasyUnlock({ done, total, href = "/team" }: { done: number; total: number; href?: string }) {
   const reduce = useReducedMotion();
+  const ref = useRef<HTMLAnchorElement>(null);
+  const [size, setSize] = useState<{ w: number; h: number } | null>(null);
   const d = Math.min(done, total);
   const left = total - d;
   const open = left === 0;
-  const px = total * S + 4; // padlock x
-  const width = px + 28;
-  const spring = (delay = 0) => (reduce ? { duration: 0 } : { type: "spring" as const, stiffness: 420, damping: 22, delay });
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const ro = new ResizeObserver(() => setSize({ w: el.offsetWidth, h: el.offsetHeight }));
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+
+  // A whole number of links around the card, so the seam doesn't show.
+  const chain = size && size.w > 0 ? track(size.w, size.h) : null;
+  const unit = chain ? chain.len / Math.max(8, Math.round(chain.len / PITCH)) : PITCH;
+  const face = unit * 0.62; // capsule length incl. round caps
+  const cap = 4.5; // half the face stroke: round caps add this at each end
 
   return (
     <Link
+      ref={ref}
       href={href}
-      className="group flex flex-col rounded-2xl border border-dashed border-line-strong p-4 outline-none transition-colors hover:bg-[#141417] focus-visible:ring-[3px] focus-visible:ring-ring/60"
+      className={cn(
+        "group relative flex flex-col rounded-[20px] border p-5 outline-none transition-colors duration-300 hover:bg-[#141417] focus-visible:ring-[3px] focus-visible:ring-ring/60",
+        open ? "border-primary-line bg-primary-soft" : "border-transparent",
+      )}
     >
-      <div className="flex items-start gap-3">
-        <div className="min-w-0 flex-1">
-          <p className="text-[11px] font-semibold tracking-[0.08em] text-muted-foreground">FANTASY</p>
-          <p className="mt-1 text-[17px] font-bold tracking-[-0.02em]">{open ? "Unchained. Build your squad." : "Break the chain"}</p>
-          <p className="mt-0.5 text-[13px] text-muted-foreground">
-            {open ? "Fantasy is open for you." : `${left} more ${left === 1 ? "prediction" : "predictions"} to unlock your squad`}
-          </p>
+      {/* the chain: hollow capsule links joined by edge links, all along the card edge */}
+      <AnimatePresence>
+        {chain && !open && (
+          <motion.svg
+            key="chain"
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-0 size-full overflow-visible"
+            viewBox={`0 0 ${size!.w} ${size!.h}`}
+            initial={reduce ? false : { opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={reduce ? { opacity: 0 } : { opacity: 0, scale: 1.04, filter: "blur(4px)" }}
+            transition={{ duration: 0.35, ease: [0.2, 0.8, 0.2, 1] }}
+          >
+            <g fill="none" strokeLinecap="round">
+              <path d={chain.d} stroke="#3f3f46" strokeWidth={cap * 2} strokeDasharray={`${face - cap * 2} ${unit - face + cap * 2}`} />
+              <path d={chain.d} stroke="var(--background)" strokeWidth={3} strokeDasharray={`${face - cap * 2} ${unit - face + cap * 2}`} />
+              <path
+                d={chain.d}
+                stroke="#5b5b64"
+                strokeWidth={3.5}
+                strokeDasharray={`${unit - face + 6} ${face - 6}`}
+                strokeDashoffset={-(face - cap - 3)}
+              />
+            </g>
+          </motion.svg>
+        )}
+      </AnimatePresence>
+
+      {/* padlock hung on the chain */}
+      <motion.span
+        aria-hidden="true"
+        initial={false}
+        animate={{ rotate: open ? 0 : -8 }}
+        transition={reduce ? { duration: 0 } : { type: "spring", stiffness: 400, damping: 18 }}
+        className={cn(
+          "absolute -top-4 end-7 flex size-10 items-center justify-center rounded-[12px] border-2 shadow-[0_8px_16px_-8px_rgb(0_0_0/0.9)]",
+          open ? "border-primary bg-primary text-primary-foreground" : "border-[#52525b] bg-surface-3 text-muted-foreground",
+        )}
+      >
+        {open ? <LockOpen className="size-[18px]" strokeWidth={2.4} /> : <Lock className="size-[18px]" strokeWidth={2.4} />}
+      </motion.span>
+
+      <p className="text-[11px] font-semibold tracking-[0.08em] text-muted-foreground">
+        {open ? "FANTASY · UNLOCKED" : "FANTASY · LOCKED"}
+      </p>
+      <p className="mt-1 pe-12 text-[17px] font-bold tracking-[-0.02em]">{open ? "Unchained. Build your squad." : "Break the chain"}</p>
+      <p className="mt-0.5 text-[13px] text-muted-foreground">
+        {open ? "Fantasy is open for you." : `${left} more ${left === 1 ? "prediction" : "predictions"} to unlock your squad`}
+      </p>
+
+      {/* stepped linear progress */}
+      <div className="mt-4 flex items-center gap-3">
+        <div
+          role="progressbar"
+          aria-label="Predictions toward Fantasy"
+          aria-valuemin={0}
+          aria-valuemax={total}
+          aria-valuenow={d}
+          aria-valuetext={`${d} of ${total}`}
+          className="relative h-2.5 flex-1 overflow-hidden rounded-full bg-[#27272a]"
+        >
+          <motion.div
+            className="h-full rounded-full bg-primary"
+            initial={reduce ? false : { width: 0 }}
+            animate={{ width: `${(d / total) * 100}%` }}
+            transition={reduce ? { duration: 0 } : { type: "spring", stiffness: 120, damping: 20, delay: 0.15 }}
+          />
+          {Array.from({ length: total - 1 }, (_, i) => (
+            <span
+              key={i}
+              className="absolute inset-y-0 w-[3px] -translate-x-1/2 bg-background"
+              style={{ left: `${((i + 1) / total) * 100}%` }}
+            />
+          ))}
         </div>
-        <p className="flex items-center font-display text-[22px] leading-none font-bold">
+        <p className="flex shrink-0 items-center font-display text-[22px] leading-none font-bold">
           <span className={cn(open && "text-primary")}>{d}</span>
           <span className="text-base text-muted-foreground">/{total}</span>
           <ChevronRight
-            className="ms-1 size-4 text-muted-foreground transition-transform duration-200 ease-spring group-hover:translate-x-0.5 rtl:rotate-180"
+            className="ms-1.5 size-4 text-muted-foreground transition-transform duration-200 ease-spring group-hover:translate-x-0.5 rtl:rotate-180"
             aria-hidden="true"
           />
         </p>
-      </div>
-
-      {/* the chain */}
-      <svg viewBox={`-12 0 ${width + 12} 44`} className="mt-4 h-11 w-full" preserveAspectRatio="xMinYMid meet" aria-hidden="true">
-        {/* broken links: lime, popped loose, each joined to the next */}
-        <motion.g initial={reduce ? false : { x: 0 }} animate={{ x: d && !open ? -6 : 0 }} transition={spring(0.15 + d * 0.08)}>
-          {Array.from({ length: d }, (_, i) => (
-            <motion.rect
-              key={`d${i}`}
-              x={i * S}
-              y={CY - 10}
-              width={FW}
-              height={20}
-              rx={10}
-              fill="none"
-              stroke="var(--primary)"
-              strokeWidth={4}
-              style={{ transformBox: "fill-box", transformOrigin: "center" }}
-              initial={reduce ? false : { scale: 0.5, opacity: 0, rotate: -12 }}
-              animate={{ scale: 1, opacity: 1, rotate: i % 2 ? 4 : -4 }}
-              transition={spring(0.08 * i)}
-            />
-          ))}
-          {Array.from({ length: Math.max(0, d - 1) }, (_, i) => (
-            <rect
-              key={`de${i}`}
-              x={i * S + FW - 10}
-              y={CY - 3}
-              width={S - FW + 20}
-              height={6}
-              rx={3}
-              fill="var(--primary)"
-              stroke="var(--background)"
-              strokeWidth={2}
-            />
-          ))}
-        </motion.g>
-
-        {/* locked links */}
-        {Array.from({ length: left }, (_, k) => {
-          const i = d + k;
-          return <rect key={`l${i}`} x={i * S} y={CY - 10} width={FW} height={20} rx={10} fill="none" stroke={LOCKED} strokeWidth={4} />;
-        })}
-
-        {/* edge links between locked faces, and into the padlock */}
-        {Array.from({ length: total }, (_, i) => {
-          if (i < d) return null; // broken off
-          const x = i * S + FW - 10;
-          const w = i === total - 1 ? px - x + 10 : S - FW + 20;
-          return (
-            <rect
-              key={`e${i}`}
-              x={x}
-              y={CY - 3}
-              width={w}
-              height={6}
-              rx={3}
-              fill={LOCKED_EDGE}
-              stroke="var(--background)"
-              strokeWidth={2}
-            />
-          );
-        })}
-
-        {/* padlock */}
-        <motion.path
-          d={`M${px + 6} ${CY - 4} v-7 a7 7 0 0 1 14 0 v7`}
-          fill="none"
-          stroke={open ? "var(--primary)" : LOCKED_EDGE}
-          strokeWidth={3.5}
-          strokeLinecap="round"
-          initial={false}
-          animate={open ? { y: -6, rotate: 28 } : { y: 0, rotate: 0 }}
-          style={{ transformBox: "fill-box", transformOrigin: "100% 100%" }}
-          transition={spring(0.3)}
-        />
-        <rect
-          x={px}
-          y={CY - 5}
-          width={26}
-          height={21}
-          rx={6}
-          fill={open ? "var(--primary)" : "var(--surface-3)"}
-          stroke={open ? "var(--primary)" : LOCKED_EDGE}
-          strokeWidth={2}
-        />
-        <circle cx={px + 13} cy={CY + 3} r={2.5} fill={open ? "var(--primary-foreground)" : "var(--muted-foreground)"} />
-        <rect x={px + 12} y={CY + 4} width={2} height={6} rx={1} fill={open ? "var(--primary-foreground)" : "var(--muted-foreground)"} />
-      </svg>
-
-      {/* stepped linear progress */}
-      <div
-        role="progressbar"
-        aria-label="Predictions toward Fantasy"
-        aria-valuemin={0}
-        aria-valuemax={total}
-        aria-valuenow={d}
-        aria-valuetext={`${d} of ${total}`}
-        className="relative mt-3 h-2 overflow-hidden rounded-full bg-[#27272a]"
-      >
-        <motion.div
-          className="h-full rounded-full bg-primary"
-          initial={reduce ? false : { width: 0 }}
-          animate={{ width: `${(d / total) * 100}%` }}
-          transition={reduce ? { duration: 0 } : { type: "spring", stiffness: 120, damping: 20, delay: 0.1 }}
-        />
-        {/* step notches, one per prediction */}
-        {Array.from({ length: total - 1 }, (_, i) => (
-          <span
-            key={i}
-            className="absolute inset-y-0 w-[3px] -translate-x-1/2 bg-background"
-            style={{ left: `${((i + 1) / total) * 100}%` }}
-          />
-        ))}
       </div>
     </Link>
   );

@@ -3,111 +3,145 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
-import { ChevronRight, Lock, LockOpen } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 
-const INSET = 6; // chain centre line, from the card edge
-const RADIUS = 20; // card radius
-const PITCH = 27; // one face link + one edge link
+const PITCH = 30; // one face link + one edge link
+const CAP = 5.5; // half the face-link stroke (round caps add this at each end)
+const OVERHANG = 24; // card padding (16) + 8px past the edge // chain runs past each card edge, as if wrapped round it
+const CY = 14; // chain centre line inside its 28px-tall SVG
 
-/** Rounded-rect path for the chain to follow, and its length. */
-function track(w: number, h: number) {
-  const [x0, y0, x1, y1] = [INSET, INSET, w - INSET, h - INSET];
-  const r = RADIUS - INSET;
-  const d = `M${x0 + r} ${y0}H${x1 - r}A${r} ${r} 0 0 1 ${x1} ${y0 + r}V${y1 - r}A${r} ${r} 0 0 1 ${x1 - r} ${y1}H${x0 + r}A${r} ${r} 0 0 1 ${x0} ${y1 - r}V${y0 + r}A${r} ${r} 0 0 1 ${x0 + r} ${y0}Z`;
-  const len = 2 * (x1 - x0 - 2 * r) + 2 * (y1 - y0 - 2 * r) + 2 * Math.PI * r;
-  return { d, len };
+/** Straight chain from x=0 to x=w: hollow capsule links joined by edge links. */
+function Chain({ w, tone }: { w: number; tone: "locked" | "open" }) {
+  const unit = w / Math.max(4, Math.round(w / PITCH));
+  const face = unit * 0.62;
+  const d = `M0 ${CY}H${w}`;
+  const faceDash = `${face - CAP * 2} ${unit - face + CAP * 2}`;
+  return (
+    <g fill="none" strokeLinecap="round">
+      <path
+        d={d}
+        stroke={tone === "open" ? "var(--primary)" : "#4a4a52"}
+        strokeWidth={CAP * 2}
+        strokeDasharray={faceDash}
+        strokeDashoffset={-CAP}
+      />
+      <path d={d} stroke="var(--surface)" strokeWidth={3.5} strokeDasharray={faceDash} strokeDashoffset={-CAP} />
+      <path
+        d={d}
+        stroke={tone === "open" ? "var(--primary)" : "#60606a"}
+        strokeWidth={4}
+        strokeDasharray={`${unit - face + 6} ${face - 6}`}
+        strokeDashoffset={-(face - 3)}
+      />
+    </g>
+  );
 }
 
 /**
- * Locked Fantasy, on Home. The card is wrapped in a chain with a padlock hung
- * on it; a stepped lime bar inside shows predictions made. At full, the chain
- * drops away and the padlock opens lime. Links to the Team tab.
+ * Locked Fantasy, on Home. One chain runs across the card, wrapped over both
+ * edges, with a padlock hanging in the middle; a stepped lime bar below shows
+ * predictions made. At full, the chain snaps in two and falls away, and the
+ * padlock opens lime. Links to the Team tab.
  */
 export function FantasyUnlock({ done, total, href = "/team" }: { done: number; total: number; href?: string }) {
   const reduce = useReducedMotion();
-  const ref = useRef<HTMLAnchorElement>(null);
-  const [size, setSize] = useState<{ w: number; h: number } | null>(null);
+  const row = useRef<HTMLDivElement>(null);
+  const [w, setW] = useState(0);
   const d = Math.min(done, total);
   const left = total - d;
   const open = left === 0;
 
   useEffect(() => {
-    const el = ref.current;
+    const el = row.current;
     if (!el) return;
-    const ro = new ResizeObserver(() => setSize({ w: el.offsetWidth, h: el.offsetHeight }));
+    const ro = new ResizeObserver(() => setW(el.offsetWidth + OVERHANG * 2));
     ro.observe(el);
     return () => ro.disconnect();
   }, []);
 
-  // A whole number of links around the card, so the seam doesn't show.
-  const chain = size && size.w > 0 ? track(size.w, size.h) : null;
-  const unit = chain ? chain.len / Math.max(8, Math.round(chain.len / PITCH)) : PITCH;
-  const face = unit * 0.62; // capsule length incl. round caps
-  const cap = 4.5; // half the face stroke: round caps add this at each end
+  const half = w / 2;
 
   return (
     <Link
-      ref={ref}
       href={href}
       className={cn(
-        "group relative flex flex-col rounded-[20px] border p-5 outline-none transition-colors duration-300 hover:bg-[#141417] focus-visible:ring-[3px] focus-visible:ring-ring/60",
-        open ? "border-primary-line bg-primary-soft" : "border-transparent",
+        "group relative flex flex-col rounded-[20px] border p-4 outline-none transition-colors duration-300 focus-visible:ring-[3px] focus-visible:ring-ring/60",
+        open ? "border-primary-line bg-primary-soft" : "border-line bg-surface hover:bg-[#141417]",
       )}
     >
-      {/* the chain: hollow capsule links joined by edge links, all along the card edge */}
-      <AnimatePresence>
-        {chain && !open && (
-          <motion.svg
-            key="chain"
-            aria-hidden="true"
-            className="pointer-events-none absolute inset-0 size-full overflow-visible"
-            viewBox={`0 0 ${size!.w} ${size!.h}`}
-            initial={reduce ? false : { opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={reduce ? { opacity: 0 } : { opacity: 0, scale: 1.04, filter: "blur(4px)" }}
-            transition={{ duration: 0.35, ease: [0.2, 0.8, 0.2, 1] }}
-          >
-            <g fill="none" strokeLinecap="round">
-              <path d={chain.d} stroke="#3f3f46" strokeWidth={cap * 2} strokeDasharray={`${face - cap * 2} ${unit - face + cap * 2}`} />
-              <path d={chain.d} stroke="var(--background)" strokeWidth={3} strokeDasharray={`${face - cap * 2} ${unit - face + cap * 2}`} />
-              <path
-                d={chain.d}
-                stroke="#5b5b64"
-                strokeWidth={3.5}
-                strokeDasharray={`${unit - face + 6} ${face - 6}`}
-                strokeDashoffset={-(face - cap - 3)}
-              />
-            </g>
-          </motion.svg>
-        )}
-      </AnimatePresence>
-
-      {/* padlock hung on the chain */}
-      <motion.span
-        aria-hidden="true"
-        initial={false}
-        animate={{ rotate: open ? 0 : -8 }}
-        transition={reduce ? { duration: 0 } : { type: "spring", stiffness: 400, damping: 18 }}
-        className={cn(
-          "absolute -top-4 end-7 flex size-10 items-center justify-center rounded-[12px] border-2 shadow-[0_8px_16px_-8px_rgb(0_0_0/0.9)]",
-          open ? "border-primary bg-primary text-primary-foreground" : "border-[#52525b] bg-surface-3 text-muted-foreground",
-        )}
-      >
-        {open ? <LockOpen className="size-[18px]" strokeWidth={2.4} /> : <Lock className="size-[18px]" strokeWidth={2.4} />}
-      </motion.span>
-
       <p className="text-[11px] font-semibold tracking-[0.08em] text-muted-foreground">
         {open ? "FANTASY · UNLOCKED" : "FANTASY · LOCKED"}
       </p>
-      <p className="mt-1 pe-12 text-[17px] font-bold tracking-[-0.02em]">{open ? "Unchained. Build your squad." : "Break the chain"}</p>
+      <p className="mt-1 text-[17px] font-bold tracking-[-0.02em]">{open ? "Unchained. Build your squad." : "Break the chain"}</p>
       <p className="mt-0.5 text-[13px] text-muted-foreground">
         {open ? "Fantasy is open for you." : `${left} more ${left === 1 ? "prediction" : "predictions"} to unlock your squad`}
       </p>
 
+      {/* the chain across the card, padlock hanging in the middle */}
+      <div ref={row} className="relative my-3 h-14" aria-hidden="true">
+        <AnimatePresence>
+          {w > 0 && !open && (
+            <motion.div key="chain" className="absolute top-1 -rotate-2" style={{ insetInline: -OVERHANG }} exit={{ opacity: 0 }}>
+              {/* two halves, so it can snap at the lock */}
+              {[0, 1].map((side) => (
+                <motion.svg
+                  key={side}
+                  width={half}
+                  height={28}
+                  viewBox={`${side * half} 0 ${half} 28`}
+                  className="absolute top-0 overflow-visible"
+                  style={{ insetInlineStart: side * half, transformOrigin: side ? "100% 50%" : "0% 50%" }}
+                  initial={reduce ? false : { opacity: 0, y: -6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={reduce ? { opacity: 0 } : { y: 18, rotate: side ? -14 : 14, opacity: 0 }}
+                  transition={{ duration: 0.4, ease: [0.2, 0.8, 0.2, 1] }}
+                >
+                  <Chain w={w} tone="locked" />
+                </motion.svg>
+              ))}
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* padlock: shackle loops over the chain, body hangs below */}
+        <motion.svg
+          viewBox="0 0 36 48"
+          className="absolute top-0 left-1/2 h-14 w-[42px] -translate-x-1/2"
+          initial={reduce ? false : { rotate: 0 }}
+          animate={{ rotate: open ? 0 : [0, 6, -4, 2, 0] }}
+          transition={reduce ? { duration: 0 } : { duration: 0.9, delay: 0.3, ease: "easeOut" }}
+          style={{ transformOrigin: "50% 10%" }}
+        >
+          <motion.path
+            d="M10 22V13a8 8 0 0 1 16 0v9"
+            fill="none"
+            stroke={open ? "var(--primary)" : "#71717a"}
+            strokeWidth={4}
+            strokeLinecap="round"
+            initial={false}
+            animate={open ? { y: -5, rotate: 26 } : { y: 0, rotate: 0 }}
+            style={{ transformBox: "fill-box", transformOrigin: "100% 100%" }}
+            transition={reduce ? { duration: 0 } : { type: "spring", stiffness: 380, damping: 16, delay: 0.25 }}
+          />
+          <rect
+            x="3"
+            y="20"
+            width="30"
+            height="26"
+            rx="8"
+            fill={open ? "var(--primary)" : "var(--surface-3)"}
+            stroke={open ? "var(--primary)" : "#52525b"}
+            strokeWidth="2"
+          />
+          <circle cx="18" cy="31" r="3" fill={open ? "var(--primary-foreground)" : "var(--muted-foreground)"} />
+          <rect x="16.75" y="32" width="2.5" height="7" rx="1.25" fill={open ? "var(--primary-foreground)" : "var(--muted-foreground)"} />
+        </motion.svg>
+      </div>
+
       {/* stepped linear progress */}
-      <div className="mt-4 flex items-center gap-3">
+      <div className="flex items-center gap-3">
         <div
           role="progressbar"
           aria-label="Predictions toward Fantasy"
@@ -126,7 +160,7 @@ export function FantasyUnlock({ done, total, href = "/team" }: { done: number; t
           {Array.from({ length: total - 1 }, (_, i) => (
             <span
               key={i}
-              className="absolute inset-y-0 w-[3px] -translate-x-1/2 bg-background"
+              className={cn("absolute inset-y-0 w-[3px] -translate-x-1/2", open ? "bg-[#1a1f0c]" : "bg-surface")}
               style={{ left: `${((i + 1) / total) * 100}%` }}
             />
           ))}

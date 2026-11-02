@@ -9,9 +9,9 @@ import { cn } from "@/lib/utils";
 /**
  * Fantasy unlock progress, on Home. One segment per prediction needed: made
  * ones fill lime one after another, the next one is outlined soft-lime, the
- * rest stay dark. At full the card turns soft-lime. Links to the Team tab.
+ * rest stay dark. At full the card turns soft-lime. Links to /fantasy.
  */
-export function FantasyUnlock({ done, total, href = "/team" }: { done: number; total: number; href?: string }) {
+export function FantasyUnlock({ done, total, href = "/fantasy" }: { done: number; total: number; href?: string }) {
   const reduce = useReducedMotion();
   const d = Math.min(done, total);
   const left = total - d;

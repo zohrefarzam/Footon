@@ -13,6 +13,7 @@ const ordinal = ["1st", "2nd", "3rd", "4th"];
 
 export default function PlayPage() {
   const m = matches.find((x) => x.status === "live")!;
+  const goals = m.events?.filter((e) => e.kind === "goal");
 
   return (
     <AppShell dock={false} className="h-dvh gap-0 overflow-hidden px-0 pt-3.5 pb-0">
@@ -45,7 +46,7 @@ export default function PlayPage() {
                     <TeamCrest code={t.code} colors={t.colors} size="xl" />
                     <span className="text-[13px] font-semibold">{t.name}</span>
                     <ul className="text-xs text-muted-foreground">
-                      {m.events
+                      {goals
                         ?.filter((e) => e.side === side)
                         .map((e) => (
                           <li key={e.minute}>
@@ -70,11 +71,11 @@ export default function PlayPage() {
             <div
               className="relative mt-1 h-1 rounded-full bg-line"
               role="img"
-              aria-label={`Minute ${m.minute} of 90. Goals at ${m.events?.map((e) => `${e.minute}'`).join(", ")}`}
+              aria-label={`Minute ${m.minute} of 90. Goals at ${goals?.map((e) => `${e.minute}'`).join(", ")}`}
             >
               <div className="absolute inset-y-0 left-0 rounded-full bg-[#3f3f46]" style={{ width: `${(m.minute! / 90) * 100}%` }} />
               <span className="absolute -top-[3px] left-1/2 h-2.5 w-px bg-[#52525b]" />
-              {m.events?.map((e) => (
+              {goals?.map((e) => (
                 <span
                   key={e.minute}
                   className={cn("absolute size-1.5 -translate-x-1/2 rounded-full bg-muted-foreground", e.side === "home" ? "-top-2.5" : "top-2")}
@@ -88,7 +89,7 @@ export default function PlayPage() {
             </div>
 
             <ul className="mt-1 grid grid-cols-3 text-center" aria-label="Match stats">
-              {m.stats?.map((st) => (
+              {m.stats?.slice(0, 3).map((st) => (
                 <li
                   key={st.label}
                   aria-label={`${st.label}: ${m.home.name} ${st.home}${st.unit ?? ""}, ${m.away.name} ${st.away}${st.unit ?? ""}`}

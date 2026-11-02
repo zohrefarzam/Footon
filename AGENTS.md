@@ -24,7 +24,7 @@ The visual reference is the Footon design canvas (7 artboards: Onboarding, Home,
 | Components | shadcn/ui (new-york style, `components.json`), on the unified `radix-ui` package |
 | Variants | `class-variance-authority` + `cn()` from `@/lib/utils` |
 | Motion | `motion` (`motion/react`) for springs, layout and presence; CSS for simple loops |
-| Icons | `lucide-react` only (stroke 1.8 in nav, 2–2.4 in buttons) |
+| Icons | `lucide-react` (stroke 2–2.4 in buttons). One exception: the dock uses Footon's own set in `components/footon/nav-icons.tsx` (outline 1.8 inactive, filled active) |
 | Fonts | Geist + Geist Mono (`geist` package), Barlow Condensed (local woff2 in `src/fonts`) |
 
 Commands: `npm run dev`, `npm run build`, `npm run lint`, `npx tsc --noEmit`. All four must pass before you hand work back.
@@ -35,16 +35,16 @@ Adding shadcn components: `npx shadcn@latest add <name>`, then **restyle it to t
 
 ```
 src/
-  app/                    routes (/, /welcome, /play, /match/[id], /invites, /league/new, /team, /me, /styleguide)
-    (tabs)/               /, /team, /me — layout holds the sticky LiveIsland (persists across tabs)
+  app/                    routes (/, /welcome, /play, /match/[id], /challenges/new, /styleguide)
+    (tabs)/               /, /challenges, /live, /me, /fantasy — layout holds the sticky LiveIsland and the Dock (persist across tabs)
     globals.css           ALL design tokens, utilities, keyframes
   components/
     ui/                   shadcn primitives, restyled (button, badge, card, input, label,
-                          switch, slider, avatar, separator, progress)
+                          switch, slider, avatar, separator, progress, dialog, tabs)
     footon/               product components (app-shell, dock, live-island, question-card,
                           match-row, segmented-tabs, live-focus, coin, number-ticker, form-bars,
-                          progress-ring, team-crest, live, empty-state, match-filter, match-list, invite-strip, invite-row, streak,
-                          prematch-calls, fantasy-unlock, football, splash, splash-gate)
+                          progress-ring, team-crest, live, empty-state, match-filter, match-list, invite-strip, streak,
+                          prematch-calls, fantasy-unlock, football, splash, splash-gate, nav-icons)
   lib/
     utils.ts              cn()
     mock-data.ts          typed mock data mirroring the canvas — replace with API, keep types
@@ -163,13 +163,15 @@ Rules:
 - **Slider**: lime range + glowing thumb. Show the discrete stop labels under it in display font.
 - **Avatar / AvatarGroup**: initials fallback; your own avatar is lime.
 - **Progress**: lime on `#27272a`.
+- **Dialog**: Radix Dialog. `variant="sheet"` (default) is a glass bottom sheet with a grabber, for invites, achievements and the quick-reply palette; `variant="center"` for short confirmations. Always a `DialogTitle`; the close button is built in.
+- **Tabs**: Radix Tabs as a scrollable underline bar (lime underline on the active tab) for *sections* of one screen, like the match page. For 2–4 *filters* over one list use `SegmentedTabs`.
 
 ### Product (`components/footon`)
 
 | Component | Purpose / rules |
 | --- | --- |
-| `AppShell` | Mobile column + dock. `dock={false}` for focus mode (live match, create flow). |
-| `Dock` | Floating glass nav, 5 slots, lime "+" in the centre = create league. Active item: white label + lime dot. |
+| `AppShell` | Mobile column. `dock={false}` for focus mode (live match, create flow); otherwise it reserves room for the dock, which `app/(tabs)/layout.tsx` renders once. |
+| `Dock` | Floating glass nav, 4 tabs: Home · Challenges · Live · Profile, with the `nav-icons` set. Active item: filled icon + white label + lime dot. The Live tab carries a pulsing `LiveDot` while a match is on. No centre "+": creating lives on the Challenges screen. Fantasy and favourite team are not tabs (Fantasy is reached from its Home card and Profile; favourite team lives in Profile settings). |
 | `LiveIsland` | Sticky top pill on every dock tab, rendered once by `app/(tabs)/layout.tsx`. Left: live minute, score and the open question (lime `Q4 open` chip, soft-lime `Q4 · Yes` once answered); tap to expand over the page and answer in place. Right: the wallet (coins → `/me`). Collapses on scroll, outside tap or Escape. With no live match it shows only the wallet. Pages don't render their own coin badge. |
 | `QuestionCard` | The live question. Yes/No → crowd split + drawn check + shimmer. Timer ring is amber. `compact` = one-row widget. |
 | `LiveFocus` | Live-match layout: full-height column, chat fills the rest; dragging the chat handle folds the match details away and compacts the question. |
@@ -183,7 +185,7 @@ Rules:
 | `CoinBadge` / `Coin` | Wallet pill. Coins are always amber with an "F". |
 | `NumberTicker` | Count-up for rewards. |
 | `FormBars` | Last-N results as bars (height + colour). `fill` stretches them across the width (Profile's recent-form card). |
-| `FantasyUnlock` | Home's Fantasy progress card: "Fantasy unlocks soon" + "N more predictions to build your squad", a display `3/5` (done count lime), and a segmented bar (`role="progressbar"`), one pill per prediction: made = lime, filling in one after another; next = soft-lime outline; rest = dark. At full the card turns soft-lime ("Fantasy is open"). No chains or padlocks. |
+| `FantasyUnlock` | Home's Fantasy progress card: "Fantasy unlocks soon" + "N more predictions to build your squad", a display `3/5` (done count lime), and a segmented bar (`role="progressbar"`), one pill per prediction: made = lime, filling in one after another; next = soft-lime outline; rest = dark. At full the card turns soft-lime ("Fantasy is open"). Chain and padlock art is allowed on this card and on the locked Fantasy page, nowhere else. |
 | `ProgressRing` | Circular progress for compact spots. |
 | `TeamCrest` | 3-letter code placeholder until real crests are licensed. |
 | `LiveDot` / `LiveMinute` | Pulsing amber dot / "● LIVE 67'". |
@@ -201,7 +203,7 @@ Rules:
 - **Create league:** close button, a live **invite ticket** (lime, notched, dashed tear line) that updates as you edit; name input, stake slider, mode switches, reward note, then `Copy` (secondary) + `Create and share` (lime).
 - **Live match (focus mode, no dock):** back + league + LIVE minute; huge display score; match progress bar; 3 standings tiles (yours soft-lime); question card stack; chat panel filling the rest of the screen (drag its handle up to fold the match details and compact the question) with message bubbles (yours right, soft-lime), a friend's question as an inline Yes/No card, quick-reaction chips, a soft "+" ask button and input.
 - **Full time:** ticking `+450`, streak pill with lime "Next match 2x", podium (yours lime-soft, tallest), match-timeline of calls (lime filled dots = right, red rings = wrong), rematch chat replies, lime "Rematch with same friends".
-- **My team:** stats header (display 56), striped pitch with shirt tokens (selected = lime, captain = amber "C"), captain + transfers list, lime "Save lineup".
+- **Fantasy (`/fantasy`, was My team):** stats header (display 56), striped pitch with shirt tokens (selected = lime, captain = amber "C"), captain + transfers list, lime "Save lineup".
 - **Profile:** silver league card (light zinc, dotted, slight 3D tilt on hover) with score + 30-tick rank strip, recent-form card (win rate, won/lost/void, full-width `FormBars`), amber boost tokens, achievement tiles, collection list (locked rows muted with a lock).
 
 ## Adapting shadcn components

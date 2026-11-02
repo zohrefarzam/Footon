@@ -1,9 +1,11 @@
+import { Dock } from "@/components/footon/dock";
 import { LiveIsland } from "@/components/footon/live-island";
 import { liveQuestion, matches, wallet } from "@/lib/mock-data";
 
 /**
- * Shared shell for the dock tabs (Home, Team, Me). The island lives here, not
- * in each page, so it stays pinned and keeps its state while you switch tabs.
+ * Shared shell for the dock tabs (Home, Challenges, Live, Profile, plus Fantasy).
+ * The island and the dock live here, not in each page, so they stay pinned and
+ * keep their state while you switch tabs.
  */
 export default function TabsLayout({ children }: LayoutProps<"/">) {
   const live = matches.find((m) => m.status === "live");
@@ -33,6 +35,7 @@ export default function TabsLayout({ children }: LayoutProps<"/">) {
         </div>
       </div>
       {children}
+      <Dock live={!!live} />
     </>
   );
 }

@@ -3,15 +3,27 @@ import { FantasyUnlock } from "@/components/footon/fantasy-unlock";
 import { FormBars } from "@/components/footon/form-bars";
 import { LiveDot, LiveMinute } from "@/components/footon/live";
 import { MatchFilter } from "@/components/footon/match-filter";
+import { ChallengesIcon, HomeIcon, LiveIcon, ProfileIcon } from "@/components/footon/nav-icons";
 import { ProgressRing } from "@/components/footon/progress-ring";
 import { TeamCrest } from "@/components/footon/team-crest";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardRow } from "@/components/ui/card";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
 import { Switch } from "@/components/ui/switch";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const swatches = [
   ["background", "#09090B", "App ground"],
@@ -129,6 +141,72 @@ export default function StyleguidePage() {
           </CardRow>
         </Card>
         <Progress value={70} className="max-w-sm" />
+      </Section>
+
+      <Section title="Dock icons">
+        <div className="grid max-w-sm grid-cols-4 gap-3 rounded-[24px] border border-line-strong bg-surface-2 p-4 text-center text-[11px]">
+          {[HomeIcon, ChallengesIcon, LiveIcon, ProfileIcon].map((Icon, i) => (
+            <div key={i} className="flex flex-col items-center gap-3">
+              <Icon className="text-nav-muted" />
+              <Icon active className="text-foreground" />
+            </div>
+          ))}
+        </div>
+        <p className="text-xs text-muted-foreground">Top: inactive (outline). Bottom: active (filled).</p>
+      </Section>
+
+      <Section title="Tabs">
+        <Tabs defaultValue="predictions" className="max-w-sm">
+          <TabsList aria-label="Match sections" className="mx-0 px-0">
+            {["Predictions", "Timeline", "Stats", "Lineups", "Chat"].map((t) => (
+              <TabsTrigger key={t} value={t.toLowerCase()}>
+                {t}
+              </TabsTrigger>
+            ))}
+          </TabsList>
+          {["predictions", "timeline", "stats", "lineups", "chat"].map((t) => (
+            <TabsContent key={t} value={t} className="pt-4 text-sm text-muted-foreground">
+              The {t} section.
+            </TabsContent>
+          ))}
+        </Tabs>
+      </Section>
+
+      <Section title="Sheets">
+        <div className="flex flex-wrap gap-3">
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button variant="secondary">Open sheet</Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>3 new invites</DialogTitle>
+                <DialogDescription>Sara, Omid and Lena want you in tonight.</DialogDescription>
+              </DialogHeader>
+              <DialogFooter>
+                <DialogClose asChild>
+                  <Button size="lg">See invites</Button>
+                </DialogClose>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button variant="outline">Open dialog</Button>
+            </DialogTrigger>
+            <DialogContent variant="center">
+              <DialogHeader>
+                <DialogTitle>Leave Derby night?</DialogTitle>
+                <DialogDescription>Your 300 coins stay in the pot.</DialogDescription>
+              </DialogHeader>
+              <DialogFooter>
+                <DialogClose asChild>
+                  <Button variant="destructive">Leave</Button>
+                </DialogClose>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+        </div>
       </Section>
     </main>
   );

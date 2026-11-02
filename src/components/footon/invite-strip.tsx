@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
-import { Check, X } from "lucide-react";
+import { Check, ChevronRight, X } from "lucide-react";
 
 import { Avatar, AvatarFallback, AvatarGroup } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -42,6 +43,13 @@ export function InviteStrip({ invites }: { invites: InviteWithMatch[] }) {
                 {pending}
               </span>
             )}
+            <Link
+              href="/invites"
+              className="ms-auto -my-3 flex h-11 items-center gap-0.5 rounded-md ps-2 font-semibold text-muted-foreground outline-none hover:text-foreground focus-visible:ring-[3px] focus-visible:ring-ring/60"
+            >
+              See all
+              <ChevronRight className="size-4" aria-hidden="true" />
+            </Link>
           </h2>
 
           <ul className="-mx-5 flex snap-x snap-mandatory scroll-px-5 gap-2.5 overflow-x-auto px-5 pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">

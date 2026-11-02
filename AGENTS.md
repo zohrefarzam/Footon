@@ -185,7 +185,7 @@ Rules:
 | `CoinBadge` / `Coin` | Wallet pill. Coins are always amber with an "F". |
 | `NumberTicker` | Count-up for rewards. |
 | `FormBars` | Last-N results as bars (height + colour). `fill` stretches them across the width (Profile's recent-form card). |
-| `FantasyUnlock` | Home's Fantasy progress card: "Fantasy unlocks soon" + "N more predictions to build your squad", a display `3/5` (done count lime), and a segmented bar (`role="progressbar"`), one pill per prediction: made = lime, filling in one after another; next = soft-lime outline; rest = dark. At full the card turns soft-lime ("Fantasy is open"). Chain and padlock art is allowed on this card and on the locked Fantasy page, nowhere else. |
+| `FantasyUnlock` | Home's Fantasy card: a preview of the squad you're earning. One shirt per prediction needed, in an arc on a line-drawn half pitch (neutral `line-strong` lines on a dotted ground; pitch green stays on the Team screen). Made = lime shirt with its number (pops in one after another); next = dashed soft-lime; rest = dark with a lock. Below: "Fantasy unlocks soon" + "N more predictions…" and a display `3/5`. At full the card turns soft-lime, "Fantasy is open", centre shirt gets the amber captain C. The shirt row is the `role="progressbar"`. |
 | `ProgressRing` | Circular progress for compact spots. |
 | `TeamCrest` | 3-letter code placeholder until real crests are licensed. |
 | `LiveDot` / `LiveMinute` | Pulsing amber dot / "● LIVE 67'". |

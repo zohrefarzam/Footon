@@ -12,7 +12,7 @@ export default function HomePage() {
       {/* compact tiles so the match list gets the screen */}
       <div className="flex gap-2.5">
         {invites.length > 0 && <InviteTile invites={invites} className="flex-1" />}
-        <FantasyUnlock done={fantasyProgress.done} total={fantasyProgress.total} className="flex-1" />
+        <FantasyUnlock done={fantasyProgress.done} total={fantasyProgress.total} className="flex-[1.4]" />
       </div>
 
       <MatchList matches={matches} liveHref="/play" />

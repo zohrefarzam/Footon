@@ -177,7 +177,7 @@ Rules:
 | `LiveFocus` | Live-match layout: full-height column, chat fills the rest; dragging the chat handle folds the match details away and compacts the question. |
 | `MatchRow` | One-line scoreboard row (~60px) inside a list card: home name + `xs` shield · centre box (score or kickoff, with amber live minute / day / FT under it; amber-soft while live) · shield + away name · "you" column (lime `+points` and a `StreakFlame` for a hot streak, or calls made before kickoff; chevron if you're not in). Every row links: live → `/play`, others → `/match/[id]`. Names become 3-letter codes under 360px. |
 | `MatchList` | Now/Today/Upcoming `SegmentedTabs` that actually filter one divided list of `MatchRow`s. |
-| `InviteStrip` | All pending league invites as a swipeable row of cards on Home (who, league, stake, match, members; Decline / Join). Join is `secondary` since several show at once; joined cards turn soft-lime. Header has "See all" → `/invites`. |
+| `InviteStrip` | All pending league invites as a swipeable row of cards (Challenges) (who, league, stake, match, members; Decline / Join). Join is `secondary` since several show at once; joined cards turn soft-lime. Header has "See all" → `/invites`. |
 | `InviteRow` | One invite as a row in the `/invites` list (one divided card): crests + match, members, coin limit. Join / ✕ resolve in place: drawn check "You're in …", or "Declined" with Undo. |
 | `StreakFlame` | Hot streak (`streak ≥ HOT_STREAK`, 3): amber-soft pill, lucide `Flame` + count in display font. Amber because a streak is a boost. Pops in once, never loops. |
 | `PrematchCalls` | Pre-match questions on `/match/[id]`, each with a Yes/No toggle (soft-lime when picked) and one lime "Lock in N calls". |
@@ -185,7 +185,8 @@ Rules:
 | `CoinBadge` / `Coin` | Wallet pill. Coins are always amber with an "F". |
 | `NumberTicker` | Count-up for rewards. |
 | `FormBars` | Last-N results as bars (height + colour). `fill` stretches them across the width (Profile's recent-form card). |
-| `FantasyUnlock` | Home's Fantasy card: a preview of the squad you're earning. One shirt per prediction needed, in an arc on a line-drawn half pitch (neutral `line-strong` lines on a dotted ground; pitch green stays on the Team screen). Made = lime shirt with its number (pops in one after another); next = dashed soft-lime; rest = dark with a lock. Below: "Fantasy unlocks soon" + "N more predictions…" and a display `3/5`. At full the card turns soft-lime, "Fantasy is open", centre shirt gets the amber captain C. The shirt row is the `role="progressbar"`. |
+| `FantasyUnlock` | Compact Home tile (half width, next to `InviteTile`): "Fantasy" + display `3/5` over a row of tiny shirts, one per prediction needed: made = lime (pop in one after another), next = dashed soft-lime, rest = dark. At full the tile turns soft-lime ("Fantasy open"). Links to `/fantasy`. |
+| `InviteTile` | Compact Home tile: "Invites" + count over the senders' avatars ("Sara +2"). Links to `/invites`, where Join / Decline happen. |
 | `ProgressRing` | Circular progress for compact spots. |
 | `TeamCrest` | 3-letter code placeholder until real crests are licensed. |
 | `LiveDot` / `LiveMinute` | Pulsing amber dot / "● LIVE 67'". |
@@ -198,7 +199,7 @@ Rules:
 
 - **Splash → Onboarding (`/welcome`):** the launch splash (from `SplashGate`), then 3 steps with a segmented progress bar, back button and wallet badge (ticks to 10,000 on claim). 1) Try one: dealt card stack; the sample question resolves to a right/wrong result; Continue is `secondary` until answered, then lime. 2) Pick clubs: crest tiles with `aria-pressed`, soft-lime when selected. 3) Claim: coin stack + ticking amount, the three numbered steps, lime "Claim 10,000 coins". Claiming or "Skip to Home" sets the `footon_onboarded` cookie. Links to `/` from here use `prefetch={false}` so a pre-cookie redirect isn't cached.
 - **Onboarding (canvas):** dealt card stack on a dotted canvas with one real sample question; three steps as a single numbered row; lime CTA "Claim 10,000 coins" with an inset arrow; "Skip to Home" as a text link.
-- **Home:** (sticky island from the tabs layout) → "Your matches" → invites strip ("See all" → `/invites`) → segmented filter → one card of one-line scoreboard rows → `FantasyUnlock` progress card → dock.
+- **Home:** (sticky island from the tabs layout) → "Your matches" → one row of two compact tiles (`InviteTile` → `/invites`, `FantasyUnlock` → `/fantasy`) → segmented filter → one card of one-line scoreboard rows → dock. The match list gets the screen; keep anything else on Home tile-sized.
 - **Match (`/match/[id]`, focus mode):** back + competition; dotted scoreboard (xl crests, display kickoff or score). Upcoming → `PrematchCalls`. Finished → "You scored +240", a `StreakFlame`, right/wrong bars (tall lime vs short red) and "5 of 6 calls right".
 - **Create league:** close button, a live **invite ticket** (lime, notched, dashed tear line) that updates as you edit; name input, stake slider, mode switches, reward note, then `Copy` (secondary) + `Create and share` (lime).
 - **Live match (focus mode, no dock):** back + league + LIVE minute; huge display score; match progress bar; 3 standings tiles (yours soft-lime); question card stack; chat panel filling the rest of the screen (drag its handle up to fold the match details and compact the question) with message bubbles (yours right, soft-lime), a friend's question as an inline Yes/No card, quick-reaction chips, a soft "+" ask button and input.

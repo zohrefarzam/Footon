@@ -2,61 +2,56 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { CircleDot, House, Plus, Shirt, UserRound } from "lucide-react";
 
 import { cn } from "@/lib/utils";
+import { LiveDot } from "./live";
+import { ChallengesIcon, HomeIcon, LiveIcon, ProfileIcon, type NavIconProps } from "./nav-icons";
 
-const items = [
-  { href: "/", label: "Home", icon: House },
-  { href: "/play", label: "Play", icon: CircleDot },
-  { href: "/league/new", label: "Create league", icon: Plus, primary: true },
-  { href: "/team", label: "Team", icon: Shirt },
-  { href: "/me", label: "Me", icon: UserRound },
-] as const;
+type Item = { href: string; label: string; icon: (p: NavIconProps) => React.ReactNode; match: (p: string) => boolean };
+
+const items: Item[] = [
+  { href: "/", label: "Home", icon: HomeIcon, match: (p) => p === "/" },
+  { href: "/challenges", label: "Challenges", icon: ChallengesIcon, match: (p) => p.startsWith("/challenges") },
+  { href: "/live", label: "Live", icon: LiveIcon, match: (p) => p.startsWith("/live") },
+  { href: "/me", label: "Profile", icon: ProfileIcon, match: (p) => p.startsWith("/me") },
+];
 
 /**
- * Floating glass dock. Always 5 slots; the centre slot is the lime "create" action.
- * Hidden in focus mode (live match) — that screen uses its own back button.
+ * Floating glass dock, 4 tabs. Active = filled icon + white label + lime dot.
+ * The Live tab carries a pulsing amber dot while a match is on.
+ * Rendered once by `app/(tabs)/layout.tsx`; hidden in focus mode.
  */
-export function Dock({ className }: { className?: string }) {
+export function Dock({ live = false, className }: { live?: boolean; className?: string }) {
   const pathname = usePathname();
 
   return (
     <nav
       aria-label="Primary"
       className={cn(
-        "glass fixed bottom-[calc(18px+env(safe-area-inset-bottom))] left-1/2 z-40 grid w-[calc(min(100vw,430px)-32px)] -translate-x-1/2 h-[66px] grid-cols-5 items-center rounded-[24px] border border-line-strong px-1.5 shadow-[0_16px_40px_-12px_rgb(0_0_0/0.8)]",
+        "glass fixed bottom-[calc(18px+env(safe-area-inset-bottom))] left-1/2 z-40 grid h-[66px] w-[calc(min(100vw,430px)-32px)] -translate-x-1/2 grid-cols-4 items-center rounded-[24px] border border-line-strong px-1.5 shadow-[0_16px_40px_-12px_rgb(0_0_0/0.8)]",
         className,
       )}
     >
-      {items.map((item) => {
-        const Icon = item.icon;
-        if ("primary" in item && item.primary) {
-          return (
-            <Link
-              key={item.href}
-              href={item.href}
-              aria-label={item.label}
-              className="flex size-[50px] items-center justify-center justify-self-center rounded-[17px] bg-primary text-primary-foreground transition-transform duration-200 ease-spring active:scale-90"
-            >
-              <Icon className="size-[22px]" strokeWidth={2.4} />
-            </Link>
-          );
-        }
-        const active = item.href === "/" ? pathname === "/" : pathname.startsWith(item.href);
+      {items.map(({ href, label, icon: Icon, match }) => {
+        const active = match(pathname);
+        const showLive = live && href === "/live";
         return (
           <Link
-            key={item.href}
-            href={item.href}
+            key={href}
+            href={href}
             aria-current={active ? "page" : undefined}
+            aria-label={showLive ? `${label}, a match is live` : undefined}
             className={cn(
-              "flex flex-col items-center gap-[3px] text-[11px] transition-colors",
+              "flex h-full min-w-12 flex-col items-center justify-center gap-[3px] rounded-[18px] text-[11px] outline-none transition-[color,transform] duration-200 ease-spring active:scale-90 focus-visible:ring-[3px] focus-visible:ring-ring/60",
               active ? "font-semibold text-foreground" : "font-medium text-nav-muted hover:text-foreground",
             )}
           >
-            <Icon className="size-[22px]" strokeWidth={1.8} />
-            {item.label}
-            <span className={cn("size-1 rounded-full", active && "bg-primary")} />
+            <span className="relative">
+              <Icon active={active} />
+              {showLive && <LiveDot className="absolute -end-0.5 -top-0.5 size-2" />}
+            </span>
+            {label}
+            <span aria-hidden="true" className={cn("size-1 rounded-full", active && "bg-primary")} />
           </Link>
         );
       })}

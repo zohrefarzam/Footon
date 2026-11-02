@@ -6,7 +6,7 @@ import { Card, CardRow } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { Pitch } from "./pitch";
 
-export default function TeamPage() {
+export default function FantasyPage() {
   return (
     <AppShell className="gap-4 pt-3.5">
       <header className="flex items-end justify-between">

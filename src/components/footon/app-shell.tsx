@@ -1,9 +1,9 @@
 import { cn } from "@/lib/utils";
-import { Dock } from "./dock";
 
 /**
  * Mobile-first column (max 430px), centred on larger screens.
- * `dock={false}` for focus mode (live match, flows with their own CTA).
+ * `dock={false}` for focus mode (live match, flows with their own CTA). The dock
+ * itself is rendered once by `app/(tabs)/layout.tsx`; `dock` here only reserves room for it.
  */
 export function AppShell({
   children,
@@ -26,7 +26,6 @@ export function AppShell({
       >
         {children}
       </main>
-      {dock && <Dock />}
     </div>
   );
 }

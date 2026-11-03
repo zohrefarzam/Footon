@@ -43,11 +43,13 @@ src/
                           switch, slider, avatar, separator, progress, dialog, tabs)
     footon/               product components (app-shell, dock, live-island, question-card,
                           match-row, segmented-tabs, match-centre, live-match, crowd-poll,
-                          match-facts, match-stats, match-lineups, match-table, league-chat, coin, number-ticker, form-bars,
+                          match-facts, match-stats, match-lineups, match-table, league-chat,
+                          match-scoreboard, match-preview, match-days, countdown, back-button, coin, number-ticker, form-bars,
                           progress-ring, team-crest, live, empty-state, match-filter, match-list, invite-strip, streak,
                           prematch-calls, fantasy-unlock, football, splash, splash-gate, nav-icons)
   lib/
     utils.ts              cn()
+    dates.ts              day labels relative to the mock today ("Yesterday", "Thu 5 Nov")
     mock-data.ts          typed mock data mirroring the canvas — replace with API, keep types
   fonts/                  Barlow Condensed woff2
   proxy.ts                first-run redirect: `/` → `/welcome` until `footon_onboarded` is set
@@ -183,6 +185,10 @@ Rules:
 | `MatchStats` | value · label · value rows with a split bar; the side ahead is bright, the other dims. Neutral, never lime. |
 | `MatchLineups` | `SegmentedTabs` between the two XIs; divided list with the shirt number in display font and the position in mono. No pitch (that colour belongs to Fantasy). |
 | `MatchTable` / `HeadToHead` | Table rows around the match (the two teams raised on `surface-2`, not coloured); last meetings as three display numbers over a split bar. |
+| `MatchScoreboard` / `CompactScore` | The dotted scoreboard on every match page and its one-line top-bar form. Live: score + `LiveMinute` + clock bar. Upcoming: display kickoff + `Countdown` (today) or the day. Finished: score + FULL TIME. |
+| `Countdown` | Time to kick-off `01:53:39`, ticking; rendered after mount; one static `aria-label`. |
+| `MatchInfo` / `TeamForm` / `MatchNews` | Preview-tab pieces. `MatchInfo` is one divided card: date + kickoff, venue + city, capacity + surface, weather, referee, where to watch (muted lucide icons). `TeamForm`: last five as W/D/L chips, shape-coded (W solid, D dark, L outline), neutral. `MatchNews`: one headline card. |
+| `MatchDays` | The Live tab body: title + "N on now", a **Live** pill (`aria-pressed`; amber-soft with a pulsing dot when on) that narrows to live matches, otherwise an underline day strip (two days back to five ahead, Today centred). Each day: "Your matches" pinned, then folding competition groups headed `ENG · England · Premier League`. No CTA: rows are the action. |
 | `LeagueChat` | League chat as a match section: who's watching, thread (yours right, soft-lime), a friend's question as an inline Yes/No card, quick reactions and the composer pinned to the bottom. |
 | `MatchRow` | One-line scoreboard row (~60px) inside a list card: home name + `xs` shield · centre box (score or kickoff, with amber live minute / day / FT under it; amber-soft while live) · shield + away name · "you" column (lime `+points` and a `StreakFlame` for a hot streak, or calls made before kickoff; chevron if you're not in). Every row links: your live match → `/play`, everything else → `/match/[id]`. Names become 3-letter codes under 360px. |
 | `MatchList` | Now/Today/Upcoming `SegmentedTabs` that actually filter one divided list of `MatchRow`s. |
@@ -209,9 +215,9 @@ Rules:
 - **Splash → Onboarding (`/welcome`):** the launch splash (from `SplashGate`), then 3 steps with a segmented progress bar, back button and wallet badge (ticks to 10,000 on claim). 1) Try one: dealt card stack; the sample question resolves to a right/wrong result; Continue is `secondary` until answered, then lime. 2) Pick clubs: crest tiles with `aria-pressed`, soft-lime when selected. 3) Claim: coin stack + ticking amount, the three numbered steps, lime "Claim 10,000 coins". Claiming or "Skip to Home" sets the `footon_onboarded` cookie. Links to `/` from here use `prefetch={false}` so a pre-cookie redirect isn't cached.
 - **Onboarding (canvas):** dealt card stack on a dotted canvas with one real sample question; three steps as a single numbered row; lime CTA "Claim 10,000 coins" with an inset arrow; "Skip to Home" as a text link.
 - **Home:** (sticky island from the tabs layout) → "Your matches" → one row of two compact tiles (`InviteTile` → `/invites`, `FantasyUnlock` → `/fantasy`) → segmented filter → one card of one-line scoreboard rows → dock. The match list gets the screen; keep anything else on Home tile-sized.
-- **Match (`/match/[id]`, focus mode):** back + competition; dotted scoreboard (xl crests, display kickoff or score). Upcoming → `PrematchCalls`. Finished → "You scored +240", a `StreakFlame`, right/wrong bars (tall lime vs short red) and "5 of 6 calls right".
 - **Create league:** close button, a live **invite ticket** (lime, notched, dashed tear line) that updates as you edit; name input, stake slider, mode switches, reward note, then `Copy` (secondary) + `Create and share` (lime).
-- **Live tab (`/live`):** FotMob's live filter. "N matches on now", then folding groups (`<details>` cards with a header row: live dot, name, count): **Your leagues** pinned first with the lime "Play LIV v MCI", then one group per competition, then "Later today". Your live match → `/play`; any other → `/match/[id]`.
+- **Live tab (`/live`):** FotMob's Matches screen via `MatchDays`: title + Live pill → day strip (Yesterday · **Today** · Tomorrow · dates) → "Your matches" (anything you have calls on) → one folding card per competition. No lime CTA here: your live match row and the island's "Q4 open" already take you in. Your live match → `/play`; everything else → `/match/[id]`.
+- **Match page (`/match/[id]`, focus mode):** same `MatchCentre` frame as live. Upcoming: **Preview** (your pre-match calls with the one lime "Lock in", `CrowdPoll`, `MatchInfo`, `TeamForm`, `MatchNews`) · Table · H2H. Finished: **Result** (your +points, streak, right/wrong bars) · Facts · Stats · Table · H2H.
 - **Live match (`/play` for your league, `/match/[id]` for any other live match; focus mode, no dock):** `LiveMatch`. FotMob's flow (score always visible, everything one tap away in sticky section tabs), Footon's job: Predict is the first tab, and the question card is the first thing in it. Chat is its own tab, not a panel under the details.
 - **Full time:** ticking `+450`, streak pill with lime "Next match 2x", podium (yours lime-soft, tallest), match-timeline of calls (lime filled dots = right, red rings = wrong), rematch chat replies, lime "Rematch with same friends".
 - **Fantasy (`/fantasy`, was My team):** stats header (display 56), striped pitch with shirt tokens (selected = lime, captain = amber "C"), captain + transfers list, lime "Save lineup".

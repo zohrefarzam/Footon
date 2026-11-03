@@ -31,6 +31,8 @@ export type Match = {
   kickoff?: string;
   /** Day label for fixtures after today ("Sat"); absent = today. */
   day?: string;
+  /** Days from `mockToday` (-1 yesterday, 1 tomorrow); absent = today. Drives the Live tab's day strip. */
+  dayOffset?: number;
   /** Short context line: your league on this match, or the competition. */
   caption: string;
   /** Competition, for grouping the live list ("Premier League"). */
@@ -54,6 +56,19 @@ export type Match = {
   h2h?: { won: number; drawn: number; lost: number };
   /** League table rows around both teams. */
   table?: TableRow[];
+  /** Pre-match facts for the Preview tab. */
+  preview?: MatchPreview;
+};
+
+export type FormResult = "W" | "D" | "L";
+export type MatchPreview = {
+  venue: { name: string; city: string; capacity: number; surface: string };
+  weather: { tempC: number; sky: string };
+  referee: string;
+  tv: string[];
+  /** Last five league results, oldest first. */
+  form: { home: FormResult[]; away: FormResult[] };
+  news?: { title: string; source: string; ago: string };
 };
 
 /** A Yes/No quick call with the crowd's share and the stakes on offer. */
@@ -72,6 +87,26 @@ export type Lineup = { formation: string; players: Player[] };
 export type TableRow = { pos: number; code: string; played: number; gd: number; points: number };
 
 export const wallet = { coins: 2450 };
+
+/** The mock "today" (a Tuesday). Day offsets and the day strip are relative to it. */
+export const mockToday = "2026-11-03";
+
+/** Country per competition, for the group headers ("England · Premier League"). */
+export const competitions: Record<string, { country: string; code: string }> = {
+  "Premier League": { country: "England", code: "ENG" },
+  LaLiga: { country: "Spain", code: "ESP" },
+  "Serie A": { country: "Italy", code: "ITA" },
+  "Ligue 1": { country: "France", code: "FRA" },
+};
+
+const plTable: TableRow[] = [
+  { pos: 1, code: "LIV", played: 11, gd: 14, points: 27 },
+  { pos: 2, code: "ARS", played: 11, gd: 12, points: 25 },
+  { pos: 3, code: "MCI", played: 11, gd: 11, points: 24 },
+  { pos: 4, code: "CHE", played: 11, gd: 8, points: 21 },
+  { pos: 5, code: "NEW", played: 11, gd: 5, points: 19 },
+  { pos: 6, code: "TOT", played: 11, gd: 4, points: 18 },
+];
 
 export const recentForm: Outcome[] = ["W", "W", "L", "W", "V", "L"];
 
@@ -106,11 +141,7 @@ export const matches: Match[] = [
     progress: { asked: 7, total: 10 },
     crowd: { home: 41, draw: 33, away: 26, topScore: [2, 1], votes: 18412 },
     h2h: { won: 2, drawn: 2, lost: 1 },
-    table: [
-      { pos: 1, code: "LIV", played: 11, gd: 14, points: 27 },
-      { pos: 2, code: "ARS", played: 11, gd: 12, points: 25 },
-      { pos: 3, code: "MCI", played: 11, gd: 11, points: 24 },
-    ],
+    table: plTable,
     lineups: {
       home: {
         formation: "4-3-3",
@@ -194,6 +225,16 @@ export const matches: Match[] = [
     you: { calls: 2, right: 0, points: 0, streak: 0 },
     market: { id: "mk-ars-1", question: "Arsenal win?", yesShare: 47, stakes: [100, 500] },
     crowd: { home: 47, draw: 28, away: 25, topScore: [2, 1], votes: 9310 },
+    table: plTable,
+    h2h: { won: 2, drawn: 1, lost: 2 },
+    preview: {
+      venue: { name: "Emirates Stadium", city: "London, England", capacity: 60704, surface: "Grass" },
+      weather: { tempC: 9, sky: "Cloudy" },
+      referee: "M. Oliver",
+      tv: ["Sky Sports Main Event", "Sky Go"],
+      form: { home: ["W", "W", "D", "W", "L"], away: ["W", "L", "W", "D", "W"] },
+      news: { title: "Arsenal v Chelsea: team news and predicted line-ups", source: "Footon", ago: "2 hours ago" },
+    },
   },
   {
     id: "new-tot",
@@ -204,6 +245,17 @@ export const matches: Match[] = [
     caption: "Premier League",
     competition: "Premier League",
     market: { id: "mk-new-1", question: "Both teams score?", yesShare: 64, stakes: [100, 500] },
+    crowd: { home: 44, draw: 26, away: 30, topScore: [1, 1], votes: 4127 },
+    table: plTable,
+    h2h: { won: 3, drawn: 0, lost: 2 },
+    preview: {
+      venue: { name: "St. James' Park", city: "Newcastle upon Tyne, England", capacity: 52758, surface: "Grass" },
+      weather: { tempC: 8, sky: "Light rain" },
+      referee: "A. Taylor",
+      tv: ["TNT Sports 1", "discovery+"],
+      form: { home: ["D", "W", "W", "L", "W"], away: ["L", "W", "D", "W", "L"] },
+      news: { title: "Five things to watch at St. James' Park tonight", source: "Footon", ago: "5 hours ago" },
+    },
   },
   {
     id: "bha-eve",
@@ -213,6 +265,18 @@ export const matches: Match[] = [
     score: [2, 0],
     caption: "Premier League",
     competition: "Premier League",
+    events: [
+      { minute: 17, side: "home", player: "Mitoma", kind: "goal" },
+      { minute: 44, side: "away", player: "Gueye", kind: "yellow" },
+      { minute: 71, side: "home", player: "Welbeck", kind: "goal" },
+      { minute: 78, side: "away", player: "Calvert-Lewin", kind: "sub", detail: "Beto" },
+    ],
+    stats: [
+      { label: "Possession", home: 61, away: 39, unit: "%" },
+      { label: "Shots", home: 14, away: 6 },
+      { label: "On target", home: 6, away: 2 },
+      { label: "Corners", home: 7, away: 2 },
+    ],
     you: { calls: 6, right: 5, points: 240, streak: 5 },
   },
   {
@@ -222,6 +286,7 @@ export const matches: Match[] = [
     status: "upcoming",
     kickoff: "13:30",
     day: "Sat",
+    dayOffset: 4,
     caption: "Premier League",
     competition: "Premier League",
     boost: 10,
@@ -234,10 +299,66 @@ export const matches: Match[] = [
     status: "upcoming",
     kickoff: "16:30",
     day: "Sun",
+    dayOffset: 5,
     caption: "Premier League",
     competition: "Premier League",
   },
 ];
+
+matches.push(
+  {
+    id: "avl-whu",
+    home: { code: "AVL", name: "Aston Villa", colors: ["#670E36", "#95BFE5"] },
+    away: { code: "WHU", name: "West Ham", colors: ["#7A263A", "#1BB1E7"] },
+    status: "finished",
+    score: [3, 1],
+    day: "Yesterday",
+    dayOffset: -1,
+    caption: "Premier League",
+    competition: "Premier League",
+  },
+  {
+    id: "lor-bre",
+    home: { code: "LOR", name: "Lorient", colors: ["#F58113", "#000000"] },
+    away: { code: "BRE", name: "Brest", colors: ["#E2001A", "#FFFFFF"] },
+    status: "finished",
+    score: [1, 1],
+    day: "Yesterday",
+    dayOffset: -1,
+    caption: "Ligue 1",
+    competition: "Ligue 1",
+  },
+  {
+    id: "rma-val",
+    home: { code: "RMA", name: "Real Madrid", colors: ["#FFFFFF", "#00529F"] },
+    away: { code: "VAL", name: "Valencia", colors: ["#FFFFFF", "#EE3524"] },
+    status: "upcoming",
+    kickoff: "20:00",
+    day: "Wed",
+    dayOffset: 1,
+    caption: "LaLiga",
+    competition: "LaLiga",
+    crowd: { home: 71, draw: 17, away: 12, topScore: [3, 1], votes: 12880 },
+    preview: {
+      venue: { name: "Santiago Bernabéu", city: "Madrid, Spain", capacity: 83186, surface: "Hybrid grass" },
+      weather: { tempC: 12, sky: "Clear" },
+      referee: "J. Martínez Munuera",
+      tv: ["Premier Sports 1", "LaLigaTV"],
+      form: { home: ["W", "W", "W", "D", "W"], away: ["L", "D", "L", "W", "D"] },
+    },
+  },
+  {
+    id: "int-nap",
+    home: { code: "INT", name: "Inter", colors: ["#0068A8", "#000000"] },
+    away: { code: "NAP", name: "Napoli", colors: ["#12A0D7", "#FFFFFF"] },
+    status: "upcoming",
+    kickoff: "19:45",
+    day: "Wed",
+    dayOffset: 1,
+    caption: "Serie A",
+    competition: "Serie A",
+  },
+);
 
 export type Invite = {
   id: string;

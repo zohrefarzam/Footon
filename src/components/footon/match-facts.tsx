@@ -33,7 +33,19 @@ function EventIcon({ kind }: { kind: MatchEvent["kind"] }) {
  * who did what by position. Goals carry the running score. A half-time rule
  * splits the halves; kick-off closes the list.
  */
-export function MatchFacts({ events, minute, home, away }: { events: MatchEvent[]; minute: number; home: string; away: string }) {
+export function MatchFacts({
+  events,
+  minute,
+  home,
+  away,
+  finished = false,
+}: {
+  events: MatchEvent[];
+  minute: number;
+  home: string;
+  away: string;
+  finished?: boolean;
+}) {
   // running score after each goal, in match order
   const score: [number, number] = [0, 0];
   const withScore = events
@@ -58,6 +70,7 @@ export function MatchFacts({ events, minute, home, away }: { events: MatchEvent[
   return (
     <Card className="overflow-hidden py-1.5">
       <ol aria-label="Match timeline">
+        {finished && marker("Full time")}
         {withScore.map((e, i) => {
           const isHome = e.side === "home";
           const body = (
@@ -106,7 +119,11 @@ export function MatchFacts({ events, minute, home, away }: { events: MatchEvent[
           );
         })}
         {showHT && firstHalfAt === -1 && marker("Half time")}
-        {withScore.length === 0 && <li className="px-4 py-5 text-center text-sm text-muted-foreground">Quiet so far. Goals, cards and subs land here.</li>}
+        {withScore.length === 0 && (
+          <li className="px-4 py-5 text-center text-sm text-muted-foreground">
+            {finished ? "No goals, cards or subs recorded." : "Quiet so far. Goals, cards and subs land here."}
+          </li>
+        )}
         {marker("Kick-off")}
       </ol>
     </Card>

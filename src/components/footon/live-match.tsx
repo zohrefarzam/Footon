@@ -106,7 +106,7 @@ export function LiveMatch({ match: m, league, backHref = "/" }: { match: Match; 
       content: <MatchFacts events={events} minute={minute} home={m.home.name} away={m.away.name} />,
     },
     ...(m.stats?.length ? [{ value: "stats", label: "Stats", content: <MatchStats stats={m.stats} home={m.home.name} away={m.away.name} /> }] : []),
-    ...(m.lineups ? [{ value: "lineups", label: "Lineups", content: <MatchLineups home={m.home} away={m.away} lineups={m.lineups} /> }] : []),
+    ...(m.lineups ? [{ value: "lineups", label: "Lineups", content: <MatchLineups home={m.home} away={m.away} lineups={m.lineups} events={events} /> }] : []),
     ...(m.table
       ? [{ value: "table", label: "Table", content: <MatchTable rows={m.table} playing={[m.home.code, m.away.code]} competition={m.competition} /> }]
       : []),

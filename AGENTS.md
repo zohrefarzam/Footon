@@ -100,7 +100,7 @@ All colours are CSS variables on `:root` in `globals.css`, exposed as Tailwind c
 | Primary soft | `primary-soft` + `primary-line` + `text-primary` | Selected / on | Selected chips, quick replies, "ask" button, your standings tile, toggled states | Main actions |
 | **Live** | `live` `#FFB547`, `live-soft`, `live-foreground` | "Happening now", "time", "money" | LIVE minute, pulsing dot, countdown ring, coins, boosts | Wins, buttons, selection |
 | **Loss** | `loss` `#F87171`, `loss-soft` | Wrong / lost | Loss bars, wrong calls, destructive actions | Errors that aren't the user's fault (use neutral copy) |
-| Pitch | `pitch`, `pitch-2`, `pitch-line` | The field | Team screen pitch only | Anywhere else |
+| Pitch | `pitch`, `pitch-2`, `pitch-line` | The field | Fantasy pitch and match line-ups | Anywhere else |
 | Booking | `booking-yellow`, `booking-red` | A referee's card | The card glyphs in `MatchFacts` and next to a team with a red | Anything that isn't a literal yellow/red card |
 
 Accessibility for colour:
@@ -183,7 +183,7 @@ Rules:
 | `CrowdPoll` | "Who wins?" 1 · X · 2 poll with the total votes. The split stays hidden until you vote, then each choice fills to its share; yours soft-lime. Free, no coins. On live and upcoming match pages. |
 | `MatchFacts` | Event timeline, newest first: minute pill in a centre column, home events on the start side, away on the end side; goals carry the running score; "Half time" and "Kick-off" rules. Icons: `Football` (goal), booking-card glyphs, lucide `ArrowRightLeft` (sub), `MonitorPlay` (VAR). |
 | `MatchStats` | value · label · value rows with a split bar; the side ahead is bright, the other dims. Neutral, never lime. |
-| `MatchLineups` | `SegmentedTabs` between the two XIs; divided list with the shirt number in display font and the position in mono. No pitch (that colour belongs to Fantasy). |
+| `MatchLineups` | Both XIs on one striped pitch (FotMob view): home top half attacking down, away bottom half attacking up, rows from the formation string. Player = disc in the team's shirt colours (data, like crests) with the number in display font and the surname on a dark tag; goals (`Football`) and booking glyphs sit on the disc. Each side is an `<ol>` and every player has a full `aria-label`. |
 | `MatchTable` / `HeadToHead` | Table rows around the match (the two teams raised on `surface-2`, not coloured); last meetings as three display numbers over a split bar. |
 | `MatchScoreboard` / `CompactScore` | The dotted scoreboard on every match page and its one-line top-bar form. Live: score + `LiveMinute` + clock bar. Upcoming: display kickoff + `Countdown` (today) or the day. Finished: score + FULL TIME. |
 | `Countdown` | Time to kick-off `01:53:39`, ticking; rendered after mount; one static `aria-label`. |

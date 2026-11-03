@@ -1,11 +1,13 @@
 import Link from "next/link";
-import { Eye, Flame, Lock, Settings, Trophy, UserRound } from "lucide-react";
+import { Award, Eye, Flame, Lock, Settings, Trophy, UserRound } from "lucide-react";
 
 import { AppShell } from "@/components/footon/app-shell";
+import { FavouriteClubs } from "@/components/footon/favourite-clubs";
 import { FormBars } from "@/components/footon/form-bars";
 import { Button } from "@/components/ui/button";
 import { Card, CardRow } from "@/components/ui/card";
-import { profile, recentForm } from "@/lib/mock-data";
+import { Progress } from "@/components/ui/progress";
+import { onboarding, profile, recentForm } from "@/lib/mock-data";
 import { cn } from "@/lib/utils";
 
 const RANK = 8;
@@ -76,6 +78,36 @@ export default function MePage() {
           </div>
         </section>
       </div>
+
+      {/* placeholder until the XP / Level / Badge doc lands */}
+      <section id="level" aria-labelledby="level-title" className="flex scroll-mt-24 flex-col gap-2.5">
+        <h2 id="level-title" className="text-[13px] font-medium text-muted-foreground">
+          Level
+        </h2>
+        <Card className="gap-3 p-4">
+          <div className="flex items-end justify-between gap-4">
+            <p className="font-display text-[56px] leading-[0.9] font-bold">
+              <span className="me-1 text-[28px] text-muted-foreground">LV</span>
+              {profile.level}
+            </p>
+            <p className="flex items-center gap-1.5 text-sm text-muted-foreground">
+              <Award className="size-4" aria-hidden="true" />
+              <span className="font-display text-xl font-bold text-foreground">{profile.badges}</span> badges
+            </p>
+          </div>
+          <Progress
+            value={(profile.xp / profile.xpNext) * 100}
+            indicatorClassName="bg-foreground/85"
+            aria-label={`${profile.xp} of ${profile.xpNext} XP to level ${profile.level + 1}`}
+          />
+          <p className="text-xs text-muted-foreground">
+            <span className="font-display text-sm font-bold text-foreground">{(profile.xpNext - profile.xp).toLocaleString("en-US")}</span> XP to level{" "}
+            {profile.level + 1}
+          </p>
+        </Card>
+      </section>
+
+      <FavouriteClubs clubs={onboarding.clubs} initial={profile.favoriteTeams} />
 
       <section className="flex flex-col gap-2.5">
         <h2 className="text-[13px] font-medium text-muted-foreground">Recent form</h2>

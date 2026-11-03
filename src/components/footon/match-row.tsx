@@ -10,7 +10,8 @@ import { TeamCrest } from "./team-crest";
 /**
  * One-line fixture row, scoreboard style, inside a divided list Card (~60px):
  *   home name + shield · score or kickoff · shield + away name · marker
- * Under the score: amber live minute, the day for fixtures, FT for results. The
+ * Under the score: amber live minute, the day for fixtures (with an amber "2x"
+ * on big matches), FT for results. The
  * centre box is amber-soft while live. The end column is yours: points in lime and
  * an amber flame for a hot streak (or calls made, before kickoff), else a chevron.
  * Names fall back to 3-letter codes on narrow screens.
@@ -27,7 +28,7 @@ export function MatchRow({ match, href, className }: { match: Match; href?: stri
   const status = live ? `Live, ${match.minute} minutes` : done ? "Full time" : `${match.day ?? "Today"} ${match.kickoff}`;
   const label = `${match.home.name} ${live || done ? `${h}, ${match.away.name} ${a}` : `v ${match.away.name}`}, ${status}${
     match.league ? `, in your league ${match.league}` : ""
-  }${you ? (upcoming ? `, you made ${you.calls} calls` : `, you scored ${you.points} points${hot ? `, ${you.streak} in a row` : ""}`) : ""}`;
+  }${match.boost ? `, big match, wins pay ${match.boost}x` : ""}${you ? (upcoming ? `, you made ${you.calls} calls` : `, you scored ${you.points} points${hot ? `, ${you.streak} in a row` : ""}`) : ""}`;
 
   const team = (i: 0 | 1) => {
     const t = i === 0 ? match.home : match.away;
@@ -73,7 +74,10 @@ export function MatchRow({ match, href, className }: { match: Match; href?: stri
           ) : done ? (
             <span className="text-muted-foreground">FT</span>
           ) : (
-            <span className="font-medium text-muted-foreground">{match.day ?? "Today"}</span>
+            <>
+              {match.boost && <span className="font-display text-xs text-live">{match.boost}x</span>}
+              <span className="font-medium text-muted-foreground">{match.day ?? "Today"}</span>
+            </>
           )}
         </span>
       </span>

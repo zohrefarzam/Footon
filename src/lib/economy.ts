@@ -29,6 +29,32 @@ export const COSTS = {
   chatQuestion: 250,
 } as const;
 
+/**
+ * Predictions (Win / draw, Goals, Cards…) each carry a coin stake. The player
+ * picks the amount, at least this minimum, unless the challenge fixed it.
+ */
+export const PREDICTION_MIN_STAKE = {
+  result: 100,
+  goals: 100,
+  corners: 100,
+  yellows: 100,
+  red: 200,
+  penalty: 200,
+} as const satisfies Record<string, number>;
+
+/** Quick-pick stakes under the amount field. */
+export const STAKE_STEPS = [100, 250, 500, 1000] as const;
+
+/** A right prediction pays back this many times its stake (stake included). */
+export const PAYOUT_MULTIPLIER = 2;
+/** Big matches (`match.boost`) multiply what a right prediction pays again. */
+export const BOOST_MULTIPLIER = 2;
+/** Points for a right call. Skill only, never boosted, never bought. */
+export const POINTS_PER_RIGHT_CALL = 50;
+
+/** Coins a right prediction pays: `payout(250)` → 500, on a 2x match → 1,000. */
+export const payout = (stake: number, boosted = false) => stake * PAYOUT_MULTIPLIER * (boosted ? BOOST_MULTIPLIER : 1);
+
 /** Every coin starter missions can pay out over the first seven days. */
 export const STARTER_TOTAL = 15000;
 export const STARTER_DAYS = 7;

@@ -11,7 +11,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
-import { COSTS, ENTRY_TIERS, splitPool } from "@/lib/economy";
+import { COSTS, ENTRY_TIERS, STAKE_STEPS, splitPool } from "@/lib/economy";
+import { cn } from "@/lib/utils";
 import { league } from "@/lib/mock-data";
 
 /** Invite slots on the ticket; with you that's the pool size we preview. */
@@ -37,7 +38,11 @@ export function CreateLeagueForm({ balance }: { balance: number }) {
   const short = cost - balance;
   const [modes, setModes] = useState<Record<string, boolean>>({ system: true, friends: true, pre: false });
   const [copied, setCopied] = useState(false);
-  const modeCount = Object.values(modes).filter(Boolean).length;
+  /** Stake rules for every prediction in the league: fixed per call, and a total cap per player. */
+  const [fixedStake, setFixedStake] = useState(false);
+  const [perCall, setPerCall] = useState<number>(STAKE_STEPS[1]);
+  const [capIndex, setCapIndex] = useState(ENTRY_TIERS.length - 1);
+  const cap = ENTRY_TIERS[capIndex];
 
   const copy = async () => {
     try {
@@ -59,7 +64,7 @@ export function CreateLeagueForm({ balance }: { balance: number }) {
             <span className="font-mono tracking-normal">#{league.code}</span>
           </div>
           <p className="mt-2.5 truncate font-display text-[44px] leading-none font-bold uppercase italic">{name || "Your league"}</p>
-          <p className="mt-1.5 text-sm font-semibold">Liverpool v Man City · 21:00</p>
+          <p className="mt-1.5 truncate text-sm font-semibold">Liverpool v Man City · 21:00 · cap {fmt(cap)}</p>
         </div>
         <div className="mx-[18px] border-t-2 border-dashed border-primary-foreground/30" />
         <span aria-hidden="true" className="absolute top-[129px] -left-[11px] size-[22px] rounded-full bg-background" />
@@ -70,8 +75,8 @@ export function CreateLeagueForm({ balance }: { balance: number }) {
             <p className="font-display text-2xl font-bold">{fmt(entry)}</p>
           </div>
           <div>
-            <p className="text-[11px] font-semibold opacity-70">MODES</p>
-            <p className="font-display text-2xl font-bold">{modeCount}</p>
+            <p className="text-[11px] font-semibold opacity-70">PER CALL</p>
+            <p className="font-display text-2xl font-bold">{fixedStake ? fmt(perCall) : "Any"}</p>
           </div>
           <div className="flex flex-col items-end gap-1">
             <div className="flex -space-x-1.5" aria-hidden="true">
@@ -137,6 +142,63 @@ export function CreateLeagueForm({ balance }: { balance: number }) {
               />
             </CardRow>
           ))}
+        </Card>
+      </div>
+
+      <div className="flex flex-col gap-2">
+        <span className="text-[13px] font-medium text-muted-foreground">Prediction stakes</span>
+        <Card className="overflow-hidden rounded-lg">
+          <CardRow className="py-3.5">
+            <label htmlFor="fixed-stake" className="flex-1 cursor-pointer">
+              <span className="block text-[15px] font-semibold">Same stake for everyone</span>
+              <span className="mt-0.5 block text-xs text-muted-foreground">
+                {fixedStake ? "Every prediction costs the amount below" : "Each player picks their own stake"}
+              </span>
+            </label>
+            <Switch id="fixed-stake" checked={fixedStake} onCheckedChange={setFixedStake} />
+          </CardRow>
+          {fixedStake && (
+            <CardRow className="animate-in-up gap-1.5 py-3">
+              <span id="per-call-label" className="sr-only">
+                Stake per prediction
+              </span>
+              <div role="radiogroup" aria-labelledby="per-call-label" className="flex flex-1 gap-1.5">
+                {STAKE_STEPS.map((s) => (
+                  <button
+                    key={s}
+                    type="button"
+                    role="radio"
+                    aria-checked={perCall === s}
+                    onClick={() => setPerCall(s)}
+                    className={cn(
+                      "h-9 flex-1 rounded-sm border font-display text-[15px] font-bold outline-none transition-[transform,background-color,border-color,color] duration-150 ease-spring active:scale-95 focus-visible:ring-[3px] focus-visible:ring-ring/60",
+                      perCall === s ? "border-primary-line bg-primary-soft text-primary" : "border-line-strong bg-surface-2 text-muted-foreground",
+                    )}
+                  >
+                    {fmt(s)}
+                  </button>
+                ))}
+              </div>
+            </CardRow>
+          )}
+          <div className="flex flex-col gap-3 border-t border-line px-4 py-3.5">
+            <div className="flex items-baseline justify-between">
+              <span id="cap-label" className="text-[15px] font-semibold">
+                Most one player can stake
+              </span>
+              <span className="font-display text-base font-bold text-live">{fmt(cap)}</span>
+            </div>
+            <Slider
+              aria-labelledby="cap-label"
+              min={0}
+              max={ENTRY_TIERS.length - 1}
+              step={1}
+              value={[capIndex]}
+              onValueChange={([v]) => setCapIndex(v)}
+              className="px-3"
+            />
+            <p className="text-xs text-muted-foreground">Across all their predictions on the match.</p>
+          </div>
         </Card>
       </div>
 

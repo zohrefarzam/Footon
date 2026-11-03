@@ -35,7 +35,7 @@ Adding shadcn components: `npx shadcn@latest add <name>`, then **restyle it to t
 
 ```
 src/
-  app/                    routes (/, /welcome, /play, /match/[id], /challenges/new, /styleguide)
+  app/                    routes (/, /welcome, /play, /match/[id], /challenges/new, /challenges/[id], /styleguide)
     (tabs)/               /, /challenges, /live, /me, /fantasy, /wallet, /shop — layout holds the sticky LiveIsland and the Dock (persist across tabs)
     globals.css           ALL design tokens, utilities, keyframes
   components/
@@ -47,12 +47,15 @@ src/
                           match-scoreboard, match-preview, match-days, countdown, back-button, coin, number-ticker, form-bars,
                           progress-ring, team-crest, live, empty-state, match-filter, match-list, invite-strip, streak,
                           prematch-calls, fantasy-unlock, football, ball-switch, splash, splash-gate, nav-icons,
-                          missions, match-tables, shop)
+                          missions, match-tables, shop, prediction-builder, challenge-list,
+                          challenge-gate, boost-badge, level-bar, favourite-clubs)
   lib/
     utils.ts              cn()
     dates.ts              day labels relative to the mock today ("Yesterday", "Thu 5 Nov")
     mock-data.ts          typed mock data mirroring the canvas — replace with API, keep types
-    economy.ts            coin rules: entry tiers, pool split + burn, costs, caps. Never hard-code these in UI
+    economy.ts            coin rules: entry tiers, pool split + burn, costs, caps, prediction stakes + payout. Never hard-code these in UI
+    predictions.ts        prediction types (Win/draw, Goals, Corners, Yellow cards, Red card, Penalty) and their options
+    challenges.ts         challenge + match join, and where each challenge links
     track.ts              analytics stub (shop intent events)
   fonts/                  Barlow Condensed woff2
   proxy.ts                first-run redirect: `/` → `/welcome` until `footon_onboarded` is set
@@ -191,15 +194,20 @@ Rules:
 | `MatchScoreboard` / `CompactScore` | The dotted scoreboard on every match page and its one-line top-bar form. Live: score + `LiveMinute` + clock bar. Upcoming: display kickoff + `Countdown` (today) or the day. Finished: score + FULL TIME. |
 | `Countdown` | Time to kick-off `01:53:39`, ticking; rendered after mount; one static `aria-label`. |
 | `MatchInfo` / `TeamForm` / `MatchNews` | Preview-tab pieces. `MatchInfo` is one divided card: date + kickoff, venue + city, capacity + surface, weather, referee, where to watch (muted lucide icons). `TeamForm`: last five as W/D/L chips, shape-coded (W solid, D dark, L outline), neutral. `MatchNews`: one headline card. |
-| `MatchDays` | The Live tab body: title + "N on now", a **Live only** `BallSwitch` (label turns amber when on) that narrows to live matches; a switch, not a toggle pill, so the on/off state is obvious and turning it off is the same tap, otherwise an underline day strip (two days back to five ahead, Today centred). Each day: "Your matches" pinned, then folding competition groups headed `ENG · England · Premier League`. No CTA: rows are the action. |
+| `MatchDays` | The Live tab body: title + "N on now", a **Live only** `BallSwitch` (label turns amber when on) that narrows to live matches; a switch, not a toggle pill, so the on/off state is obvious and turning it off is the same tap, otherwise an underline day strip (two days back to five ahead, Today centred). Each day: folding competition groups headed `ENG · England · Premier League`. No CTA: rows are the action. |
 | `BallSwitch` | Same size as `Switch`, but the thumb is the `Football`: dimmed when off, full on an amber-soft track when on (it means "live now"), turning slightly as it moves. No extra marks or shadow; keep it quiet. Only for live filters; settings use the plain lime `Switch`. |
-| `LeagueChat` | League chat as a match section: who's watching, thread (yours right, soft-lime), a friend's question as an inline Yes/No card, quick reactions and the composer pinned to the bottom. |
+| `LeagueChat` | League chat as a match section: who's in, thread (yours right, soft-lime), friends' questions as inline Yes/No cards (answering records your pick), quick reactions and the composer pinned to the bottom. The soft-lime + turns the composer into "ask the league": a short question (60 chars, mono counter), your own Yes/No call, and "Post · 250" (`COSTS.chatQuestion`). |
 | `MatchRow` | One-line scoreboard row (~60px) inside a list card: home name + `xs` shield · centre box (score or kickoff, with amber live minute / day / FT under it; amber-soft while live) · shield + away name · "you" column (lime `+points` and a `StreakFlame` for a hot streak, or calls made before kickoff; chevron if you're not in). Every row links: your live match → `/play`, everything else → `/match/[id]`. Names become 3-letter codes under 360px. |
 | `MatchList` | Now/Today/Upcoming `SegmentedTabs` that actually filter one divided list of `MatchRow`s. |
-| `InviteStrip` | All pending league invites as a swipeable row of cards (Challenges) (who, league, stake, match, members; Decline / Join). Join is `secondary` since several show at once; joined cards turn soft-lime. Header has "See all" → `/invites`. |
+| `InviteStrip` | All pending league invites as a swipeable row of cards (Challenges) (who, league, stake, match, members; Decline / Join). Join is `secondary` since several show at once; joined cards turn soft-lime with "Open" → `/challenges/[id]` (the next step). Header has "See all" → `/invites`. |
 | `InviteRow` | One invite as a row in the `/invites` list (one divided card): crests + match, members, coin limit. Join / ✕ resolve in place: drawn check "You're in …", or "Declined" with Undo. |
 | `StreakFlame` | Hot streak (`streak ≥ HOT_STREAK`, 3): amber-soft pill, lucide `Flame` + count in display font. Amber because a streak is a boost. Pops in once, never loops. |
-| `PrematchCalls` | Pre-match questions on `/match/[id]`, each with a Yes/No toggle (soft-lime when picked) and one lime "Lock in N calls". |
+| `PredictionBuilder` | Your own predictions on a match (Predict tab of `/match/[id]` and `/challenges/[id]`). Type tiles (Win / draw, Goals, Corners, Yellow cards, Red card, Penalty) toggle rows into one divided slip; each row: options as soft-lime radio chips, a coin stake (numeric field + `STAKE_STEPS` chips, at least `PREDICTION_MIN_STAKE`), and what it wins (`payout()`). A challenge's `rules` can fix the stake ("set by Sara") and cap the total. One lime "Lock in N predictions · cost"; over the cap / short of coins / unpicked → disabled with the reason (short adds "Ways to earn"). Locked slips stay editable until kickoff (secondary "Edit predictions"); after kickoff they read back ✓ Right / ✗ Wrong. |
+| `ChallengeList` / `ChallengeRow` | Challenges as Joined · Invited · Expired `SegmentedTabs` over one divided card. Row: name (+ `BoostBadge`), match codes + time, who made it, entry, players, then your place / "Invite" / "Expired". Every row opens `/challenges/[id]` (your live one → `/play`). `ChallengeRow` is reused on Home. |
+| `ChallengeGate` | An invite on its challenge page: the rules (entry, stake per prediction, cap, pool), secondary Decline + lime "Accept · entry". Accepting reveals the `PredictionBuilder` in place; declining leaves Undo. |
+| `BoostBadge` | A big match (`match.boost`): amber-soft pill, lucide `Zap` + "2x" (amber: it's a boost). On `MatchRow` (amber "2x" over the day), challenge rows, Home's big matches, the scoreboard ("Wins pay 2x") and the builder. Boosts coins a right prediction wins, never points. |
+| `LevelBar` | XP · Level · Badges strip under the live island on every dock tab (`app/(tabs)/layout.tsx`) → `/me#level`. Neutral fill, never lime. **Placeholder** until the gamification doc lands. |
+| `FavouriteClubs` | Profile's "Your clubs": crest chips with ✕, "Add club" opens a sheet with the onboarding crest grid (`aria-pressed`, soft-lime when picked). |
 | `SegmentedTabs` | 2–4 filters with sliding lime pill. |
 | `CoinBadge` / `Coin` / `CoinAmount` | Wallet pill. Coins are always amber with an "F". `CoinAmount` is a coin figure in a row: gains amber, spends neutral with a minus (an entry isn't a loss). |
 | `StarterMissions` | First-week missions (15,000 over 7 days): progress, open rows first, done rows muted with the reason they paid. |
@@ -221,15 +229,16 @@ Rules:
 
 - **Splash → Onboarding (`/welcome`):** the launch splash (from `SplashGate`), then 3 steps with a segmented progress bar, back button and wallet badge (ticks to 10,000 on claim). 1) Try one: dealt card stack; the sample question resolves to a right/wrong result; Continue is `secondary` until answered, then lime. 2) Pick clubs: crest tiles with `aria-pressed`, soft-lime when selected. 3) Claim: coin stack + ticking amount, the three numbered steps, lime "Claim 10,000 coins". Claiming or "Skip to Home" sets the `footon_onboarded` cookie. Links to `/` from here use `prefetch={false}` so a pre-cookie redirect isn't cached.
 - **Onboarding (canvas):** dealt card stack on a dotted canvas with one real sample question; three steps as a single numbered row; lime CTA "Claim 10,000 coins" with an inset arrow; "Skip to Home" as a text link.
-- **Home:** (sticky island from the tabs layout) → "Your matches" → one row of two compact tiles (`InviteTile` → `/invites`, `FantasyUnlock` → `/fantasy`) → segmented filter → one card of one-line scoreboard rows → dock. The match list gets the screen; keep anything else on Home tile-sized.
+- **Home = yours:** (sticky island + `LevelBar` from the tabs layout) → **Your challenges** (joined, live first; `ChallengeRow`) → **Open predictions** (upcoming matches with a slip, "N predictions · edit until 21:00" → Predict) → two compact tiles (`InviteTile`, `FantasyUnlock`) → **Big matches · Wins pay 2x** (`MatchRow`s) → secondary "Browse all matches" → `/live`. Nothing on → `EmptyState`. Browsing every fixture is the Live tab's job; don't put the full match list back on Home.
 - **Create league:** close button, a live **invite ticket** (lime, notched, dashed tear line) that updates as you edit; name input, stake slider, mode switches, reward note, then `Copy` (secondary) + `Create and share` (lime).
-- **Live tab (`/live`):** FotMob's Matches screen via `MatchDays`: title + "Live only" switch → day strip (Yesterday · **Today** · Tomorrow · dates) → "Your matches" (anything you have calls on) → one folding card per competition. No lime CTA here: your live match row and the island's "Q4 open" already take you in. Your live match → `/play`; everything else → `/match/[id]`.
-- **Match page (`/match/[id]`, focus mode):** same `MatchCentre` frame as live. Upcoming: **Preview** (your pre-match calls with the one lime "Lock in", `CrowdPoll`, `MatchInfo`, `TeamForm`, `MatchNews`) · Table · H2H. Finished: **Result** (your +points, streak, right/wrong bars) · Facts · Stats · Table · H2H.
+- **Live tab (`/live`):** FotMob's Matches screen via `MatchDays`: title + "Live only" switch → day strip (Yesterday · **Today** · Tomorrow · dates) → one folding card per competition (your own matches live on Home, not pinned here). No lime CTA here: your live match row and the island's "Q4 open" already take you in. Your live match → `/play`; everything else → `/match/[id]`.
+- **Match page (`/match/[id]`, focus mode):** same `MatchCentre` frame as live. Upcoming: **Predict** (`PredictionBuilder` with the one lime "Lock in", `MatchTables`, `CrowdPoll`) · **Preview** (`MatchInfo`, `TeamForm`, `MatchNews`) · Table · H2H. Finished: **Result** (your +points, streak, right/wrong bars, your resolved predictions, coins) · Facts · Stats · Table · H2H.
+- **Challenge page (`/challenges/[id]`, focus mode):** `MatchCentre` titled with the league. **Predict** (invited → `ChallengeGate`, then the builder with the league's rules; joined → the builder; expired → a read-only note, nothing charged) · Chat (once you're in) · League (players, pool) · Match (preview or facts). Your league's live match redirects to `/play`.
 - **Live match (`/play` for your league, `/match/[id]` for any other live match; focus mode, no dock):** `LiveMatch`. FotMob's flow (score always visible, everything one tap away in sticky section tabs), Footon's job: Predict is the first tab, and the question card is the first thing in it. Chat is its own tab, not a panel under the details.
 - **Full time:** ticking `+450`, streak pill with lime "Next match 2x", podium (yours lime-soft, tallest), match-timeline of calls (lime filled dots = right, red rings = wrong), rematch chat replies, lime "Rematch with same friends".
 - **Fantasy (`/fantasy`, was My team):** stats header (display 56), striped pitch with shirt tokens (selected = lime, captain = amber "C"), captain + transfers list, lime "Save lineup".
-- **Create league:** entry slider uses `ENTRY_TIERS`; the pool preview under it; the lime CTA carries the total cost (create + your entry). Short of coins → disabled "Need N more coins" + "Ways to earn".
-- **Profile:** silver league card (light zinc, dotted, slight 3D tilt on hover) with score + 30-tick rank strip, recent-form card (win rate, won/lost/void, full-width `FormBars`), amber boost tokens, achievement tiles, collection list (locked rows muted with a lock).
+- **Create league:** entry slider uses `ENTRY_TIERS`; the pool preview under it; "Prediction stakes": a "Same stake for everyone" switch with `STAKE_STEPS` chips and a "Most one player can stake" cap slider (both shown on the ticket); the lime CTA carries the total cost (create + your entry). Short of coins → disabled "Need N more coins" + "Ways to earn".
+- **Profile:** silver league card (light zinc, dotted, slight 3D tilt on hover) with score + 30-tick rank strip, recent-form card (win rate, won/lost/void, full-width `FormBars`), a Level card (`#level`, placeholder XP / badges), `FavouriteClubs`, amber boost tokens, achievement tiles, collection list (locked rows muted with a lock).
 
 ## Economy (coins, points, prizes)
 
@@ -239,6 +248,7 @@ From the Footon economy doc. Numbers live in `lib/economy.ts`; mock state in `mo
 - **Two tables per match.** Free table always open (top 3 get 400/300/200, 2,000/week cap). Coin table = a friends' league pool, entry 500 / 1,500 / 2,500 (the cap). 5% of each pool burns; under 5 players the winner takes the rest, from 5 it's 70/30. Use `splitPool()`.
 - **Coins are earned with a reason.** Starter coins come mission by mission (onboarding pays only mission one, 1,000); every coin row says why ("Watched to the end").
 - **Never sell pressure.** No shop or purchase prompt after a loss or on a low balance, no fake timers, no "sold out". Short of coins → say how many and link to ways to earn (`/wallet`). The shop is reached only from the Wallet header.
+- **Predictions carry a coin stake.** Each prediction costs a stake (the player's pick, at least `PREDICTION_MIN_STAKE`, or the challenge's fixed amount); a challenge can cap the total per player. A right one pays `payout()` = stake × `PAYOUT_MULTIPLIER` (2), ×`BOOST_MULTIPLIER` again on a big (`boost`) match, plus `POINTS_PER_RIGHT_CALL` points. Stakes and payouts are coins (amber); rank still reads points only.
 - **Never sell advantage.** Nothing that earns points (the 2x boost) is for sale; no mystery boxes; coins can't be cashed out or sent. Packs are 18+ with a monthly limit.
 - **Wallet (`/wallet`):** balance + Points/Coins/Prizes strip, first-week missions, this week's mission and caps (amber bars: allowances), ways to earn, activity, the rules line.
 - **Shop (`/shop`, Phase 2):** real items and prices, no payment. Tap → "Coming soon" sheet → "Notify me". We measure opens, item taps, notify taps.

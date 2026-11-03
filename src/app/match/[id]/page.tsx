@@ -11,11 +11,11 @@ import { CompactScore, MatchScoreboard } from "@/components/footon/match-scorebo
 import { MatchStats } from "@/components/footon/match-stats";
 import { MatchTables } from "@/components/footon/match-tables";
 import { HeadToHead, MatchTable } from "@/components/footon/match-table";
-import { PrematchCalls } from "@/components/footon/prematch-calls";
+import { PredictionBuilder } from "@/components/footon/prediction-builder";
 import { CoinAmount } from "@/components/footon/coin";
 import { StreakFlame } from "@/components/footon/streak";
 import { Card } from "@/components/ui/card";
-import { challenges, HOT_STREAK, matches, prematchQuestions, type Match } from "@/lib/mock-data";
+import { challenges, HOT_STREAK, matches, predictionSlips, wallet, type Match } from "@/lib/mock-data";
 import { cn } from "@/lib/utils";
 
 export function generateStaticParams() {
@@ -84,7 +84,7 @@ function YourCoins({ match: m }: { match: Match }) {
 /**
  * Any match, in the FotMob match-page frame (scoreboard → sticky section tabs):
  *   live     → LiveMatch (your league's live match lives at /play)
- *   upcoming → Preview (your calls, who wins, match info, form, news) · Table · H2H
+ *   upcoming → Predict (your predictions, the two tables, who wins) · Preview (info, form, news) · Table · H2H
  *   finished → Result · Facts · Stats · Table · H2H
  */
 export default async function MatchPage({ params }: PageProps<"/match/[id]">) {
@@ -101,33 +101,38 @@ export default async function MatchPage({ params }: PageProps<"/match/[id]">) {
   }
 
   const done = m.status === "finished";
-  const questions = prematchQuestions.map((q) => ({
-    ...q,
-    text: q.text.replace("{home}", m.home.name).replace("{away}", m.away.name),
-  }));
+  const pool = challenges.find((c) => c.matchId === m.id && c.status === "joined");
 
-  const pool = challenges.find((c) => c.matchId === m.id && c.status === "active");
+  const builder = (
+    <PredictionBuilder
+      match={{ id: m.id, status: m.status, kickoff: m.kickoff, home: m.home.name, away: m.away.name, boost: !!m.boost }}
+      initial={predictionSlips[m.id]}
+      rules={pool && { ...pool.rules, league: pool.name, setBy: pool.mine ? undefined : pool.from?.name }}
+      balance={wallet.coins}
+    />
+  );
 
-  const preview = (
+  const predict = (
     <>
+      {builder}
       <MatchTables
-        joinedFree={!!m.you?.calls}
-        coin={pool && { league: pool.name, entry: pool.entry, players: pool.members.length, href: "/challenges" }}
+        joinedFree={!!m.you?.calls || !!predictionSlips[m.id]?.length}
+        coin={pool && { league: pool.name, entry: pool.entry, players: pool.members.length, href: `/challenges/${pool.id}` }}
       />
-      <PrematchCalls questions={questions} made={m.you?.calls ?? 0} />
       {m.crowd && <CrowdPoll home={m.home} away={m.away} crowd={m.crowd} />}
-      {m.preview ? (
-        <>
-          <MatchInfo match={m} preview={m.preview} />
-          <TeamForm home={m.home} away={m.away} form={m.preview.form} />
-          {m.preview.news && <MatchNews news={m.preview.news} />}
-        </>
-      ) : (
-        <p className="rounded-xl border border-dashed border-line-strong px-4 py-6 text-center text-sm text-muted-foreground">
-          Team news and match info land here closer to kickoff.
-        </p>
-      )}
     </>
+  );
+
+  const preview = m.preview ? (
+    <>
+      <MatchInfo match={m} preview={m.preview} />
+      <TeamForm home={m.home} away={m.away} form={m.preview.form} />
+      {m.preview.news && <MatchNews news={m.preview.news} />}
+    </>
+  ) : (
+    <p className="rounded-xl border border-dashed border-line-strong px-4 py-6 text-center text-sm text-muted-foreground">
+      Team news and match info land here closer to kickoff.
+    </p>
   );
 
   const sections: MatchSection[] = [
@@ -139,6 +144,7 @@ export default async function MatchPage({ params }: PageProps<"/match/[id]">) {
             content: (
               <>
                 <YourResult match={m} />
+                {predictionSlips[m.id]?.length ? builder : null}
                 <YourCoins match={m} />
               </>
             ),
@@ -150,7 +156,10 @@ export default async function MatchPage({ params }: PageProps<"/match/[id]">) {
           },
           ...(m.stats?.length ? [{ value: "stats", label: "Stats", content: <MatchStats stats={m.stats} home={m.home.name} away={m.away.name} /> }] : []),
         ]
-      : [{ value: "preview", label: "Preview", content: preview }]),
+      : [
+          { value: "predict", label: "Predict", content: predict },
+          { value: "preview", label: "Preview", content: preview },
+        ]),
     ...(m.table
       ? [{ value: "table", label: "Table", content: <MatchTable rows={m.table} playing={[m.home.code, m.away.code]} competition={m.competition} /> }]
       : []),

@@ -1,10 +1,11 @@
 import { Dock } from "@/components/footon/dock";
+import { LevelBar } from "@/components/footon/level-bar";
 import { LiveIsland } from "@/components/footon/live-island";
-import { liveQuestion, matches, wallet } from "@/lib/mock-data";
+import { liveQuestion, matches, profile, wallet } from "@/lib/mock-data";
 
 /**
  * Shared shell for the dock tabs (Home, Challenges, Live, Profile, plus Fantasy).
- * The island and the dock live here, not in each page, so they stay pinned and
+ * The island, the level bar and the dock live here, not in each page, so they stay pinned and
  * keep their state while you switch tabs.
  */
 export default function TabsLayout({ children }: LayoutProps<"/">) {
@@ -33,6 +34,10 @@ export default function TabsLayout({ children }: LayoutProps<"/">) {
             }
           />
         </div>
+      </div>
+      {/* XP · level · badges: scrolls with the page, under the island */}
+      <div className="mx-auto w-full max-w-[430px] bg-background px-5 pt-1">
+        <LevelBar level={profile.level} xp={profile.xp} xpNext={profile.xpNext} badges={profile.badges} />
       </div>
       {children}
       <Dock live={!!live} />

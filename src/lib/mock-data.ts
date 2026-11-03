@@ -4,6 +4,7 @@
  */
 import type { Outcome } from "@/components/footon/form-bars";
 import type { LiveQuestion } from "@/components/footon/question-card";
+import type { Prediction } from "@/lib/predictions";
 
 /** `colors` = [shirt, trim]; drives the placeholder crest. */
 export type Team = { code: string; name: string; colors?: [string, string] };
@@ -45,6 +46,11 @@ export type Match = {
   stats?: MatchStat[];
   /** The headline quick call shown on the match card. */
   market?: Market;
+  /**
+   * A big match: every coin a right prediction wins pays back this many times
+   * over (shown as the amber "2x" boost). Points are never boosted here.
+   */
+  boost?: 2;
   /** Live: how many of tonight's questions have been asked so far. */
   progress?: { asked: number; total: number };
   /** How the crowd called the result, in %, the most-called score and how many voted. */
@@ -221,6 +227,7 @@ export const matches: Match[] = [
     kickoff: "21:00",
     caption: "Tonight",
     competition: "Premier League",
+    boost: 2,
     you: { calls: 2, right: 0, points: 0, streak: 0 },
     market: { id: "mk-ars-1", question: "Arsenal win?", yesShare: 47 },
     crowd: { home: 47, draw: 28, away: 25, topScore: [2, 1], votes: 9310 },
@@ -293,6 +300,7 @@ export const matches: Match[] = [
     dayOffset: 4,
     caption: "Premier League",
     competition: "Premier League",
+    boost: 2,
     market: { id: "mk-mun-1", question: "Liverpool win at Old Trafford?", yesShare: 52 },
   },
   {
@@ -363,24 +371,6 @@ matches.push(
   },
 );
 
-export type Invite = {
-  id: string;
-  from: string;
-  initial: string;
-  league: string;
-  /** Coins each player puts in the pool (one of ENTRY_TIERS). */
-  entry: number;
-  /** Who's already in, by initial. */
-  members: string[];
-  matchId: string;
-};
-
-export const invites: Invite[] = [
-  { id: "inv-1", from: "Sara", initial: "S", league: "Derby night", entry: 1500, members: ["S", "M", "R"], matchId: "ars-che" },
-  { id: "inv-2", from: "Omid", initial: "O", league: "Office five", entry: 500, members: ["O", "K"], matchId: "new-tot" },
-  { id: "inv-3", from: "Lena", initial: "L", league: "North West", entry: 2500, members: ["L", "J", "P", "A"], matchId: "mun-liv" },
-];
-
 export const fantasyProgress = { done: 3, total: 5 };
 
 export const league = {
@@ -412,7 +402,7 @@ export const chat = {
     { from: "You", initial: "Y", text: "Going No on that one", you: true },
     { from: "Sara", initial: "S", text: "You will miss that one." },
   ],
-  friendQuestion: { from: "Omid", initial: "O", text: "Yellow card before 80'?", closes: "80'" },
+  questions: [{ id: "fq-1", from: "Omid", initial: "O", text: "Yellow card before 80'?", closes: "80'" }],
   reactions: ["VAR!", "Offside", "What a save"],
 };
 
@@ -452,33 +442,159 @@ export const onboarding = {
   ] satisfies Team[],
 };
 
-/** Calls you can make before kickoff. `{home}` / `{away}` are filled with team names. */
-export const prematchQuestions = [
-  { id: "pq-1", text: "Goal before 30'?" },
-  { id: "pq-2", text: "{home} ahead at 90'?" },
-  { id: "pq-3", text: "Both teams score by 90'?" },
-  { id: "pq-4", text: "Yellow card before 45'?" },
-];
+/**
+ * How a challenge prices its predictions. `stake: "free"` = each player picks
+ * their own stake per prediction (at least the type's minimum); `{ fixed }` =
+ * the creator set one stake for every prediction. `cap` = the most one player
+ * can stake across all their predictions on the match.
+ */
+export type ChallengeRules = { stake: "free" | { fixed: number }; cap?: number };
 
-/** A friends' challenge (a small league on one match). `mine` = you created it. */
+/**
+ * A friends' challenge (a small league on one match).
+ *   invited  → someone asked you in; Accept / Decline on its page
+ *   joined   → you're in; predictions open until kickoff
+ *   expired  → the invite closed at kickoff before you answered
+ *   finished → the match is over and the pool settled
+ * `mine` = you created it.
+ */
 export type Challenge = {
   id: string;
   name: string;
   matchId: string;
-  /** Coins each player puts in the pool. */
+  /** Coins each player puts in the pool (one of ENTRY_TIERS). */
   entry: number;
+  /** Who's in, by initial ("Y" is you). */
   members: string[];
-  status: "active" | "finished";
+  status: "invited" | "joined" | "expired" | "finished";
+  rules: ChallengeRules;
+  /** Who invited you (absent when it's yours). */
+  from?: { name: string; initial: string };
   mine?: boolean;
   /** Your place, once calls have resolved. */
   rank?: number;
 };
 
 export const challenges: Challenge[] = [
-  { id: "ch-1", name: "Sunday Rivals", matchId: "liv-mci", entry: 500, members: ["Y", "S", "O"], status: "active", mine: true, rank: 1 },
-  { id: "ch-2", name: "Derby night", matchId: "ars-che", entry: 1500, members: ["S", "M", "R", "Y"], status: "active" },
-  { id: "ch-3", name: "Seaside", matchId: "bha-eve", entry: 500, members: ["Y", "K"], status: "finished", mine: true, rank: 1 },
+  { id: "ch-1", name: "Sunday Rivals", matchId: "liv-mci", entry: 500, members: ["Y", "S", "O"], status: "joined", mine: true, rank: 1, rules: { stake: "free", cap: 2500 } },
+  {
+    id: "ch-2",
+    name: "Derby night",
+    matchId: "ars-che",
+    entry: 1500,
+    members: ["S", "M", "R", "Y"],
+    status: "joined",
+    from: { name: "Sara", initial: "S" },
+    rules: { stake: { fixed: 250 }, cap: 1500 },
+  },
+  {
+    id: "ch-4",
+    name: "Office five",
+    matchId: "new-tot",
+    entry: 500,
+    members: ["O", "K"],
+    status: "invited",
+    from: { name: "Omid", initial: "O" },
+    rules: { stake: { fixed: 100 }, cap: 1000 },
+  },
+  {
+    id: "ch-5",
+    name: "North West",
+    matchId: "mun-liv",
+    entry: 2500,
+    members: ["L", "J", "P", "A"],
+    status: "invited",
+    from: { name: "Lena", initial: "L" },
+    rules: { stake: "free", cap: 2500 },
+  },
+  { id: "ch-3", name: "Seaside", matchId: "bha-eve", entry: 500, members: ["Y", "K"], status: "finished", mine: true, rank: 1, rules: { stake: "free" } },
+  {
+    id: "ch-6",
+    name: "Claret and blue",
+    matchId: "avl-whu",
+    entry: 500,
+    members: ["K", "J"],
+    status: "expired",
+    from: { name: "Kian", initial: "K" },
+    rules: { stake: "free", cap: 1000 },
+  },
+  {
+    id: "ch-7",
+    name: "Ligue 1 nerds",
+    matchId: "lor-bre",
+    entry: 1500,
+    members: ["P", "A", "R"],
+    status: "expired",
+    from: { name: "Paul", initial: "P" },
+    rules: { stake: { fixed: 250 } },
+  },
 ];
+
+/** A pending invite, as the invite tile / strip / rows read it. `id` is the challenge id. */
+export type Invite = {
+  id: string;
+  from: string;
+  initial: string;
+  league: string;
+  entry: number;
+  members: string[];
+  matchId: string;
+  rules: ChallengeRules;
+};
+
+export const invites: Invite[] = challenges
+  .filter((c) => c.status === "invited")
+  .map((c) => ({
+    id: c.id,
+    from: c.from?.name ?? "",
+    initial: c.from?.initial ?? "",
+    league: c.name,
+    entry: c.entry,
+    members: c.members,
+    matchId: c.matchId,
+    rules: c.rules,
+  }));
+
+/**
+ * Predictions you've already locked, by match. Before kickoff they stay
+ * editable; once a match is on, `result` marks how each one went.
+ */
+export const predictionSlips: Record<string, Prediction[]> = {
+  "ars-che": [
+    { id: "p-1", type: "result", pick: "1", stake: 250 },
+    { id: "p-2", type: "corners", pick: "Over 9.5", stake: 250 },
+  ],
+  "bha-eve": [
+    { id: "p-3", type: "result", pick: "1", stake: 250, result: "right" },
+    { id: "p-4", type: "goals", pick: "Over 2.5", stake: 250, result: "right" },
+    { id: "p-5", type: "red", pick: "Yes", stake: 200, result: "wrong" },
+  ],
+};
+
+/** Chat before kickoff, for a challenge whose match hasn't started. */
+export const prematchChat = {
+  messages: [
+    { from: "Sara", initial: "S", text: "Calling it now, two goals before half time" },
+    { from: "You", initial: "Y", text: "Bold. I've gone over on the corners", you: true },
+    { from: "Max", initial: "M", text: "Anyone else smell a red card?" },
+  ],
+  questions: [{ id: "fq-pre", from: "Sara", initial: "S", text: "Saka scores first?", closes: "kickoff" }],
+  reactions: ["Told you", "Easy", "Not again"],
+};
+
+/** First names for the initials in league member lists. */
+export const people: Record<string, string> = {
+  Y: "You",
+  S: "Sara",
+  O: "Omid",
+  M: "Max",
+  R: "Reza",
+  K: "Kian",
+  L: "Lena",
+  J: "Jonas",
+  P: "Paul",
+  A: "Aria",
+};
 
 export const profile = {
   name: "You",
@@ -489,7 +605,10 @@ export const profile = {
   xpNext: 1000,
   streak: { current: 3, best: 6 },
   referral: { code: "FOOT-Y7K2", bonus: 1500, joined: 2 },
-  favoriteTeam: "LIV",
+  /** Clubs you follow; picked in onboarding, edited on Profile. */
+  favoriteTeams: ["LIV"],
+  /** Placeholder until the XP / Level / Badge doc lands. */
+  badges: 3,
   /** Calls you have running right now (shown in the island). */
   activeCalls: 2,
 };

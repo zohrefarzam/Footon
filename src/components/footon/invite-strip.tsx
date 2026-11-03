@@ -12,9 +12,10 @@ import type { Invite, Match } from "@/lib/mock-data";
 export type InviteWithMatch = Invite & { match: Match };
 
 /**
- * Every pending league invite in one swipeable row on Home. Each card: who,
+ * Every pending league invite in one swipeable row on Challenges. Each card: who,
  * which league and stake, the match and kickoff, who's in, Decline / Join.
- * Declined cards fold away; joined cards stay, marked soft-lime.
+ * Declined cards fold away; joined cards stay, marked soft-lime, with Open →
+ * the challenge page (the next step: predictions and chat).
  */
 export function InviteStrip({ invites }: { invites: InviteWithMatch[] }) {
   const [declined, setDeclined] = useState<string[]>([]);
@@ -113,15 +114,14 @@ export function InviteStrip({ invites }: { invites: InviteWithMatch[] }) {
                       </div>
                       <AnimatePresence mode="wait" initial={false}>
                         {isIn ? (
-                          <motion.span
-                            key="in"
-                            initial={{ opacity: 0, scale: 0.8 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            className="flex h-9 items-center gap-1.5 px-1 text-sm font-semibold text-primary"
-                            aria-live="polite"
-                          >
-                            <Check className="size-4" strokeWidth={2.6} />
-                            You&apos;re in
+                          <motion.span key="in" initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} aria-live="polite">
+                            <Button asChild variant="soft" className="h-9 rounded-sm px-3 text-sm">
+                              <Link href={`/challenges/${inv.id}`} aria-label={`You're in ${inv.league}. Open challenge`}>
+                                <Check className="size-4" strokeWidth={2.6} />
+                                Open
+                                <ChevronRight className="size-4 rtl:rotate-180" />
+                              </Link>
+                            </Button>
                           </motion.span>
                         ) : (
                           <motion.div key="join" exit={{ opacity: 0, scale: 0.8 }}>

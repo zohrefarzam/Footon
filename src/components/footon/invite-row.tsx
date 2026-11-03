@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
-import { X } from "lucide-react";
+import Link from "next/link";
+import { ChevronRight, X } from "lucide-react";
 
 import { Avatar, AvatarFallback, AvatarGroup } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -107,8 +108,14 @@ export function InviteRow({ invite }: { invite: InviteWithMatch }) {
             </span>
             <div className="min-w-0 flex-1">
               <p className="truncate text-[15px] font-semibold">You&apos;re in {invite.league}</p>
-              <p className="text-xs text-muted-foreground">Questions open at kickoff, {m.kickoff}</p>
+              <p className="text-xs text-muted-foreground">Set your predictions before {m.kickoff}</p>
             </div>
+            <Button asChild variant="soft" size="sm" className="h-9 rounded-sm px-3">
+              <Link href={`/challenges/${invite.id}`}>
+                Open
+                <ChevronRight className="rtl:rotate-180" />
+              </Link>
+            </Button>
           </motion.div>
         )}
 

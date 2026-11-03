@@ -1,6 +1,7 @@
 import { dayLabel } from "@/lib/dates";
 import type { Match } from "@/lib/mock-data";
 import { cn } from "@/lib/utils";
+import { BoostBadge } from "./boost-badge";
 import { Countdown } from "./countdown";
 import { LiveMinute } from "./live";
 import { TeamCrest } from "./team-crest";
@@ -60,6 +61,7 @@ export function MatchScoreboard({ match: m }: { match: Match }) {
               ) : (
                 <span className="text-[13px] font-medium text-muted-foreground">{dayLabel(m.dayOffset)}</span>
               )}
+              {m.boost && <BoostBadge label="Wins pay" className="mt-1" />}
             </>
           ) : (
             <>

@@ -41,20 +41,17 @@ function Group({ title, code, list }: { title: string; code?: string; list: Matc
   );
 }
 
-/** Your matches pinned first (FotMob's "Following"), then one group per competition. */
+/** One group per competition, in the competitions' order. Your own matches live on Home. */
 function Groups({ list, empty }: { list: Match[]; empty: string }) {
   if (!list.length)
     return (
       <p className="bg-dots rounded-[20px] border border-dashed border-line-strong px-6 py-10 text-center text-sm text-muted-foreground">{empty}</p>
     );
-  const yours = list.filter((m) => m.you || m.league);
-  const rest = list.filter((m) => !(m.you || m.league));
-  const comps = [...new Set(rest.map((m) => m.competition))].toSorted((a, b) => compOrder.indexOf(a) - compOrder.indexOf(b));
+  const comps = [...new Set(list.map((m) => m.competition))].toSorted((a, b) => compOrder.indexOf(a) - compOrder.indexOf(b));
   return (
     <>
-      {yours.length > 0 && <Group title="Your matches" list={yours} />}
       {comps.map((c) => (
-        <Group key={c} title={`${competitions[c]?.country ?? ""} · ${c}`} code={competitions[c]?.code} list={rest.filter((m) => m.competition === c)} />
+        <Group key={c} title={`${competitions[c]?.country ?? ""} · ${c}`} code={competitions[c]?.code} list={list.filter((m) => m.competition === c)} />
       ))}
     </>
   );

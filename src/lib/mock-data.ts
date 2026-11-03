@@ -33,6 +33,8 @@ export type Match = {
   day?: string;
   /** Short context line: your league on this match, or the competition. */
   caption: string;
+  /** Competition, for grouping the live list ("Premier League"). */
+  competition: string;
   /** Set when you play this match in one of your leagues. */
   league?: string;
   /** Your stake in this match, when you've made calls on it. */
@@ -45,8 +47,8 @@ export type Match = {
   market?: Market;
   /** Live: how many of tonight's questions have been asked so far. */
   progress?: { asked: number; total: number };
-  /** How the crowd called the result, in %, plus the most-called score. */
-  crowd?: { home: number; draw: number; away: number; topScore: [number, number] };
+  /** How the crowd called the result, in %, the most-called score and how many voted. */
+  crowd?: { home: number; draw: number; away: number; topScore: [number, number]; votes: number };
   lineups?: { home: Lineup; away: Lineup };
   /** Last meetings, from the home side's view. */
   h2h?: { won: number; drawn: number; lost: number };
@@ -82,6 +84,7 @@ export const matches: Match[] = [
     minute: 67,
     score: [1, 1],
     caption: "Sunday Rivals · limit 500",
+    competition: "Premier League",
     league: "Sunday Rivals",
     you: { calls: 4, right: 3, points: 120, streak: 3 },
     events: [
@@ -101,7 +104,7 @@ export const matches: Match[] = [
     boost: 10,
     market: { id: "mk-liv-1", question: "Next corner before 75'?", yesShare: 58, closesIn: 38, stakes: [100, 500] },
     progress: { asked: 7, total: 10 },
-    crowd: { home: 41, draw: 33, away: 26, topScore: [2, 1] },
+    crowd: { home: 41, draw: 33, away: 26, topScore: [2, 1], votes: 18412 },
     h2h: { won: 2, drawn: 2, lost: 1 },
     table: [
       { pos: 1, code: "LIV", played: 11, gd: 14, points: 27 },
@@ -144,15 +147,53 @@ export const matches: Match[] = [
     },
   },
   {
+    id: "bet-sev",
+    home: { code: "BET", name: "Real Betis", colors: ["#00954C", "#FFFFFF"] },
+    away: { code: "SEV", name: "Sevilla", colors: ["#F43333", "#FFFFFF"] },
+    status: "live",
+    minute: 35,
+    score: [1, 0],
+    caption: "LaLiga",
+    competition: "LaLiga",
+    events: [
+      { minute: 12, side: "away", player: "Agoumé", kind: "yellow" },
+      { minute: 29, side: "home", player: "Isco", kind: "goal" },
+    ],
+    stats: [
+      { label: "Possession", home: 58, away: 42, unit: "%" },
+      { label: "Shots", home: 6, away: 3 },
+      { label: "Corners", home: 3, away: 1 },
+      { label: "On target", home: 3, away: 1 },
+    ],
+    crowd: { home: 52, draw: 27, away: 21, topScore: [2, 0], votes: 6204 },
+  },
+  {
+    id: "ata-par",
+    home: { code: "ATA", name: "Atalanta", colors: ["#1E71B8", "#000000"] },
+    away: { code: "PAR", name: "Parma", colors: ["#FFDD00", "#1B4094"] },
+    status: "live",
+    minute: 12,
+    score: [0, 0],
+    caption: "Serie A",
+    competition: "Serie A",
+    events: [],
+    stats: [
+      { label: "Possession", home: 63, away: 37, unit: "%" },
+      { label: "Shots", home: 2, away: 0 },
+    ],
+    crowd: { home: 68, draw: 20, away: 12, topScore: [2, 0], votes: 3877 },
+  },
+  {
     id: "ars-che",
     home: { code: "ARS", name: "Arsenal", colors: ["#EF0107", "#FFFFFF"] },
     away: { code: "CHE", name: "Chelsea", colors: ["#034694", "#FFFFFF"] },
     status: "upcoming",
     kickoff: "21:00",
     caption: "Tonight",
+    competition: "Premier League",
     you: { calls: 2, right: 0, points: 0, streak: 0 },
     market: { id: "mk-ars-1", question: "Arsenal win?", yesShare: 47, stakes: [100, 500] },
-    crowd: { home: 47, draw: 28, away: 25, topScore: [2, 1] },
+    crowd: { home: 47, draw: 28, away: 25, topScore: [2, 1], votes: 9310 },
   },
   {
     id: "new-tot",
@@ -161,6 +202,7 @@ export const matches: Match[] = [
     status: "upcoming",
     kickoff: "19:30",
     caption: "Premier League",
+    competition: "Premier League",
     market: { id: "mk-new-1", question: "Both teams score?", yesShare: 64, stakes: [100, 500] },
   },
   {
@@ -170,6 +212,7 @@ export const matches: Match[] = [
     status: "finished",
     score: [2, 0],
     caption: "Premier League",
+    competition: "Premier League",
     you: { calls: 6, right: 5, points: 240, streak: 5 },
   },
   {
@@ -180,6 +223,7 @@ export const matches: Match[] = [
     kickoff: "13:30",
     day: "Sat",
     caption: "Premier League",
+    competition: "Premier League",
     boost: 10,
     market: { id: "mk-mun-1", question: "Liverpool win at Old Trafford?", yesShare: 52, stakes: [100, 500] },
   },
@@ -191,6 +235,7 @@ export const matches: Match[] = [
     kickoff: "16:30",
     day: "Sun",
     caption: "Premier League",
+    competition: "Premier League",
   },
 ];
 

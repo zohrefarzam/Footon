@@ -43,6 +43,10 @@
   --loss-soft: #2a1416;
 
   /* Pitch (Team screen only) */
+  /* Referee cards in the match timeline only (they are the literal card colours) */
+  --booking-yellow: #facc15;
+  --booking-red: #ef4444;
+
   --pitch: #0f1a12;
   --pitch-2: #122016;
   --pitch-line: rgb(255 255 255 / 0.09);
@@ -83,6 +87,8 @@
   --color-win: var(--win);
   --color-loss: var(--loss);
   --color-loss-soft: var(--loss-soft);
+  --color-booking-yellow: var(--booking-yellow);
+  --color-booking-red: var(--booking-red);
   --color-pitch: var(--pitch);
   --color-pitch-2: var(--pitch-2);
   --color-pitch-line: var(--pitch-line);

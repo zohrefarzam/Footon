@@ -42,7 +42,8 @@ src/
     ui/                   shadcn primitives, restyled (button, badge, card, input, label,
                           switch, slider, avatar, separator, progress, dialog, tabs)
     footon/               product components (app-shell, dock, live-island, question-card,
-                          match-row, segmented-tabs, live-focus, coin, number-ticker, form-bars,
+                          match-row, segmented-tabs, match-centre, live-match, crowd-poll,
+                          match-facts, match-stats, match-lineups, match-table, league-chat, coin, number-ticker, form-bars,
                           progress-ring, team-crest, live, empty-state, match-filter, match-list, invite-strip, streak,
                           prematch-calls, fantasy-unlock, football, splash, splash-gate, nav-icons)
   lib/
@@ -98,6 +99,7 @@ All colours are CSS variables on `:root` in `globals.css`, exposed as Tailwind c
 | **Live** | `live` `#FFB547`, `live-soft`, `live-foreground` | "Happening now", "time", "money" | LIVE minute, pulsing dot, countdown ring, coins, boosts | Wins, buttons, selection |
 | **Loss** | `loss` `#F87171`, `loss-soft` | Wrong / lost | Loss bars, wrong calls, destructive actions | Errors that aren't the user's fault (use neutral copy) |
 | Pitch | `pitch`, `pitch-2`, `pitch-line` | The field | Team screen pitch only | Anywhere else |
+| Booking | `booking-yellow`, `booking-red` | A referee's card | The card glyphs in `MatchFacts` and next to a team with a red | Anything that isn't a literal yellow/red card |
 
 Accessibility for colour:
 - Text contrast ≥ 4.5:1 (≥ 3:1 for 24px+). Lime text on dark and dark text on lime both pass; **white text on lime fails**, so don't use it.
@@ -174,8 +176,15 @@ Rules:
 | `Dock` | Floating glass nav, 4 tabs: Home · Challenges · Live · Profile, with the `nav-icons` set. Active item: filled icon + white label + lime dot. The Live tab carries a pulsing `LiveDot` while a match is on. No centre "+": creating lives on the Challenges screen. Fantasy and favourite team are not tabs (Fantasy is reached from its Home card and Profile; favourite team lives in Profile settings). |
 | `LiveIsland` | Sticky top pill on every dock tab, rendered once by `app/(tabs)/layout.tsx`. Left: live minute, score and the open question (lime `Q4 open` chip, soft-lime `Q4 · Yes` once answered); tap to expand over the page and answer in place. Right: the wallet (coins → `/me`). Collapses on scroll, outside tap or Escape. With no live match it shows only the wallet. Pages don't render their own coin badge. |
 | `QuestionCard` | The live question. Yes/No → crowd split + drawn check + shimmer. Timer ring is amber. `compact` = one-row widget. |
-| `LiveFocus` | Live-match layout: full-height column, chat fills the rest; dragging the chat handle folds the match details away and compacts the question. |
-| `MatchRow` | One-line scoreboard row (~60px) inside a list card: home name + `xs` shield · centre box (score or kickoff, with amber live minute / day / FT under it; amber-soft while live) · shield + away name · "you" column (lime `+points` and a `StreakFlame` for a hot streak, or calls made before kickoff; chevron if you're not in). Every row links: live → `/play`, others → `/match/[id]`. Names become 3-letter codes under 360px. |
+| `MatchCentre` | Match page frame (after FotMob): sticky top bar (back · title) → dotted scoreboard that scrolls away (the top bar then crossfades to the compact score + live minute) → sticky underline `Tabs` for sections. Sections arrive as server-rendered nodes; only the frame is client. |
+| `LiveMatch` | A live match in `MatchCentre`. Scoreboard: xl crests, scorers under each name, red-card glyphs, display score, `LiveMinute`, match clock bar. Sections: **Predict** (first, amber dot while a question is open) · Chat · Facts · Stats · Lineups · Table · H2H; a section only shows when there's data. With your league: Predict = `QuestionCard` → league card (standings tiles, "N of M asked", your calls right, streak, lime `+points`) → `CrowdPoll`. Without: `CrowdPoll` + a dashed "Start a league" card (the one lime CTA). |
+| `CrowdPoll` | "Who wins?" 1 · X · 2 poll with the total votes. The split stays hidden until you vote, then each choice fills to its share; yours soft-lime. Free, no coins. On live and upcoming match pages. |
+| `MatchFacts` | Event timeline, newest first: minute pill in a centre column, home events on the start side, away on the end side; goals carry the running score; "Half time" and "Kick-off" rules. Icons: `Football` (goal), booking-card glyphs, lucide `ArrowRightLeft` (sub), `MonitorPlay` (VAR). |
+| `MatchStats` | value · label · value rows with a split bar; the side ahead is bright, the other dims. Neutral, never lime. |
+| `MatchLineups` | `SegmentedTabs` between the two XIs; divided list with the shirt number in display font and the position in mono. No pitch (that colour belongs to Fantasy). |
+| `MatchTable` / `HeadToHead` | Table rows around the match (the two teams raised on `surface-2`, not coloured); last meetings as three display numbers over a split bar. |
+| `LeagueChat` | League chat as a match section: who's watching, thread (yours right, soft-lime), a friend's question as an inline Yes/No card, quick reactions and the composer pinned to the bottom. |
+| `MatchRow` | One-line scoreboard row (~60px) inside a list card: home name + `xs` shield · centre box (score or kickoff, with amber live minute / day / FT under it; amber-soft while live) · shield + away name · "you" column (lime `+points` and a `StreakFlame` for a hot streak, or calls made before kickoff; chevron if you're not in). Every row links: your live match → `/play`, everything else → `/match/[id]`. Names become 3-letter codes under 360px. |
 | `MatchList` | Now/Today/Upcoming `SegmentedTabs` that actually filter one divided list of `MatchRow`s. |
 | `InviteStrip` | All pending league invites as a swipeable row of cards (Challenges) (who, league, stake, match, members; Decline / Join). Join is `secondary` since several show at once; joined cards turn soft-lime. Header has "See all" → `/invites`. |
 | `InviteRow` | One invite as a row in the `/invites` list (one divided card): crests + match, members, coin limit. Join / ✕ resolve in place: drawn check "You're in …", or "Declined" with Undo. |
@@ -202,7 +211,8 @@ Rules:
 - **Home:** (sticky island from the tabs layout) → "Your matches" → one row of two compact tiles (`InviteTile` → `/invites`, `FantasyUnlock` → `/fantasy`) → segmented filter → one card of one-line scoreboard rows → dock. The match list gets the screen; keep anything else on Home tile-sized.
 - **Match (`/match/[id]`, focus mode):** back + competition; dotted scoreboard (xl crests, display kickoff or score). Upcoming → `PrematchCalls`. Finished → "You scored +240", a `StreakFlame`, right/wrong bars (tall lime vs short red) and "5 of 6 calls right".
 - **Create league:** close button, a live **invite ticket** (lime, notched, dashed tear line) that updates as you edit; name input, stake slider, mode switches, reward note, then `Copy` (secondary) + `Create and share` (lime).
-- **Live match (focus mode, no dock):** back + league + LIVE minute; huge display score; match progress bar; 3 standings tiles (yours soft-lime); question card stack; chat panel filling the rest of the screen (drag its handle up to fold the match details and compact the question) with message bubbles (yours right, soft-lime), a friend's question as an inline Yes/No card, quick-reaction chips, a soft "+" ask button and input.
+- **Live tab (`/live`):** FotMob's live filter. "N matches on now", then folding groups (`<details>` cards with a header row: live dot, name, count): **Your leagues** pinned first with the lime "Play LIV v MCI", then one group per competition, then "Later today". Your live match → `/play`; any other → `/match/[id]`.
+- **Live match (`/play` for your league, `/match/[id]` for any other live match; focus mode, no dock):** `LiveMatch`. FotMob's flow (score always visible, everything one tap away in sticky section tabs), Footon's job: Predict is the first tab, and the question card is the first thing in it. Chat is its own tab, not a panel under the details.
 - **Full time:** ticking `+450`, streak pill with lime "Next match 2x", podium (yours lime-soft, tallest), match-timeline of calls (lime filled dots = right, red rings = wrong), rematch chat replies, lime "Rematch with same friends".
 - **Fantasy (`/fantasy`, was My team):** stats header (display 56), striped pitch with shirt tokens (selected = lime, captain = amber "C"), captain + transfers list, lime "Save lineup".
 - **Profile:** silver league card (light zinc, dotted, slight 3D tilt on hover) with score + 30-tick rank strip, recent-form card (win rate, won/lost/void, full-width `FormBars`), amber boost tokens, achievement tiles, collection list (locked rows muted with a lock).

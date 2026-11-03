@@ -3,6 +3,8 @@ import { notFound, redirect } from "next/navigation";
 import { ChevronLeft } from "lucide-react";
 
 import { AppShell } from "@/components/footon/app-shell";
+import { CrowdPoll } from "@/components/footon/crowd-poll";
+import { LiveMatch } from "@/components/footon/live-match";
 import { PrematchCalls } from "@/components/footon/prematch-calls";
 import { StreakFlame } from "@/components/footon/streak";
 import { TeamCrest } from "@/components/footon/team-crest";
@@ -15,12 +17,22 @@ export function generateStaticParams() {
   return matches.map((m) => ({ id: m.id }));
 }
 
-/** Any match from the list: upcoming → pre-match calls; finished → your result. Live goes to /play. */
+/**
+ * Any match from the list: upcoming → who-wins poll + pre-match calls; finished →
+ * your result; live → the match centre (your league's live match lives at /play).
+ */
 export default async function MatchPage({ params }: PageProps<"/match/[id]">) {
   const { id } = await params;
   const m = matches.find((x) => x.id === id);
   if (!m) notFound();
-  if (m.status === "live") redirect("/play");
+  if (m.status === "live") {
+    if (m.league) redirect("/play");
+    return (
+      <AppShell dock={false} className="gap-0 pt-0">
+        <LiveMatch match={m} backHref="/live" />
+      </AppShell>
+    );
+  }
 
   const done = m.status === "finished";
   const you = m.you;
@@ -95,7 +107,10 @@ export default async function MatchPage({ params }: PageProps<"/match/[id]">) {
           </p>
         )
       ) : (
-        <PrematchCalls questions={questions} made={you?.calls ?? 0} />
+        <>
+          {m.crowd && <CrowdPoll home={m.home} away={m.away} crowd={m.crowd} />}
+          <PrematchCalls questions={questions} made={you?.calls ?? 0} />
+        </>
       )}
     </AppShell>
   );

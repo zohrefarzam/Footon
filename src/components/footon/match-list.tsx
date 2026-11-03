@@ -41,7 +41,7 @@ export function MatchList({ matches, liveHref }: { matches: Match[]; liveHref: s
       <SegmentedTabs label="Match filter" options={filters} value={filter} onValueChange={setFilter} />
       <Card key={filter} className="animate-in-up overflow-hidden rounded-[20px]" aria-live="polite">
         {list.length ? (
-          list.map((m) => <MatchRow key={m.id} match={m} href={m.status === "live" ? liveHref : `/match/${m.id}`} />)
+          list.map((m) => <MatchRow key={m.id} match={m} href={m.status === "live" && m.league ? liveHref : `/match/${m.id}`} />)
         ) : (
           <p className="px-4 py-6 text-center text-sm text-muted-foreground">{empty[filter]}</p>
         )}

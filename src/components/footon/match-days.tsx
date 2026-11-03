@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { ChevronDown } from "lucide-react";
 
+import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { dayLabel } from "@/lib/dates";
 import { competitions, type Match } from "@/lib/mock-data";
@@ -86,19 +87,14 @@ export function MatchDays({ matches }: { matches: Match[] }) {
             {live.length ? `${live.length} ${live.length === 1 ? "match" : "matches"} on now` : "Nothing on right now"}
           </p>
         </div>
-        <button
-          type="button"
-          aria-pressed={liveOnly}
-          onClick={() => setLiveOnly((v) => !v)}
-          className={cn(
-            "flex h-9 items-center gap-2 rounded-full border px-3.5 text-sm font-semibold outline-none transition-[transform,background-color,border-color,color] duration-200 ease-spring active:scale-95 focus-visible:ring-[3px] focus-visible:ring-ring/60",
-            liveOnly ? "border-live/40 bg-live-soft text-live" : "border-line-strong bg-surface-2 text-muted-foreground hover:text-foreground",
-          )}
-        >
-          {liveOnly ? <LiveDot /> : <span aria-hidden="true" className="size-[7px] rounded-full bg-[#52525b]" />}
-          Live
-          <span className="font-display text-[15px] font-bold">{live.length}</span>
-        </button>
+        {/* a switch, not a toggle pill: its on/off state reads at a glance, and the same tap turns it back off */}
+        <div className="flex shrink-0 items-center gap-2.5">
+          <label htmlFor="live-only" className="flex cursor-pointer items-center gap-1.5 text-sm font-semibold select-none">
+            <LiveDot className={cn(!liveOnly && "animate-none bg-[#52525b]")} />
+            <span className={cn("transition-colors duration-200", liveOnly ? "text-live" : "text-muted-foreground")}>Live only</span>
+          </label>
+          <Switch id="live-only" checked={liveOnly} onCheckedChange={setLiveOnly} />
+        </div>
       </div>
 
       {liveOnly ? (

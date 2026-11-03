@@ -46,7 +46,7 @@ src/
                           match-facts, match-stats, match-lineups, match-table, league-chat,
                           match-scoreboard, match-preview, match-days, countdown, back-button, coin, number-ticker, form-bars,
                           progress-ring, team-crest, live, empty-state, match-filter, match-list, invite-strip, streak,
-                          prematch-calls, fantasy-unlock, football, splash, splash-gate, nav-icons)
+                          prematch-calls, fantasy-unlock, football, ball-switch, splash, splash-gate, nav-icons)
   lib/
     utils.ts              cn()
     dates.ts              day labels relative to the mock today ("Yesterday", "Thu 5 Nov")
@@ -188,7 +188,8 @@ Rules:
 | `MatchScoreboard` / `CompactScore` | The dotted scoreboard on every match page and its one-line top-bar form. Live: score + `LiveMinute` + clock bar. Upcoming: display kickoff + `Countdown` (today) or the day. Finished: score + FULL TIME. |
 | `Countdown` | Time to kick-off `01:53:39`, ticking; rendered after mount; one static `aria-label`. |
 | `MatchInfo` / `TeamForm` / `MatchNews` | Preview-tab pieces. `MatchInfo` is one divided card: date + kickoff, venue + city, capacity + surface, weather, referee, where to watch (muted lucide icons). `TeamForm`: last five as W/D/L chips, shape-coded (W solid, D dark, L outline), neutral. `MatchNews`: one headline card. |
-| `MatchDays` | The Live tab body: title + "N on now", a **Live only** `Switch` (label with a live dot that pulses when on) that narrows to live matches; a switch, not a toggle pill, so the on/off state is obvious and turning it off is the same tap, otherwise an underline day strip (two days back to five ahead, Today centred). Each day: "Your matches" pinned, then folding competition groups headed `ENG · England · Premier League`. No CTA: rows are the action. |
+| `MatchDays` | The Live tab body: title + "N on now", a **Live only** `BallSwitch` (label turns amber when on) that narrows to live matches; a switch, not a toggle pill, so the on/off state is obvious and turning it off is the same tap, otherwise an underline day strip (two days back to five ahead, Today centred). Each day: "Your matches" pinned, then folding competition groups headed `ENG · England · Premier League`. No CTA: rows are the action. |
+| `BallSwitch` | Switch whose thumb is the `Football`; it *rolls* (pattern turns ~135° over the 28px travel, shade stays). On = amber-soft track + a live dot where the ball was, because it means "live now". Radix `Switch`, so `role="switch"` + keyboard. Only for live filters; settings use the plain lime `Switch`. |
 | `LeagueChat` | League chat as a match section: who's watching, thread (yours right, soft-lime), a friend's question as an inline Yes/No card, quick reactions and the composer pinned to the bottom. |
 | `MatchRow` | One-line scoreboard row (~60px) inside a list card: home name + `xs` shield · centre box (score or kickoff, with amber live minute / day / FT under it; amber-soft while live) · shield + away name · "you" column (lime `+points` and a `StreakFlame` for a hot streak, or calls made before kickoff; chevron if you're not in). Every row links: your live match → `/play`, everything else → `/match/[id]`. Names become 3-letter codes under 360px. |
 | `MatchList` | Now/Today/Upcoming `SegmentedTabs` that actually filter one divided list of `MatchRow`s. |

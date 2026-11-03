@@ -3,11 +3,11 @@
 import { useEffect, useRef, useState } from "react";
 import { ChevronDown } from "lucide-react";
 
-import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { dayLabel } from "@/lib/dates";
 import { competitions, type Match } from "@/lib/mock-data";
 import { cn } from "@/lib/utils";
+import { BallSwitch } from "./ball-switch";
 import { LiveDot } from "./live";
 import { MatchRow } from "./match-row";
 
@@ -87,13 +87,15 @@ export function MatchDays({ matches }: { matches: Match[] }) {
             {live.length ? `${live.length} ${live.length === 1 ? "match" : "matches"} on now` : "Nothing on right now"}
           </p>
         </div>
-        {/* a switch, not a toggle pill: its on/off state reads at a glance, and the same tap turns it back off */}
+        {/* a switch, not a toggle pill: on/off reads at a glance and the same tap turns it off. The thumb is the ball. */}
         <div className="flex shrink-0 items-center gap-2.5">
-          <label htmlFor="live-only" className="flex cursor-pointer items-center gap-1.5 text-sm font-semibold select-none">
-            <LiveDot className={cn(!liveOnly && "animate-none bg-[#52525b]")} />
-            <span className={cn("transition-colors duration-200", liveOnly ? "text-live" : "text-muted-foreground")}>Live only</span>
+          <label
+            htmlFor="live-only"
+            className={cn("cursor-pointer text-sm font-semibold transition-colors duration-200 select-none", liveOnly ? "text-live" : "text-muted-foreground")}
+          >
+            Live only
           </label>
-          <Switch id="live-only" checked={liveOnly} onCheckedChange={setLiveOnly} />
+          <BallSwitch id="live-only" checked={liveOnly} onCheckedChange={setLiveOnly} />
         </div>
       </div>
 

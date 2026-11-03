@@ -25,7 +25,7 @@ export type IslandLive = {
 /**
  * The sticky top island, on every tab. One black pill that carries the live
  * match (minute, score, open question) and the wallet. Tap the match side to
- * expand and answer in place; tap the coins to open your profile. Collapses on
+ * expand and answer in place; tap the coins to open your wallet. Collapses on
  * scroll, outside tap or Escape. Without a live match it's just the wallet.
  */
 export function LiveIsland({ coins, live }: { coins: number; live?: IslandLive }) {
@@ -54,8 +54,8 @@ export function LiveIsland({ coins, live }: { coins: number; live?: IslandLive }
 
   const wallet = (
     <Link
-      href="/me"
-      aria-label={`${coins.toLocaleString("en-US")} coins. Open profile`}
+      href="/wallet"
+      aria-label={`${coins.toLocaleString("en-US")} coins. Open wallet`}
       className="flex h-11 shrink-0 items-center gap-1.5 rounded-full ps-2 pe-3.5 outline-none transition-[transform,background-color] duration-200 ease-spring hover:bg-white/5 active:scale-95 focus-visible:ring-[3px] focus-visible:ring-ring/60"
     >
       <Coin className="size-[22px]" />

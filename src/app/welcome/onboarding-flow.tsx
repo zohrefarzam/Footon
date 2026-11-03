@@ -27,7 +27,8 @@ type Sample = {
 export type OnboardingData = {
   startingCoins: number;
   sample: Sample;
-  steps: { title: string; body: string }[];
+  /** The next starter missions and what each pays. */
+  steps: { title: string; coins: number }[];
   clubs: Team[];
 };
 
@@ -342,9 +343,9 @@ function TryStep({ sample, answer, onAnswer }: { sample: Sample; answer: "yes" |
                       <p className="text-xs text-muted-foreground">{sample.resolvedLabel}</p>
                     </div>
                     {right && (
-                      <span className="flex items-center gap-1 font-display text-[22px] font-bold text-live">
+                      <span className="font-display text-[22px] font-bold text-primary">
                         +{sample.reward}
-                        <Coin className="size-[18px] text-[9px]" />
+                        <span className="ms-0.5 text-sm">pts</span>
                       </span>
                     )}
                   </motion.div>
@@ -359,7 +360,7 @@ function TryStep({ sample, answer, onAnswer }: { sample: Sample; answer: "yes" |
       <p className="mt-3 text-[15px] text-muted-foreground">
         {resolved
           ? right
-            ? `In a real match that's +${sample.reward} coins.`
+            ? `In a real match that's +${sample.reward} points. Points rank you; coins get you in.`
             : "You'll get the next one. There's always a next one."
           : "Free to play. No sign-up needed to start."}
       </p>
@@ -424,7 +425,7 @@ function ClubsStep({ clubs, selected, onToggle }: { clubs: Team[]; selected: str
 
 /* ---------- Step 3: claim the starting stack ---------- */
 
-function ClaimStep({ coins, steps, claimed }: { coins: number; steps: { title: string; body: string }[]; claimed: boolean }) {
+function ClaimStep({ coins, steps, claimed }: { coins: number; steps: { title: string; coins: number }[]; claimed: boolean }) {
   const reduce = useReducedMotion();
   return (
     <div className="flex flex-1 flex-col">
@@ -456,10 +457,10 @@ function ClaimStep({ coins, steps, claimed }: { coins: number; steps: { title: s
         <p className="relative mt-7 font-display text-[64px] leading-none font-bold text-live">
           <NumberTicker value={coins} duration={1.4} />
         </p>
-        <p className="relative mt-1 text-[13px] font-medium text-muted-foreground">starting coins, on us</p>
+        <p className="relative mt-1 text-[13px] font-medium text-muted-foreground">first mission: you picked your clubs</p>
       </div>
 
-      <Headline title="Your starting stack." sub="Spend it on calls." />
+      <Headline title="Your first coins." sub="Earn more all week." />
 
       <ol className="mt-5 grid grid-cols-3 gap-3 border-t border-line pt-4">
         {steps.map((s, i) => (
@@ -468,7 +469,11 @@ function ClaimStep({ coins, steps, claimed }: { coins: number; steps: { title: s
               {String(i + 1).padStart(2, "0")}
             </span>
             <p className="mt-0.5 text-sm font-semibold">{s.title}</p>
-            <p className="text-xs text-muted-foreground">{s.body}</p>
+            <p className="mt-0.5 flex items-center gap-1 font-display text-[15px] font-bold text-live">
+              +{s.coins.toLocaleString("en-US")}
+              <Coin className="size-3.5 text-[7px]" />
+              <span className="sr-only">coins</span>
+            </p>
           </li>
         ))}
       </ol>

@@ -77,7 +77,7 @@ export function InviteStrip({ invites }: { invites: InviteWithMatch[] }) {
                           {inv.from} <span className="font-normal text-muted-foreground">invited you</span>
                         </p>
                         <p className="truncate text-xs text-muted-foreground">
-                          {inv.league} · limit {inv.stakeLimit}
+                          {inv.league} · {inv.entry.toLocaleString("en-US")} entry
                         </p>
                       </div>
                       {!isIn && (

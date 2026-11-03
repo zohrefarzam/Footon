@@ -3,6 +3,7 @@ import { X } from "lucide-react";
 
 import { AppShell } from "@/components/footon/app-shell";
 import { Button } from "@/components/ui/button";
+import { wallet } from "@/lib/mock-data";
 import { CreateLeagueForm } from "./create-league-form";
 
 export default function NewChallengePage() {
@@ -17,7 +18,7 @@ export default function NewChallengePage() {
         <h1 className="flex-1 text-center text-lg font-semibold">New challenge</h1>
         <span className="w-10" />
       </header>
-      <CreateLeagueForm />
+      <CreateLeagueForm balance={wallet.coins} />
     </AppShell>
   );
 }

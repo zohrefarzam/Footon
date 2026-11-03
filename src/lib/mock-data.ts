@@ -39,12 +39,10 @@ export type Match = {
   competition: string;
   /** Set when you play this match in one of your leagues. */
   league?: string;
-  /** Your stake in this match, when you've made calls on it. */
+  /** Your part in this match (points, calls), when you've made calls on it. */
   you?: MatchYou;
   events?: MatchEvent[];
   stats?: MatchStat[];
-  /** Coin multiplier on featured matches (10 = "10x"). Absent = 1x. */
-  boost?: number;
   /** The headline quick call shown on the match card. */
   market?: Market;
   /** Live: how many of tonight's questions have been asked so far. */
@@ -58,6 +56,8 @@ export type Match = {
   table?: TableRow[];
   /** Pre-match facts for the Preview tab. */
   preview?: MatchPreview;
+  /** Finished: the coins this match moved for you, each with its reason. */
+  settlement?: CoinEntry[];
 };
 
 export type FormResult = "W" | "D" | "L";
@@ -71,7 +71,7 @@ export type MatchPreview = {
   news?: { title: string; source: string; ago: string };
 };
 
-/** A Yes/No quick call with the crowd's share and the stakes on offer. */
+/** A Yes/No quick call with the crowd's share. Calls earn points, never coins. */
 export type Market = {
   id: string;
   question: string;
@@ -79,14 +79,14 @@ export type Market = {
   yesShare: number;
   /** Seconds until it locks; absent before kickoff. */
   closesIn?: number;
-  stakes: number[];
 };
 
 export type Player = { number: number; name: string; pos: string };
 export type Lineup = { formation: string; players: Player[] };
 export type TableRow = { pos: number; code: string; played: number; gd: number; points: number };
 
-export const wallet = { coins: 2450 };
+/** Your coins right now. Points live on the profile; they never mix. */
+export const wallet = { coins: 6450 };
 
 /** The mock "today" (a Tuesday). Day offsets and the day strip are relative to it. */
 export const mockToday = "2026-11-03";
@@ -118,7 +118,7 @@ export const matches: Match[] = [
     status: "live",
     minute: 67,
     score: [1, 1],
-    caption: "Sunday Rivals · limit 500",
+    caption: "Sunday Rivals · 500 entry",
     competition: "Premier League",
     league: "Sunday Rivals",
     you: { calls: 4, right: 3, points: 120, streak: 3 },
@@ -136,8 +136,7 @@ export const matches: Match[] = [
       { label: "Fouls", home: 8, away: 10 },
       { label: "Offsides", home: 1, away: 2 },
     ],
-    boost: 10,
-    market: { id: "mk-liv-1", question: "Next corner before 75'?", yesShare: 58, closesIn: 38, stakes: [100, 500] },
+    market: { id: "mk-liv-1", question: "Next corner before 75'?", yesShare: 58, closesIn: 38 },
     progress: { asked: 7, total: 10 },
     crowd: { home: 41, draw: 33, away: 26, topScore: [2, 1], votes: 18412 },
     h2h: { won: 2, drawn: 2, lost: 1 },
@@ -223,7 +222,7 @@ export const matches: Match[] = [
     caption: "Tonight",
     competition: "Premier League",
     you: { calls: 2, right: 0, points: 0, streak: 0 },
-    market: { id: "mk-ars-1", question: "Arsenal win?", yesShare: 47, stakes: [100, 500] },
+    market: { id: "mk-ars-1", question: "Arsenal win?", yesShare: 47 },
     crowd: { home: 47, draw: 28, away: 25, topScore: [2, 1], votes: 9310 },
     table: plTable,
     h2h: { won: 2, drawn: 1, lost: 2 },
@@ -244,7 +243,7 @@ export const matches: Match[] = [
     kickoff: "19:30",
     caption: "Premier League",
     competition: "Premier League",
-    market: { id: "mk-new-1", question: "Both teams score?", yesShare: 64, stakes: [100, 500] },
+    market: { id: "mk-new-1", question: "Both teams score?", yesShare: 64 },
     crowd: { home: 44, draw: 26, away: 30, topScore: [1, 1], votes: 4127 },
     table: plTable,
     h2h: { won: 3, drawn: 0, lost: 2 },
@@ -278,6 +277,11 @@ export const matches: Match[] = [
       { label: "Corners", home: 7, away: 2 },
     ],
     you: { calls: 6, right: 5, points: 240, streak: 5 },
+    settlement: [
+      { id: "s-1", label: "Seaside pool", reason: "1st of 2 · 5% burned", amount: 950 },
+      { id: "s-2", label: "Watched to the end", reason: "3+ answers to 90'", amount: 100 },
+      { id: "s-3", label: "Rare call right", reason: "Only 14% said Yes to the 71' goal", amount: 50 },
+    ],
   },
   {
     id: "mun-liv",
@@ -289,8 +293,7 @@ export const matches: Match[] = [
     dayOffset: 4,
     caption: "Premier League",
     competition: "Premier League",
-    boost: 10,
-    market: { id: "mk-mun-1", question: "Liverpool win at Old Trafford?", yesShare: 52, stakes: [100, 500] },
+    market: { id: "mk-mun-1", question: "Liverpool win at Old Trafford?", yesShare: 52 },
   },
   {
     id: "che-mci",
@@ -365,16 +368,17 @@ export type Invite = {
   from: string;
   initial: string;
   league: string;
-  stakeLimit: number;
+  /** Coins each player puts in the pool (one of ENTRY_TIERS). */
+  entry: number;
   /** Who's already in, by initial. */
   members: string[];
   matchId: string;
 };
 
 export const invites: Invite[] = [
-  { id: "inv-1", from: "Sara", initial: "S", league: "Derby night", stakeLimit: 300, members: ["S", "M", "R"], matchId: "ars-che" },
-  { id: "inv-2", from: "Omid", initial: "O", league: "Office five", stakeLimit: 200, members: ["O", "K"], matchId: "new-tot" },
-  { id: "inv-3", from: "Lena", initial: "L", league: "North West", stakeLimit: 500, members: ["L", "J", "P", "A"], matchId: "mun-liv" },
+  { id: "inv-1", from: "Sara", initial: "S", league: "Derby night", entry: 1500, members: ["S", "M", "R"], matchId: "ars-che" },
+  { id: "inv-2", from: "Omid", initial: "O", league: "Office five", entry: 500, members: ["O", "K"], matchId: "new-tot" },
+  { id: "inv-3", from: "Lena", initial: "L", league: "North West", entry: 2500, members: ["L", "J", "P", "A"], matchId: "mun-liv" },
 ];
 
 export const fantasyProgress = { done: 3, total: 5 };
@@ -412,9 +416,13 @@ export const chat = {
   reactions: ["VAR!", "Offside", "What a save"],
 };
 
-/** Onboarding: the starting stack, the sample question and the club picker. */
+/**
+ * Onboarding: the first mission's coins, the sample question and the club
+ * picker. The 15,000 starter coins arrive mission by mission over the first
+ * week, never in one lump; picking your club is mission one.
+ */
 export const onboarding = {
-  startingCoins: 10000,
+  startingCoins: 1000,
   sample: {
     match: "LIV 1–1 MCI",
     minute: 67,
@@ -423,12 +431,14 @@ export const onboarding = {
     /** How the sample resolves, so the demo can show a real outcome. */
     outcome: "yes" as "yes" | "no",
     resolvedLabel: "Corner at 71'",
+    /** Points for a right call. Calls earn points; coins come from missions and play. */
     reward: 50,
   },
+  /** The next three starter missions, shown as the numbered row. */
   steps: [
-    { title: "Pick a match", body: "Now or upcoming" },
-    { title: "Invite friends", body: "Share one link" },
-    { title: "Answer live", body: "Top the table" },
+    { title: "Make a call", coins: 1000 },
+    { title: "Join a league", coins: 2000 },
+    { title: "Invite a friend", coins: 2000 },
   ],
   clubs: [
     { code: "LIV", name: "Liverpool", colors: ["#C8102E", "#F6EB61"] },
@@ -455,7 +465,7 @@ export type Challenge = {
   id: string;
   name: string;
   matchId: string;
-  /** Coins each player puts in. */
+  /** Coins each player puts in the pool. */
   entry: number;
   members: string[];
   status: "active" | "finished";
@@ -466,37 +476,19 @@ export type Challenge = {
 
 export const challenges: Challenge[] = [
   { id: "ch-1", name: "Sunday Rivals", matchId: "liv-mci", entry: 500, members: ["Y", "S", "O"], status: "active", mine: true, rank: 1 },
-  { id: "ch-2", name: "Derby night", matchId: "ars-che", entry: 300, members: ["S", "M", "R", "Y"], status: "active" },
-  { id: "ch-3", name: "Seaside", matchId: "bha-eve", entry: 200, members: ["Y", "K"], status: "finished", mine: true, rank: 1 },
-];
-
-/** One settled (or pending) call, for the Profile history. `delta` in coins. */
-export type PredictionRecord = {
-  id: string;
-  question: string;
-  matchId: string;
-  stake: number;
-  result: "won" | "lost" | "void" | "pending";
-  delta: number;
-  /** Day label: "Today", "Yesterday", "Sat". */
-  day: string;
-};
-
-export const history: PredictionRecord[] = [
-  { id: "h-1", question: "Next corner before 75'?", matchId: "liv-mci", stake: 100, result: "pending", delta: 0, day: "Today" },
-  { id: "h-2", question: "Goal before 60'?", matchId: "liv-mci", stake: 100, result: "won", delta: 180, day: "Today" },
-  { id: "h-3", question: "Yellow card before 30'?", matchId: "liv-mci", stake: 500, result: "lost", delta: -500, day: "Today" },
-  { id: "h-4", question: "Brighton ahead at 90'?", matchId: "bha-eve", stake: 500, result: "won", delta: 850, day: "Yesterday" },
-  { id: "h-5", question: "Penalty given?", matchId: "bha-eve", stake: 100, result: "void", delta: 0, day: "Yesterday" },
+  { id: "ch-2", name: "Derby night", matchId: "ars-che", entry: 1500, members: ["S", "M", "R", "Y"], status: "active" },
+  { id: "ch-3", name: "Seaside", matchId: "bha-eve", entry: 500, members: ["Y", "K"], status: "finished", mine: true, rank: 1 },
 ];
 
 export const profile = {
   name: "You",
   level: 7,
+  /** Total points: skill only, from right calls. Rank and prizes read this. */
+  points: 4820,
   xp: 640,
   xpNext: 1000,
   streak: { current: 3, best: 6 },
-  referral: { code: "FOOT-Y7K2", bonus: 500, joined: 2 },
+  referral: { code: "FOOT-Y7K2", bonus: 1500, joined: 2 },
   favoriteTeam: "LIV",
   /** Calls you have running right now (shown in the island). */
   activeCalls: 2,
@@ -512,3 +504,109 @@ export const chatPresets: { group: string; phrases: string[] }[] = [
 /** In-house sticker ids (SVG drawn in components/footon/stickers.tsx). */
 export const stickers = ["var-screen", "red-card", "golden-boot", "crying-ball", "whistle", "goal-net", "trophy", "megaphone"] as const;
 export type StickerId = (typeof stickers)[number];
+
+/* ---------- Economy: missions, earning, activity, shop ---------- */
+
+/** One coin movement with the reason it happened. Spends are negative. */
+export type CoinEntry = { id: string; label: string; reason: string; amount: number; day?: string };
+
+/**
+ * Starter missions: 15,000 coins over the first week, paid for doing the real
+ * thing (never as a gift). `done` carries the reason shown once it's paid.
+ */
+export type Mission = { id: string; title: string; coins: number; done?: string };
+
+export const starter = {
+  day: 3,
+  missions: [
+    { id: "m-1", title: "Pick your club and profile", coins: 1000, done: "You picked Liverpool" },
+    { id: "m-2", title: "Make your first call", coins: 1000, done: "You called it at Brighton v Everton" },
+    { id: "m-3", title: "Join your first friends' league", coins: 2000, done: "You joined Seaside" },
+    { id: "m-4", title: "Invite a friend who joins", coins: 2000 },
+    { id: "m-5", title: "Stay to the end of a match", coins: 2000, done: "You watched to the final whistle" },
+    { id: "m-6", title: "Answer 10 live questions", coins: 1500, done: "10 answers in" },
+    { id: "m-7", title: "Ask your first question in chat", coins: 1500 },
+    { id: "m-8", title: "Come back on day 3", coins: 2000, done: "You came back today" },
+    { id: "m-9", title: "Win a pool or the free table", coins: 2000, done: "You won Seaside" },
+  ] satisfies Mission[],
+};
+
+/** This week's capped earnings, so you can see what's left to earn. */
+export const weekly = {
+  mission: { title: "Watch 3 matches to the end", done: 2, total: 3, coins: 750 },
+  caps: [
+    { id: "free-table", label: "Free table rewards", used: 700, cap: 2000, period: "this week" },
+    { id: "invites", label: "Friends who finished a match", used: 1, cap: 6, period: "this month", unit: "friends" },
+  ],
+};
+
+/** Ways to keep earning after the first week. `cap` is shown as written. */
+export const earnWays = [
+  { id: "e-1", label: "Watch to the end", detail: "3+ answers to 90'", coins: 100, cap: "Every match" },
+  { id: "e-2", label: "Free table top 3", detail: "400 / 300 / 200", coins: 400, cap: "Up to 2,000 a week" },
+  { id: "e-3", label: "Rare call right", detail: "Under 20% picked it", coins: 50, cap: "Up to 150 a match" },
+  { id: "e-4", label: "Five matches in a row", detail: "To the end, each time", coins: 500, cap: "Every 5 matches" },
+  { id: "e-5", label: "A friend finishes a match", detail: "Their first, after your invite", coins: 1500, cap: "Up to 6 a month" },
+  { id: "e-6", label: "Friends answer your question", detail: "50 for each friend", coins: 50, cap: "Up to 250 a question" },
+  { id: "e-7", label: "Up a weekly league", detail: "Promotion", coins: 1000, cap: "Weekly" },
+];
+
+export const coinActivity: CoinEntry[] = [
+  { id: "a-1", label: "Sunday Rivals entry", reason: "LIV v MCI · into the pool", amount: -500, day: "Today" },
+  { id: "a-2", label: "Came back on day 3", reason: "Starter mission", amount: 2000, day: "Today" },
+  { id: "a-3", label: "Seaside pool", reason: "1st of 2 · BHA v EVE", amount: 950, day: "Yesterday" },
+  { id: "a-4", label: "Watched to the end", reason: "BHA v EVE", amount: 100, day: "Yesterday" },
+  { id: "a-5", label: "Created Sunday Rivals", reason: "New league", amount: -1500, day: "Yesterday" },
+  { id: "a-6", label: "2nd on the free table", reason: "AVL v WHU", amount: 300, day: "Sun" },
+];
+
+/**
+ * Shop catalogue. Phase 2 is a "coming soon" shop: real items and prices, no
+ * payment. Tapping an item asks if you want to hear when it opens; that tap is
+ * the purchase-intent signal. Nothing here sells points, rank or prize odds,
+ * and there are no mystery boxes.
+ */
+export type ShopItem = {
+  id: string;
+  name: string;
+  detail: string;
+  /** Coin price, or a range for families of looks. */
+  coins?: number | [number, number];
+  /** Real-money price, coin packs only. */
+  price?: string;
+  /** Coins in a pack and its bonus %. */
+  pack?: { coins: number; bonus?: number };
+  icon: "pack" | "celebration" | "banter" | "banner" | "freeze" | "league" | "kit" | "slot";
+};
+
+export const shop: { group: string; note?: string; items: ShopItem[] }[] = [
+  {
+    group: "Coin packs",
+    note: "18+ · monthly limit",
+    items: [
+      { id: "pack-s", name: "Small", detail: "For one big night", price: "$0.99", pack: { coins: 1000 }, icon: "pack" },
+      { id: "pack-m", name: "Medium", detail: "A few weekends", price: "$4.99", pack: { coins: 5500, bonus: 10 }, icon: "pack" },
+      { id: "pack-l", name: "Large", detail: "The season", price: "$9.99", pack: { coins: 11500, bonus: 15 }, icon: "pack" },
+    ],
+  },
+  {
+    group: "Match moments",
+    items: [
+      { id: "celebration", name: "Goal celebration", detail: "Takes over your league's screen", coins: [100, 750], icon: "celebration" },
+      { id: "banter", name: "Banter card", detail: "Drop it in chat after a big call", coins: 500, icon: "banter" },
+      { id: "revenge", name: "Revenge banner", detail: "For the rematch", coins: 500, icon: "banner" },
+    ],
+  },
+  {
+    group: "Keep your run",
+    items: [{ id: "freeze", name: "Streak freeze", detail: "Miss a match, keep your streak", coins: 2500, icon: "freeze" }],
+  },
+  {
+    group: "Looks",
+    items: [
+      { id: "league-look", name: "League look", detail: "Crest and trophy room", coins: 5000, icon: "league" },
+      { id: "club-look", name: "Fantasy club look", detail: "Kit, crest, stadium", coins: [2500, 10000], icon: "kit" },
+      { id: "slot", name: "Extra fantasy slot", detail: "One more friends' fantasy league", coins: 1000, icon: "slot" },
+    ],
+  },
+];

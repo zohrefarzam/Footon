@@ -36,7 +36,7 @@ Adding shadcn components: `npx shadcn@latest add <name>`, then **restyle it to t
 ```
 src/
   app/                    routes (/, /welcome, /play, /match/[id], /challenges/new, /styleguide)
-    (tabs)/               /, /challenges, /live, /me, /fantasy — layout holds the sticky LiveIsland and the Dock (persist across tabs)
+    (tabs)/               /, /challenges, /live, /me, /fantasy, /wallet, /shop — layout holds the sticky LiveIsland and the Dock (persist across tabs)
     globals.css           ALL design tokens, utilities, keyframes
   components/
     ui/                   shadcn primitives, restyled (button, badge, card, input, label,
@@ -46,11 +46,14 @@ src/
                           match-facts, match-stats, match-lineups, match-table, league-chat,
                           match-scoreboard, match-preview, match-days, countdown, back-button, coin, number-ticker, form-bars,
                           progress-ring, team-crest, live, empty-state, match-filter, match-list, invite-strip, streak,
-                          prematch-calls, fantasy-unlock, football, ball-switch, splash, splash-gate, nav-icons)
+                          prematch-calls, fantasy-unlock, football, ball-switch, splash, splash-gate, nav-icons,
+                          missions, match-tables, shop)
   lib/
     utils.ts              cn()
     dates.ts              day labels relative to the mock today ("Yesterday", "Thu 5 Nov")
     mock-data.ts          typed mock data mirroring the canvas — replace with API, keep types
+    economy.ts            coin rules: entry tiers, pool split + burn, costs, caps. Never hard-code these in UI
+    track.ts              analytics stub (shop intent events)
   fonts/                  Barlow Condensed woff2
   proxy.ts                first-run redirect: `/` → `/welcome` until `footon_onboarded` is set
 ```
@@ -176,7 +179,7 @@ Rules:
 | --- | --- |
 | `AppShell` | Mobile column. `dock={false}` for focus mode (live match, create flow); otherwise it reserves room for the dock, which `app/(tabs)/layout.tsx` renders once. |
 | `Dock` | Floating glass nav, 4 tabs: Home · Challenges · Live · Profile, with the `nav-icons` set. Active item: filled icon + white label + lime dot. The Live tab carries a pulsing `LiveDot` while a match is on. No centre "+": creating lives on the Challenges screen. Fantasy and favourite team are not tabs (Fantasy is reached from its Home card and Profile; favourite team lives in Profile settings). |
-| `LiveIsland` | Sticky top pill on every dock tab, rendered once by `app/(tabs)/layout.tsx`. Left: live minute, score and the open question (lime `Q4 open` chip, soft-lime `Q4 · Yes` once answered); tap to expand over the page and answer in place. Right: the wallet (coins → `/me`). Collapses on scroll, outside tap or Escape. With no live match it shows only the wallet. Pages don't render their own coin badge. |
+| `LiveIsland` | Sticky top pill on every dock tab, rendered once by `app/(tabs)/layout.tsx`. Left: live minute, score and the open question (lime `Q4 open` chip, soft-lime `Q4 · Yes` once answered); tap to expand over the page and answer in place. Right: the wallet (coins → `/wallet`). Collapses on scroll, outside tap or Escape. With no live match it shows only the wallet. Pages don't render their own coin badge. |
 | `QuestionCard` | The live question. Yes/No → crowd split + drawn check + shimmer. Timer ring is amber. `compact` = one-row widget. |
 | `MatchCentre` | Match page frame (after FotMob): sticky top bar (back · title) → dotted scoreboard that scrolls away (the top bar then crossfades to the compact score + live minute) → sticky underline `Tabs` for sections. Sections arrive as server-rendered nodes; only the frame is client. |
 | `LiveMatch` | A live match in `MatchCentre`. Scoreboard: xl crests, scorers under each name, red-card glyphs, display score, `LiveMinute`, match clock bar. Sections: **Predict** (first, amber dot while a question is open) · Chat · Facts · Stats · Lineups · Table · H2H; a section only shows when there's data. With your league: Predict = `QuestionCard` → league card (standings tiles, "N of M asked", your calls right, streak, lime `+points`) → `CrowdPoll`. Without: `CrowdPoll` + a dashed "Start a league" card (the one lime CTA). |
@@ -198,7 +201,10 @@ Rules:
 | `StreakFlame` | Hot streak (`streak ≥ HOT_STREAK`, 3): amber-soft pill, lucide `Flame` + count in display font. Amber because a streak is a boost. Pops in once, never loops. |
 | `PrematchCalls` | Pre-match questions on `/match/[id]`, each with a Yes/No toggle (soft-lime when picked) and one lime "Lock in N calls". |
 | `SegmentedTabs` | 2–4 filters with sliding lime pill. |
-| `CoinBadge` / `Coin` | Wallet pill. Coins are always amber with an "F". |
+| `CoinBadge` / `Coin` / `CoinAmount` | Wallet pill. Coins are always amber with an "F". `CoinAmount` is a coin figure in a row: gains amber, spends neutral with a minus (an entry isn't a loss). |
+| `StarterMissions` | First-week missions (15,000 over 7 days): progress, open rows first, done rows muted with the reason they paid. |
+| `MatchTables` | "Two tables, same calls" card on a match: Free table (always open, top 3 get coins) and Coin table (your league's pool, or "Start a league"). Footer: entry never changes rank. `poolLine()` gives "winner takes 5,700". |
+| `Shop` | Phase 2 "coming soon" shop: item rows → sheet saying it's not open yet, nothing charged, lime "Notify me". Fires `track()` events. |
 | `NumberTicker` | Count-up for rewards. |
 | `FormBars` | Last-N results as bars (height + colour). `fill` stretches them across the width (Profile's recent-form card). |
 | `FantasyUnlock` | Compact Home tile, a bit wider than `InviteTile` (it matters more). Locked must read as locked: dashed border (the "locked" card style), lock icon + "Fantasy locked", display `3/5`, and a row of tiny shirts (made = lime, popping in one after another; next = dashed soft-lime; rest = dark) with "N to go". Under 360px the words "locked" and "N to go" drop; lock + dashed border carry it. At full: solid soft-lime "Fantasy open". Links to `/fantasy`. |
@@ -222,7 +228,20 @@ Rules:
 - **Live match (`/play` for your league, `/match/[id]` for any other live match; focus mode, no dock):** `LiveMatch`. FotMob's flow (score always visible, everything one tap away in sticky section tabs), Footon's job: Predict is the first tab, and the question card is the first thing in it. Chat is its own tab, not a panel under the details.
 - **Full time:** ticking `+450`, streak pill with lime "Next match 2x", podium (yours lime-soft, tallest), match-timeline of calls (lime filled dots = right, red rings = wrong), rematch chat replies, lime "Rematch with same friends".
 - **Fantasy (`/fantasy`, was My team):** stats header (display 56), striped pitch with shirt tokens (selected = lime, captain = amber "C"), captain + transfers list, lime "Save lineup".
+- **Create league:** entry slider uses `ENTRY_TIERS`; the pool preview under it; the lime CTA carries the total cost (create + your entry). Short of coins → disabled "Need N more coins" + "Ways to earn".
 - **Profile:** silver league card (light zinc, dotted, slight 3D tilt on hover) with score + 30-tick rank strip, recent-form card (win rate, won/lost/void, full-width `FormBars`), amber boost tokens, achievement tiles, collection list (locked rows muted with a lock).
+
+## Economy (coins, points, prizes)
+
+From the Footon economy doc. Numbers live in `lib/economy.ts`; mock state in `mock-data.ts`.
+
+- **Three things never mix.** Points = skill (right calls only; rank and prizes read points only; show in lime/neutral, never with a coin). Coins = play money (amber; entries, leagues, moments, looks). Prizes = real things from sponsors by weekly/monthly rank. A right call shows `+50 pts`, never coins.
+- **Two tables per match.** Free table always open (top 3 get 400/300/200, 2,000/week cap). Coin table = a friends' league pool, entry 500 / 1,500 / 2,500 (the cap). 5% of each pool burns; under 5 players the winner takes the rest, from 5 it's 70/30. Use `splitPool()`.
+- **Coins are earned with a reason.** Starter coins come mission by mission (onboarding pays only mission one, 1,000); every coin row says why ("Watched to the end").
+- **Never sell pressure.** No shop or purchase prompt after a loss or on a low balance, no fake timers, no "sold out". Short of coins → say how many and link to ways to earn (`/wallet`). The shop is reached only from the Wallet header.
+- **Never sell advantage.** Nothing that earns points (the 2x boost) is for sale; no mystery boxes; coins can't be cashed out or sent. Packs are 18+ with a monthly limit.
+- **Wallet (`/wallet`):** balance + Points/Coins/Prizes strip, first-week missions, this week's mission and caps (amber bars: allowances), ways to earn, activity, the rules line.
+- **Shop (`/shop`, Phase 2):** real items and prices, no payment. Tap → "Coming soon" sheet → "Notify me". We measure opens, item taps, notify taps.
 
 ## Adapting shadcn components
 

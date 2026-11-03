@@ -5,7 +5,7 @@ import { AppShell } from "@/components/footon/app-shell";
 import { FormBars } from "@/components/footon/form-bars";
 import { Button } from "@/components/ui/button";
 import { Card, CardRow } from "@/components/ui/card";
-import { recentForm } from "@/lib/mock-data";
+import { profile, recentForm } from "@/lib/mock-data";
 import { cn } from "@/lib/utils";
 
 const RANK = 8;
@@ -45,8 +45,8 @@ export default function MePage() {
           <div className="flex items-start justify-between">
             <div>
               <p className="text-[11px] font-bold tracking-[0.12em]">SILVER LEAGUE</p>
-              <p className="mt-2 font-display text-[64px] leading-[0.95] font-bold">4,820</p>
-              <p className="text-[13px] font-semibold opacity-70">Total score</p>
+              <p className="mt-2 font-display text-[64px] leading-[0.95] font-bold">{profile.points.toLocaleString("en-US")}</p>
+              <p className="text-[13px] font-semibold opacity-70">Total points</p>
             </div>
             <span className="flex size-[60px] items-center justify-center rounded-[18px] bg-background text-[#d4d4d8]" aria-hidden="true">
               <UserRound className="size-7" strokeWidth={1.8} />
@@ -124,7 +124,7 @@ export default function MePage() {
         </div>
         <div className="flex-1">
           <p className="text-[15px] font-semibold">2 boosts left</p>
-          <p className="mt-0.5 text-xs text-muted-foreground">Double your gain · once per match</p>
+          <p className="mt-0.5 text-xs text-muted-foreground">Double your points · once per match · earned, never sold</p>
         </div>
       </Card>
 

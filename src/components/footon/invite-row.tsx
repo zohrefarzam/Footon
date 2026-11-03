@@ -83,7 +83,7 @@ export function InviteRow({ invite }: { invite: InviteWithMatch }) {
               <span className="text-xs whitespace-nowrap text-muted-foreground">{invite.members.length} in</span>
               <span className="ms-1 flex items-center gap-1 text-xs whitespace-nowrap text-muted-foreground">
                 <Coin className="size-[18px]" />
-                <span className="font-display text-sm font-bold text-foreground">{invite.stakeLimit}</span> limit
+                <span className="font-display text-sm font-bold text-foreground">{invite.entry.toLocaleString("en-US")}</span> entry
               </span>
             </div>
           </motion.div>

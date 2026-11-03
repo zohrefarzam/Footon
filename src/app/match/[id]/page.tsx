@@ -9,11 +9,13 @@ import { MatchFacts } from "@/components/footon/match-facts";
 import { MatchInfo, MatchNews, TeamForm } from "@/components/footon/match-preview";
 import { CompactScore, MatchScoreboard } from "@/components/footon/match-scoreboard";
 import { MatchStats } from "@/components/footon/match-stats";
+import { MatchTables } from "@/components/footon/match-tables";
 import { HeadToHead, MatchTable } from "@/components/footon/match-table";
 import { PrematchCalls } from "@/components/footon/prematch-calls";
+import { CoinAmount } from "@/components/footon/coin";
 import { StreakFlame } from "@/components/footon/streak";
 import { Card } from "@/components/ui/card";
-import { HOT_STREAK, matches, prematchQuestions, type Match } from "@/lib/mock-data";
+import { challenges, HOT_STREAK, matches, prematchQuestions, type Match } from "@/lib/mock-data";
 import { cn } from "@/lib/utils";
 
 export function generateStaticParams() {
@@ -53,6 +55,32 @@ function YourResult({ match: m }: { match: Match }) {
   );
 }
 
+/** Coins this match moved, each with its reason. Kept apart from points: they never mix. */
+function YourCoins({ match: m }: { match: Match }) {
+  const rows = m.settlement;
+  if (!rows?.length) return null;
+  const total = rows.reduce((s, r) => s + r.amount, 0);
+  return (
+    <section aria-labelledby="coins-title" className="flex flex-col gap-2.5">
+      <h2 id="coins-title" className="flex items-baseline justify-between text-[13px] font-medium text-muted-foreground">
+        Coins from this match
+        <CoinAmount value={total} signed className="text-[15px]" />
+      </h2>
+      <Card className="overflow-hidden">
+        {rows.map((r) => (
+          <div key={r.id} className="flex items-center gap-3 px-4 py-3 [&+&]:border-t [&+&]:border-line">
+            <div className="min-w-0 flex-1">
+              <p className="text-[15px] font-semibold">{r.label}</p>
+              <p className="mt-0.5 truncate text-xs text-muted-foreground">{r.reason}</p>
+            </div>
+            <CoinAmount value={r.amount} signed className="text-base" />
+          </div>
+        ))}
+      </Card>
+    </section>
+  );
+}
+
 /**
  * Any match, in the FotMob match-page frame (scoreboard → sticky section tabs):
  *   live     → LiveMatch (your league's live match lives at /play)
@@ -78,8 +106,14 @@ export default async function MatchPage({ params }: PageProps<"/match/[id]">) {
     text: q.text.replace("{home}", m.home.name).replace("{away}", m.away.name),
   }));
 
+  const pool = challenges.find((c) => c.matchId === m.id && c.status === "active");
+
   const preview = (
     <>
+      <MatchTables
+        joinedFree={!!m.you?.calls}
+        coin={pool && { league: pool.name, entry: pool.entry, players: pool.members.length, href: "/challenges" }}
+      />
       <PrematchCalls questions={questions} made={m.you?.calls ?? 0} />
       {m.crowd && <CrowdPoll home={m.home} away={m.away} crowd={m.crowd} />}
       {m.preview ? (
@@ -99,7 +133,16 @@ export default async function MatchPage({ params }: PageProps<"/match/[id]">) {
   const sections: MatchSection[] = [
     ...(done
       ? [
-          { value: "result", label: "Result", content: <YourResult match={m} /> },
+          {
+            value: "result",
+            label: "Result",
+            content: (
+              <>
+                <YourResult match={m} />
+                <YourCoins match={m} />
+              </>
+            ),
+          },
           {
             value: "facts",
             label: "Facts",

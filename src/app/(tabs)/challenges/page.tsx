@@ -66,7 +66,7 @@ export default function ChallengesPage() {
                     <span className="font-display text-[13px] font-bold">
                       {c.match.home.code} v {c.match.away.code}
                     </span>
-                    · {c.entry.toLocaleString("en-US")} coins in
+                    · {c.entry.toLocaleString("en-US")} entry
                   </p>
                 </div>
                 <AvatarGroup aria-label={`${c.members.length} players`}>

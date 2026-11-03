@@ -3,17 +3,20 @@ import { ArrowRight } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { ENTRY_TIERS, splitPool } from "@/lib/economy";
 import { HOT_STREAK, type Match } from "@/lib/mock-data";
 import { cn } from "@/lib/utils";
 import { BackButton } from "./back-button";
 import { CrowdPoll } from "./crowd-poll";
 import { LeagueChat, type ChatData } from "./league-chat";
+import { CoinAmount } from "./coin";
 import { LiveDot } from "./live";
 import { MatchCentre, type MatchSection } from "./match-centre";
 import { MatchFacts } from "./match-facts";
 import { CompactScore, MatchScoreboard } from "./match-scoreboard";
 import { MatchLineups } from "./match-lineups";
 import { MatchStats } from "./match-stats";
+import { poolLine } from "./match-tables";
 import { HeadToHead, MatchTable } from "./match-table";
 import { QuestionCard, type LiveQuestion } from "./question-card";
 import { StreakFlame } from "./streak";
@@ -22,7 +25,14 @@ const ordinal = ["1st", "2nd", "3rd", "4th", "5th"];
 
 type Standing = { name: string; initial: string; points: number; you?: boolean; delta?: number };
 /** Your league on this match. Absent = a public match you can only watch and vote on. */
-export type LiveLeague = { name: string; standings: Standing[]; question: LiveQuestion; chat: ChatData };
+export type LiveLeague = {
+  name: string;
+  standings: Standing[];
+  question: LiveQuestion;
+  chat: ChatData;
+  /** The league's coin pool on this match. Points decide who takes it. */
+  pool?: { entry: number; players: number };
+};
 
 /**
  * A live match, laid out like a FotMob match page but played the Footon way:
@@ -75,6 +85,14 @@ export function LiveMatch({ match: m, league, backHref = "/" }: { match: Match; 
             <span className="font-display text-lg font-bold text-primary">+{you.points}</span>
           </div>
         )}
+        {league.pool && (
+          <div className="flex items-center gap-3 border-t border-line px-4 py-3">
+            <p className="min-w-0 flex-1 truncate text-xs text-muted-foreground">
+              Pool · {league.pool.entry.toLocaleString("en-US")} each · {poolLine(league.pool.entry, league.pool.players)}
+            </p>
+            <CoinAmount value={splitPool(league.pool.entry, league.pool.players).pool} className="text-base" />
+          </div>
+        )}
       </Card>
 
       {m.crowd && <CrowdPoll home={m.home} away={m.away} crowd={m.crowd} />}
@@ -85,7 +103,9 @@ export function LiveMatch({ match: m, league, backHref = "/" }: { match: Match; 
       <Card variant="dashed" className="items-start gap-3 p-4">
         <div>
           <p className="text-[15px] font-semibold">Call the next moment with friends</p>
-          <p className="mt-0.5 text-[13px] text-muted-foreground">Start a league on this match and the live questions open here.</p>
+          <p className="mt-0.5 text-[13px] text-muted-foreground">
+            Start a league on this match and the live questions open here. Entry from {ENTRY_TIERS[0].toLocaleString("en-US")}, the pool goes to the top caller.
+          </p>
         </div>
         <Button asChild size="lg" className="w-full">
           <Link href="/challenges/new">

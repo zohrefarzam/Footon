@@ -88,7 +88,7 @@ export default function StyleguidePage() {
 
       <Section title="Buttons">
         <div className="flex flex-wrap items-center gap-3">
-          <Button size="lg">Claim 10,000 coins</Button>
+          <Button size="lg">Claim 1,000 coins</Button>
           <Button>Yes</Button>
           <Button variant="secondary">No</Button>
           <Button variant="outline">Not this time</Button>

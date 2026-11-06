@@ -36,7 +36,7 @@ Adding shadcn components: `npx shadcn@latest add <name>`, then **restyle it to t
 ```
 src/
   app/                    routes (/, /welcome, /play, /match/[id], /challenges/new, /challenges/[id], /styleguide)
-    (tabs)/               /, /challenges, /live, /me, /fantasy, /wallet, /shop — layout holds the sticky LiveIsland and the Dock (persist across tabs)
+    (tabs)/               /, /challenges, /predictions, /live, /me, /fantasy, /wallet, /shop — layout holds the sticky LiveIsland and the Dock (persist across tabs)
     globals.css           ALL design tokens, utilities, keyframes
   components/
     ui/                   shadcn primitives, restyled (button, badge, card, input, label,
@@ -48,7 +48,8 @@ src/
                           progress-ring, team-crest, live, empty-state, match-filter, match-list, invite-strip, streak,
                           prematch-calls, fantasy-unlock, football, ball-switch, splash, splash-gate, nav-icons,
                           missions, match-tables, shop, prediction-builder, challenge-list,
-                          challenge-gate, boost-badge, level-bar, favourite-clubs)
+                          challenge-gate, boost-badge, level-bar, favourite-clubs, hub-tabs,
+                          shop-preview, shop-icons)
   lib/
     utils.ts              cn()
     dates.ts              day labels relative to the mock today ("Yesterday", "Thu 5 Nov")
@@ -181,7 +182,7 @@ Rules:
 | Component | Purpose / rules |
 | --- | --- |
 | `AppShell` | Mobile column. `dock={false}` for focus mode (live match, create flow); otherwise it reserves room for the dock, which `app/(tabs)/layout.tsx` renders once. |
-| `Dock` | Floating glass nav, 4 tabs: Home · Challenges · Live · Profile, with the `nav-icons` set. Active item: filled icon + white label + lime dot. The Live tab carries a pulsing `LiveDot` while a match is on. No centre "+": creating lives on the Challenges screen. Fantasy and favourite team are not tabs (Fantasy is reached from its Home card and Profile; favourite team lives in Profile settings). |
+| `Dock` | Floating glass nav, 4 tabs: Home · Challenges · Live · Profile, with the `nav-icons` set. Challenges stays active on `/predictions`. Active item: filled icon + white label + lime dot. The Live tab carries a pulsing `LiveDot` while a match is on. No centre "+": creating lives on the Challenges screen. Fantasy and favourite team are not tabs (Fantasy is reached from its Home card and Profile; favourite team lives in Profile settings). |
 | `LiveIsland` | Sticky top pill on every dock tab, rendered once by `app/(tabs)/layout.tsx`. Left: live minute, score and the open question (lime `Q4 open` chip, soft-lime `Q4 · Yes` once answered); tap to expand over the page and answer in place. Right: the wallet (coins → `/wallet`). Collapses on scroll, outside tap or Escape. With no live match it shows only the wallet. Pages don't render their own coin badge. |
 | `QuestionCard` | The live question. Yes/No → crowd split + drawn check + shimmer. Timer ring is amber. `compact` = one-row widget. |
 | `MatchCentre` | Match page frame (after FotMob): sticky top bar (back · title) → dotted scoreboard that scrolls away (the top bar then crossfades to the compact score + live minute) → sticky underline `Tabs` for sections. Sections arrive as server-rendered nodes; only the frame is client. |
@@ -207,7 +208,9 @@ Rules:
 | `ChallengeGate` | An invite on its challenge page: the rules (entry, stake per prediction, cap, pool), secondary Decline + lime "Accept · entry". Accepting reveals the `PredictionBuilder` in place; declining leaves Undo. |
 | `BoostBadge` | A big match (`match.boost`): amber-soft pill, lucide `Zap` + "2x" (amber: it's a boost). On `MatchRow` (amber "2x" over the day), challenge rows, Home's big matches, the scoreboard ("Wins pay 2x") and the builder. Boosts coins a right prediction wins, never points. |
 | `LevelBar` | XP · Level · Badges strip under the live island on every dock tab (`app/(tabs)/layout.tsx`) → `/me#level`. Neutral fill, never lime. **Placeholder** until the gamification doc lands. |
-| `FavouriteClubs` | Profile's "Your clubs": crest chips with ✕, "Add club" opens a sheet with the onboarding crest grid (`aria-pressed`, soft-lime when picked). |
+| `FavouriteClubs` | Profile's "Your clubs": crest chips with ✕, "Add club" opens a sheet with a search field (name or code, clear ✕, "No club matches" empty state, result count announced) over the crest grid of `clubDirectory` (`aria-pressed`, soft-lime when picked). |
+| `HubTabs` | The Challenges dock tab's two screens as title tabs: **Challenges** (`/challenges`) · **Predictions** (`/predictions`), lime underline sliding between them, open-slip count next to Predictions. Optional `action` on the end (Challenges: lime icon "+" = New challenge). |
+| `ShopPreview` | Home's shop card: full width, dotted, neutral; "Shop" + "Opening soon" over three real items with their amber coin prices. Links to `/shop`. Never lime, never after a loss or on a low balance. |
 | `SegmentedTabs` | 2–4 filters with sliding lime pill. |
 | `CoinBadge` / `Coin` / `CoinAmount` | Wallet pill. Coins are always amber with an "F". `CoinAmount` is a coin figure in a row: gains amber, spends neutral with a minus (an entry isn't a loss). |
 | `StarterMissions` | First-week missions (15,000 over 7 days): progress, open rows first, done rows muted with the reason they paid. |
@@ -229,7 +232,8 @@ Rules:
 
 - **Splash → Onboarding (`/welcome`):** the launch splash (from `SplashGate`), then 3 steps with a segmented progress bar, back button and wallet badge (ticks to 10,000 on claim). 1) Try one: dealt card stack; the sample question resolves to a right/wrong result; Continue is `secondary` until answered, then lime. 2) Pick clubs: crest tiles with `aria-pressed`, soft-lime when selected. 3) Claim: coin stack + ticking amount, the three numbered steps, lime "Claim 10,000 coins". Claiming or "Skip to Home" sets the `footon_onboarded` cookie. Links to `/` from here use `prefetch={false}` so a pre-cookie redirect isn't cached.
 - **Onboarding (canvas):** dealt card stack on a dotted canvas with one real sample question; three steps as a single numbered row; lime CTA "Claim 10,000 coins" with an inset arrow; "Skip to Home" as a text link.
-- **Home = yours:** (sticky island + `LevelBar` from the tabs layout) → **Your challenges** (joined, live first; `ChallengeRow`) → **Open predictions** (upcoming matches with a slip, "N predictions · edit until 21:00" → Predict) → two compact tiles (`InviteTile`, `FantasyUnlock`) → **Big matches · Wins pay 2x** (`MatchRow`s) → secondary "Browse all matches" → `/live`. Nothing on → `EmptyState`. Browsing every fixture is the Live tab's job; don't put the full match list back on Home.
+- **Home:** (sticky island + `LevelBar` from the tabs layout) → **Big matches · Wins pay 2x** (`MatchRow`s; an "All matches" text link in the section header → `/live`, no button) → two compact tiles (`InviteTile`, `FantasyUnlock`) → `ShopPreview`. No big matches → `EmptyState`. Your challenges and open predictions live on the Challenges tab, not Home. Browsing every fixture is the Live tab's job; don't put the full match list back on Home.
+- **Predictions (`/predictions`, second `HubTabs` tab):** Open · Staked · Could win strip (display numbers, coins amber) → **Open · editable until kickoff** (one divided card, a group per match: crests, name, `BoostBadge`, "Edit until", secondary Edit pill → `/match/[id]`; each pick as a row with type icon, summary, stake → `payout()`) → **Settled** (✓ rows soft-lime with `+50 pts` and coins, ✗ rows muted with the stake) → "Predict another match" text link → `/live`. No lime CTA.
 - **Create league:** close button, a live **invite ticket** (lime, notched, dashed tear line) that updates as you edit; name input, stake slider, mode switches, reward note, then `Copy` (secondary) + `Create and share` (lime).
 - **Live tab (`/live`):** FotMob's Matches screen via `MatchDays`: title + "Live only" switch → day strip (Yesterday · **Today** · Tomorrow · dates) → one folding card per competition (your own matches live on Home, not pinned here). No lime CTA here: your live match row and the island's "Q4 open" already take you in. Your live match → `/play`; everything else → `/match/[id]`.
 - **Match page (`/match/[id]`, focus mode):** same `MatchCentre` frame as live. Upcoming: **Predict** (`PredictionBuilder` with the one lime "Lock in", `MatchTables`, `CrowdPoll`) · **Preview** (`MatchInfo`, `TeamForm`, `MatchNews`) · Table · H2H. Finished: **Result** (your +points, streak, right/wrong bars, your resolved predictions, coins) · Facts · Stats · Table · H2H.
@@ -247,7 +251,7 @@ From the Footon economy doc. Numbers live in `lib/economy.ts`; mock state in `mo
 - **Three things never mix.** Points = skill (right calls only; rank and prizes read points only; show in lime/neutral, never with a coin). Coins = play money (amber; entries, leagues, moments, looks). Prizes = real things from sponsors by weekly/monthly rank. A right call shows `+50 pts`, never coins.
 - **Two tables per match.** Free table always open (top 3 get 400/300/200, 2,000/week cap). Coin table = a friends' league pool, entry 500 / 1,500 / 2,500 (the cap). 5% of each pool burns; under 5 players the winner takes the rest, from 5 it's 70/30. Use `splitPool()`.
 - **Coins are earned with a reason.** Starter coins come mission by mission (onboarding pays only mission one, 1,000); every coin row says why ("Watched to the end").
-- **Never sell pressure.** No shop or purchase prompt after a loss or on a low balance, no fake timers, no "sold out". Short of coins → say how many and link to ways to earn (`/wallet`). The shop is reached only from the Wallet header.
+- **Never sell pressure.** No shop or purchase prompt after a loss or on a low balance, no fake timers, no "sold out". Short of coins → say how many and link to ways to earn (`/wallet`). The shop is reached from the Wallet header and Home's `ShopPreview` card, nowhere else.
 - **Predictions carry a coin stake.** Each prediction costs a stake (the player's pick, at least `PREDICTION_MIN_STAKE`, or the challenge's fixed amount); a challenge can cap the total per player. A right one pays `payout()` = stake × `PAYOUT_MULTIPLIER` (2), ×`BOOST_MULTIPLIER` again on a big (`boost`) match, plus `POINTS_PER_RIGHT_CALL` points. Stakes and payouts are coins (amber); rank still reads points only.
 - **Never sell advantage.** Nothing that earns points (the 2x boost) is for sale; no mystery boxes; coins can't be cashed out or sent. Packs are 18+ with a monthly limit.
 - **Wallet (`/wallet`):** balance + Points/Coins/Prizes strip, first-week missions, this week's mission and caps (amber bars: allowances), ways to earn, activity, the rules line.

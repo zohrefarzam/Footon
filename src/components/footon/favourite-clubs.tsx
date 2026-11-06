@@ -1,11 +1,12 @@
 "use client";
 
-import { useState } from "react";
-import { Check, Plus, X } from "lucide-react";
+import { useDeferredValue, useState } from "react";
+import { Check, Plus, Search, X } from "lucide-react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import type { Team } from "@/lib/mock-data";
 import { cn } from "@/lib/utils";
@@ -14,13 +15,16 @@ import { TeamCrest } from "./team-crest";
 /**
  * Your clubs on Profile: picked in onboarding, changed here any time. Each club
  * is a chip with ✕ to drop it; "Add club" opens a sheet with the onboarding
- * crest grid (soft-lime when picked).
+ * crest grid (soft-lime when picked), searchable by name or code.
  */
 export function FavouriteClubs({ clubs, initial }: { clubs: Team[]; initial: string[] }) {
   const [picked, setPicked] = useState<string[]>(initial);
   const reduce = useReducedMotion();
   const toggle = (code: string) => setPicked((p) => (p.includes(code) ? p.filter((c) => c !== code) : [...p, code]));
   const mine = picked.flatMap((code) => clubs.filter((c) => c.code === code));
+  const [query, setQuery] = useState("");
+  const q = useDeferredValue(query).trim().toLowerCase();
+  const results = q ? clubs.filter((c) => c.name.toLowerCase().includes(q) || c.code.toLowerCase().includes(q)) : clubs;
 
   return (
     <section aria-labelledby="clubs-title" className="flex flex-col gap-2.5">
@@ -49,7 +53,7 @@ export function FavouriteClubs({ clubs, initial }: { clubs: Team[]; initial: str
             ))}
           </AnimatePresence>
           <li>
-            <Dialog>
+            <Dialog onOpenChange={(o) => !o && setQuery("")}>
               <DialogTrigger asChild>
                 <Button variant="outline" className="h-11 rounded-full px-4">
                   <Plus strokeWidth={2.4} aria-hidden="true" />
@@ -59,8 +63,43 @@ export function FavouriteClubs({ clubs, initial }: { clubs: Team[]; initial: str
               <DialogContent>
                 <DialogTitle>Your clubs</DialogTitle>
                 <DialogDescription>Follow as many as you like. Their matches show up first.</DialogDescription>
-                <ul className="mt-2 grid grid-cols-4 gap-2">
-                  {clubs.map((club) => {
+                <div className="relative mt-2">
+                  <label htmlFor="club-search" className="sr-only">
+                    Search clubs
+                  </label>
+                  <Search className="pointer-events-none absolute start-3.5 top-1/2 size-[18px] -translate-y-1/2 text-muted-foreground" aria-hidden="true" />
+                  <Input
+                    id="club-search"
+                    type="search"
+                    inputMode="search"
+                    autoComplete="off"
+                    placeholder="Search clubs"
+                    value={query}
+                    onChange={(e) => setQuery(e.target.value)}
+                    className="ps-10 pe-11 [&::-webkit-search-cancel-button]:hidden"
+                  />
+                  {query && (
+                    <Button
+                      variant="ghost"
+                      size="icon-sm"
+                      className="absolute end-1.5 top-1/2 size-9 -translate-y-1/2 rounded-full"
+                      aria-label="Clear search"
+                      onClick={() => setQuery("")}
+                    >
+                      <X />
+                    </Button>
+                  )}
+                </div>
+                <p className="sr-only" aria-live="polite">
+                  {q ? `${results.length} ${results.length === 1 ? "club" : "clubs"} found` : ""}
+                </p>
+                {results.length === 0 && (
+                  <p className="bg-dots rounded-xl border border-dashed border-line-strong px-6 py-8 text-center text-sm text-muted-foreground">
+                    No club matches &ldquo;{query.trim()}&rdquo;.
+                  </p>
+                )}
+                <ul className="-mx-1 grid max-h-[min(52vh,420px)] grid-cols-4 gap-2 overflow-y-auto px-1 pt-2 pb-1 max-[359px]:grid-cols-3">
+                  {results.map((club) => {
                     const on = picked.includes(club.code);
                     return (
                       <li key={club.code}>

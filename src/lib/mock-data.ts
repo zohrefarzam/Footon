@@ -442,6 +442,30 @@ export const onboarding = {
   ] satisfies Team[],
 };
 
+/** Every club you can follow from Profile (searchable). Onboarding shows only the first eight. */
+export const clubDirectory: Team[] = [
+  ...onboarding.clubs,
+  { code: "BHA", name: "Brighton", colors: ["#0057B8", "#FFFFFF"] },
+  { code: "EVE", name: "Everton", colors: ["#003399", "#FFFFFF"] },
+  { code: "WHU", name: "West Ham", colors: ["#7A263A", "#1BB1E7"] },
+  { code: "BRE", name: "Brentford", colors: ["#E30613", "#FFFFFF"] },
+  { code: "NFO", name: "Nott'm Forest", colors: ["#DD0000", "#FFFFFF"] },
+  { code: "FUL", name: "Fulham", colors: ["#FFFFFF", "#000000"] },
+  { code: "CRY", name: "Crystal Palace", colors: ["#1B458F", "#C4122E"] },
+  { code: "WOL", name: "Wolves", colors: ["#FDB913", "#231F20"] },
+  { code: "BOU", name: "Bournemouth", colors: ["#DA291C", "#000000"] },
+  { code: "RMA", name: "Real Madrid", colors: ["#FFFFFF", "#00529F"] },
+  { code: "BAR", name: "Barcelona", colors: ["#A50044", "#004D98"] },
+  { code: "BET", name: "Real Betis", colors: ["#00954C", "#FFFFFF"] },
+  { code: "SEV", name: "Sevilla", colors: ["#FFFFFF", "#D81E05"] },
+  { code: "VAL", name: "Valencia", colors: ["#FFFFFF", "#EE3524"] },
+  { code: "INT", name: "Inter", colors: ["#0068A8", "#000000"] },
+  { code: "NAP", name: "Napoli", colors: ["#12A0D7", "#FFFFFF"] },
+  { code: "ATA", name: "Atalanta", colors: ["#1E71B8", "#000000"] },
+  { code: "PSG", name: "Paris SG", colors: ["#004170", "#DA291C"] },
+  { code: "BAY", name: "Bayern", colors: ["#DC052D", "#FFFFFF"] },
+];
+
 /**
  * How a challenge prices its predictions. `stake: "free"` = each player picks
  * their own stake per prediction (at least the type's minimum); `{ fixed }` =
@@ -563,6 +587,11 @@ export const predictionSlips: Record<string, Prediction[]> = {
   "ars-che": [
     { id: "p-1", type: "result", pick: "1", stake: 250 },
     { id: "p-2", type: "corners", pick: "Over 9.5", stake: 250 },
+  ],
+  "mun-liv": [
+    { id: "p-6", type: "result", pick: "2", stake: 500 },
+    { id: "p-7", type: "goals", pick: "Over 2.5", stake: 250 },
+    { id: "p-8", type: "penalty", pick: "Yes", stake: 100 },
   ],
   "bha-eve": [
     { id: "p-3", type: "result", pick: "1", stake: 250, result: "right" },

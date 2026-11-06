@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
-import { BellRing, Check, Flag, Layers, MessageSquareQuote, PartyPopper, Shield, Shirt, Snowflake, UserPlus } from "lucide-react";
+import { BellRing, Check } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -12,24 +12,16 @@ import type { ShopItem } from "@/lib/mock-data";
 import { track } from "@/lib/track";
 import { cn } from "@/lib/utils";
 import { Coin } from "./coin";
+import { formatShopCoins, shopIcons } from "./shop-icons";
 
-const icons = {
-  pack: Layers,
-  celebration: PartyPopper,
-  banter: MessageSquareQuote,
-  banner: Flag,
-  freeze: Snowflake,
-  league: Shield,
-  kit: Shirt,
-  slot: UserPlus,
-} satisfies Record<ShopItem["icon"], unknown>;
+const icons = shopIcons;
 
 const fmt = (n: number) => n.toLocaleString("en-US");
 
 function Price({ item, className }: { item: ShopItem; className?: string }) {
   if (item.price) return <span className={cn("font-display text-lg font-bold", className)}>{item.price}</span>;
   if (item.coins == null) return null;
-  const label = Array.isArray(item.coins) ? `${fmt(item.coins[0])}–${fmt(item.coins[1])}` : fmt(item.coins);
+  const label = formatShopCoins(item.coins);
   return (
     <span className={cn("inline-flex items-center gap-1 font-display text-lg font-bold text-live", className)}>
       {label}

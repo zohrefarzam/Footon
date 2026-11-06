@@ -7,7 +7,7 @@ import { FormBars } from "@/components/footon/form-bars";
 import { Button } from "@/components/ui/button";
 import { Card, CardRow } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { onboarding, profile, recentForm } from "@/lib/mock-data";
+import { clubDirectory, profile, recentForm } from "@/lib/mock-data";
 import { cn } from "@/lib/utils";
 
 const RANK = 8;
@@ -107,7 +107,7 @@ export default function MePage() {
         </Card>
       </section>
 
-      <FavouriteClubs clubs={onboarding.clubs} initial={profile.favoriteTeams} />
+      <FavouriteClubs clubs={clubDirectory} initial={profile.favoriteTeams} />
 
       <section className="flex flex-col gap-2.5">
         <h2 className="text-[13px] font-medium text-muted-foreground">Recent form</h2>

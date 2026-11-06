@@ -11,7 +11,7 @@ type Item = { href: string; label: string; icon: (p: NavIconProps) => React.Reac
 
 const items: Item[] = [
   { href: "/", label: "Home", icon: HomeIcon, match: (p) => p === "/" },
-  { href: "/challenges", label: "Challenges", icon: ChallengesIcon, match: (p) => p.startsWith("/challenges") },
+  { href: "/challenges", label: "Challenges", icon: ChallengesIcon, match: (p) => p.startsWith("/challenges") || p.startsWith("/predictions") },
   { href: "/live", label: "Live", icon: LiveIcon, match: (p) => p.startsWith("/live") },
   { href: "/me", label: "Profile", icon: ProfileIcon, match: (p) => p.startsWith("/me") },
 ];

@@ -21,7 +21,7 @@ import { BoostBadge } from "./boost-badge";
 import { Coin, CoinAmount } from "./coin";
 import { Football } from "./football";
 
-function TypeIcon({ type, className }: { type: PredictionType; className?: string }) {
+export function TypeIcon({ type, className }: { type: PredictionType; className?: string }) {
   const c = cn("size-4 shrink-0", className);
   switch (type) {
     case "result":

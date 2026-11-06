@@ -50,17 +50,16 @@ export function ChallengesIcon({ active, className }: NavIconProps) {
   );
 }
 
-/** Predictions: your slip, a ticket with a tick on it. */
+/** Predictions: a dart in the target — you call it before it happens. */
 export function PredictionsIcon({ active, className }: NavIconProps) {
   const knock = active ? "stroke-background" : undefined;
   return (
     <Svg active={active} className={className}>
-      <path
-        d="M5 4.5A1.5 1.5 0 0 1 6.5 3h11A1.5 1.5 0 0 1 19 4.5v16l-2.3-1.5-2.4 1.5-2.3-1.5-2.3 1.5L7.3 19 5 20.5z"
-        fill={active ? "currentColor" : "none"}
-      />
-      <path d="m8.6 9.6 2 2 4-4.2" strokeWidth={2} className={knock} />
-      <path d="M8.8 15h6.4" className={knock} />
+      <circle cx="11" cy="13" r="8" fill={active ? "currentColor" : "none"} />
+      <circle cx="11" cy="13" r="4.2" className={knock} />
+      <circle cx="11" cy="13" r="1" className={active ? "fill-background stroke-background" : "fill-current"} />
+      {active && <path d="M11 13 19.5 4.5" strokeWidth={2.6} className="stroke-background" />}
+      <path d="M11 13 19.5 4.5M16.5 4.5h3v3" />
     </Svg>
   );
 }

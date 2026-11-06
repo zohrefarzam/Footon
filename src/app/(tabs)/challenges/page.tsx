@@ -3,16 +3,14 @@ import { Plus } from "lucide-react";
 
 import { AppShell } from "@/components/footon/app-shell";
 import { ChallengeList } from "@/components/footon/challenge-list";
-import { HubTabs } from "@/components/footon/hub-tabs";
 import { InviteStrip } from "@/components/footon/invite-strip";
 import { Button } from "@/components/ui/button";
 import { challengesWithMatch } from "@/lib/challenges";
-import { invites, matches, predictionSlips } from "@/lib/mock-data";
+import { invites, matches } from "@/lib/mock-data";
 
 /**
  * Challenges hub: pending invites to answer, then every challenge you're part
  * of as Joined · Invited · Expired, and the one lime action: start a new one.
- * Predictions sit next to it as the second title tab (`/predictions`).
  * Each row opens the challenge's own page (accept, predict, chat).
  */
 export default function ChallengesPage() {
@@ -21,20 +19,17 @@ export default function ChallengesPage() {
     return match ? [{ ...i, match }] : [];
   });
 
-  const openSlips = matches.filter((m) => m.status === "upcoming" && predictionSlips[m.id]?.length).length;
-
   return (
     <AppShell>
-      <HubTabs
-        count={openSlips}
-        action={
-          <Button asChild size="icon" className="mb-1 shrink-0 rounded-md" aria-label="New challenge">
-            <Link href="/challenges/new">
-              <Plus strokeWidth={2.4} aria-hidden="true" />
-            </Link>
-          </Button>
-        }
-      />
+      <header className="flex items-center justify-between gap-3">
+        <h1 className="text-[26px] font-bold tracking-[-0.03em]">Challenges</h1>
+        <Button asChild size="sm" className="h-10 rounded-sm px-3.5">
+          <Link href="/challenges/new">
+            <Plus strokeWidth={2.4} aria-hidden="true" />
+            New challenge
+          </Link>
+        </Button>
+      </header>
 
       <div id="invites" className="scroll-mt-20">
         <InviteStrip invites={pending} />

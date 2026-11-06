@@ -5,7 +5,6 @@ import { AppShell } from "@/components/footon/app-shell";
 import { BoostBadge } from "@/components/footon/boost-badge";
 import { Coin } from "@/components/footon/coin";
 import { EmptyState } from "@/components/footon/empty-state";
-import { HubTabs } from "@/components/footon/hub-tabs";
 import { TypeIcon } from "@/components/footon/prediction-builder";
 import { TeamCrest } from "@/components/footon/team-crest";
 import { Card } from "@/components/ui/card";
@@ -119,7 +118,7 @@ function Slip({ m, settled = false }: { m: Match; settled?: boolean }) {
 }
 
 /**
- * Predictions, the second half of the Challenges tab: every slip you've locked.
+ * Predictions, its own dock tab: every slip you've locked.
  * Open slips (still editable until kickoff) first, with what's staked and what
  * it could win, then settled ones read back ✓ / ✗. Rows open the match's
  * Predict tab, where the builder does the editing.
@@ -135,7 +134,14 @@ export default function PredictionsPage() {
 
   return (
     <AppShell>
-      <HubTabs count={open.length} />
+      <header className="flex items-baseline justify-between gap-3">
+        <h1 className="text-[26px] font-bold tracking-[-0.03em]">Predictions</h1>
+        {open.length > 0 && (
+          <span className="text-[13px] text-muted-foreground">
+            <span className="font-display text-base font-bold text-foreground">{open.length}</span> {open.length === 1 ? "match" : "matches"} open
+          </span>
+        )}
+      </header>
 
       {withSlip.length === 0 ? (
         <EmptyState title="No predictions yet" body="Pick a match and call the goals, corners or cards before kickoff." action={{ label: "Browse matches", href: "/live" }} />

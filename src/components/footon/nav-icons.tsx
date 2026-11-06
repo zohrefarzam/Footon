@@ -50,6 +50,21 @@ export function ChallengesIcon({ active, className }: NavIconProps) {
   );
 }
 
+/** Predictions: your slip, a ticket with a tick on it. */
+export function PredictionsIcon({ active, className }: NavIconProps) {
+  const knock = active ? "stroke-background" : undefined;
+  return (
+    <Svg active={active} className={className}>
+      <path
+        d="M5 4.5A1.5 1.5 0 0 1 6.5 3h11A1.5 1.5 0 0 1 19 4.5v16l-2.3-1.5-2.4 1.5-2.3-1.5-2.3 1.5L7.3 19 5 20.5z"
+        fill={active ? "currentColor" : "none"}
+      />
+      <path d="m8.6 9.6 2 2 4-4.2" strokeWidth={2} className={knock} />
+      <path d="M8.8 15h6.4" className={knock} />
+    </Svg>
+  );
+}
+
 /** Live: a football sending signal — something is happening right now. */
 export function LiveIcon({ active, className }: NavIconProps) {
   const knock = active ? "stroke-background" : undefined;

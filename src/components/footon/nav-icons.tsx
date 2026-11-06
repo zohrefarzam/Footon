@@ -50,16 +50,14 @@ export function ChallengesIcon({ active, className }: NavIconProps) {
   );
 }
 
-/** Predictions: a dart in the target — you call it before it happens. */
+/** Predictions: a referee-style card with a question mark — make your call. */
 export function PredictionsIcon({ active, className }: NavIconProps) {
   const knock = active ? "stroke-background" : undefined;
   return (
     <Svg active={active} className={className}>
-      <circle cx="11" cy="13" r="8" fill={active ? "currentColor" : "none"} />
-      <circle cx="11" cy="13" r="4.2" className={knock} />
-      <circle cx="11" cy="13" r="1" className={active ? "fill-background stroke-background" : "fill-current"} />
-      {active && <path d="M11 13 19.5 4.5" strokeWidth={2.6} className="stroke-background" />}
-      <path d="M11 13 19.5 4.5M16.5 4.5h3v3" />
+      <rect x="6" y="3.5" width="12" height="17" rx="2" transform="rotate(10 12 12)" fill={active ? "currentColor" : "none"} />
+      <path d="M10.2 9.6a2.1 2.1 0 0 1 4 .8c0 1.4-2 1.8-2 3" strokeWidth={2} className={knock} />
+      <path d="M12 16.2h.01" strokeWidth={2.6} className={knock} />
     </Svg>
   );
 }

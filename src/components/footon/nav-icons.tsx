@@ -50,14 +50,13 @@ export function ChallengesIcon({ active, className }: NavIconProps) {
   );
 }
 
-/** Predictions: a referee-style card with a question mark — make your call. */
+/** Predictions: a crystal ball — call it before it happens. */
 export function PredictionsIcon({ active, className }: NavIconProps) {
-  const knock = active ? "stroke-background" : undefined;
   return (
     <Svg active={active} className={className}>
-      <rect x="6" y="3.5" width="12" height="17" rx="2" transform="rotate(10 12 12)" fill={active ? "currentColor" : "none"} />
-      <path d="M10.2 9.6a2.1 2.1 0 0 1 4 .8c0 1.4-2 1.8-2 3" strokeWidth={2} className={knock} />
-      <path d="M12 16.2h.01" strokeWidth={2.6} className={knock} />
+      <circle cx="12" cy="10.5" r="7" fill={active ? "currentColor" : "none"} />
+      <path d="M8.7 9.2a3.7 3.7 0 0 1 2.7-2.7" className={active ? "stroke-background" : undefined} />
+      <path d="M6.5 20.5h11L16 17.3H8z" fill={active ? "currentColor" : "none"} />
     </Svg>
   );
 }

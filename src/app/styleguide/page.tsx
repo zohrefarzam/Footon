@@ -5,6 +5,7 @@ import { EmptyState } from "@/components/footon/empty-state";
 import { LeagueBadge } from "@/components/footon/league-badge";
 import { MatchHero } from "@/components/footon/match-hero";
 import { PitchMarkings } from "@/components/footon/pitch-markings";
+import { PromoBanner } from "@/components/footon/promo-banner";
 import { SectionHeading } from "@/components/footon/section-heading";
 import { Standings } from "@/components/footon/standings";
 import { FantasyUnlock } from "@/components/footon/fantasy-unlock";
@@ -33,7 +34,7 @@ import { Progress } from "@/components/ui/progress";
 import { Switch } from "@/components/ui/switch";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { achievements, division, league, matches } from "@/lib/mock-data";
+import { achievements, division, league, matches, promos } from "@/lib/mock-data";
 
 const swatches = [
   ["background", "#06140F", "Stadium ground"],
@@ -96,6 +97,14 @@ export default function StyleguidePage() {
           <p className="text-[15px] font-semibold">Body strong 15/600 — Geist</p>
           <p className="text-[13px] text-muted-foreground">Secondary 13/400 — muted-foreground</p>
           <p className="font-mono text-xs">t.me/footon_bot?start=sun9k — Geist Mono</p>
+        </div>
+      </Section>
+
+      <Section title="Partner banners">
+        <div className="grid max-w-md gap-3">
+          {promos.map((p, i) => (
+            <PromoBanner key={p.id} promo={p} slot={i + 1} />
+          ))}
         </div>
       </Section>
 

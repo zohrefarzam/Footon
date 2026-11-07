@@ -25,7 +25,7 @@ export function SectionHeading({
 }) {
   return (
     <div className={cn("flex min-h-6 items-center gap-2", className)}>
-      <h2 id={id} className="font-display text-[17px] leading-none font-bold tracking-[0.04em] uppercase">
+      <h2 id={id} className="shrink-0 whitespace-nowrap font-display text-[17px] leading-none font-bold tracking-[0.04em] uppercase">
         {title}
       </h2>
       {meta}

@@ -843,3 +843,65 @@ export const shop: { group: string; note?: string; items: ShopItem[] }[] = [
     ],
   },
 ];
+
+/* ---------- Sponsor banners (Home) ---------- */
+
+/**
+ * A commercial banner in Home's partner slot. Always labelled as sponsored and
+ * named after the partner. `colors` = [ground, ink, accent] from the partner's
+ * brand (data, like a club's kit), never Footon's own roles. `art` picks the
+ * illustration. Rules: no countdowns, no "last chance", never shown after a
+ * loss; prizes are won by points (rank), never bought.
+ * Partners below are fictional examples.
+ */
+export type Promo = {
+  id: string;
+  partner: string;
+  /** What kind of deal this is, shown next to "Sponsored". */
+  kind: "Prize partner" | "Kit partner" | "Broadcast partner";
+  headline: string;
+  body: string;
+  cta: string;
+  href: string;
+  external?: boolean;
+  colors: [string, string, string];
+  art: "trophy" | "boot" | "screen";
+};
+
+export const promos: Promo[] = [
+  {
+    id: "promo-kestrel-ball",
+    partner: "Kestrel Sports",
+    kind: "Prize partner",
+    headline: "Win a signed match ball",
+    body: "Finish top 3 in your division this week. Points only.",
+    cta: "See the table",
+    href: "/leaderboard",
+    colors: ["#f2ede1", "#10231a", "#c8392b"],
+    art: "trophy",
+  },
+  {
+    id: "promo-northpitch-boots",
+    partner: "Northpitch",
+    kind: "Kit partner",
+    headline: "Built for the last minute",
+    body: "The new Glide. Light, and quiet on the ball.",
+    cta: "Visit Northpitch",
+    href: "https://example.com/northpitch",
+    external: true,
+    colors: ["#14171f", "#f4f5f7", "#5b8cff"],
+    art: "boot",
+  },
+  {
+    id: "promo-halfway-tv",
+    partner: "Halfway Line TV",
+    kind: "Broadcast partner",
+    headline: "Every Premier League game, live",
+    body: "Watch it there. Call it here.",
+    cta: "Watch on Halfway Line",
+    href: "https://example.com/halfwayline",
+    external: true,
+    colors: ["#3b1d5c", "#fbf7ff", "#f2b84b"],
+    art: "screen",
+  },
+];

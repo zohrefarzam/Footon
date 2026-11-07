@@ -1,10 +1,11 @@
 /**
  * Product analytics, stubbed. The Phase 2 shop exists to measure purchase
  * intent before any payment is built: who opens the shop, taps an item, asks
- * to be notified, and which item gets the taps. Wire this to the real
+ * to be notified, and which item gets the taps. Sponsor banners on Home
+ * report taps (`promo_tap`, with the promo id and slot position). Wire this to the real
  * analytics client; until then events go to `window.dataLayer` if present.
  */
-export type TrackEvent = "shop_open" | "shop_item_tap" | "shop_notify";
+export type TrackEvent = "shop_open" | "shop_item_tap" | "shop_notify" | "promo_tap";
 
 export function track(event: TrackEvent, props: Record<string, string | number> = {}) {
   if (typeof window === "undefined") return;

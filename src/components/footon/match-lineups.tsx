@@ -17,7 +17,7 @@ const posName: Record<string, string> = {
 };
 
 /** Black or white text on a shirt colour, whichever reads. */
-function ink(hex = "#3f3f46") {
+function ink(hex = "#2e4b3f") {
   const n = parseInt(hex.slice(1), 16);
   const [r, g, b] = [(n >> 16) & 255, (n >> 8) & 255, n & 255];
   return 0.299 * r + 0.587 * g + 0.114 * b > 150 ? "#09090b" : "#fafafa";
@@ -34,7 +34,7 @@ function Token({ p, team, events, x, y }: { p: Player; team: Team; events: Match
   const mine = events.filter((e) => e.player === p.name);
   const goals = mine.filter((e) => e.kind === "goal");
   const card = mine.find((e) => e.kind === "red") ?? mine.find((e) => e.kind === "yellow");
-  const [shirt, trim] = team.colors ?? ["#3f3f46", "#a1a1aa"];
+  const [shirt, trim] = team.colors ?? ["#2e4b3f", "#9db1a6"];
 
   const label = [
     `${p.number}, ${p.name}, ${posName[p.pos] ?? p.pos}`,
@@ -72,7 +72,7 @@ function Token({ p, team, events, x, y }: { p: Player; team: Team; events: Match
           />
         )}
       </span>
-      <span aria-hidden="true" className="max-w-full truncate rounded-[6px] bg-black/50 px-1.5 py-px text-[11px] font-semibold text-[#e4e4e7]">
+      <span aria-hidden="true" className="max-w-full truncate rounded-[6px] bg-black/50 px-1.5 py-px text-[11px] font-semibold text-[#e1ebe5]">
         {p.name}
       </span>
     </li>
@@ -102,7 +102,7 @@ function TeamTag({ team, formation, className }: { team: Team; formation: string
   return (
     <div aria-hidden="true" className={cn("absolute inset-x-0 flex items-center gap-2 px-4", className)}>
       <TeamCrest code={team.code} colors={team.colors} size="xs" />
-      <span className="text-[13px] font-semibold text-[#e4e4e7]">{team.name}</span>
+      <span className="text-[13px] font-semibold text-[#e1ebe5]">{team.name}</span>
       <span className="ms-auto font-display text-[15px] font-bold text-white/60">{formation}</span>
     </div>
   );

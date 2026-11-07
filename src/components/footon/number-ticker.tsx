@@ -21,12 +21,12 @@ export function NumberTicker({
   className?: string;
 }) {
   const reduce = useReducedMotion();
-  const [display, setDisplay] = useState(reduce ? value : from);
+  // always start from `from` so server and client markup agree; reduced motion jumps straight to the value after mount
+  const [display, setDisplay] = useState(from);
 
   useEffect(() => {
-    if (reduce) return;
     const controls = animate(from, value, {
-      duration,
+      duration: reduce ? 0 : duration,
       ease: [0.16, 1, 0.3, 1],
       onUpdate: (v) => setDisplay(Math.round(v)),
     });
@@ -37,7 +37,7 @@ export function NumberTicker({
     <span className={className} aria-label={`${prefix}${value.toLocaleString("en-US")}`}>
       <span aria-hidden="true" className="tabular-nums">
         {prefix}
-        {(reduce ? value : display).toLocaleString("en-US")}
+        {display.toLocaleString("en-US")}
       </span>
     </span>
   );

@@ -69,7 +69,7 @@ export function Shop({ groups }: { groups: { group: string; note?: string; items
                   key={item.id}
                   type="button"
                   onClick={() => pick(item)}
-                  className="flex w-full items-center gap-3 px-4 py-3 text-start outline-none transition-colors hover:bg-[#141417] focus-visible:ring-[3px] focus-visible:ring-inset focus-visible:ring-ring/60 [&+&]:border-t [&+&]:border-line"
+                  className="flex w-full items-center gap-3 px-4 py-3 text-start outline-none transition-colors hover:bg-surface-hover focus-visible:ring-[3px] focus-visible:ring-inset focus-visible:ring-ring/60 [&+&]:border-t [&+&]:border-line"
                 >
                   <span aria-hidden="true" className="flex size-10 shrink-0 items-center justify-center rounded-sm bg-surface-3 text-muted-foreground">
                     <Icon className="size-[18px]" />

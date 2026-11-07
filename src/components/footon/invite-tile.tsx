@@ -17,7 +17,7 @@ export function InviteTile({ invites, className }: { invites: Invite[]; classNam
       href="/invites"
       aria-label={`${invites.length} invites from ${names.join(", ")}`}
       className={cn(
-        "group flex min-w-0 flex-col justify-between gap-2 rounded-xl border border-line bg-surface px-3.5 py-3 outline-none transition-colors duration-300 hover:bg-[#141417] focus-visible:ring-[3px] focus-visible:ring-ring/60",
+        "group flex min-w-0 flex-col justify-between gap-2 rounded-xl border border-line bg-surface px-3.5 py-3 outline-none transition-colors duration-300 hover:bg-surface-hover focus-visible:ring-[3px] focus-visible:ring-ring/60",
         className,
       )}
     >

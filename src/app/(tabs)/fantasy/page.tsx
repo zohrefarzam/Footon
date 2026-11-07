@@ -24,7 +24,7 @@ export default function FantasyPage() {
           </p>
           <div className="mt-1 flex justify-end gap-[3px]" aria-hidden="true">
             {[0, 1, 2, 3].map((i) => (
-              <span key={i} className={cn("h-1 w-4 rounded-full", i === 0 ? "bg-[#3f3f46]" : i === 1 ? "bg-primary" : "bg-[#27272a]")} />
+              <span key={i} className={cn("h-1 w-4 rounded-full", i === 0 ? "bg-dim" : i === 1 ? "bg-primary" : "bg-track")} />
             ))}
           </div>
         </div>
@@ -42,14 +42,14 @@ export default function FantasyPage() {
           <span className="font-display text-xl font-bold text-win">+14</span>
         </CardRow>
         <CardRow>
-          <span className="flex size-[34px] items-center justify-center rounded-sm bg-[#1c1c21] text-[#d4d4d8]">
+          <span className="flex size-[34px] items-center justify-center rounded-sm bg-surface-2 text-silver">
             <ArrowLeftRight className="size-4" />
           </span>
           <div className="flex-1">
             <p className="text-[15px] font-semibold">Transfers</p>
             <p className="mt-0.5 text-xs text-muted-foreground">1 left this week</p>
           </div>
-          <Button variant="secondary" size="sm" className="h-[34px] rounded-sm border-0 bg-[#27272a]">
+          <Button variant="secondary" size="sm" className="h-[34px] rounded-sm border-0 bg-track">
             Change
           </Button>
         </CardRow>

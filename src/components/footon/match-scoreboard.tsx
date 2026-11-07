@@ -4,6 +4,7 @@ import { cn } from "@/lib/utils";
 import { BoostBadge } from "./boost-badge";
 import { Countdown } from "./countdown";
 import { LiveMinute } from "./live";
+import { PitchMarkings } from "./pitch-markings";
 import { TeamCrest } from "./team-crest";
 
 /**
@@ -21,15 +22,27 @@ export function MatchScoreboard({ match: m }: { match: Match }) {
   const goals = events.filter((e) => e.kind === "goal");
   const reds = events.filter((e) => e.kind === "red");
 
+  const [homeShirt] = m.home.colors ?? ["#2e4b3f"];
+  const [awayShirt] = m.away.colors ?? ["#2e4b3f"];
+
   return (
-    <section aria-label="Score" className="bg-dots -mx-5 flex flex-col gap-4 px-5 pt-3 pb-5">
+    <section aria-label="Score" className="floodlight relative isolate -mx-5 flex flex-col gap-4 overflow-hidden border-b border-line px-5 pt-3 pb-5">
+      {/* the pitch under the board, and each side's colours pooled behind its crest (data, like the crests) */}
+      <div
+        aria-hidden="true"
+        className="absolute inset-0 -z-10"
+        style={{
+          backgroundImage: `radial-gradient(45% 70% at 16% 34%, ${homeShirt}29, transparent 70%), radial-gradient(45% 70% at 84% 34%, ${awayShirt}29, transparent 70%)`,
+        }}
+      />
+      <PitchMarkings className="-z-10" />
       <div className="grid grid-cols-[1fr_auto_1fr] items-start gap-3">
         {(["home", "away"] as const).map((side, i) => {
           const t = m[side];
           return (
             <div key={side} className={cn("flex flex-col items-center gap-1.5 text-center", i === 1 && "col-start-3 row-start-1")}>
               <TeamCrest code={t.code} colors={t.colors} size="xl" />
-              <span className="flex items-center gap-1.5 text-[13px] font-semibold">
+              <span className="flex items-center gap-1.5 text-sm font-bold">
                 {t.name}
                 {reds
                   .filter((e) => e.side === side)
@@ -67,7 +80,7 @@ export function MatchScoreboard({ match: m }: { match: Match }) {
             <>
               <p aria-live={live ? "polite" : undefined} aria-label={`${m.home.name} ${h}, ${m.away.name} ${a}`} className="font-display text-[64px] leading-none font-bold">
                 {h}
-                <span className="mx-2.5 text-[#3f3f46]">:</span>
+                <span className="mx-2.5 text-dim">:</span>
                 {a}
               </p>
               {live ? (
@@ -87,8 +100,8 @@ export function MatchScoreboard({ match: m }: { match: Match }) {
           role="img"
           aria-label={`Minute ${minute} of 90${goals.length ? `. Goals at ${goals.map((e) => `${e.minute}'`).join(", ")}` : ""}`}
         >
-          <div className="absolute inset-y-0 start-0 rounded-full bg-[#3f3f46]" style={{ width: `${(minute / 90) * 100}%` }} />
-          <span className="absolute -top-[3px] start-1/2 h-2.5 w-px bg-[#52525b]" />
+          <div className="absolute inset-y-0 start-0 rounded-full bg-dim" style={{ width: `${(minute / 90) * 100}%` }} />
+          <span className="absolute -top-[3px] start-1/2 h-2.5 w-px bg-dim-strong" />
           {goals.map((e) => (
             <span
               key={e.minute}
@@ -117,7 +130,7 @@ export function CompactScore({ match: m }: { match: Match }) {
       ) : (
         <>
           {h}
-          <span className="text-[#3f3f46]">:</span>
+          <span className="text-dim">:</span>
           {a}
         </>
       )}

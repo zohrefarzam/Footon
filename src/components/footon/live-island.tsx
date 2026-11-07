@@ -69,7 +69,7 @@ export function LiveIsland({ coins, live }: { coins: number; live?: IslandLive }
       initial={false}
       animate={{ borderRadius: open ? 26 : 23 }}
       transition={spring}
-      className="pointer-events-auto overflow-hidden border border-[#26262c] bg-black shadow-[0_12px_32px_-12px_rgb(0_0_0/0.95)]"
+      className="pointer-events-auto overflow-hidden border border-line-strong bg-[#030d09] shadow-[0_12px_32px_-12px_rgb(0_0_0/0.95)]"
     >
       <div className="flex items-center ps-1">
         {live ? (
@@ -126,7 +126,7 @@ export function LiveIsland({ coins, live }: { coins: number; live?: IslandLive }
         ) : (
           <span className="flex-1" />
         )}
-        {live && <span aria-hidden="true" className="h-5 w-px shrink-0 bg-[#2a2a30]" />}
+        {live && <span aria-hidden="true" className="h-5 w-px shrink-0 bg-surface-4" />}
         {wallet}
       </div>
 

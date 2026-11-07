@@ -9,8 +9,9 @@ import { Card } from "@/components/ui/card";
 import { formatCoins } from "@/lib/economy";
 import { challengeHref, type ChallengeWithMatch } from "@/lib/challenges";
 import type { Challenge } from "@/lib/mock-data";
-import { cn } from "@/lib/utils";
+import { cn, ordinal } from "@/lib/utils";
 import { BoostBadge } from "./boost-badge";
+import { LeagueBadge } from "./league-badge";
 import { LiveDot } from "./live";
 import { SegmentedTabs } from "./segmented-tabs";
 
@@ -27,8 +28,6 @@ const empty: Record<Segment, string> = {
   Expired: "Nothing expired. You answer fast.",
 };
 
-const ordinal = (n: number) => `${n}${["th", "st", "nd", "rd"][n % 100 > 10 && n % 100 < 14 ? 0 : n % 10] ?? "th"}`;
-
 /** One challenge as a divided row: name, who, match, entry, players, then your place or what's next. */
 export function ChallengeRow({ c }: { c: ChallengeWithMatch }) {
   const m = c.match;
@@ -38,8 +37,9 @@ export function ChallengeRow({ c }: { c: ChallengeWithMatch }) {
   return (
     <Link
       href={challengeHref(c)}
-      className="flex items-center gap-3 px-4 py-3.5 outline-none transition-colors hover:bg-[#141417] focus-visible:ring-[3px] focus-visible:ring-inset focus-visible:ring-ring/60 [&+&]:border-t [&+&]:border-line"
+      className="flex items-center gap-3 px-4 py-3.5 outline-none transition-colors hover:bg-surface-hover focus-visible:ring-[3px] focus-visible:ring-inset focus-visible:ring-ring/60 [&+&]:border-t [&+&]:border-line"
     >
+      <LeagueBadge name={c.name} size="sm" className={cn(expired && "opacity-50 grayscale")} />
       <div className="min-w-0 flex-1">
         <p className={cn("flex items-center gap-2 text-[15px] font-semibold", expired && "text-muted-foreground")}>
           <span className="truncate">{c.name}</span>
@@ -72,7 +72,7 @@ export function ChallengeRow({ c }: { c: ChallengeWithMatch }) {
         <span className="rounded-full bg-surface-3 px-2 py-0.5 text-xs font-semibold">Invite</span>
       ) : c.rank ? (
         <span
-          className={cn("w-10 text-end font-display text-xl font-bold", c.rank === 1 && "text-primary")}
+          className={cn("w-10 text-end font-display text-xl font-bold", c.rank === 1 && (c.status === "finished" ? "text-gold" : "text-primary"))}
           aria-label={c.status === "finished" ? `Finished ${ordinal(c.rank)}` : `${ordinal(c.rank)} now`}
         >
           {ordinal(c.rank)}

@@ -27,7 +27,7 @@ export function FantasyUnlock({ done, total, href = "/fantasy", className }: { d
       aria-label={open ? "Fantasy is open" : `Fantasy: ${d} of ${total} predictions, ${total - d} more to unlock`}
       className={cn(
         "group flex min-w-0 flex-col justify-between gap-2 rounded-xl border px-3.5 py-3 outline-none transition-colors duration-300 focus-visible:ring-[3px] focus-visible:ring-ring/60",
-        open ? "border-primary-line bg-primary-soft" : "border-dashed border-line-strong bg-surface hover:bg-[#141417]",
+        open ? "border-primary-line bg-primary-soft" : "border-dashed border-line-strong bg-surface hover:bg-surface-hover",
         className,
       )}
     >
@@ -60,7 +60,7 @@ export function FantasyUnlock({ done, total, href = "/fantasy", className }: { d
             >
               <path
                 d={SHIRT}
-                fill={filled ? "var(--primary)" : next ? "var(--primary-soft)" : "#1c1c21"}
+                fill={filled ? "var(--primary)" : next ? "var(--primary-soft)" : "var(--surface-2)"}
                 stroke={filled || next ? "var(--primary)" : "var(--line-strong)"}
                 strokeWidth="1.4"
                 strokeLinejoin="round"

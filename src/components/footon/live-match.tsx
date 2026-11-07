@@ -4,7 +4,7 @@ import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { ENTRY_TIERS, splitPool } from "@/lib/economy";
-import { HOT_STREAK, type Match } from "@/lib/mock-data";
+import { HOT_STREAK, type Match, type Standing } from "@/lib/mock-data";
 import { cn } from "@/lib/utils";
 import { BackButton } from "./back-button";
 import { CrowdPoll } from "./crowd-poll";
@@ -19,11 +19,11 @@ import { MatchStats } from "./match-stats";
 import { poolLine } from "./match-tables";
 import { HeadToHead, MatchTable } from "./match-table";
 import { QuestionCard, type LiveQuestion } from "./question-card";
+import { Standings } from "./standings";
 import { StreakFlame } from "./streak";
 
 const ordinal = ["1st", "2nd", "3rd", "4th", "5th"];
 
-type Standing = { name: string; initial: string; points: number; you?: boolean; delta?: number };
 /** Your league on this match. Absent = a public match you can only watch and vote on. */
 export type LiveLeague = {
   name: string;
@@ -61,7 +61,7 @@ export function LiveMatch({ match: m, league, backHref = "/" }: { match: Match; 
           {league.standings.map((p, i) => (
             <li
               key={p.name}
-              className={cn("rounded-[12px] border px-2.5 py-2", p.you ? "border-primary-line bg-primary-soft" : "border-line bg-surface-2")}
+              className={cn("relative rounded-[12px] border px-2.5 py-2", p.you ? "border-primary-line bg-primary-soft" : "border-line bg-surface-2")}
             >
               <div className={cn("flex justify-between text-[11px]", p.you ? "font-semibold text-primary" : "text-muted-foreground")}>
                 <span>
@@ -69,7 +69,7 @@ export function LiveMatch({ match: m, league, backHref = "/" }: { match: Match; 
                 </span>
                 {p.delta ? <span aria-label={`up ${p.delta}`}>▲{p.delta}</span> : null}
               </div>
-              <div className={cn("mt-0.5 font-display text-[22px] font-bold", !p.you && "text-[#d4d4d8]")}>{p.points}</div>
+              <div className={cn("mt-0.5 font-display text-[22px] font-bold", !p.you && "text-silver")}>{p.points}</div>
             </li>
           ))}
         </ol>
@@ -119,7 +119,21 @@ export function LiveMatch({ match: m, league, backHref = "/" }: { match: Match; 
 
   const sections: MatchSection[] = [
     { value: "predict", label: "Predict", badge: league ? <LiveDot className="size-1.5" /> : undefined, content: predict },
-    ...(league ? [{ value: "chat", label: "Chat", content: <LeagueChat chat={league.chat} members={league.standings} /> }] : []),
+    ...(league
+      ? [
+          { value: "chat", label: "Chat", content: <LeagueChat chat={league.chat} members={league.standings} /> },
+          {
+            value: "league",
+            label: "League",
+            content: (
+              <Card className="overflow-hidden pb-1">
+                <Standings rows={league.standings} caption={`${league.name} standings`} />
+                <p className="border-t border-line px-4 py-3 text-xs text-muted-foreground">Points from right calls decide it. Stakes never change your place.</p>
+              </Card>
+            ),
+          },
+        ]
+      : []),
     {
       value: "facts",
       label: "Facts",

@@ -211,7 +211,7 @@ export function LeagueChat({ chat, members, closes = "90'" }: { chat: ChatData; 
           <>
             <div className="flex gap-1.5 overflow-x-auto [scrollbar-width:none]">
               {chat.reactions.map((r) => (
-                <Button key={r} variant="outline" size="sm" className="h-[30px] shrink-0 text-xs text-[#d4d4d8]" onClick={() => send(r)}>
+                <Button key={r} variant="outline" size="sm" className="h-[30px] shrink-0 text-xs text-silver" onClick={() => send(r)}>
                   {r}
                 </Button>
               ))}

@@ -73,7 +73,7 @@ export function HeadToHead({ h2h, home, away }: { h2h: { won: number; drawn: num
         {cells.map((c, i) => (
           <span
             key={c.label}
-            className={cn("rounded-full", i === 1 ? "bg-[#3f3f46]" : "bg-foreground", i === 2 && "bg-muted-foreground")}
+            className={cn("rounded-full", i === 1 ? "bg-dim" : "bg-foreground", i === 2 && "bg-muted-foreground")}
             style={{ width: `${(c.n / total) * 100}%` }}
           />
         ))}

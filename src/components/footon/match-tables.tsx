@@ -9,7 +9,7 @@ import { CoinAmount } from "./coin";
 export type CoinTable = { league: string; entry: number; players: number; href: string };
 
 const rowLink =
-  "flex items-center gap-3 border-t border-line px-4 py-3.5 outline-none transition-colors hover:bg-[#141417] focus-visible:ring-[3px] focus-visible:ring-inset focus-visible:ring-ring/60";
+  "flex items-center gap-3 border-t border-line px-4 py-3.5 outline-none transition-colors hover:bg-surface-hover focus-visible:ring-[3px] focus-visible:ring-inset focus-visible:ring-ring/60";
 
 /** "Winner takes 5,700" or "5,700 / 2,443" from 5 players up. */
 export function poolLine(entry: number, players: number) {

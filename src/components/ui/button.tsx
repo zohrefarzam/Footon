@@ -19,7 +19,7 @@ const buttonVariants = cva(
         default:
           "bg-primary text-primary-foreground shadow-[inset_0_1px_0_rgb(255_255_255/0.45)] hover:brightness-105",
         secondary:
-          "bg-surface-3 text-foreground border border-line-strong hover:bg-[#2a2a30]",
+          "bg-surface-3 text-foreground border border-line-strong hover:bg-surface-4",
         outline:
           "border border-line-strong bg-transparent text-foreground hover:bg-surface-2",
         ghost: "bg-transparent text-muted-foreground hover:bg-surface-2 hover:text-foreground",

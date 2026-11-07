@@ -236,14 +236,14 @@ function TryStep({ sample, answer, onAnswer }: { sample: Sample; answer: "yes" |
             className="absolute inset-0 rounded-2xl border border-line bg-surface p-4"
           >
             <p className="text-[11px] font-semibold tracking-[0.08em] text-subtle">QUESTION 7</p>
-            <p className="mt-2 text-[22px] font-bold tracking-[-0.03em] text-[#3a3a42]">Goal before 80&apos;?</p>
+            <p className="mt-2 text-[22px] font-bold tracking-[-0.03em] text-[#2c4d3f]">Goal before 80&apos;?</p>
           </motion.div>
           <motion.div
             aria-hidden="true"
             initial={reduce ? false : { opacity: 0, rotate: 0, y: 30 }}
             animate={{ opacity: 1, rotate: 5, y: 2, x: 12 }}
             transition={{ ...spring, delay: 0.12 }}
-            className="absolute inset-0 rounded-2xl border border-[#232328] bg-[#141417]"
+            className="absolute inset-0 rounded-2xl border border-surface-3 bg-surface-hover"
           />
 
           <motion.section
@@ -251,7 +251,7 @@ function TryStep({ sample, answer, onAnswer }: { sample: Sample; answer: "yes" |
             initial={reduce ? false : { opacity: 0, y: 40, rotate: -3 }}
             animate={{ opacity: 1, y: 0, rotate: 0 }}
             transition={{ ...spring, delay: 0.2 }}
-            className="relative flex min-h-[220px] flex-col rounded-2xl border border-[#34343b] bg-surface-2 p-4 shadow-[0_24px_48px_-20px_rgb(0_0_0/0.9)]"
+            className="relative flex min-h-[220px] flex-col rounded-2xl border border-[#284a3c] bg-surface-2 p-4 shadow-[0_24px_48px_-20px_rgb(0_0_0/0.9)]"
           >
             <div className="flex items-center justify-between gap-3">
               <span className="flex items-center gap-1.5 text-[11px] font-semibold tracking-[0.08em] text-live">
@@ -295,7 +295,7 @@ function TryStep({ sample, answer, onAnswer }: { sample: Sample; answer: "yes" |
                           initial={{ width: 0 }}
                           animate={{ width: `${side === "yes" ? sample.yesShare : 100 - sample.yesShare}%` }}
                           transition={{ type: "spring", stiffness: 120, damping: 18 }}
-                          className={cn("rounded-full", answer === side ? "bg-primary" : "bg-[#3f3f46]")}
+                          className={cn("rounded-full", answer === side ? "bg-primary" : "bg-dim")}
                         />
                       ))}
                     </div>
@@ -393,7 +393,7 @@ function ClubsStep({ clubs, selected, onToggle }: { clubs: Team[]; selected: str
                 onClick={() => onToggle(club.code)}
                 className={cn(
                   "relative flex w-full flex-col items-center gap-2 rounded-xl border px-1 pt-3.5 pb-2.5 outline-none transition-[transform,background-color,border-color] duration-200 ease-spring active:scale-95 focus-visible:ring-[3px] focus-visible:ring-ring/60",
-                  on ? "border-primary-line bg-primary-soft" : "border-line bg-surface hover:bg-[#141417]",
+                  on ? "border-primary-line bg-primary-soft" : "border-line bg-surface hover:bg-surface-hover",
                 )}
               >
                 <TeamCrest code={club.code} colors={club.colors} size="lg" />

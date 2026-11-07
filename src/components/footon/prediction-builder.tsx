@@ -2,17 +2,19 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Check, CircleDot, Flag, Pencil, Swords, X } from "lucide-react";
+import { Check, CircleDot, Flag, Goal, Lock, Pencil, Swords, X } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { PREDICTION_MIN_STAKE, STAKE_STEPS, formatCoins, payout, POINTS_PER_RIGHT_CALL } from "@/lib/economy";
-import type { ChallengeRules } from "@/lib/mock-data";
+import type { ChallengeRules, Team } from "@/lib/mock-data";
 import {
   PREDICTION_LABELS,
   PREDICTION_TYPES,
+  parseScore,
   predictionOptions,
   predictionSummary,
+  scorePick,
   type Prediction,
   type PredictionType,
 } from "@/lib/predictions";
@@ -20,10 +22,13 @@ import { cn } from "@/lib/utils";
 import { BoostBadge } from "./boost-badge";
 import { Coin, CoinAmount } from "./coin";
 import { Football } from "./football";
+import { ScorePicker } from "./score-picker";
 
 export function TypeIcon({ type, className }: { type: PredictionType; className?: string }) {
   const c = cn("size-4 shrink-0", className);
   switch (type) {
+    case "score":
+      return <Goal className={c} aria-hidden="true" />;
     case "result":
       return <Swords className={c} aria-hidden="true" />;
     case "goals":
@@ -41,6 +46,8 @@ export function TypeIcon({ type, className }: { type: PredictionType; className?
 
 export type PredictionBuilderProps = {
   match: { id: string; status: "live" | "upcoming" | "finished"; kickoff?: string; home: string; away: string; boost?: boolean };
+  /** Both sides, for the score picker's crests. Falls back to the names. */
+  teams?: { home: Team; away: Team };
   /** What you've already locked on this match. */
   initial?: Prediction[];
   /** The challenge's stake rules, when you play this match in one. */
@@ -54,11 +61,13 @@ export type PredictionBuilderProps = {
  * Until kickoff the slip stays editable; after it, it reads back right / wrong.
  * A challenge can fix the stake per prediction and cap the total.
  */
-export function PredictionBuilder({ match: m, initial = [], rules, balance }: PredictionBuilderProps) {
+export function PredictionBuilder({ match: m, teams, initial = [], rules, balance }: PredictionBuilderProps) {
   const open = m.status === "upcoming";
   const [items, setItems] = useState<Prediction[]>(initial);
   const [locked, setLocked] = useState(initial.length > 0);
   const [seq, setSeq] = useState(0);
+  /** Set when you lock in during this visit: drives the confirmation. */
+  const [justLocked, setJustLocked] = useState(false);
   const fixed = rules && rules.stake !== "free" ? rules.stake.fixed : undefined;
   const editing = open && !locked;
 
@@ -71,6 +80,26 @@ export function PredictionBuilder({ match: m, initial = [], rules, balance }: Pr
     }
   };
   const update = (id: string, patch: Partial<Prediction>) => setItems((xs) => xs.map((p) => (p.id === id ? { ...p, ...patch } : p)));
+  const scoreItem = items.find((p) => p.type === "score");
+  const setScore = ([h, a]: [number, number]) => {
+    if (scoreItem) update(scoreItem.id, { pick: scorePick(h, a) });
+    else {
+      setItems((xs) => [{ id: `new-${seq}`, type: "score", pick: scorePick(h, a), stake: minFor("score") }, ...xs]);
+      setSeq((n) => n + 1);
+    }
+  };
+  const sides = teams ?? {
+    home: { code: m.home.slice(0, 3).toUpperCase(), name: m.home },
+    away: { code: m.away.slice(0, 3).toUpperCase(), name: m.away },
+  };
+  const lockIn = () => {
+    setLocked(true);
+    setJustLocked(true);
+  };
+  const edit = () => {
+    setLocked(false);
+    setJustLocked(false);
+  };
 
   const total = items.reduce((s, p) => s + p.stake, 0);
   const wins = items.reduce((s, p) => s + payout(p.stake, m.boost), 0);
@@ -87,12 +116,24 @@ export function PredictionBuilder({ match: m, initial = [], rules, balance }: Pr
         </h2>
         <span className="flex items-center gap-2 text-xs text-muted-foreground">
           {m.boost && <BoostBadge />}
-          {open ? (
-            <>
-              Editable until <span className="font-display text-sm font-bold text-foreground">{m.kickoff}</span>
-            </>
-          ) : (
-            "Locked at kickoff"
+          {/* status: draft (dashed) → locked in (soft lime, check) → locked at kickoff (lock) */}
+          {!open ? (
+            <span className="flex h-6 items-center gap-1 rounded-full bg-surface-3 px-2.5 font-semibold text-foreground">
+              <Lock className="size-3" strokeWidth={2.6} aria-hidden="true" />
+              Locked at kickoff
+            </span>
+          ) : locked ? (
+            <span className="flex h-6 items-center gap-1 rounded-full border border-primary-line bg-primary-soft px-2.5 font-semibold text-primary">
+              <Check className="size-3" strokeWidth={3} aria-hidden="true" />
+              Locked in
+            </span>
+          ) : items.length > 0 ? (
+            <span className="flex h-6 items-center rounded-full border border-dashed border-line-strong px-2.5 font-semibold">Draft</span>
+          ) : null}
+          {open && (
+            <span>
+              until <span className="font-display text-sm font-bold text-foreground">{m.kickoff}</span>
+            </span>
           )}
         </span>
       </div>
@@ -117,9 +158,11 @@ export function PredictionBuilder({ match: m, initial = [], rules, balance }: Pr
         </p>
       )}
 
+      {editing && <ScorePicker home={sides.home} away={sides.away} value={scoreItem ? parseScore(scoreItem.pick) : undefined} onChange={setScore} />}
+
       {editing && (
         <ul className="grid grid-cols-3 gap-2" aria-label="Add a prediction">
-          {PREDICTION_TYPES.map((t) => {
+          {PREDICTION_TYPES.filter((t) => t !== "score").map((t) => {
             const on = items.some((p) => p.type === t);
             return (
               <li key={t}>
@@ -129,7 +172,7 @@ export function PredictionBuilder({ match: m, initial = [], rules, balance }: Pr
                   onClick={() => toggleType(t)}
                   className={cn(
                     "flex h-[60px] w-full flex-col items-start justify-between rounded-lg border px-2.5 py-2 text-start outline-none transition-[transform,background-color,border-color] duration-200 ease-spring active:scale-95 focus-visible:ring-[3px] focus-visible:ring-ring/60",
-                    on ? "border-primary-line bg-primary-soft text-primary" : "border-line bg-surface hover:bg-[#141417]",
+                    on ? "border-primary-line bg-primary-soft text-primary" : "border-line bg-surface hover:bg-surface-hover",
                   )}
                 >
                   <span className="flex w-full items-center gap-1.5">
@@ -162,6 +205,12 @@ export function PredictionBuilder({ match: m, initial = [], rules, balance }: Pr
                         </Button>
                       </div>
 
+                      {p.type === "score" ? (
+                        <p className="flex items-center justify-between gap-3 rounded-sm border border-primary-line bg-primary-soft px-3 py-2 text-[13px] font-semibold text-primary">
+                          <span className="truncate">{predictionSummary(p, m.home, m.away)}</span>
+                          <span className="shrink-0 text-xs font-medium text-muted-foreground">Change it above</span>
+                        </p>
+                      ) : (
                       <div role="radiogroup" aria-label={`${label}: your pick`} className="flex gap-1.5">
                         {predictionOptions(p.type, m.home, m.away).map((o) => {
                           const on = p.pick === o.value;
@@ -182,6 +231,7 @@ export function PredictionBuilder({ match: m, initial = [], rules, balance }: Pr
                           );
                         })}
                       </div>
+                      )}
 
                       <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
                         {fixed ? (
@@ -302,7 +352,7 @@ export function PredictionBuilder({ match: m, initial = [], rules, balance }: Pr
                 Pick an answer for {unpicked === 1 ? "1 more" : `${unpicked} more`}
               </Button>
             ) : (
-              <Button size="lg" disabled={lowStake} onClick={() => setLocked(true)} className="justify-between ps-5 pe-4">
+              <Button size="lg" disabled={lowStake} onClick={lockIn} className="justify-between ps-5 pe-4">
                 <span>
                   Lock in {items.length} {items.length === 1 ? "prediction" : "predictions"}
                 </span>
@@ -324,8 +374,23 @@ export function PredictionBuilder({ match: m, initial = [], rules, balance }: Pr
           </>
         )}
 
+        {open && locked && justLocked && (
+          <div role="status" className="animate-in-up flex items-center gap-3 rounded-xl border border-primary-line bg-primary-soft px-4 py-3">
+            <svg viewBox="0 0 24 24" aria-hidden="true" className="size-6 shrink-0 text-primary">
+              <circle cx="12" cy="12" r="11" fill="currentColor" opacity=".18" />
+              <path d="m7 12.5 3.2 3.2L17 9" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" className="animate-draw [stroke-dasharray:1]" pathLength={1} />
+            </svg>
+            <p className="text-sm">
+              <span className="font-semibold text-primary">
+                {items.length} {items.length === 1 ? "prediction" : "predictions"} locked in.
+              </span>{" "}
+              <span className="text-muted-foreground">You can change them until {m.kickoff}.</span>
+            </p>
+          </div>
+        )}
+
         {open && locked && (
-          <Button variant="secondary" size="lg" onClick={() => setLocked(false)}>
+          <Button variant="secondary" size="lg" onClick={edit}>
             <Pencil aria-hidden="true" />
             Edit predictions
           </Button>

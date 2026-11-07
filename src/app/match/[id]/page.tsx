@@ -1,4 +1,5 @@
 import { notFound, redirect } from "next/navigation";
+import { Trophy } from "lucide-react";
 
 import { AppShell } from "@/components/footon/app-shell";
 import { BackButton } from "@/components/footon/back-button";
@@ -13,17 +14,19 @@ import { MatchTables } from "@/components/footon/match-tables";
 import { HeadToHead, MatchTable } from "@/components/footon/match-table";
 import { PredictionBuilder } from "@/components/footon/prediction-builder";
 import { CoinAmount } from "@/components/footon/coin";
+import { NumberTicker } from "@/components/footon/number-ticker";
+import { PitchMarkings } from "@/components/footon/pitch-markings";
 import { StreakFlame } from "@/components/footon/streak";
 import { Card } from "@/components/ui/card";
 import { challenges, HOT_STREAK, matches, predictionSlips, wallet, type Match } from "@/lib/mock-data";
-import { cn } from "@/lib/utils";
+import { cn, ordinal } from "@/lib/utils";
 
 export function generateStaticParams() {
   return matches.map((m) => ({ id: m.id }));
 }
 
-/** Your result on a finished match: points, streak, right vs wrong bars. */
-function YourResult({ match: m }: { match: Match }) {
+/** Your result on a finished match: points, streak, right vs wrong bars, and your place in the league it counted for. */
+function YourResult({ match: m, league }: { match: Match; league?: { name: string; rank?: number; players: number } }) {
   const you = m.you;
   if (!you)
     return (
@@ -31,15 +34,41 @@ function YourResult({ match: m }: { match: Match }) {
         You didn&apos;t play this one. Calls open before every kickoff.
       </p>
     );
+  const won = league?.rank === 1;
   return (
-    <Card className="gap-4 p-4">
-      <div className="flex items-start justify-between">
+    <Card className="floodlight relative isolate gap-4 overflow-hidden border-line-strong p-4">
+      <PitchMarkings variant="box" className="-z-10" />
+      <div className="flex items-start justify-between gap-3">
         <div>
-          <p className="text-[13px] text-muted-foreground">You scored</p>
-          <p className="font-display text-[56px] leading-[0.95] font-bold text-primary">+{you.points}</p>
+          <p className="text-[11px] font-semibold tracking-[0.08em] text-muted-foreground uppercase">You scored</p>
+          <p className="font-display text-[56px] leading-[0.95] font-bold text-primary">
+            <NumberTicker value={you.points} prefix="+" />
+            <span className="ms-1.5 text-2xl text-muted-foreground">pts</span>
+          </p>
         </div>
         {you.streak >= HOT_STREAK && <StreakFlame count={you.streak} size="md" />}
       </div>
+      {league?.rank && (
+        <p
+          className={cn(
+            "flex items-center gap-3 rounded-lg border px-3 py-2.5",
+            won ? "border-gold-line bg-gold-soft" : "border-line bg-surface-2",
+          )}
+        >
+          <span
+            aria-hidden="true"
+            className={cn("flex size-9 items-center justify-center rounded-full", won ? "bg-gold text-gold-foreground" : "bg-surface-3 text-foreground")}
+          >
+            <Trophy className="size-[18px]" strokeWidth={2.2} />
+          </span>
+          <span className="min-w-0 flex-1 text-sm">
+            <span className={cn("font-semibold", won && "text-gold")}>{won ? `You won ${league.name}` : `${ordinal(league.rank)} in ${league.name}`}</span>
+            <span className="block text-xs text-muted-foreground">
+              {ordinal(league.rank)} of {league.players} · final table
+            </span>
+          </span>
+        </p>
+      )}
       <div className="flex gap-1.5" role="img" aria-label={`${you.right} of ${you.calls} calls right`}>
         {Array.from({ length: you.calls }, (_, i) => (
           <span key={i} className={cn("h-2 flex-1 rounded-full", i < you.right ? "bg-win" : "h-1 self-center bg-loss")} />
@@ -102,10 +131,12 @@ export default async function MatchPage({ params }: PageProps<"/match/[id]">) {
 
   const done = m.status === "finished";
   const pool = challenges.find((c) => c.matchId === m.id && c.status === "joined");
+  const settled = challenges.find((c) => c.matchId === m.id && c.status === "finished");
 
   const builder = (
     <PredictionBuilder
       match={{ id: m.id, status: m.status, kickoff: m.kickoff, home: m.home.name, away: m.away.name, boost: !!m.boost }}
+      teams={{ home: m.home, away: m.away }}
       initial={predictionSlips[m.id]}
       rules={pool && { ...pool.rules, league: pool.name, setBy: pool.mine ? undefined : pool.from?.name }}
       balance={wallet.coins}
@@ -143,7 +174,7 @@ export default async function MatchPage({ params }: PageProps<"/match/[id]">) {
             label: "Result",
             content: (
               <>
-                <YourResult match={m} />
+                <YourResult match={m} league={settled && { name: settled.name, rank: settled.rank, players: settled.members.length }} />
                 {predictionSlips[m.id]?.length ? builder : null}
                 <YourCoins match={m} />
               </>

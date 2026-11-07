@@ -18,7 +18,7 @@ export function ShopPreview({ items, className }: { items: ShopItem[]; className
       href="/shop"
       aria-label={`Shop, opening soon: ${items.map((i) => i.name).join(", ")}`}
       className={cn(
-        "group bg-dots flex flex-col gap-3 rounded-xl border border-line-strong bg-surface p-3.5 outline-none transition-colors duration-300 hover:border-[#3a3a42] focus-visible:ring-[3px] focus-visible:ring-ring/60",
+        "group bg-dots flex flex-col gap-3 rounded-xl border border-line-strong bg-surface p-3.5 outline-none transition-colors duration-300 hover:border-[#2c4d3f] focus-visible:ring-[3px] focus-visible:ring-ring/60",
         className,
       )}
     >

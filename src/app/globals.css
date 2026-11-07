@@ -2,7 +2,9 @@
 @import "tw-animate-css";
 
 /*
- * Footon design tokens.
+ * Footon design tokens: "stadium at night".
+ * Neutrals are a green-tinted ladder (deep stadium green → turf), the brand is
+ * a floodlit pitch green, amber stays live/coins, gold is trophies only.
  * Footon is dark-only. Values live on :root; `.dark` mirrors them so
  * shadcn components that check for the class still behave.
  * Read AGENTS.md before adding or changing a token.
@@ -12,43 +14,57 @@
   color-scheme: dark;
   --radius: 1rem;
 
-  /* Ground and surfaces (zinc, from darkest to lightest) */
-  --background: #09090b;
-  --surface: #111114; /* cards, list groups */
-  --surface-2: #18181b; /* raised: floating cards, pills, dock */
-  --surface-3: #232328; /* secondary buttons, chat bubbles */
-  --line: #1e1e23; /* hairline border on surface */
-  --line-strong: #2e2e35; /* border on surface-2 / raised */
+  /* Ground and surfaces (stadium green, from darkest to lightest) */
+  --background: #06140f;
+  --surface: #0b1e17; /* cards, list groups */
+  --surface-hover: #0f251c; /* hover on a row inside a surface card */
+  --surface-2: #11281f; /* raised: floating cards, pills, dock */
+  --surface-3: #183327; /* secondary buttons, chat bubbles */
+  --surface-4: #1f3d30; /* hover on surface-3 */
+  --line: #15302a; /* hairline border on surface */
+  --line-strong: #224236; /* border on surface-2 / raised */
+  --track: #193429; /* empty progress tracks, switch off */
+  --dim: #2e4b3f; /* dim fills: score colons, inactive bars */
+  --dim-strong: #4a675a; /* tick marks on dim fills */
 
   /* Text */
-  --foreground: #fafafa;
-  --muted-foreground: #a1a1aa; /* secondary text — passes 4.5:1 on all surfaces */
-  --subtle: #71717a; /* decoration and large text only (fails 4.5:1 at small sizes) */
-  --nav-muted: #8e8e97; /* inactive dock items */
+  --foreground: #f3f8f4;
+  --muted-foreground: #9db1a6; /* secondary text — passes 4.5:1 on all surfaces */
+  --subtle: #62786d; /* decoration and large text only (fails 4.5:1 at small sizes) */
+  --nav-muted: #8aa095; /* inactive dock items */
 
-  /* Brand: lime. Only the main action, wins, and "you" */
-  --primary: #c8f542;
-  --primary-foreground: #0b0f02;
-  --primary-soft: rgb(200 245 66 / 0.12); /* selected chips, tabs, toggles */
-  --primary-line: rgb(200 245 66 / 0.35);
+  /* Brand: floodlit pitch green. Only the main action, wins, and "you" */
+  --primary: #22dd80;
+  --primary-foreground: #02160c;
+  --primary-soft: rgb(34 221 128 / 0.12); /* selected chips, tabs, toggles */
+  --primary-line: rgb(34 221 128 / 0.38);
+  --neon: #8cffb0; /* floodlight tint only: glows on hero canvases, never text or fills */
 
   /* Live: amber. Live minute, timers, coins, boosts */
-  --live: #ffb547;
-  --live-foreground: #3b2300;
-  --live-soft: rgb(255 181 71 / 0.12);
+  --live: #ffa83e;
+  --live-foreground: #3b2200;
+  --live-soft: rgb(255 168 62 / 0.13);
+
+  /* Gold: trophies, 1st place, achievements. Never coins, never actions */
+  --gold: #f5c451;
+  --gold-foreground: #2d2002;
+  --gold-soft: rgb(245 196 81 / 0.13);
+  --gold-line: rgb(245 196 81 / 0.4);
+  --silver: #c9d4ce; /* 2nd place, the Silver division card */
+  --bronze: #d9925e; /* 3rd place */
 
   /* Outcomes */
   --win: var(--primary);
   --loss: #f87171;
-  --loss-soft: #2a1416;
+  --loss-soft: #2b1517;
 
-  /* Pitch (Team screen only) */
   /* Referee cards in the match timeline only (they are the literal card colours) */
   --booking-yellow: #facc15;
   --booking-red: #ef4444;
 
-  --pitch: #0f1a12;
-  --pitch-2: #122016;
+  /* Pitch: line-ups, fantasy, and the pitch markings on hero canvases */
+  --pitch: #0d2c1d;
+  --pitch-2: #103423;
   --pitch-line: rgb(255 255 255 / 0.09);
 
   /* shadcn semantic aliases */
@@ -63,18 +79,23 @@
   --accent-foreground: var(--foreground);
   --destructive: var(--loss);
   --border: var(--line);
-  --input: #26262c;
-  --ring: #52525b;
+  --input: #1d3b2f;
+  --ring: #4f6e60;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-surface: var(--surface);
+  --color-surface-hover: var(--surface-hover);
   --color-surface-2: var(--surface-2);
   --color-surface-3: var(--surface-3);
+  --color-surface-4: var(--surface-4);
   --color-line: var(--line);
   --color-line-strong: var(--line-strong);
+  --color-track: var(--track);
+  --color-dim: var(--dim);
+  --color-dim-strong: var(--dim-strong);
   --color-subtle: var(--subtle);
   --color-nav-muted: var(--nav-muted);
   --color-primary: var(--primary);
@@ -84,6 +105,13 @@
   --color-live: var(--live);
   --color-live-foreground: var(--live-foreground);
   --color-live-soft: var(--live-soft);
+  --color-gold: var(--gold);
+  --color-gold-foreground: var(--gold-foreground);
+  --color-gold-soft: var(--gold-soft);
+  --color-gold-line: var(--gold-line);
+  --color-silver: var(--silver);
+  --color-bronze: var(--bronze);
+  --color-neon: var(--neon);
   --color-win: var(--win);
   --color-loss: var(--loss);
   --color-loss-soft: var(--loss-soft);
@@ -130,15 +158,27 @@
   --animate-live-pulse: live-pulse 1.8s ease-out infinite;
   --animate-shimmer: shimmer 2.2s linear infinite;
   --animate-in-up: in-up 0.4s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  /* SVG check / line drawing itself in: pair with pathLength={1} and [stroke-dasharray:1] */
+  --animate-draw: draw 0.45s cubic-bezier(0.2, 0.8, 0.2, 1) 0.1s both;
+  /* skeleton blocks while a screen loads */
+  --animate-skeleton: skeleton 1.4s ease-in-out infinite;
 
   @keyframes live-pulse {
-    0% { box-shadow: 0 0 0 0 rgb(255 181 71 / 0.6); }
-    70% { box-shadow: 0 0 0 7px rgb(255 181 71 / 0); }
-    100% { box-shadow: 0 0 0 0 rgb(255 181 71 / 0); }
+    0% { box-shadow: 0 0 0 0 rgb(255 168 62 / 0.6); }
+    70% { box-shadow: 0 0 0 7px rgb(255 168 62 / 0); }
+    100% { box-shadow: 0 0 0 0 rgb(255 168 62 / 0); }
   }
   @keyframes shimmer {
     from { background-position: 150% 0; }
     to { background-position: -50% 0; }
+  }
+  @keyframes draw {
+    from { stroke-dashoffset: 1; }
+    to { stroke-dashoffset: 0; }
+  }
+  @keyframes skeleton {
+    0%, 100% { opacity: 0.55; }
+    50% { opacity: 1; }
   }
   @keyframes in-up {
     from { opacity: 0; transform: translateY(8px); filter: blur(4px); }
@@ -146,10 +186,28 @@
   }
 }
 
-/* Dotted canvas behind hero moments (onboarding deck, invite ticket) */
+/* Dotted canvas behind quiet moments (empty states, locked cards, the invite ticket) */
 @utility bg-dots {
-  background-image: radial-gradient(#1f1f24 1px, transparent 1px);
+  background-image: radial-gradient(#173328 1px, transparent 1px);
   background-size: 14px 14px;
+}
+
+/*
+ * Mown-turf stripes: the one football texture for hero canvases (scoreboards,
+ * the Home match hero, the leaderboard header). Barely there by design.
+ */
+@utility bg-turf {
+  background-image: repeating-linear-gradient(90deg, rgb(255 255 255 / 0.022) 0 32px, transparent 32px 64px);
+}
+
+/*
+ * Floodlight: one soft pool of light from the top of a hero canvas. Pair with
+ * `bg-turf`. Allowed on hero canvases only, never on list cards or buttons.
+ */
+@utility floodlight {
+  background-image:
+    radial-gradient(120% 70% at 50% -10%, rgb(140 255 176 / 0.10), transparent 60%),
+    repeating-linear-gradient(90deg, rgb(255 255 255 / 0.022) 0 32px, transparent 32px 64px);
 }
 
 /* Shimmering status text, e.g. "Waiting for 75'…" */
@@ -164,7 +222,7 @@
 
 /* Glass surface for the dock and bottom sheets */
 @utility glass {
-  background: rgb(24 24 27 / 0.8);
+  background: rgb(14 36 27 / 0.78);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
 }

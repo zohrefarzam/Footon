@@ -1,4 +1,12 @@
+import { AchievementBadge } from "@/components/footon/achievement-badge";
 import { CoinBadge } from "@/components/footon/coin";
+import { DivisionCard } from "@/components/footon/division-card";
+import { EmptyState } from "@/components/footon/empty-state";
+import { LeagueBadge } from "@/components/footon/league-badge";
+import { MatchHero } from "@/components/footon/match-hero";
+import { PitchMarkings } from "@/components/footon/pitch-markings";
+import { SectionHeading } from "@/components/footon/section-heading";
+import { Standings } from "@/components/footon/standings";
 import { FantasyUnlock } from "@/components/footon/fantasy-unlock";
 import { FormBars } from "@/components/footon/form-bars";
 import { LiveDot, LiveMinute } from "@/components/footon/live";
@@ -23,21 +31,26 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
 import { Switch } from "@/components/ui/switch";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { achievements, division, league, matches } from "@/lib/mock-data";
 
 const swatches = [
-  ["background", "#09090B", "App ground"],
-  ["surface", "#111114", "Cards, lists"],
-  ["surface-2", "#18181B", "Raised, dock"],
-  ["surface-3", "#232328", "Secondary buttons"],
-  ["line", "#1E1E23", "Hairlines"],
-  ["line-strong", "#2E2E35", "Raised borders"],
-  ["foreground", "#FAFAFA", "Text"],
-  ["muted-foreground", "#A1A1AA", "Secondary text"],
-  ["primary", "#C8F542", "Main CTA, wins, you"],
-  ["live", "#FFB547", "Live, timers, coins"],
+  ["background", "#06140F", "Stadium ground"],
+  ["surface", "#0B1E17", "Cards, lists"],
+  ["surface-2", "#11281F", "Raised, dock"],
+  ["surface-3", "#183327", "Secondary buttons"],
+  ["line", "#15302A", "Hairlines"],
+  ["line-strong", "#224236", "Raised borders"],
+  ["foreground", "#F3F8F4", "Text"],
+  ["muted-foreground", "#9DB1A6", "Secondary text"],
+  ["primary", "#22DD80", "Main CTA, wins, you"],
+  ["live", "#FFA83E", "Live, timers, coins"],
+  ["gold", "#F5C451", "Trophies, 1st, achievements"],
+  ["silver", "#C9D4CE", "2nd, Silver division"],
+  ["bronze", "#D9925E", "3rd"],
   ["loss", "#F87171", "Losses, wrong"],
-  ["pitch", "#0F1A12", "Team pitch"],
+  ["pitch", "#0D2C1D", "Line-ups, fantasy"],
 ] as const;
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
@@ -83,6 +96,51 @@ export default function StyleguidePage() {
           <p className="text-[15px] font-semibold">Body strong 15/600 — Geist</p>
           <p className="text-[13px] text-muted-foreground">Secondary 13/400 — muted-foreground</p>
           <p className="font-mono text-xs">t.me/footon_bot?start=sun9k — Geist Mono</p>
+        </div>
+      </Section>
+
+      <Section title="Football language">
+        <div className="max-w-md">
+          <SectionHeading title="Big matches" action={{ label: "All matches", href: "/live" }} />
+        </div>
+        <div className="max-w-md">
+          <MatchHero
+            match={matches.find((m) => m.id === "ars-che")!}
+            eyebrow="Matchday · Tuesday 3 November"
+            cta={{ label: "Make your predictions", href: "/match/ars-che" }}
+          />
+        </div>
+        <div className="flex items-center gap-3">
+          <LeagueBadge name="Sunday Rivals" size="lg" />
+          <LeagueBadge name="Derby night" />
+          <LeagueBadge name="Seaside" size="sm" />
+          <LeagueBadge name="Silver" tone="silver" />
+          <TeamCrest code="LIV" colors={["#C8102E", "#F6EB61"]} size="lg" />
+        </div>
+        <Card className="max-w-md overflow-hidden pb-1">
+          <Standings rows={division.rows} caption="Division table" zones={{ promote: division.promote, relegate: division.relegate, size: division.size }} />
+        </Card>
+        <Card className="max-w-md overflow-hidden">
+          <Standings rows={league.standings} caption="Compact league table" compact />
+        </Card>
+        <DivisionCard division={division} className="max-w-md" />
+        <ul className="grid max-w-md grid-cols-3 gap-2">
+          {achievements.slice(0, 6).map((a) => (
+            <li key={a.id} className="flex">
+              <AchievementBadge achievement={a} className="flex-1" />
+            </li>
+          ))}
+        </ul>
+        <div className="floodlight relative isolate h-28 max-w-md overflow-hidden rounded-2xl border border-line-strong bg-surface">
+          <PitchMarkings />
+        </div>
+        <div className="max-w-md">
+          <EmptyState title="Nothing on yet" body="Every fixture is on the Live tab." action={{ label: "Browse matches", href: "/live" }} />
+        </div>
+        <div className="flex max-w-md items-center gap-3">
+          <Skeleton className="size-10 rounded-full" />
+          <Skeleton className="h-4 flex-1" />
+          <Skeleton className="h-6 w-12" />
         </div>
       </Section>
 

@@ -373,15 +373,62 @@ matches.push(
 
 export const fantasyProgress = { done: 3, total: 5 };
 
+/**
+ * One row of a friends' league or division table. `move` = places gained (+)
+ * or lost (−) since the last update; `right` / `calls` = calls right of calls made.
+ */
+export type Standing = {
+  name: string;
+  initial: string;
+  points: number;
+  you?: boolean;
+  /** Places gained since the last update (negative = dropped). */
+  delta?: number;
+  right?: number;
+  calls?: number;
+  /** Fixed position, for tables shown with gaps (a division around you). */
+  rank?: number;
+};
+
 export const league = {
   name: "Sunday Rivals",
   code: "sun9k",
   link: "t.me/footon_bot?start=sun9k",
   standings: [
-    { name: "You", initial: "Y", points: 840, you: true, delta: 1 },
-    { name: "Sara", initial: "S", points: 790 },
-    { name: "Omid", initial: "O", points: 770 },
-  ],
+    { name: "You", initial: "Y", points: 840, you: true, delta: 1, right: 17, calls: 22 },
+    { name: "Sara", initial: "S", points: 790, delta: -1, right: 16, calls: 22 },
+    { name: "Omid", initial: "O", points: 770, right: 15, calls: 21 },
+  ] satisfies Standing[],
+};
+
+/**
+ * Your weekly division: everyone on Footon at your level, ranked by points
+ * (skill only). Top `promote` go up, bottom `relegate` go down when the week ends.
+ * `rows` is the slice the app shows: the top of the table, the places around
+ * you, and the bottom.
+ */
+export const division = {
+  name: "Silver",
+  week: 10,
+  endsIn: "4 days",
+  size: 30,
+  promote: 5,
+  relegate: 5,
+  rows: [
+    { rank: 1, name: "Nima", initial: "N", points: 5610, right: 112, calls: 158, delta: 0 },
+    { rank: 2, name: "Hana", initial: "H", points: 5480, right: 109, calls: 161, delta: 2 },
+    { rank: 3, name: "Leo", initial: "L", points: 5320, right: 106, calls: 149, delta: -1 },
+    { rank: 4, name: "Mina", initial: "M", points: 5150, right: 103, calls: 155, delta: -1 },
+    { rank: 5, name: "Theo", initial: "T", points: 5040, right: 100, calls: 147, delta: 1 },
+    { rank: 6, name: "Dara", initial: "D", points: 4990, right: 99, calls: 152, delta: -1 },
+    { rank: 7, name: "Iris", initial: "I", points: 4900, right: 98, calls: 150, delta: 0 },
+    { rank: 8, name: "You", initial: "Y", points: 4820, right: 96, calls: 141, delta: 3, you: true },
+    { rank: 9, name: "Sam", initial: "S", points: 4770, right: 95, calls: 150, delta: -2 },
+    { rank: 10, name: "Arash", initial: "A", points: 4700, right: 94, calls: 146, delta: 0 },
+    { rank: 28, name: "Ben", initial: "B", points: 3180, right: 63, calls: 132, delta: -1 },
+    { rank: 29, name: "Kai", initial: "K", points: 3050, right: 61, calls: 128, delta: 0 },
+    { rank: 30, name: "Ela", initial: "E", points: 2910, right: 58, calls: 140, delta: -2 },
+  ] satisfies Standing[],
 };
 
 export const liveQuestion: LiveQuestion = {
@@ -497,10 +544,12 @@ export type Challenge = {
   mine?: boolean;
   /** Your place, once calls have resolved. */
   rank?: number;
+  /** The league table on this match, once calls have resolved. */
+  table?: Standing[];
 };
 
 export const challenges: Challenge[] = [
-  { id: "ch-1", name: "Sunday Rivals", matchId: "liv-mci", entry: 500, members: ["Y", "S", "O"], status: "joined", mine: true, rank: 1, rules: { stake: "free", cap: 2500 } },
+  { id: "ch-1", name: "Sunday Rivals", matchId: "liv-mci", entry: 500, members: ["Y", "S", "O"], status: "joined", mine: true, rank: 1, rules: { stake: "free", cap: 2500 }, table: league.standings },
   {
     id: "ch-2",
     name: "Derby night",
@@ -531,7 +580,21 @@ export const challenges: Challenge[] = [
     from: { name: "Lena", initial: "L" },
     rules: { stake: "free", cap: 2500 },
   },
-  { id: "ch-3", name: "Seaside", matchId: "bha-eve", entry: 500, members: ["Y", "K"], status: "finished", mine: true, rank: 1, rules: { stake: "free" } },
+  {
+    id: "ch-3",
+    name: "Seaside",
+    matchId: "bha-eve",
+    entry: 500,
+    members: ["Y", "K"],
+    status: "finished",
+    mine: true,
+    rank: 1,
+    rules: { stake: "free" },
+    table: [
+      { name: "You", initial: "Y", points: 240, right: 5, calls: 6, you: true },
+      { name: "Kian", initial: "K", points: 190, right: 4, calls: 6 },
+    ],
+  },
   {
     id: "ch-6",
     name: "Claret and blue",
@@ -641,6 +704,28 @@ export const profile = {
   /** Calls you have running right now (shown in the island). */
   activeCalls: 2,
 };
+
+/**
+ * Achievements. `tier: "gold"` = a trophy moment (wins, promotions), drawn in
+ * gold; the rest are standard. No `earned` = still locked, with what unlocks it.
+ */
+export type Achievement = {
+  id: string;
+  label: string;
+  detail: string;
+  icon: "trophy" | "flame" | "eye" | "swords" | "shield" | "arrow-up";
+  tier: "gold" | "standard";
+  earned?: string;
+};
+
+export const achievements: Achievement[] = [
+  { id: "first-win", label: "First win", detail: "Won Seaside", icon: "trophy", tier: "gold", earned: "Yesterday" },
+  { id: "streak-5", label: "Streak 5", detail: "5 right in a row", icon: "flame", tier: "standard", earned: "Yesterday" },
+  { id: "prophet", label: "Prophet", detail: "A call under 20% got right", icon: "eye", tier: "standard", earned: "Sun" },
+  { id: "derby", label: "Derby day", detail: "Win a league on a derby", icon: "swords", tier: "gold" },
+  { id: "promoted", label: "Promoted", detail: "Finish top 5 in your division", icon: "arrow-up", tier: "gold" },
+  { id: "unbeaten", label: "Unbeaten", detail: "Top 3 in a league five times", icon: "shield", tier: "standard" },
+];
 
 /** Banter you can send without typing. Grouped for the quick-reply palette. */
 export const chatPresets: { group: string; phrases: string[] }[] = [

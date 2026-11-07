@@ -109,7 +109,7 @@ export function FavouriteClubs({ clubs, initial }: { clubs: Team[]; initial: str
                           onClick={() => toggle(club.code)}
                           className={cn(
                             "relative flex w-full flex-col items-center gap-2 rounded-xl border px-1 pt-3.5 pb-2.5 outline-none transition-[transform,background-color,border-color] duration-200 ease-spring active:scale-95 focus-visible:ring-[3px] focus-visible:ring-ring/60",
-                            on ? "border-primary-line bg-primary-soft" : "border-line bg-surface hover:bg-[#141417]",
+                            on ? "border-primary-line bg-primary-soft" : "border-line bg-surface hover:bg-surface-hover",
                           )}
                         >
                           <TeamCrest code={club.code} colors={club.colors} size="lg" />

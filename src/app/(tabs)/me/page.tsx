@@ -1,23 +1,17 @@
 import Link from "next/link";
-import { Award, Eye, Flame, Lock, Settings, Trophy, UserRound } from "lucide-react";
+import { Award, Lock, Settings, UserRound } from "lucide-react";
 
+import { AchievementBadge } from "@/components/footon/achievement-badge";
 import { AppShell } from "@/components/footon/app-shell";
+import { RankStrip } from "@/components/footon/division-card";
 import { FavouriteClubs } from "@/components/footon/favourite-clubs";
 import { FormBars } from "@/components/footon/form-bars";
+import { PitchMarkings } from "@/components/footon/pitch-markings";
 import { Button } from "@/components/ui/button";
 import { Card, CardRow } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { clubDirectory, profile, recentForm } from "@/lib/mock-data";
-import { cn } from "@/lib/utils";
-
-const RANK = 8;
-const OF = 30;
-
-const achievements = [
-  { label: "Prophet", icon: Eye, tone: "bg-primary-soft text-primary" },
-  { label: "Streak 5", icon: Flame, tone: "bg-live-soft text-live" },
-  { label: "First win", icon: Trophy, tone: "bg-[#1c1c21] text-[#e4e4e7]" },
-];
+import { achievements, clubDirectory, division, profile, recentForm } from "@/lib/mock-data";
+import { cn, ordinal } from "@/lib/utils";
 
 const collection = [
   { label: "Players", count: 3 },
@@ -31,50 +25,42 @@ export default function MePage() {
   const losses = recentForm.filter((r) => r === "L").length;
   const voids = recentForm.length - wins - losses;
   const rate = Math.round((wins / Math.max(1, wins + losses)) * 100);
+  const RANK = division.rows.find((r) => r.you)?.rank ?? division.size;
+  const OF = division.size;
 
   return (
-    <AppShell className="gap-5 pt-3.5">
-      <header className="flex h-10 items-center justify-between">
+    <AppShell wide className="gap-5 pt-3.5 lg:grid lg:grid-cols-2 lg:items-start lg:gap-x-6">
+      <header className="flex h-10 items-center justify-between lg:col-span-2">
         <h1 className="text-[22px] font-bold tracking-[-0.03em]">Profile</h1>
         <Button variant="secondary" size="icon" aria-label="Settings" className="size-10">
           <Settings />
         </Button>
       </header>
 
-      {/* Silver league card — tilts slightly on hover */}
+      {/* Silver division card — a silver trading card, tilts slightly on hover */}
       <div className="group perspective-[900px]">
-        <section className="rounded-3xl bg-[#d4d4d8] bg-[radial-gradient(rgb(9_9_11/0.12)_1px,transparent_1px)] bg-[length:12px_12px] p-5 text-background shadow-[0_24px_50px_-24px_rgb(212_212_216/0.35)] transition-transform duration-500 ease-spring-soft group-hover:-translate-y-0.5 group-hover:rotate-x-6 group-hover:-rotate-y-8">
+        <section className="relative isolate overflow-hidden rounded-3xl bg-silver p-5 text-background shadow-[0_24px_50px_-24px_rgb(201_212_206/0.35)] transition-transform duration-500 ease-spring-soft group-hover:-translate-y-0.5 group-hover:rotate-x-6 group-hover:-rotate-y-8 [--pitch-line:rgb(6_20_15/0.12)]">
+          <PitchMarkings variant="box" className="-z-10" />
           <div className="flex items-start justify-between">
             <div>
-              <p className="text-[11px] font-bold tracking-[0.12em]">SILVER LEAGUE</p>
+              <p className="text-[11px] font-bold tracking-[0.12em]">{division.name.toUpperCase()} DIVISION</p>
               <p className="mt-2 font-display text-[64px] leading-[0.95] font-bold">{profile.points.toLocaleString("en-US")}</p>
               <p className="text-[13px] font-semibold opacity-70">Total points</p>
             </div>
-            <span className="flex size-[60px] items-center justify-center rounded-[18px] bg-background text-[#d4d4d8]" aria-hidden="true">
+            <span className="flex size-[60px] items-center justify-center rounded-[18px] bg-background text-silver" aria-hidden="true">
               <UserRound className="size-7" strokeWidth={1.8} />
             </span>
           </div>
           <div className="mt-[18px]">
             <div className="flex justify-between text-xs font-semibold">
               <span>
-                Rank {RANK} of {OF}
+                {ordinal(RANK)} of {OF} · week {division.week}
               </span>
-              <Link href="/" className="underline underline-offset-3">
+              <Link href="/leaderboard" className="-my-3 py-3 underline underline-offset-3">
                 View leaderboard
               </Link>
             </div>
-            <div role="img" aria-label={`Rank ${RANK} of ${OF}`} className="mt-2 grid h-4 grid-cols-30 items-end gap-0.5">
-              {Array.from({ length: OF }, (_, i) => (
-                <span
-                  key={i}
-                  className={cn(
-                    "rounded-[2px]",
-                    i + 1 === RANK ? "h-4 bg-background" : "h-2",
-                    i + 1 < RANK ? "bg-background/55" : i + 1 > RANK && "bg-background/18",
-                  )}
-                />
-              ))}
-            </div>
+            <RankStrip rank={RANK} size={OF} promote={division.promote} relegate={division.relegate} tone="light" className="mt-2" />
           </div>
         </section>
       </div>
@@ -160,18 +146,17 @@ export default function MePage() {
         </div>
       </Card>
 
-      <section className="flex flex-col gap-2.5">
-        <h2 className="text-[13px] font-medium text-muted-foreground">Achievements</h2>
+      <section id="achievements" aria-labelledby="ach-title" className="flex scroll-mt-24 flex-col gap-2.5">
+        <h2 id="ach-title" className="flex items-baseline justify-between text-[13px] font-medium text-muted-foreground">
+          Achievements
+          <span className="text-xs">
+            <span className="font-display text-sm font-bold text-foreground">{achievements.filter((a) => a.earned).length}</span> of {achievements.length}
+          </span>
+        </h2>
         <ul className="grid grid-cols-3 gap-2">
-          {achievements.map(({ label, icon: Icon, tone }) => (
-            <li
-              key={label}
-              className="flex flex-col gap-2.5 rounded-lg border border-line bg-surface p-3 transition-[transform,border-color] duration-200 ease-spring hover:-translate-y-0.5 hover:border-line-strong"
-            >
-              <span className={cn("flex size-8 items-center justify-center rounded-sm", tone)}>
-                <Icon className="size-[17px]" />
-              </span>
-              <span className="text-[13px] font-semibold">{label}</span>
+          {achievements.map((a) => (
+            <li key={a.id} className="flex">
+              <AchievementBadge achievement={a} className="flex-1" />
             </li>
           ))}
         </ul>

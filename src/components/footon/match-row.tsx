@@ -115,7 +115,7 @@ export function MatchRow({ match, href, className }: { match: Match; href?: stri
           aria-label={label}
           className={cn(
             row,
-            "outline-none transition-colors hover:bg-[#141417] focus-visible:ring-[3px] focus-visible:ring-inset focus-visible:ring-ring/60",
+            "outline-none transition-colors hover:bg-surface-hover focus-visible:ring-[3px] focus-visible:ring-inset focus-visible:ring-ring/60",
           )}
         >
           {body}

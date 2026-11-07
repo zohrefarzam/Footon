@@ -45,7 +45,7 @@ export function TeamCrest({
   return (
     <span
       className={cn(
-        "inline-flex shrink-0 items-center justify-center border border-[#2a2a30] bg-[#1c1c21] font-display font-bold text-[#e4e4e7]",
+        "inline-flex shrink-0 items-center justify-center border border-line-strong bg-surface-2 font-display font-bold text-[#e1ebe5]",
         sizes[size],
         className,
       )}

@@ -17,7 +17,7 @@ export function LevelBar({ level, xp, xpNext, badges, className }: { level: numb
       href="/me#level"
       aria-label={`Level ${level}, ${fmt(xp)} of ${fmt(xpNext)} XP to level ${level + 1}, ${badges} badges`}
       className={cn(
-        "flex h-9 items-center gap-2.5 rounded-full border border-line bg-surface ps-1 pe-3 outline-none transition-[transform,background-color] duration-200 ease-spring hover:bg-[#141417] active:scale-[0.98] focus-visible:ring-[3px] focus-visible:ring-ring/60",
+        "flex h-9 items-center gap-2.5 rounded-full border border-line bg-surface ps-1 pe-3 outline-none transition-[transform,background-color] duration-200 ease-spring hover:bg-surface-hover active:scale-[0.98] focus-visible:ring-[3px] focus-visible:ring-ring/60",
         className,
       )}
     >
@@ -25,7 +25,7 @@ export function LevelBar({ level, xp, xpNext, badges, className }: { level: numb
         <span className="text-[11px] text-muted-foreground">LV</span>
         {level}
       </span>
-      <span aria-hidden="true" className="relative h-1.5 min-w-0 flex-1 overflow-hidden rounded-full bg-[#27272a]">
+      <span aria-hidden="true" className="relative h-1.5 min-w-0 flex-1 overflow-hidden rounded-full bg-track">
         <span className="absolute inset-y-0 start-0 rounded-full bg-foreground/85" style={{ width: `${pct}%` }} />
       </span>
       <span aria-hidden="true" className="shrink-0 font-display text-[13px] font-bold text-muted-foreground tabular-nums">

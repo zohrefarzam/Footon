@@ -154,7 +154,7 @@ export function LiveIsland({ coins, live }: { coins: number; live?: IslandLive }
                         className={cn(
                           "flex h-11 items-center justify-center rounded-md text-[15px] font-bold outline-none transition-[transform,filter] duration-200 ease-spring active:scale-95 focus-visible:ring-[3px] focus-visible:ring-ring/60",
                           a === "yes"
-                            ? "bg-primary text-primary-foreground shadow-[inset_0_1px_0_rgb(255_255_255/0.45)] hover:brightness-105"
+                            ? "bg-primary text-primary-foreground hover:brightness-105"
                             : "border border-line-strong bg-surface-3",
                         )}
                       >

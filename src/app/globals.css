@@ -33,12 +33,11 @@
   --subtle: #62786d; /* decoration and large text only (fails 4.5:1 at small sizes) */
   --nav-muted: #8aa095; /* inactive dock items */
 
-  /* Brand: floodlit pitch green. Only the main action, wins, and "you" */
-  --primary: #22dd80;
-  --primary-foreground: #02160c;
-  --primary-soft: rgb(34 221 128 / 0.12); /* selected chips, tabs, toggles */
-  --primary-line: rgb(34 221 128 / 0.38);
-  --neon: #8cffb0; /* floodlight tint only: glows on hero canvases, never text or fills */
+  /* Brand: calm grass green (matte, not neon). Only the main action, wins, and "you" */
+  --primary: #43b883;
+  --primary-foreground: #04170e;
+  --primary-soft: rgb(67 184 131 / 0.12); /* selected chips, tabs, toggles */
+  --primary-line: rgb(67 184 131 / 0.34);
 
   /* Live: amber. Live minute, timers, coins, boosts */
   --live: #ffa83e;
@@ -111,7 +110,6 @@
   --color-gold-line: var(--gold-line);
   --color-silver: var(--silver);
   --color-bronze: var(--bronze);
-  --color-neon: var(--neon);
   --color-win: var(--win);
   --color-loss: var(--loss);
   --color-loss-soft: var(--loss-soft);
@@ -201,12 +199,12 @@
 }
 
 /*
- * Floodlight: one soft pool of light from the top of a hero canvas. Pair with
+ * Floodlight: one soft pool of white light from the top of a hero canvas. Pair with
  * `bg-turf`. Allowed on hero canvases only, never on list cards or buttons.
  */
 @utility floodlight {
   background-image:
-    radial-gradient(120% 70% at 50% -10%, rgb(140 255 176 / 0.10), transparent 60%),
+    radial-gradient(120% 70% at 50% -10%, rgb(255 255 255 / 0.05), transparent 60%),
     repeating-linear-gradient(90deg, rgb(255 255 255 / 0.022) 0 32px, transparent 32px 64px);
 }
 

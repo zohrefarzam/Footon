@@ -74,7 +74,7 @@ export default function HomePage() {
 
         {big.length > 0 && (
           <section aria-labelledby="home-big" className="order-2 flex flex-col gap-2.5 lg:order-none">
-            <SectionHeading id="home-big" title="Big matches" meta={<BoostBadge label="Wins pay" />} action={{ label: "All matches", href: "/live" }} />
+            <SectionHeading id="home-big" title="Big fixtures" meta={<BoostBadge label="Wins pay" />} action={{ label: "All matches", href: "/live" }} />
             <Card className="overflow-hidden">
               {big.map((m) => (
                 <MatchRow key={m.id} match={m} href={m.status === "live" && m.league ? "/play" : `/match/${m.id}`} />
@@ -85,7 +85,7 @@ export default function HomePage() {
 
         {last && (
           <section aria-labelledby="home-result" className="order-5 flex flex-col gap-2.5 lg:order-none">
-            <SectionHeading id="home-result" title="Latest result" action={{ label: "Trophies", href: "/me#achievements" }} />
+            <SectionHeading id="home-result" title="Results" action={{ label: "Trophies", href: "/me#achievements" }} />
             <ResultCard
               match={last.match}
               league={{ name: last.name, rank: last.rank, players: last.members.length }}

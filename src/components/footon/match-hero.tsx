@@ -51,17 +51,17 @@ export function MatchHero({
         aria-hidden="true"
         className="absolute inset-0 -z-10 opacity-90"
         style={{
-          backgroundImage: `radial-gradient(60% 55% at 12% 46%, ${homeShirt}2e, transparent 70%), radial-gradient(60% 55% at 88% 46%, ${awayShirt}2e, transparent 70%)`,
+          backgroundImage: `radial-gradient(50% 45% at 14% 40%, ${homeShirt}1c, transparent 70%), radial-gradient(50% 45% at 86% 40%, ${awayShirt}1c, transparent 70%)`,
         }}
       />
-      <PitchMarkings className="-z-10" />
+      <PitchMarkings corners className="-z-10" />
       {/* kit stripe: home colour | away colour */}
       <div aria-hidden="true" className="flex h-1">
         <span className="flex-1" style={{ background: homeShirt }} />
         <span className="flex-1" style={{ background: awayShirt }} />
       </div>
 
-      <div className="flex flex-col gap-4 p-4 pt-3.5">
+      <div className="flex flex-col gap-4 p-4 pt-3.5 pb-5">
         <header className="flex items-center gap-2">
           <p className="min-w-0 truncate text-[11px] font-semibold tracking-[0.08em] text-muted-foreground uppercase">{eyebrow}</p>
           <span className="ms-auto flex shrink-0 items-center gap-1.5">
@@ -88,14 +88,20 @@ export function MatchHero({
 
           <div className="col-start-2 row-start-1 flex min-w-[92px] flex-col items-center gap-1">
             {live || m.status === "finished" ? (
-              <p className="font-display text-[56px] leading-none font-bold tabular-nums" aria-label={`${m.home.name} ${h}, ${m.away.name} ${a}`}>
+              /* stadium scoreboard plate */
+              <p
+                className="rounded-md border border-line-strong bg-background/80 px-3.5 py-1.5 font-display text-[52px] leading-none font-bold tabular-nums"
+                aria-label={`${m.home.name} ${h}, ${m.away.name} ${a}`}
+              >
                 {h}
                 <span className="mx-2 text-dim">:</span>
                 {a}
               </p>
             ) : (
               <>
-                <p className="font-display text-[44px] leading-none font-bold tabular-nums">{m.kickoff}</p>
+                <p className="rounded-md border border-line-strong bg-background/80 px-3 py-1.5 font-display text-[40px] leading-none font-bold tabular-nums">
+                  {m.kickoff}
+                </p>
                 {(m.dayOffset ?? 0) === 0 && m.kickoff ? (
                   <Countdown kickoff={m.kickoff} className="font-display text-sm font-bold text-muted-foreground" />
                 ) : (
@@ -125,12 +131,19 @@ export function MatchHero({
           </div>
         )}
 
-        <Button asChild size="lg" className="w-full justify-between ps-5 pe-4">
+      </div>
+
+      {/* matchday ticket: a perforated tear line with notches, then the stub holding the one action */}
+      <div aria-hidden="true" className="relative h-0">
+        <span className="absolute -start-2.5 -top-2.5 size-5 rounded-full border border-line-strong bg-background" />
+        <span className="absolute -end-2.5 -top-2.5 size-5 rounded-full border border-line-strong bg-background" />
+        <span className="absolute inset-x-4 top-0 border-t border-dashed border-line-strong" />
+      </div>
+      <div className="p-4">
+        <Button asChild size="lg" className="w-full">
           <Link href={cta.href}>
             {cta.label}
-            <span className="flex size-8 items-center justify-center rounded-sm bg-primary-foreground/10">
-              <ArrowRight className="rtl:rotate-180" strokeWidth={2.4} aria-hidden="true" />
-            </span>
+            <ArrowRight className="rtl:rotate-180" strokeWidth={2.2} aria-hidden="true" />
           </Link>
         </Button>
       </div>

@@ -65,7 +65,7 @@ export function ScorePicker({
   const clamp = (n: number) => Math.max(0, Math.min(SCORE_MAX, n));
   return (
     <section aria-labelledby="score-picker" className="relative isolate overflow-hidden rounded-2xl border border-line-strong bg-surface p-4 floodlight">
-      <PitchMarkings className="-z-10" />
+      <PitchMarkings corners className="-z-10" />
       <div className="flex items-baseline justify-between gap-3">
         <h3 id="score-picker" className="font-display text-[17px] leading-none font-bold tracking-[0.04em] uppercase">
           Call the score

@@ -28,7 +28,7 @@ export default function LeaderboardPage() {
   return (
     <AppShell wide className="lg:grid lg:grid-cols-[minmax(0,1fr)_340px] lg:items-start lg:gap-x-6">
       <header className="floodlight relative isolate flex flex-col gap-4 overflow-hidden rounded-2xl border border-line-strong bg-surface p-4 lg:col-span-2">
-        <PitchMarkings variant="box" className="-z-10" />
+        <PitchMarkings variant="box" corners className="-z-10" />
         <div className="flex items-center gap-3">
           <LeagueBadge name={d.name} tone="silver" size="lg" />
           <div className="min-w-0 flex-1">

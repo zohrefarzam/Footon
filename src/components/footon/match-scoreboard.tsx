@@ -32,7 +32,7 @@ export function MatchScoreboard({ match: m }: { match: Match }) {
         aria-hidden="true"
         className="absolute inset-0 -z-10"
         style={{
-          backgroundImage: `radial-gradient(45% 70% at 16% 34%, ${homeShirt}29, transparent 70%), radial-gradient(45% 70% at 84% 34%, ${awayShirt}29, transparent 70%)`,
+          backgroundImage: `radial-gradient(40% 60% at 16% 34%, ${homeShirt}1c, transparent 70%), radial-gradient(40% 60% at 84% 34%, ${awayShirt}1c, transparent 70%)`,
         }}
       />
       <PitchMarkings className="-z-10" />

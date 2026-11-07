@@ -1,8 +1,8 @@
 import { ChevronDown, ChevronUp } from "lucide-react";
 
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import type { Standing } from "@/lib/mock-data";
 import { cn } from "@/lib/utils";
+import { KitAvatar } from "./kit-avatar";
 
 const MEDALS: Record<number, { className: string; label: string }> = {
   1: { className: "bg-gold text-gold-foreground", label: "gold" },
@@ -103,9 +103,7 @@ export function Standings({
         </td>
         <td className="w-full min-w-0 py-1.5 ps-1">
           <span className="flex min-w-0 items-center gap-2.5">
-            <Avatar className={compact ? "size-7" : "size-8"}>
-              <AvatarFallback className={cn(r.you && "bg-primary text-primary-foreground")}>{r.initial}</AvatarFallback>
-            </Avatar>
+            <KitAvatar initial={r.initial} you={r.you} size={compact ? "sm" : "md"} />
             <span className={cn("min-w-0 truncate text-[15px] font-semibold", r.you && "text-primary")}>{r.name}</span>
             <RankMove delta={r.delta} />
           </span>

@@ -44,7 +44,7 @@ const swatches = [
   ["line-strong", "#224236", "Raised borders"],
   ["foreground", "#F3F8F4", "Text"],
   ["muted-foreground", "#9DB1A6", "Secondary text"],
-  ["primary", "#22DD80", "Main CTA, wins, you"],
+  ["primary", "#43B883", "Main CTA, wins, you"],
   ["live", "#FFA83E", "Live, timers, coins"],
   ["gold", "#F5C451", "Trophies, 1st, achievements"],
   ["silver", "#C9D4CE", "2nd, Silver division"],

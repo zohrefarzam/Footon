@@ -37,7 +37,7 @@ function YourResult({ match: m, league }: { match: Match; league?: { name: strin
   const won = league?.rank === 1;
   return (
     <Card className="floodlight relative isolate gap-4 overflow-hidden border-line-strong p-4">
-      <PitchMarkings variant="box" className="-z-10" />
+      <PitchMarkings variant="box" corners className="-z-10" />
       <div className="flex items-start justify-between gap-3">
         <div>
           <p className="text-[11px] font-semibold tracking-[0.08em] text-muted-foreground uppercase">You scored</p>

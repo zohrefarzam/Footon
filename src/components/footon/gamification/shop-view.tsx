@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 
+import { Skeleton } from "@/components/ui/skeleton";
 import { api } from "@/lib/gamification/api";
 import { useLevel, useShop } from "@/lib/gamification/queries";
 import type { ShopItem } from "@/lib/gamification/schemas";
@@ -27,7 +28,7 @@ export function ShopView() {
     void api.markShopSeen().catch(() => {});
   }, [shop]);
 
-  if (!shop || !lv) return <div aria-busy="true" className="h-[420px] rounded-xl border border-line bg-surface" />;
+  if (!shop || !lv) return <Skeleton className="h-[420px] rounded-xl" />;
 
   // keep the open sheet in step with the server's latest copy of the item
   const current = picked ? (shop.items.find((i) => i.id === picked.id) ?? picked) : null;

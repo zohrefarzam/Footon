@@ -3,6 +3,7 @@
 import { Flame } from "lucide-react";
 import { motion, useReducedMotion } from "motion/react";
 
+import { Skeleton } from "@/components/ui/skeleton";
 import { formatTimes } from "@/lib/gamification/format";
 import { useConfig, useProgress } from "@/lib/gamification/queries";
 import { copy } from "@/lib/gamification/strings";
@@ -19,7 +20,7 @@ export function ComboMeter({ className }: { className?: string }) {
   const combo = useProgress().data?.combo;
   const steps = useConfig().data?.combo;
   const reduce = useReducedMotion();
-  if (!combo || !steps || steps.length === 0) return <div aria-hidden="true" className={cn("h-[60px] rounded-xl border border-line bg-surface", className)} />;
+  if (!combo || !steps || steps.length === 0) return <Skeleton className={cn("h-[60px] rounded-xl", className)} />;
 
   const top = steps[steps.length - 1].at;
   const next = steps.find((s) => s.at > combo.count) ?? null;

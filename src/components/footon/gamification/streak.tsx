@@ -4,6 +4,7 @@ import { CalendarCheck, Snowflake } from "lucide-react";
 import { motion, useReducedMotion } from "motion/react";
 
 import { Card } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 import { formatNumber } from "@/lib/gamification/format";
 import { useConfig, useProgress } from "@/lib/gamification/queries";
 import type { Streak, StreakUpdate } from "@/lib/gamification/schemas";
@@ -58,7 +59,7 @@ export function FreezeIndicator({ held, max, className }: { held: number; max: n
 export function StreakCounter({ className }: { className?: string }) {
   const s = useProgress().data?.streak;
   const config = useConfig().data;
-  if (!s || !config) return <Card aria-busy="true" className={cn("h-[168px]", className)} />;
+  if (!s || !config) return <Skeleton className={cn("h-[168px] rounded-xl", className)} />;
 
   const current = live(s);
   const prev = [0, ...config.streak.milestones].filter((m) => m <= current).pop() ?? 0;
@@ -85,7 +86,7 @@ export function StreakCounter({ className }: { className?: string }) {
         <p className="text-xs text-muted-foreground">{copy.streakNone}</p>
       ) : next ? (
         <div className="flex flex-col gap-1.5">
-          <span aria-hidden="true" className="relative block h-1.5 overflow-hidden rounded-full bg-[#27272a]">
+          <span aria-hidden="true" className="relative block h-1.5 overflow-hidden rounded-full bg-track">
             <span className="absolute inset-0 origin-left rounded-full bg-live transition-transform duration-700 ease-out-soft rtl:origin-right" style={{ transform: `scaleX(${pct})` }} />
           </span>
           <p className="text-xs text-muted-foreground">{copy.toMilestone(next - current, next)}</p>

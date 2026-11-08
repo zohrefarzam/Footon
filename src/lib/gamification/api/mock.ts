@@ -45,15 +45,15 @@ const LEVEL_BADGE_RARITY: Record<number, number> = { 5: 38, 10: 14, 15: 6, 20: 2
 
 /** Every non-level badge the mock server knows. Earned state lives in `MockState.earned`. */
 const CATALOG: Omit<Badge, "earnedAt">[] = [
-  { id: "first-win", family: "achievement", name: "First win", description: "Your first right call", icon: "trophy", rarityPct: 71 },
-  { id: "prophet", family: "achievement", name: "Prophet", description: "Called a 0–0 before kickoff", icon: "eye", rarityPct: 9.5 },
-  { id: "hat-trick", family: "achievement", name: "Hat-trick", description: "3 right in a row in one match", icon: "flame", rarityPct: 22 },
-  { id: "perfect-five", family: "achievement", name: "Perfect five", description: "5 right in a row in one match", icon: "flame", rarityPct: 4.2 },
-  { id: "streak-7", family: "achievement", name: "Week in", description: "7 match days in a row", icon: "calendar", rarityPct: 12 },
-  { id: "streak-30", family: "achievement", name: "Season ticket", description: "30 match days in a row", icon: "calendar", rarityPct: 0.9 },
-  { id: "league-founder", family: "social", name: "Founder", description: "Started a league", icon: "users", rarityPct: 18 },
-  { id: "first-invite", family: "social", name: "Plus one", description: "A friend joined from your invite", icon: "handshake", rarityPct: 27 },
-  { id: "autumn-2026", family: "seasonal", name: "Autumn 2026", description: "Played a match day this autumn", icon: "leaf", rarityPct: 41 },
+  { id: "first-win", family: "achievement", name: "First win", description: "Your first right call", icon: "trophy", tier: "gold", rarityPct: 71 },
+  { id: "prophet", family: "achievement", name: "Prophet", description: "Called a 0–0 before kickoff", icon: "eye", tier: "standard", rarityPct: 9.5 },
+  { id: "hat-trick", family: "achievement", name: "Hat-trick", description: "3 right in a row in one match", icon: "flame", tier: "standard", rarityPct: 22 },
+  { id: "perfect-five", family: "achievement", name: "Perfect five", description: "5 right in a row in one match", icon: "flame", tier: "gold", rarityPct: 4.2 },
+  { id: "streak-7", family: "achievement", name: "Week in", description: "7 match days in a row", icon: "calendar", tier: "standard", rarityPct: 12 },
+  { id: "streak-30", family: "achievement", name: "Season ticket", description: "30 match days in a row", icon: "calendar", tier: "gold", rarityPct: 0.9 },
+  { id: "league-founder", family: "social", name: "Founder", description: "Started a league", icon: "users", tier: "standard", rarityPct: 18 },
+  { id: "first-invite", family: "social", name: "Plus one", description: "A friend joined from your invite", icon: "handshake", tier: "standard", rarityPct: 27 },
+  { id: "autumn-2026", family: "seasonal", name: "Autumn 2026", description: "Played a match day this autumn", icon: "leaf", tier: "standard", rarityPct: 41 },
 ];
 
 export type MockState = {
@@ -105,7 +105,17 @@ export type MockGamificationApi = GamificationApi & { dev: MockDevControls };
 function levelBadge(level: number, config: GamificationConfig): Omit<Badge, "earnedAt"> | null {
   if (!(level in LEVEL_BADGE_RARITY)) return null;
   const tier = tierFor(level, config);
-  return { id: `level-${level}`, family: "level", name: tier.name, description: `Reached level ${level}`, icon: tier.id, rarityPct: LEVEL_BADGE_RARITY[level], level };
+  return {
+    id: `level-${level}`,
+    family: "level",
+    name: tier.name,
+    description: `Reached level ${level}`,
+    icon: tier.id,
+    // the top two tiers are trophy moments
+    tier: level >= 25 ? "gold" : "standard",
+    rarityPct: LEVEL_BADGE_RARITY[level],
+    level,
+  };
 }
 
 export function createMockApi(opts: MockOptions = {}): MockGamificationApi {

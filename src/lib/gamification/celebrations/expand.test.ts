@@ -6,7 +6,7 @@ import type { Badge, RewardResult } from "../schemas";
 import { result } from "../test-fixtures";
 import { expandReward } from "./expand";
 
-const badge = (over: Partial<Badge>): Badge => ({ id: "b", family: "achievement", name: "B", icon: "trophy", rarityPct: 10, earnedAt: null, ...over });
+const badge = (over: Partial<Badge>): Badge => ({ id: "b", family: "achievement", name: "B", icon: "trophy", tier: "standard", rarityPct: 10, earnedAt: null, ...over });
 
 
 const tierOf = (l: number) => tierFor(l, mockConfig).id;

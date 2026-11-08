@@ -3,10 +3,10 @@
 import { useState } from "react";
 import { ChevronRight, Plus } from "lucide-react";
 
-import { formatPercent } from "@/lib/gamification/format";
+import { AchievementBadge } from "@/components/footon/achievement-badge";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useBadges, useConfig, useProgress } from "@/lib/gamification/queries";
 import { copy } from "@/lib/gamification/strings";
-import { BadgeGlyph } from "./badge-glyph";
 import { BadgeWall } from "./badge-wall";
 
 /**
@@ -23,10 +23,14 @@ export function PinnedBadges() {
   const slots = Math.max(0, max - pinned.length);
 
   return (
-    <section aria-labelledby="badges-title" className="flex flex-col gap-2.5">
+    <section id="achievements" aria-labelledby="badges-title" className="flex scroll-mt-24 flex-col gap-2.5">
       <h2 id="badges-title" className="flex items-center text-[13px] font-medium text-muted-foreground">
         {copy.badgesTitle}
-        {badges && <span className="ms-1.5">· {copy.earnedOf(badges.filter((b) => b.earnedAt).length, badges.length)}</span>}
+        {badges && (
+          <span className="ms-1.5 text-xs">
+            <span className="font-display text-sm font-bold text-foreground">{badges.filter((b) => b.earnedAt).length}</span> of {badges.length}
+          </span>
+        )}
         <button
           type="button"
           onClick={() => setOpen(true)}
@@ -40,23 +44,22 @@ export function PinnedBadges() {
       <ul className="grid grid-cols-3 gap-2">
         {badges
           ? pinned.map((b) => (
-              <li key={b.id} className="flex flex-col items-center gap-1.5 rounded-lg border border-line bg-surface p-3 text-center">
-                <BadgeGlyph badge={b} />
-                <span className="text-[13px] leading-tight font-semibold">{b.name}</span>
-                <span className="font-display text-[13px] font-bold text-muted-foreground">
-                  {formatPercent(b.rarityPct)}
-                  <span className="sr-only"> {copy.rarity}</span>
-                </span>
+              <li key={b.id} className="flex">
+                <AchievementBadge badge={b} className="flex-1" />
               </li>
             ))
-          : Array.from({ length: max }, (_, i) => <li key={i} aria-hidden="true" className="h-[118px] rounded-lg border border-line bg-surface" />)}
+          : Array.from({ length: max }, (_, i) => (
+              <li key={i}>
+                <Skeleton className="h-[118px] rounded-lg" />
+              </li>
+            ))}
         {badges &&
           Array.from({ length: slots }, (_, i) => (
             <li key={`slot-${i}`}>
               <button
                 type="button"
                 onClick={() => setOpen(true)}
-                className="flex h-full min-h-[118px] w-full flex-col items-center justify-center gap-1.5 rounded-lg border border-dashed border-line-strong p-3 text-[13px] font-semibold text-muted-foreground outline-none transition-[transform,color] duration-200 ease-spring hover:text-foreground focus-visible:ring-[3px] focus-visible:ring-ring/60 active:scale-95"
+                className="bg-dots flex h-full min-h-[118px] w-full flex-col items-center justify-center gap-1.5 rounded-lg border border-dashed border-line-strong p-3 text-[13px] font-semibold text-muted-foreground outline-none transition-[transform,color] duration-200 ease-spring hover:text-foreground focus-visible:ring-[3px] focus-visible:ring-ring/60 active:scale-95"
               >
                 <Plus className="size-4" aria-hidden="true" />
                 {copy.pinSlot}

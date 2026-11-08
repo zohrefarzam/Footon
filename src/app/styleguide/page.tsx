@@ -34,8 +34,16 @@ import { Progress } from "@/components/ui/progress";
 import { Switch } from "@/components/ui/switch";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { achievements, division, league, matches, promos } from "@/lib/mock-data";
+import type { Badge as BadgeData } from "@/lib/gamification/schemas";
+import { division, league, matches, promos } from "@/lib/mock-data";
 import { GamificationDemo } from "./gamification-demo";
+
+/** Medallion states: gold (a trophy moment), standard, not earned yet. */
+const sampleBadges: BadgeData[] = [
+  { id: "first-win", family: "achievement", name: "First win", icon: "trophy", tier: "gold", rarityPct: 71, earnedAt: "2026-10-12" },
+  { id: "hat-trick", family: "achievement", name: "Hat-trick", icon: "flame", tier: "standard", rarityPct: 22, earnedAt: "2026-10-20" },
+  { id: "season", family: "achievement", name: "Season ticket", description: "30 match days in a row", icon: "calendar", tier: "gold", rarityPct: 0.9, earnedAt: null },
+];
 
 const swatches = [
   ["background", "#06140F", "Stadium ground"],
@@ -135,9 +143,9 @@ export default function StyleguidePage() {
         </Card>
         <DivisionCard division={division} className="max-w-md" />
         <ul className="grid max-w-md grid-cols-3 gap-2">
-          {achievements.slice(0, 6).map((a) => (
+          {sampleBadges.map((a) => (
             <li key={a.id} className="flex">
-              <AchievementBadge achievement={a} className="flex-1" />
+              <AchievementBadge badge={a} className="flex-1" />
             </li>
           ))}
         </ul>

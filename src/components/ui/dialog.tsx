@@ -12,7 +12,7 @@ import { cn } from "@/lib/utils";
  *   Use it for invites, achievements, the quick-reply palette.
  * - `variant="center"`: a small centred card for confirmations.
  * - `variant="full"`: the whole mobile column, for the rare moment that holds
- *   the user (the Level Up screen). Dotted canvas, no glass.
+ *   the user (the Level Up screen). A floodlit hero canvas, no glass.
  * Radix handles focus trap, Escape, scroll lock and aria wiring — keep it.
  */
 const Dialog = DialogPrimitive.Root;
@@ -58,8 +58,8 @@ function DialogContent({
         {...props}
       >
         {variant === "sheet" && <span aria-hidden="true" className="mx-auto h-1 w-10 shrink-0 rounded-full bg-line-strong" />}
-        {/* dotted canvas behind the content (a separate layer: twMerge treats bg-dots as a background colour) */}
-        {variant === "full" && <span aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10 bg-dots" />}
+        {/* floodlit canvas behind the content (its own layer: twMerge would drop bg-background for a bg-* utility) */}
+        {variant === "full" && <span aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10 floodlight" />}
         {children}
         <DialogPrimitive.Close
           aria-label={closeLabel}

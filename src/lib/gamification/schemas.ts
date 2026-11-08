@@ -48,6 +48,8 @@ export const Badge = z.object({
   icon: z.string(),
   /** Share of users who hold it, 0–100. */
   rarityPct: z.number().min(0).max(100),
+  /** "gold" = a trophy moment (wins, top streaks, top tiers), drawn as a gold medal. */
+  tier: z.enum(["gold", "standard"]).default("standard"),
   /** Level badges only: the level that awards it. */
   level: z.number().int().optional(),
   earnedAt: z.string().nullable(),

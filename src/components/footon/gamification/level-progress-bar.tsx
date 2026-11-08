@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { Award } from "lucide-react";
 
+import { Skeleton } from "@/components/ui/skeleton";
 import { formatNumber } from "@/lib/gamification/format";
 import { useLevel } from "@/lib/gamification/queries";
 import { copy } from "@/lib/gamification/strings";
@@ -17,7 +18,7 @@ import { TIER_ICON } from "./tier-badge";
  */
 export function XpTrack({ pct, className, fillClassName }: { pct: number; className?: string; fillClassName?: string }) {
   return (
-    <span aria-hidden="true" className={cn("relative block h-1.5 min-w-0 overflow-hidden rounded-full bg-[#27272a]", className)}>
+    <span aria-hidden="true" className={cn("relative block h-1.5 min-w-0 overflow-hidden rounded-full bg-track", className)}>
       <span
         className={cn(
           "absolute inset-0 origin-left rounded-full bg-foreground/85 transition-transform duration-700 ease-out-soft rtl:origin-right",
@@ -37,7 +38,7 @@ export function XpTrack({ pct, className, fillClassName }: { pct: number; classN
 export function LevelProgressBar({ className }: { className?: string }) {
   const lv = useLevel();
 
-  if (!lv) return <span aria-hidden="true" className={cn("block h-9 rounded-full border border-line bg-surface", className)} />;
+  if (!lv) return <Skeleton className={cn("h-9 rounded-full", className)} />;
 
   const { progress, bar, tier } = lv;
   const Icon = TIER_ICON[tier.id];
@@ -50,7 +51,7 @@ export function LevelProgressBar({ className }: { className?: string }) {
       href="/me#level"
       aria-label={label}
       className={cn(
-        "flex h-9 items-center gap-2.5 rounded-full border border-line bg-surface ps-1 pe-3 outline-none transition-[transform,background-color] duration-200 ease-spring hover:bg-[#141417] focus-visible:ring-[3px] focus-visible:ring-ring/60 active:scale-[0.98]",
+        "flex h-9 items-center gap-2.5 rounded-full border border-line bg-surface ps-1 pe-3 outline-none transition-[transform,background-color] duration-200 ease-spring hover:bg-surface-hover focus-visible:ring-[3px] focus-visible:ring-ring/60 active:scale-[0.98]",
         className,
       )}
     >

@@ -3,6 +3,7 @@
 import { Check, Lock } from "lucide-react";
 
 import { Coin } from "@/components/footon/coin";
+import { SectionHeading } from "@/components/footon/section-heading";
 import { formatNumber } from "@/lib/gamification/format";
 import type { ShopItem, ShopSlot } from "@/lib/gamification/schemas";
 import { copy } from "@/lib/gamification/strings";
@@ -54,7 +55,7 @@ export function ShopItemCard({ item, level, onSelect }: { item: ShopItem; level:
       data-state={state}
       className={cn(
         "relative flex w-full min-w-0 flex-col gap-2 rounded-xl border p-2.5 text-start outline-none transition-[transform,border-color] duration-200 ease-spring focus-visible:ring-[3px] focus-visible:ring-ring/60 active:scale-[0.97]",
-        state === "locked" && "border-dashed border-line-strong bg-transparent",
+        state === "locked" && "bg-dots border-dashed border-line-strong",
         state === "equipped" && "border-primary-line bg-primary-soft",
         (state === "owned" || state === "new" || state === "buyable") && "border-line bg-surface hover:border-line-strong",
       )}
@@ -99,9 +100,7 @@ export function ShopGrid({ items, level, onSelect }: { items: ShopItem[]; level:
         if (list.length === 0) return null;
         return (
           <section key={slot} aria-labelledby={`shop-${slot}`} className="flex flex-col gap-2.5">
-            <h2 id={`shop-${slot}`} className="text-[13px] font-medium text-muted-foreground">
-              {copy.shopSection[slot]}
-            </h2>
+            <SectionHeading id={`shop-${slot}`} title={copy.shopSection[slot]} />
             <ul className="grid grid-cols-2 gap-2">
               {list.map((item) => (
                 <li key={item.id} className="flex">

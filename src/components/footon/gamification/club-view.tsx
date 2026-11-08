@@ -4,12 +4,13 @@ import { formatNumber } from "@/lib/gamification/format";
 import type { ClubItem, ItemLook, MyClub, ShopSlot, TierId } from "@/lib/gamification/schemas";
 import { copy } from "@/lib/gamification/strings";
 import { cn } from "@/lib/utils";
+import { PitchMarkings } from "@/components/footon/pitch-markings";
 import { BadgeGlyph } from "./badge-glyph";
 import { TIER_ICON } from "./tier-badge";
 
 /** The shirt outline (same mark as the Fantasy tile's shirts). */
 export const SHIRT_PATH = "M8 3 3 6l2 4 2-1v12h10V9l2 1 2-4-5-3a4 4 0 0 1-8 0z";
-const NEUTRAL: ItemLook = { primary: "#3f3f46", secondary: "#a1a1aa" };
+const NEUTRAL: ItemLook = { primary: "var(--dim)", secondary: "var(--muted-foreground)" };
 
 export function Shirt({ look = NEUTRAL, className }: { look?: ItemLook; className?: string }) {
   return (
@@ -87,9 +88,10 @@ export function MyClubView({
     >
       <div
         aria-hidden="true"
-        className={cn("relative flex flex-col items-center justify-end", full ? "h-[220px] pb-5" : "h-[150px] pb-3", !stadium && "bg-dots")}
+        className={cn("relative isolate flex flex-col items-center justify-end overflow-hidden", full ? "h-[220px] pb-5" : "h-[150px] pb-3", !stadium && "bg-pitch floodlight")}
         style={stadium?.look ? stands(stadium.look) : undefined}
       >
+        {!stadium && <PitchMarkings variant="box" className="-z-10" />}
         <Shirt look={kit?.look} className={cn("drop-shadow-[0_12px_18px_rgb(0_0_0/0.55)]", full ? "size-28" : "size-20")} />
         {boots && <Boots look={boots.look} className={cn("mt-1", full ? "w-16" : "w-12")} />}
       </div>

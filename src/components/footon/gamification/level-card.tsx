@@ -3,6 +3,7 @@
 import { Award, Lock } from "lucide-react";
 
 import { Card, CardRow } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 import { formatNumber } from "@/lib/gamification/format";
 import { useLevel } from "@/lib/gamification/queries";
 import type { FeatureId } from "@/lib/gamification/schemas";
@@ -17,7 +18,7 @@ import { TierBadge } from "./tier-badge";
  */
 export function LevelCard() {
   const lv = useLevel();
-  if (!lv) return <Card aria-busy="true" className="h-[236px]" />;
+  if (!lv) return <Skeleton className="h-[236px] rounded-xl" />;
 
   const { progress, bar, tier, config } = lv;
   const next = (Object.entries(config.unlocks) as [FeatureId, number][])

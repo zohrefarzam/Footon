@@ -701,28 +701,6 @@ export const profile = {
   activeCalls: 2,
 };
 
-/**
- * Achievements. `tier: "gold"` = a trophy moment (wins, promotions), drawn in
- * gold; the rest are standard. No `earned` = still locked, with what unlocks it.
- */
-export type Achievement = {
-  id: string;
-  label: string;
-  detail: string;
-  icon: "trophy" | "flame" | "eye" | "swords" | "shield" | "arrow-up";
-  tier: "gold" | "standard";
-  earned?: string;
-};
-
-export const achievements: Achievement[] = [
-  { id: "first-win", label: "First win", detail: "Won Seaside", icon: "trophy", tier: "gold", earned: "Yesterday" },
-  { id: "streak-5", label: "Streak 5", detail: "5 right in a row", icon: "flame", tier: "standard", earned: "Yesterday" },
-  { id: "prophet", label: "Prophet", detail: "A call under 20% got right", icon: "eye", tier: "standard", earned: "Sun" },
-  { id: "derby", label: "Derby day", detail: "Win a league on a derby", icon: "swords", tier: "gold" },
-  { id: "promoted", label: "Promoted", detail: "Finish top 5 in your division", icon: "arrow-up", tier: "gold" },
-  { id: "unbeaten", label: "Unbeaten", detail: "Top 3 in a league five times", icon: "shield", tier: "standard" },
-];
-
 /** Banter you can send without typing. Grouped for the quick-reply palette. */
 export const chatPresets: { group: string; phrases: string[] }[] = [
   { group: "Banter", phrases: ["Told you", "Not again", "Easy", "Bottle job", "Who's laughing now"] },

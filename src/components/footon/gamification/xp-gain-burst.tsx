@@ -68,7 +68,7 @@ export function XpGainBurst({
           </span>
         )}
       </span>
-      <span className="relative block h-1.5 overflow-hidden rounded-full bg-[#27272a]">
+      <span className="relative block h-1.5 overflow-hidden rounded-full bg-track">
         <motion.span
           className="absolute inset-0 origin-left rounded-full bg-foreground/85 rtl:origin-right"
           initial={{ scaleX: reduce ? to : from }}

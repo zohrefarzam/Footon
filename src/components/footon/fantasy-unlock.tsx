@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { ChevronRight, Lock } from "lucide-react";
 
+import { Skeleton } from "@/components/ui/skeleton";
 import { xpForLevel, xpToLevel } from "@/lib/gamification/level";
 import { useLevel } from "@/lib/gamification/queries";
 import { copy } from "@/lib/gamification/strings";
@@ -18,7 +19,7 @@ import { XpTrack } from "./gamification/level-progress-bar";
  */
 export function FantasyUnlock({ href = "/fantasy", className }: { href?: string; className?: string }) {
   const lv = useLevel();
-  if (!lv) return <span aria-hidden="true" className={cn("block h-[70px] min-w-0 rounded-xl border border-line bg-surface", className)} />;
+  if (!lv) return <Skeleton className={cn("h-[70px] min-w-0 rounded-xl", className)} />;
 
   const { progress, config, curve } = lv;
   const need = requiredLevel("fantasy", config);
@@ -60,7 +61,7 @@ export function FantasyUnlock({ href = "/fantasy", className }: { href?: string;
       aria-disabled="true"
       aria-label={`Fantasy, ${copy.locked}. ${copy.levelRequired(need)}. ${copy.xpToGo(toGo)}`}
       data-locked="fantasy"
-      className={cn(tile, "border-dashed border-line-strong bg-surface", className)}
+      className={cn(tile, "bg-dots border-dashed border-line-strong bg-surface", className)}
     >
       <span aria-hidden="true" className="flex items-center gap-1.5">
         <Lock className="size-3.5 shrink-0 text-muted-foreground" strokeWidth={2.2} />

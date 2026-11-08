@@ -7,6 +7,7 @@ import { motion, useReducedMotion } from "motion/react";
 import { Coin } from "@/components/footon/coin";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Skeleton } from "@/components/ui/skeleton";
 import { ApiError } from "@/lib/gamification/api/client";
 import { formatNumber } from "@/lib/gamification/format";
 import { tierFor } from "@/lib/gamification/level";
@@ -65,7 +66,7 @@ export function ItemPreview({ item, open, onOpenChange }: { item: ShopItem | nul
             preview={{ slot: item.slot, item: { id: item.id, name: item.name, look: item.look } }}
           />
         ) : (
-          <div aria-busy="true" className="h-[230px] rounded-3xl border border-line bg-surface" />
+          <Skeleton className="h-[230px] rounded-3xl" />
         )}
 
         {bought ? (

@@ -13,7 +13,7 @@ import { SHIRT_PATH } from "./club-view";
 export const CARD = { width: 1080, height: 1350 } as const;
 
 // the design tokens, as canvas needs literal colours
-const C = { bg: "#09090b", surface: "#111114", line: "#2e2e35", dot: "#1f1f24", fg: "#fafafa", muted: "#a1a1aa", live: "#ffb547" };
+const C = { bg: "#06140f", surface: "#0b1e17", line: "#224236", pitch: "#0d2c1d", stripe: "rgb(255 255 255 / 0.022)", chalk: "rgb(255 255 255 / 0.09)", fg: "#f3f8f4", muted: "#9db1a6", live: "#ffa83e" };
 
 export type CardFonts = { sans: string; display: string };
 
@@ -42,8 +42,9 @@ export function drawClubCard(ctx: CanvasRenderingContext2D, club: MyClub, tierNa
   const { width: W, height: H } = CARD;
   ctx.fillStyle = C.bg;
   ctx.fillRect(0, 0, W, H);
-  ctx.fillStyle = C.dot;
-  for (let y = 18; y < H; y += 36) for (let x = 18; x < W; x += 36) ctx.fillRect(x, y, 3, 3);
+  // mown-turf stripes, like the app's hero canvases
+  ctx.fillStyle = C.stripe;
+  for (let sx = 0; sx < W; sx += 128) ctx.fillRect(sx, 0, 64, H);
 
   // card + frame
   const x = 80, y = 110, w = W - 160, h = 1000, r = 64;
@@ -62,11 +63,19 @@ export function drawClubCard(ctx: CanvasRenderingContext2D, club: MyClub, tierNa
     ctx.fillStyle = club.stadium.look.secondary;
     for (let sy = y + 20; sy < y + 560; sy += 40) ctx.fillRect(x, sy, w, 8);
     ctx.globalAlpha = 1;
+  } else {
+    // no stadium yet: the pitch, with a penalty box chalked on it
+    ctx.fillStyle = C.pitch;
+    ctx.fillRect(x, y, w, 560);
+    ctx.strokeStyle = C.chalk;
+    ctx.lineWidth = 3;
+    ctx.strokeRect(x + w / 2 - 260, y + 360, 520, 200);
+    ctx.strokeRect(x + w / 2 - 120, y + 480, 240, 80);
   }
   ctx.restore();
 
   // kit
-  const look = club.kit?.look ?? { primary: "#3f3f46", secondary: "#a1a1aa" };
+  const look = club.kit?.look ?? { primary: "#2e4b3f", secondary: C.muted };
   ctx.save();
   ctx.translate(W / 2 - 216, y + 90);
   ctx.scale(18, 18);

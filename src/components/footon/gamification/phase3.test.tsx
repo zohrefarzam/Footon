@@ -8,7 +8,7 @@ import { formatTimeLeft } from "@/lib/gamification/format";
 import { applyReward, gamificationKeys } from "@/lib/gamification/queries";
 import type { Quest, QuestBoard, UserProgress } from "@/lib/gamification/schemas";
 import { result } from "@/lib/gamification/test-fixtures";
-import { QuestList } from "./quests";
+import { QuestList, QuestsTile } from "./quests";
 
 vi.mock("@/lib/gamification/api", () => ({
   api: {
@@ -120,5 +120,29 @@ describe("QuestList", () => {
 describe("formatTimeLeft", () => {
   it("is coarse and never negative", () => {
     expect([30_000, 45 * 60_000, 6 * 3_600_000, 50 * 3_600_000, -5].map(formatTimeLeft)).toEqual(["1m", "45m", "6h", "2d", "1m"]);
+  });
+});
+
+describe("QuestsTile (Home)", () => {
+  it("says how many are done and shows the next open quest", () => {
+    setup(<QuestsTile />);
+    const tile = screen.getByRole("link");
+    expect(tile).toHaveAttribute("href", "/quests");
+    expect(tile).toHaveAccessibleName("Quests, 1 of 3 done. Next: Make a prediction, 0 of 1");
+  });
+
+  it("reads all done once every daily is finished", () => {
+    setup(<QuestsTile />, undefined, { ...board, quests: board.quests.map((q) => ({ ...q, completed: q.kind === "daily" ? true : q.completed })) });
+    expect(screen.getByRole("link")).toHaveAccessibleName("Quests, All done today");
+  });
+
+  it("holds its space until the board loads", () => {
+    const qc = new QueryClient();
+    render(
+      <QueryClientProvider client={qc}>
+        <QuestsTile />
+      </QueryClientProvider>,
+    );
+    expect(screen.queryByRole("link")).toBeNull();
   });
 });

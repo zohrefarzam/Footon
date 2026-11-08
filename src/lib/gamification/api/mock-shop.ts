@@ -21,19 +21,19 @@ export const CATALOG: CatalogItem[] = [
   { id: "freeze", slot: "freeze", name: "Streak freeze", detail: "Miss a match day, keep your run", price: 2500, unlock: "shopFreeze" },
 
   // the kit you start with: owned and on from day one
-  { id: "kit-academy", slot: "kit", name: "Academy kit", detail: "Where everyone starts", look: { primary: "#3f3f46", secondary: "#a1a1aa" }, price: 0, unlock: 1 },
+  { id: "kit-academy", slot: "kit", name: "Academy kit", detail: "Where everyone starts", look: { primary: "#2e4b3f", secondary: "#9db1a6" }, price: 0, unlock: 1 },
   { id: "kit-home", slot: "kit", name: "Home kit", detail: "Your first real colours", look: { primary: "#1d4ed8", secondary: "#fafafa" }, price: "firstKit", unlock: "myClubKit" },
-  { id: "kit-away", slot: "kit", name: "Away kit", look: { primary: "#fafafa", secondary: "#111114" }, price: 2500, unlock: "myClubKit" },
+  { id: "kit-away", slot: "kit", name: "Away kit", look: { primary: "#f3f8f4", secondary: "#0b1e17" }, price: 2500, unlock: "myClubKit" },
   { id: "kit-night", slot: "kit", name: "Night kit", detail: "For the late kickoffs", look: { primary: "#111114", secondary: "#8b5cf6" }, price: 4000, unlock: "myClubKit" },
 
-  { id: "stadium-terrace", slot: "stadium", name: "The terrace", detail: "Standing room, loud", look: { primary: "#1f2937", secondary: "#9ca3af" }, price: 5000, unlock: "stadium" },
-  { id: "stadium-bowl", slot: "stadium", name: "Floodlit bowl", look: { primary: "#0f1a12", secondary: "#e5e7eb" }, price: 9000, unlock: "stadium" },
+  { id: "stadium-terrace", slot: "stadium", name: "The terrace", detail: "Standing room, loud", look: { primary: "#183327", secondary: "#9db1a6" }, price: 5000, unlock: "stadium" },
+  { id: "stadium-bowl", slot: "stadium", name: "Floodlit bowl", look: { primary: "#0d2c1d", secondary: "#e6efe9" }, price: 9000, unlock: "stadium" },
 
   { id: "boots-classic", slot: "boots", name: "Classic black", look: { primary: "#111114", secondary: "#fafafa" }, price: 2000, unlock: "boots" },
   { id: "boots-volt", slot: "boots", name: "Volt", look: { primary: "#f97316", secondary: "#111114" }, price: 3500, unlock: "boots" },
 
-  { id: "frame-pitch", slot: "frame", name: "Pitch frame", look: { primary: "#2e2e35", secondary: "#71717a" }, price: 3000, unlock: 5 },
-  { id: "frame-legend", slot: "frame", name: "Legend frame", detail: "With the Legend title", look: { primary: "#d4d4d8", secondary: "#71717a" }, price: 6000, unlock: "legendFrame" },
+  { id: "frame-pitch", slot: "frame", name: "Pitch frame", look: { primary: "#e6efe9", secondary: "#224236" }, price: 3000, unlock: 5 },
+  { id: "frame-legend", slot: "frame", name: "Legend frame", detail: "With the Legend title", look: { primary: "#c9d4ce", secondary: "#4a675a" }, price: 6000, unlock: "legendFrame" },
 ];
 
 /** Friends' clubs the mock server can show (`getMyClub("sara")`). */

@@ -1,17 +1,15 @@
 "use client";
 
 import { useEffect } from "react";
-import { Lock, Pin } from "lucide-react";
+import { Pin } from "lucide-react";
 
+import { AchievementBadge } from "@/components/footon/achievement-badge";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { formatPercent } from "@/lib/gamification/format";
 import { useBadges, useConfig, usePinBadges, useProgress } from "@/lib/gamification/queries";
 import type { Badge, BadgeFamily } from "@/lib/gamification/schemas";
 import { copy } from "@/lib/gamification/strings";
 import { track } from "@/lib/track";
-import { cn } from "@/lib/utils";
-import { BadgeGlyph } from "./badge-glyph";
 
 const FAMILIES: BadgeFamily[] = ["level", "achievement", "social", "seasonal"];
 
@@ -64,39 +62,27 @@ export function BadgeWall({ open, onOpenChange }: { open: boolean; onOpenChange:
                 {list.map((b) => {
                   const isPinned = pinned.includes(b.id);
                   return (
-                    <li
-                      key={b.id}
-                      className={cn(
-                        "flex flex-col items-center gap-1.5 rounded-lg border p-2.5 text-center",
-                        b.earnedAt ? "border-line bg-surface" : "border-dashed border-line-strong",
-                      )}
-                    >
-                      <BadgeGlyph badge={b} locked={!b.earnedAt} />
-                      <p className={cn("text-[13px] leading-tight font-semibold", !b.earnedAt && "text-muted-foreground")}>{b.name}</p>
-                      {b.description && <p className="sr-only">{b.description}</p>}
-                      <p className="text-[11px] text-muted-foreground">
-                        <span className="font-display text-[13px] font-bold text-foreground">{formatPercent(b.rarityPct)}</span>
-                        <span className="sr-only"> {copy.rarity}</span>
-                      </p>
-                      {b.earnedAt ? (
-                        <Button
-                          variant={isPinned ? "soft" : "secondary"}
-                          size="sm"
-                          aria-pressed={isPinned}
-                          aria-label={isPinned ? copy.unpinBadge(b.name) : copy.pinBadge(b.name)}
-                          disabled={pin.isPending || (!isPinned && full)}
-                          onClick={() => toggle(b)}
-                          className="h-8 w-full rounded-sm px-2 text-xs"
-                        >
-                          <Pin className="size-3" aria-hidden="true" />
-                          {isPinned ? copy.pinned : copy.pin}
-                        </Button>
-                      ) : (
-                        <span className="flex h-8 items-center gap-1 text-[11px] text-muted-foreground">
-                          <Lock className="size-3" aria-hidden="true" />
-                          {copy.notEarned}
-                        </span>
-                      )}
+                    <li key={b.id} className="flex">
+                      <AchievementBadge
+                        badge={b}
+                        className="flex-1"
+                        footer={
+                          b.earnedAt ? (
+                            <Button
+                              variant={isPinned ? "soft" : "secondary"}
+                              size="sm"
+                              aria-pressed={isPinned}
+                              aria-label={isPinned ? copy.unpinBadge(b.name) : copy.pinBadge(b.name)}
+                              disabled={pin.isPending || (!isPinned && full)}
+                              onClick={() => toggle(b)}
+                              className="mt-auto h-8 w-full rounded-sm px-2 text-xs"
+                            >
+                              <Pin className="size-3" aria-hidden="true" />
+                              {isPinned ? copy.pinned : copy.pin}
+                            </Button>
+                          ) : undefined
+                        }
+                      />
                     </li>
                   );
                 })}

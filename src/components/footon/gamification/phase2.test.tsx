@@ -7,6 +7,7 @@ import { defaultFlags, mockConfig } from "@/lib/gamification/config";
 import { applyReward, gamificationKeys } from "@/lib/gamification/queries";
 import type { Badge, UserProgress } from "@/lib/gamification/schemas";
 import { result } from "@/lib/gamification/test-fixtures";
+import { AchievementBadge } from "@/components/footon/achievement-badge";
 import { BadgeWall } from "./badge-wall";
 import { ComboMeter } from "./combo-meter";
 import { StreakBrokenSheet } from "./streak-broken-sheet";
@@ -57,6 +58,7 @@ const badge = (id: string, earned: boolean, family: Badge["family"] = "achieveme
   family,
   name: id,
   icon: "trophy",
+  tier: "standard",
   rarityPct: 10,
   earnedAt: earned ? "2026-10-01T00:00:00Z" : null,
 });
@@ -154,5 +156,23 @@ describe("Streak", () => {
     expect(dialog).toHaveAccessibleName("That run's over");
     expect(screen.getByRole("link", { name: "Start a new run" })).toHaveAttribute("href", "/live");
     expect(dialog.innerHTML).not.toMatch(/text-loss|bg-loss|destructive/);
+  });
+});
+
+describe("Badge medallions", () => {
+  it("gold for trophy badges, turf for the rest, dashed with a lock until earned", () => {
+    const { container } = render(
+      <>
+        <AchievementBadge badge={{ ...badge("gold", true), tier: "gold" }} />
+        <AchievementBadge badge={badge("plain", true)} />
+        <AchievementBadge badge={{ ...badge("later", false), description: "5 right in a row" }} />
+      </>,
+    );
+    const [gold, plain, later] = Array.from(container.children) as HTMLElement[];
+    expect(gold.className).toMatch(/border-gold-line/);
+    expect(plain.className).toMatch(/border-line /);
+    expect(later.className).toMatch(/border-dashed/);
+    expect(later).toHaveTextContent("Not yet. 5 right in a row");
+    expect(gold).toHaveTextContent("10% of players have it");
   });
 });

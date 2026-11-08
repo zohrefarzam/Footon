@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { motion, useReducedMotion } from "motion/react";
 import { LockOpen, Share2 } from "lucide-react";
 
+import { PitchMarkings } from "@/components/footon/pitch-markings";
 import { Button } from "@/components/ui/button";
 import { Card, CardRow } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
@@ -83,6 +84,7 @@ export function LevelUpScreen({
           if (returnTo.current?.isConnected) returnTo.current.focus();
         }}
       >
+        <PitchMarkings variant="centre" className="-z-10 h-[420px]" />
         <div className="flex flex-1 flex-col items-center pt-10 text-center">
           <p className="text-[11px] font-semibold tracking-[0.08em] text-muted-foreground">{copy.levelUpEyebrow}</p>
           <motion.p

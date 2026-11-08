@@ -4,6 +4,7 @@ import Link from "next/link";
 import { ShoppingBag } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 import { tierFor } from "@/lib/gamification/level";
 import { useConfig, useMyClub } from "@/lib/gamification/queries";
 import { copy } from "@/lib/gamification/strings";
@@ -16,7 +17,7 @@ export function ClubPage({ userId = "me" }: { userId?: string }) {
   const config = useConfig().data;
 
   if (club.isError) return <p className="text-sm text-muted-foreground">{copy.clubUnavailable}</p>;
-  if (!club.data || !config) return <div aria-busy="true" className="h-[340px] rounded-3xl border border-line bg-surface" />;
+  if (!club.data || !config) return <Skeleton className="h-[340px] rounded-3xl" />;
 
   const tierName = tierFor(club.data.level, config).name;
   return (
@@ -50,7 +51,7 @@ export function MyClubLink() {
       {club && config ? (
         <MyClubView club={club} tierName={tierFor(club.level, config).name} size="compact" />
       ) : (
-        <span aria-hidden="true" className="block h-[230px] rounded-3xl border border-line bg-surface" />
+        <Skeleton className="h-[230px] rounded-3xl" />
       )}
     </Link>
   );

@@ -3,6 +3,7 @@
 import { Lock } from "lucide-react";
 
 import { Card } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 import { formatNumber } from "@/lib/gamification/format";
 import { levelProgress, xpForLevel, xpToLevel } from "@/lib/gamification/level";
 import { useLevel } from "@/lib/gamification/queries";
@@ -95,7 +96,7 @@ export function LockedFeatureGate({
   const toGo = xpToLevel(progress.totalXp, need, curve);
 
   return (
-    <Card variant="dashed" role="group" aria-label={`${aria}. ${copy.xpToGo(toGo)}`} data-locked={feature} className={cn("flex flex-col gap-3 p-4", className)}>
+    <Card variant="dashed" role="group" aria-label={`${aria}. ${copy.xpToGo(toGo)}`} data-locked={feature} className={cn("bg-dots flex flex-col gap-3 p-4", className)}>
       <div aria-hidden="true" className="flex items-center gap-3">
         <span className="flex size-11 shrink-0 items-center justify-center rounded-md bg-surface-2">
           <Lock className="size-5 text-muted-foreground" strokeWidth={2.2} />
@@ -117,7 +118,7 @@ export function LockedFeatureGate({
 
 function Pending({ variant, size, title, className }: { variant: Variant; size: "sm" | "lg"; title: string; className?: string }) {
   if (variant === "button")
-    return <div aria-busy="true" aria-label={title} className={cn("border border-line bg-surface", size === "lg" ? "h-14 rounded-lg" : "h-10 w-24 rounded-sm", className)} />;
+    return <Skeleton className={cn(size === "lg" ? "h-14 rounded-lg" : "h-10 w-24 rounded-sm", className)} />;
   if (variant === "row")
     return (
       <div aria-busy="true" className={cn("flex items-center gap-3 px-4 py-3.5", className)}>

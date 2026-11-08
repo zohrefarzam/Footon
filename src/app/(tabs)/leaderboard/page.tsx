@@ -26,8 +26,8 @@ export default function LeaderboardPage() {
   const leagues = challengesWithMatch().filter((c) => (c.status === "joined" || c.status === "finished") && c.table?.length);
 
   return (
-    <AppShell wide className="lg:grid lg:grid-cols-[minmax(0,1fr)_340px] lg:items-start lg:gap-x-6">
-      <header className="floodlight relative isolate flex flex-col gap-4 overflow-hidden rounded-2xl border border-line-strong bg-surface p-4 lg:col-span-2">
+    <AppShell>
+      <header className="floodlight relative isolate flex flex-col gap-4 overflow-hidden rounded-2xl border border-line-strong bg-surface p-4">
         <PitchMarkings variant="box" corners className="-z-10" />
         <div className="flex items-center gap-3">
           <LeagueBadge name={d.name} tone="silver" size="lg" />

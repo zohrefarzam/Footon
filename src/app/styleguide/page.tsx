@@ -84,7 +84,7 @@ export default function StyleguidePage() {
       </header>
 
       <Section title="Colour">
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+        <div className="grid grid-cols-2 gap-3">
           {swatches.map(([name, hex, use]) => (
             <div key={name} className="overflow-hidden rounded-lg border border-line">
               <div className="h-16 border-b border-line" style={{ background: hex }} />

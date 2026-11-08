@@ -25,8 +25,8 @@ export default function MePage() {
   const OF = division.size;
 
   return (
-    <AppShell wide className="gap-5 pt-3.5 lg:grid lg:grid-cols-2 lg:items-start lg:gap-x-6">
-      <header className="flex h-10 items-center justify-between lg:col-span-2">
+    <AppShell className="gap-5 pt-3.5">
+      <header className="flex h-10 items-center justify-between">
         <h1 className="text-[22px] font-bold tracking-[-0.03em]">Profile</h1>
         <Button variant="secondary" size="icon" aria-label="Settings" className="size-10">
           <Settings />

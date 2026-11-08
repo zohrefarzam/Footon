@@ -174,7 +174,7 @@ Rules: no font sizes under 11px. Use `tabular-nums` (`font-display` already look
 - **Spacing:** 4px grid. Screen gutter 20px (`px-5`). Vertical rhythm between screen sections 18px (`gap-[18px]` in `AppShell`). Card padding 16px; row padding `px-4 py-3.5`.
 - **Touch targets** ≥ 44px (`size="default"` and up). `sm` (32–36px) only for secondary chips inside a row.
 - **Elevation:** flat by default (borders, not shadows). Shadows only on floating things: question card (`variant="raised"`), dock, live island.
-- **Width:** mobile column, `max-w-[430px]` (560px from `md`), centred. Design at 390×844. `AppShell wide` opens a 1080px desktop grid (`lg:`) for Home (match column + competition column, interleaved on phones with `order-*` inside `contents` wrappers), Profile and Leaderboard. Don't stretch single-list screens.
+- **Width:** mobile only. One phone column, `max-w-[430px]`, centred on any larger screen; design at 390×844 and check 320px. No tablet or desktop layouts: no `sm:`/`md:`/`lg:` breakpoints, no wide grids. Small-phone tweaks use `max-[359px]:` / `min-[360px]:` only.
 - **Textures:** `bg-dots` (quiet: locked/dashed states, the invite ticket), `bg-turf` (mown stripes), `floodlight` (top light + stripes, hero canvases only), `PitchMarkings` (centre circle or penalty box SVG, plus `corners` for corner-flag arcs; `aria-hidden`, behind content with `-z-10` in an `isolate` parent). The floodlight is white at 5%, never tinted.
 
 ## Motion
@@ -381,7 +381,7 @@ When you add a new shadcn component:
 - Charts/visual data (`FormBars`, timelines, rings) have `role="img"` + a text `aria-label`.
 - Live-updating text uses `aria-live="polite"`.
 - Focus visible: `focus-visible:ring-[3px] ring-ring/60`.
-- Works at 320px wide; no horizontal scroll.
+- Works at 320px wide; no horizontal scroll. Mobile only: no tablet/desktop breakpoints.
 - Future RTL (Persian) support: prefer logical utilities (`ps-*`, `pe-*`, `ms-*`, `start-*`) in new code, and avoid hard-coded left/right where direction matters.
 
 ## Don'ts
@@ -394,4 +394,5 @@ When you add a new shadcn component:
 - ❌ `subtle` grey for small body text.
 - ❌ New colours, fonts or radii without adding a token here and in `globals.css`.
 - ❌ `"use client"` on whole pages.
+- ❌ Tablet or desktop layouts (`sm:`/`md:`/`lg:` breakpoints, wide grids). Footon is one phone column.
 - ❌ `transition: all`, layout-thrashing animations, motion without a reduced-motion path.

@@ -57,7 +57,7 @@ function levelBadge(level: number, config: GamificationConfig): Badge | null {
   return {
     id: `level-${level}`,
     family: "level",
-    name: `نشان ${tierFor(level, config).name}`,
+    name: `${tierFor(level, config).name}`,
     icon: tierFor(level, config).id,
     rarityPct: LEVEL_BADGE_RARITY[level],
     level,
@@ -80,8 +80,8 @@ export function createMockApi(opts: MockOptions = {}): MockGamificationApi {
     combo: 0,
     badges: [
       { ...levelBadge(5, config)!, earnedAt: "2026-10-20T19:00:00Z" },
-      { id: "first-win", family: "achievement", name: "اولین برد", icon: "trophy", rarityPct: 71, earnedAt: "2026-10-12T21:00:00Z" },
-      { id: "prophet", family: "achievement", name: "پیشگو", icon: "eye", rarityPct: 9.5, earnedAt: "2026-10-28T20:40:00Z" },
+      { id: "first-win", family: "achievement", name: "First win", icon: "trophy", rarityPct: 71, earnedAt: "2026-10-12T21:00:00Z" },
+      { id: "prophet", family: "achievement", name: "Prophet", icon: "eye", rarityPct: 9.5, earnedAt: "2026-10-28T20:40:00Z" },
     ],
     pinned: ["prophet"],
     ...opts.initial,

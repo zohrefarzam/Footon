@@ -1,11 +1,12 @@
-import { faPercent } from "@/lib/gamification/format";
+import { formatPercent } from "@/lib/gamification/format";
+import { copy } from "@/lib/gamification/strings";
 import { cn } from "@/lib/utils";
 
-/** How rare a badge is, as the share of users who hold it: "۹٫۵٪ کاربران دارند". */
+/** How rare a badge is, as the share of players who hold it: "9.5% of players have it". */
 export function RarityLabel({ pct, className }: { pct: number; className?: string }) {
   return (
-    <span dir="rtl" lang="fa" className={cn("fa-scope text-xs text-muted-foreground", className)}>
-      <bdi className="font-display text-[13px] font-bold text-foreground">{faPercent(pct)}</bdi> کاربران دارند
+    <span className={cn("text-xs text-muted-foreground", className)}>
+      <span className="font-display text-[13px] font-bold text-foreground">{formatPercent(pct)}</span> {copy.rarity}
     </span>
   );
 }

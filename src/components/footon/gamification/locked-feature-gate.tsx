@@ -3,11 +3,11 @@
 import { Lock } from "lucide-react";
 
 import { Card } from "@/components/ui/card";
-import { faNum } from "@/lib/gamification/format";
+import { formatNumber } from "@/lib/gamification/format";
 import { levelProgress, xpForLevel, xpToLevel } from "@/lib/gamification/level";
 import { useLevel } from "@/lib/gamification/queries";
 import type { FeatureId } from "@/lib/gamification/schemas";
-import { fa } from "@/lib/gamification/strings.fa";
+import { copy } from "@/lib/gamification/strings";
 import { isUnlocked, requiredLevel } from "@/lib/gamification/unlocks";
 import { cn } from "@/lib/utils";
 import { XpTrack } from "./level-progress-bar";
@@ -23,7 +23,7 @@ type Variant = "card" | "row" | "button";
  * - `row`: a list row inside a `Card`, for a gated `CardRow`/link row.
  * - `button`: a dashed stand-in the size of the gated button (`lg` 56px, `sm` 40px).
  *
- * `title` names the thing in the surrounding screen's language.
+ * `title` names the locked thing ("Start a league").
  */
 export function LockedFeatureGate({
   feature,
@@ -47,8 +47,8 @@ export function LockedFeatureGate({
   if (isUnlocked(feature, lv.progress.level, lv.config)) return <>{children}</>;
 
   const need = requiredLevel(feature, lv.config);
-  const label = fa.levelRequired(need);
-  const aria = `${title}، ${fa.locked}. ${label}`;
+  const label = copy.levelRequired(need);
+  const aria = `${title}, ${copy.locked}. ${label}`;
 
   if (variant === "button") {
     return (
@@ -66,8 +66,8 @@ export function LockedFeatureGate({
         <span aria-hidden="true" className="truncate">
           {title}
         </span>
-        <span aria-hidden="true" dir="rtl" lang="fa" className={cn("fa-scope shrink-0 rounded-full bg-surface-3 px-2 py-0.5 text-xs text-foreground", size === "sm" && "max-[359px]:hidden")}>
-          {size === "sm" ? fa.levelN(need) : label}
+        <span aria-hidden="true" className={cn("shrink-0 rounded-full bg-surface-3 px-2 py-0.5 text-xs text-foreground", size === "sm" && "max-[359px]:hidden")}>
+          {size === "sm" ? copy.levelN(need) : label}
         </span>
       </div>
     );
@@ -81,9 +81,7 @@ export function LockedFeatureGate({
         </span>
         <div aria-hidden="true" className="min-w-0 flex-1">
           <p className="text-[15px] font-semibold text-muted-foreground">{title}</p>
-          <p dir="rtl" lang="fa" className="fa-scope mt-0.5 text-start text-xs text-muted-foreground">
-            {label}
-          </p>
+          <p className="mt-0.5 text-xs text-muted-foreground">{label}</p>
         </div>
       </div>
     );
@@ -97,26 +95,22 @@ export function LockedFeatureGate({
   const toGo = xpToLevel(progress.totalXp, need, curve);
 
   return (
-    <Card variant="dashed" role="group" aria-label={`${aria}. ${fa.xpToGo(toGo)}`} data-locked={feature} className={cn("flex flex-col gap-3 p-4", className)}>
+    <Card variant="dashed" role="group" aria-label={`${aria}. ${copy.xpToGo(toGo)}`} data-locked={feature} className={cn("flex flex-col gap-3 p-4", className)}>
       <div aria-hidden="true" className="flex items-center gap-3">
         <span className="flex size-11 shrink-0 items-center justify-center rounded-md bg-surface-2">
           <Lock className="size-5 text-muted-foreground" strokeWidth={2.2} />
         </span>
         <div className="min-w-0 flex-1">
           <p className="text-[15px] font-semibold">{title}</p>
-          <p dir="rtl" lang="fa" className="fa-scope mt-0.5 text-start text-[13px] text-muted-foreground">
-            {label}
-          </p>
+          <p className="mt-0.5 text-[13px] text-muted-foreground">{label}</p>
         </div>
       </div>
-      <div aria-hidden="true" dir="rtl" lang="fa" className="fa-scope flex items-center gap-2.5">
-        <span className="shrink-0 font-display text-[15px] font-bold">{fa.levelShort} {faNum(progress.level)}</span>
+      <div aria-hidden="true" className="flex items-center gap-2.5">
+        <span className="shrink-0 font-display text-[15px] font-bold">{copy.levelShort} {formatNumber(progress.level)}</span>
         <XpTrack pct={pct} className="flex-1" />
-        <span className="shrink-0 font-display text-[15px] font-bold text-muted-foreground">{fa.levelShort} {faNum(need)}</span>
+        <span className="shrink-0 font-display text-[15px] font-bold text-muted-foreground">{copy.levelShort} {formatNumber(need)}</span>
       </div>
-      <p aria-hidden="true" dir="rtl" lang="fa" className="fa-scope -mt-1 text-xs text-muted-foreground">
-        <bdi>{fa.xpToGo(toGo)}</bdi>
-      </p>
+      <p aria-hidden="true" className="-mt-1 text-xs text-muted-foreground">{copy.xpToGo(toGo)}</p>
     </Card>
   );
 }

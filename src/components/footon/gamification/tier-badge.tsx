@@ -15,14 +15,14 @@ export const TIER_ICON: Record<TierId, LucideIcon> = {
 };
 
 /**
- * The tier a level sits in (آکادمی … مربی). Neutral: a tier is a rank, not
+ * The tier a level sits in (Academy … Gaffer). Neutral: a tier is a rank, not
  * a win, so it never takes lime. `sm` = chip, `lg` = the Level Up tile.
  */
 export function TierBadge({ tier, name, size = "sm", className }: { tier: TierId; name: string; size?: "sm" | "lg"; className?: string }) {
   const Icon = TIER_ICON[tier];
   if (size === "lg") {
     return (
-      <span dir="rtl" lang="fa" className={cn("fa-scope inline-flex flex-col items-center gap-2", className)}>
+      <span className={cn("inline-flex flex-col items-center gap-2", className)}>
         <span className="flex size-16 items-center justify-center rounded-2xl border border-line-strong bg-surface-2">
           <Icon className="size-7 text-foreground" strokeWidth={1.8} aria-hidden="true" />
         </span>
@@ -32,9 +32,7 @@ export function TierBadge({ tier, name, size = "sm", className }: { tier: TierId
   }
   return (
     <span
-      dir="rtl"
-      lang="fa"
-      className={cn("fa-scope inline-flex h-7 shrink-0 items-center gap-1 rounded-full bg-surface-3 ps-2 pe-2.5 text-xs font-semibold", className)}
+      className={cn("inline-flex h-7 shrink-0 items-center gap-1 rounded-full bg-surface-3 ps-2 pe-2.5 text-xs font-semibold", className)}
     >
       <Icon className="size-3.5 text-muted-foreground" strokeWidth={2.2} aria-hidden="true" />
       {name}

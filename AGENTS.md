@@ -25,7 +25,7 @@ The visual reference is the Footon design canvas (7 artboards: Onboarding, Home,
 | Variants | `class-variance-authority` + `cn()` from `@/lib/utils` |
 | Motion | `motion` (`motion/react`) for springs, layout and presence; CSS for simple loops |
 | Icons | `lucide-react` (stroke 2–2.4 in buttons). One exception: the dock uses Footon's own set in `components/footon/nav-icons.tsx` (outline 1.8 inactive, filled active) |
-| Fonts | Geist + Geist Mono (`geist` package), Barlow Condensed and Vazirmatn (Persian, Arabic-script subset) as local woff2 in `src/fonts` |
+| Fonts | Geist + Geist Mono (`geist` package), Barlow Condensed (local woff2 in `src/fonts`) |
 | Server state | TanStack Query (gamification data, in the browser; `app/providers.tsx`) |
 | Client state | Zustand, only for UI queues (celebrations, the prediction outbox) |
 | Validation | Zod: every gamification response is parsed before the UI sees it |
@@ -57,7 +57,7 @@ src/
                           shop-preview, shop-icons)
       gamification/       XP / level / badges / streak / quests / shop: celebration-host, xp-gain-burst,
                           level-progress-bar, level-card, level-up-screen, tier-badge, locked-feature-gate,
-                          rarity-label, badge-glyph, celebration-toast, fa-scope
+                          rarity-label, badge-glyph, celebration-toast
   lib/
     utils.ts              cn()
     dates.ts              day labels relative to the mock today ("Yesterday", "Thu 5 Nov")
@@ -72,14 +72,14 @@ src/
       level.ts            level-curve maths for drawing bars only; tierFor()
       unlocks.ts          requiredLevel / isUnlocked; the core loop is never locked
       day.ts              matchDayKey(): a match belongs to its start date in the user's timezone
-      format.ts           Persian digits (`fa-IR`): faNum, faSigned, faPercent, faTimes
-      strings.fa.ts       Persian copy for gamification surfaces
+      format.ts           formatNumber, formatSigned, formatPercent, formatTimes
+      strings.ts          gamification copy (one file, ready for a later translation pass)
       queries.ts          query hooks (useProgress, useConfig, useFlags, useLevel) + applyReward()
       outbox.ts           prediction actions on their way to the server (retry, idempotency keys)
       share.ts            share to a Telegram group (Mini App → Web Share → link)
       celebrations/       expand.ts (RewardResult → ordered moments) + store.ts (the queue)
       api/                client.ts (interface, HTTP client, Zod-validated wrapper), mock.ts + mock-rules.ts (in-memory MOCK SERVER), index.ts
-  fonts/                  Barlow Condensed + Vazirmatn woff2
+  fonts/                  Barlow Condensed woff2
   proxy.ts                first-run redirect: `/` → `/welcome` until `footon_onboarded` is set
 ```
 
@@ -228,7 +228,7 @@ Rules:
 | `ChallengeList` / `ChallengeRow` | Challenges as Joined · Invited · Expired `SegmentedTabs` over one divided card. Row: name (+ `BoostBadge`), match codes + time, who made it, entry, players, then your place / "Invite" / "Expired". Every row opens `/challenges/[id]` (your live one → `/play`). `ChallengeRow` is reused on Home. |
 | `ChallengeGate` | An invite on its challenge page: the rules (entry, stake per prediction, cap, pool), secondary Decline + lime "Accept · entry". Accepting reveals the `PredictionBuilder` in place; declining leaves Undo. |
 | `BoostBadge` | A big match (`match.boost`): amber-soft pill, lucide `Zap` + "2x" (amber: it's a boost). On `MatchRow` (amber "2x" over the day), challenge rows, Home's big matches, the scoreboard ("Wins pay 2x") and the builder. Boosts coins a right prediction wins, never points. |
-| `LevelProgressBar` | (gamification) XP · Level · Badges strip under the live island on every dock tab (`app/(tabs)/layout.tsx`) → `/me#level`. Persian, RTL: the neutral track fills from the inline start (right). Reads the server's progress; skeleton until it loads. |
+| `LevelProgressBar` | (gamification) XP · Level · Badges strip under the live island on every dock tab (`app/(tabs)/layout.tsx`) → `/me#level`. Neutral track, filled from the inline start with `scaleX`. Reads the server's progress; skeleton until it loads. |
 | `FavouriteClubs` | Profile's "Your clubs": crest chips with ✕, "Add club" opens a sheet with a search field (name or code, clear ✕, "No club matches" empty state, result count announced) over the crest grid of `clubDirectory` (`aria-pressed`, soft-lime when picked). |
 | `ShopPreview` | Home's shop card: full width, dotted, neutral; "Shop" + "Opening soon" over three real items with their amber coin prices. Links to `/shop`. Never lime, never after a loss or on a low balance. |
 | `SegmentedTabs` | 2–4 filters with sliding lime pill. |
@@ -238,7 +238,7 @@ Rules:
 | `Shop` | Phase 2 "coming soon" shop: item rows → sheet saying it's not open yet, nothing charged, lime "Notify me". Fires `track()` events. |
 | `NumberTicker` | Count-up for rewards. |
 | `FormBars` | Last-N results as bars (height + colour). `fill` stretches them across the width (Profile's recent-form card). |
-| `FantasyUnlock` | Compact Home tile, a bit wider than `InviteTile` (it matters more), gated by level (`unlocks.fantasy`, L8). Locked must read as locked: dashed border (the "locked" card style), lock icon + "Fantasy locked", the neutral XP track to the level it needs and "سطح ۸ لازم است". Under 360px "locked" and the level label drop; lock + dashed border carry it. Open: solid soft-lime "Fantasy open". Always links to `/fantasy` (which shows the same gate). |
+| `FantasyUnlock` | Compact Home tile, a bit wider than `InviteTile` (it matters more), gated by level (`unlocks.fantasy`, L8). Locked must read as locked: dashed border (the "locked" card style), lock icon + "Fantasy locked", the neutral XP track to the level it needs and "Level 8 required". Under 360px "locked" and the level label drop; lock + dashed border carry it. Open: solid soft-lime "Fantasy open". Always links to `/fantasy` (which shows the same gate). |
 | `InviteTile` | Compact Home tile: "Invites" + count over the senders' avatars ("Sara +2"). Links to `/invites`, where Join / Decline happen. |
 | `ProgressRing` | Circular progress for compact spots. |
 | `TeamCrest` | 3-letter code placeholder until real crests are licensed. |
@@ -272,8 +272,8 @@ From the gamification brief. Code in `lib/gamification` and `components/footon/g
 - **One landing point.** Every result goes through `applyReward()`: the cache takes the server totals, then `expandReward()` queues the moments.
 - **Celebration queue** (`CelebrationHost`, in the root via `app/providers.tsx`): +XP → streak tick → Level Up (one screen per level, ascending, each carrying its level badge) → badge toasts → quest completions. One at a time; nothing dropped; a result id plays once; pauses while the splash is up or the tab is hidden. Everything but Level Up plays and moves on (tap to skip); every moment is announced in one polite live region. Level Up traps focus and returns it.
 - **The prediction never waits on gamification.** Lock-ins and live answers go through `outbox`: the slip reads as saved at once, the server call follows with an idempotency key, failures stay retryable (also after a reload, and on reconnect), and no reward shows until the server answers.
-- **Locked is visible.** Wrap gated UI in `LockedFeatureGate` (`card` / `row` / `button`): a dashed stand-in with a lock and "Level X required" (Persian). Never hide a locked feature. The core loop (predict, live, profile, join league, weekly board) is never locked, whatever the config says. Levels are never for sale.
-- **Persian, right to left, on gamification surfaces only** (the rest of the app is English for now). Wrap them in `FaScope` (or `dir="rtl" lang="fa"` + `fa-scope`), use logical utilities only, numbers via `format.ts` (Persian digits), and `<bdi>` around Latin terms and signed numbers (`+۲۰ XP`). Copy lives in `strings.fa.ts`.
+- **Locked is visible.** Wrap gated UI in `LockedFeatureGate` (`card` / `row` / `button`): a dashed stand-in with a lock and "Level X required". Never hide a locked feature. The core loop (predict, live, profile, join league, weekly board) is never locked, whatever the config says. Levels are never for sale.
+- **English for now.** Copy lives in `strings.ts` and numbers go through `format.ts`, so a later translation (Persian, RTL) swaps one file. Keep to logical utilities (`ps-`, `ms-`, `start-`, `origin-left rtl:origin-right`) so the layout flips when it comes.
 - **Colour roles.** XP and level are neutral (a rank, not a win). Tiers differ by name + icon shape (`TIER_ICON`), never by colour. Streak and combo are amber (they're boosts). Coins stay amber. The Level Up screen's one lime thing is Continue; Share is secondary.
 - **Numbers come from config** (`useConfig()`): curve, tiers, unlocks, caps, streak milestones, combo steps, quest counts. A/B flags (`useFlags()`): daily quest count, Level Up share style, curve variant, first kit price, premium coins (off).
 - **Analytics.** The client tracks only what the user saw or tapped (`level_up_viewed`, `badge_toast_viewed`, `card_shared`…). Server events (xp_earned, level_up, badge_earned, streak_*, quest_*, item_purchased) are never sent from the client.
@@ -281,12 +281,12 @@ From the gamification brief. Code in `lib/gamification` and `components/footon/g
 
 | Component | Purpose / rules |
 | --- | --- |
-| `XpGainBurst` | "+۲۰ XP" pill under the island with the coins it paid and the track moving from the old server total to the new one; amber ×۲ for a combo, muted ×۰٫۵ past the soft cap. Not interactive. |
-| `LevelUpScreen` | Full-screen dialog: level in display 88, tier tile ("ردهٔ جدید" when it changed), the level badge with its rarity, what just unlocked, lime Continue, secondary Share (`levelUpShareStyle`: full button or icon). |
+| `XpGainBurst` | "+20 XP" pill under the island with the coins it paid and the track moving from the old server total to the new one; amber ×2 for a combo, muted ×0.5 past the soft cap. Not interactive. |
+| `LevelUpScreen` | Full-screen dialog: level in display 88, tier tile ("New tier" when it changed), the level badge with its rarity, what just unlocked, lime Continue, secondary Share (`levelUpShareStyle`: full button or icon). |
 | `TierBadge` | Tier chip (`sm`) or tile (`lg`), neutral, icon per tier. |
 | `LevelCard` | Profile's level card. |
 | `LockedFeatureGate` | See above. Pending (before the server answers) holds the space without claiming locked or open. |
-| `RarityLabel` / `BadgeGlyph` | "۹٫۵٪ کاربران دارند"; a badge's icon tile, family told by shape (level square, achievement circle, social soft square, seasonal dashed ring). |
+| `RarityLabel` / `BadgeGlyph` | "9.5% of players have it"; a badge's icon tile, family told by shape (level square, achievement circle, social soft square, seasonal dashed ring). |
 | `CelebrationToast` | Short non-blocking moment above the dock (streak, badge, quest). |
 
 ## Economy (coins, points, prizes)

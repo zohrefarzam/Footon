@@ -48,7 +48,7 @@ describe("LockedFeatureGate", () => {
     expect(screen.queryByText("Open fantasy")).toBeNull();
     const locked = screen.getByRole("group");
     expect(locked).toHaveAttribute("data-locked", "fantasy");
-    expect(locked).toHaveAccessibleName(/سطح ۸ لازم است/);
+    expect(locked).toHaveAccessibleName(/Level 8 required/);
   });
 
   it("renders the feature at and above its level", () => {
@@ -58,7 +58,7 @@ describe("LockedFeatureGate", () => {
 
   it("shows the XP still to go on the card", () => {
     withData(gated("card"), progress(7, 1640));
-    expect(screen.getByRole("group")).toHaveAccessibleName(/۱۱۰ XP مانده/);
+    expect(screen.getByRole("group")).toHaveAccessibleName(/110 XP to go/);
   });
 
   it("never locks the core loop, whatever the config says", () => {
@@ -92,13 +92,12 @@ describe("LevelUpScreen", () => {
     const origin = screen.getByText("Lock in");
     origin.focus();
 
-    withData(<LevelUpScreen level={8} tier="reserve" tierName="ذخیره" tierChanged={false} unlocks={["fantasy"]} badge={null} shareStyle="button" onDone={onDone} />, null);
+    withData(<LevelUpScreen level={8} tier="reserve" tierName="Reserve" tierChanged={false} unlocks={["fantasy"]} badge={null} shareStyle="button" onDone={onDone} />, null);
 
     const dialog = screen.getByRole("dialog");
-    expect(dialog).toHaveAttribute("dir", "rtl");
-    expect(dialog).toHaveAccessibleName("رسیدی به سطح ۸");
-    expect(screen.getByText("فانتزی")).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "ادامه" })).toHaveFocus();
+    expect(dialog).toHaveAccessibleName("You reached level 8");
+    expect(screen.getByText("Fantasy")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Continue" })).toHaveFocus();
 
     await user.tab();
     expect(dialog).toContainElement(document.activeElement as HTMLElement); // trapped

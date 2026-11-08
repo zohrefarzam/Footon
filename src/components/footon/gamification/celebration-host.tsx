@@ -7,11 +7,10 @@ import { CalendarCheck, CircleCheck } from "lucide-react";
 import { useSplashDone } from "@/components/footon/splash-gate";
 import { isBlocking, type Celebration } from "@/lib/gamification/celebrations/expand";
 import { useCelebrations } from "@/lib/gamification/celebrations/store";
-import { faNum } from "@/lib/gamification/format";
 import { curveFor, tierFor } from "@/lib/gamification/level";
 import { useConfig, useFlags } from "@/lib/gamification/queries";
 import type { FeatureFlags, GamificationConfig } from "@/lib/gamification/schemas";
-import { fa } from "@/lib/gamification/strings.fa";
+import { copy } from "@/lib/gamification/strings";
 import { track } from "@/lib/track";
 import { BadgeGlyph } from "./badge-glyph";
 import { CelebrationToast } from "./celebration-toast";
@@ -30,15 +29,15 @@ export const HOLD: Record<Exclude<Celebration["kind"], "levelUp">, number> = {
 export function announcement(c: Celebration, config: GamificationConfig | undefined): string {
   switch (c.kind) {
     case "xp":
-      return fa.announceXp(c.xpGained, c.coinsGained, c.comboMultiplier);
+      return copy.announceXp(c.xpGained, c.coinsGained, c.comboMultiplier);
     case "streak":
-      return fa.announceStreak(c.streak.current);
+      return copy.announceStreak(c.streak.current);
     case "levelUp":
-      return fa.announceLevel(c.level, config ? tierFor(c.level, config).name : "");
+      return copy.announceLevel(c.level, config ? tierFor(c.level, config).name : "");
     case "badge":
-      return fa.announceBadge(c.badge.name);
+      return copy.announceBadge(c.badge.name);
     case "quest":
-      return fa.announceQuest(c.quest.title);
+      return copy.announceQuest(c.quest.title);
   }
 }
 
@@ -75,7 +74,7 @@ export function CelebrationHost() {
 
   return (
     <>
-      <div aria-live="polite" aria-atomic="true" className="sr-only" lang="fa" dir="rtl">
+      <div aria-live="polite" aria-atomic="true" className="sr-only">
         {text}
       </div>
       {/* top: XP under the island */}
@@ -140,29 +139,29 @@ function Toast({ c, onDismiss }: { c: Celebration; onDismiss: () => void }) {
         <CelebrationToast
           tone="live"
           icon={<CalendarCheck className="size-5" strokeWidth={2.2} />}
-          title={fa.announceStreak(c.streak.current)}
-          detail={c.streak.best > c.streak.current ? `بهترین: ${faNum(c.streak.best)}` : undefined}
+          title={copy.announceStreak(c.streak.current)}
+          detail={c.streak.best > c.streak.current ? copy.best(c.streak.best) : undefined}
           onDismiss={onDismiss}
-          dismissLabel={fa.skip}
+          dismissLabel={copy.skip}
         />
       );
     case "badge":
       return (
         <CelebrationToast
           icon={<BadgeGlyph badge={c.badge} size="sm" className="bg-transparent" />}
-          title={fa.announceBadge(c.badge.name)}
+          title={copy.announceBadge(c.badge.name)}
           detail={<RarityLabel pct={c.badge.rarityPct} />}
           onDismiss={onDismiss}
-          dismissLabel={fa.skip}
+          dismissLabel={copy.skip}
         />
       );
     case "quest":
       return (
         <CelebrationToast
           icon={<CircleCheck className="size-5" strokeWidth={2.2} />}
-          title={fa.announceQuest(c.quest.title)}
+          title={copy.announceQuest(c.quest.title)}
           onDismiss={onDismiss}
-          dismissLabel={fa.skip}
+          dismissLabel={copy.skip}
         />
       );
     default:

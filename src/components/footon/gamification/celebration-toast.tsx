@@ -28,15 +28,13 @@ export function CelebrationToast({
   return (
     <motion.button
       type="button"
-      dir="rtl"
-      lang="fa"
       onClick={onDismiss}
       aria-label={`${title}. ${dismissLabel}`}
       initial={reduce ? { opacity: 0 } : { opacity: 0, y: 16, scale: 0.96 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
       exit={reduce ? { opacity: 0 } : { opacity: 0, y: 10, transition: { duration: 0.18 } }}
       transition={reduce ? { duration: 0.15 } : { type: "spring", stiffness: 420, damping: 30 }}
-      className="fa-scope pointer-events-auto flex w-full items-center gap-3 rounded-2xl border border-line-strong bg-surface-2 px-3.5 py-3 text-start shadow-[0_16px_40px_-16px_rgb(0_0_0/0.9)] outline-none focus-visible:ring-[3px] focus-visible:ring-ring/60"
+      className="pointer-events-auto flex w-full items-center gap-3 rounded-2xl border border-line-strong bg-surface-2 px-3.5 py-3 text-start shadow-[0_16px_40px_-16px_rgb(0_0_0/0.9)] outline-none focus-visible:ring-[3px] focus-visible:ring-ring/60"
     >
       <span
         aria-hidden="true"

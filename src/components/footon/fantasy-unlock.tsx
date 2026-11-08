@@ -5,7 +5,7 @@ import { ChevronRight, Lock } from "lucide-react";
 
 import { xpForLevel, xpToLevel } from "@/lib/gamification/level";
 import { useLevel } from "@/lib/gamification/queries";
-import { fa } from "@/lib/gamification/strings.fa";
+import { copy } from "@/lib/gamification/strings";
 import { isUnlocked, requiredLevel } from "@/lib/gamification/unlocks";
 import { cn } from "@/lib/utils";
 import { XpTrack } from "./gamification/level-progress-bar";
@@ -31,7 +31,7 @@ export function FantasyUnlock({ href = "/fantasy", className }: { href?: string;
   return (
     <Link
       href={href}
-      aria-label={open ? "Fantasy is open" : `Fantasy, ${fa.locked}. ${fa.levelRequired(need)}. ${fa.xpToGo(toGo)}`}
+      aria-label={open ? "Fantasy is open" : `Fantasy, ${copy.locked}. ${copy.levelRequired(need)}. ${copy.xpToGo(toGo)}`}
       data-locked={open ? undefined : "fantasy"}
       className={cn(
         "group flex min-w-0 flex-col justify-between gap-2 rounded-xl border px-3.5 py-3 outline-none transition-colors duration-300 focus-visible:ring-[3px] focus-visible:ring-ring/60",
@@ -56,8 +56,8 @@ export function FantasyUnlock({ href = "/fantasy", className }: { href?: string;
         ) : (
           <>
             <XpTrack pct={pct} className="flex-1" />
-            <span dir="rtl" lang="fa" className="fa-scope shrink-0 text-xs whitespace-nowrap text-muted-foreground max-[359px]:hidden">
-              {fa.levelRequired(need)}
+            <span className="shrink-0 text-xs whitespace-nowrap text-muted-foreground max-[359px]:hidden">
+              {copy.levelRequired(need)}
             </span>
           </>
         )}

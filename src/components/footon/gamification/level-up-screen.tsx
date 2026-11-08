@@ -7,10 +7,10 @@ import { LockOpen, Share2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardRow } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
-import { faNum } from "@/lib/gamification/format";
+import { formatNumber } from "@/lib/gamification/format";
 import type { Badge, FeatureFlags, FeatureId, TierId } from "@/lib/gamification/schemas";
 import { shareToTelegram } from "@/lib/gamification/share";
-import { fa, featureName } from "@/lib/gamification/strings.fa";
+import { copy, featureName } from "@/lib/gamification/strings";
 import { track } from "@/lib/track";
 import { RarityLabel } from "./rarity-label";
 import { BadgeGlyph } from "./badge-glyph";
@@ -59,7 +59,7 @@ export function LevelUpScreen({
   };
 
   const share = async () => {
-    const method = await shareToTelegram({ text: fa.shareLevelText(level, tierName) });
+    const method = await shareToTelegram({ text: copy.shareLevelText(level, tierName) });
     if (method) track("card_shared", { surface: "level_up", method });
   };
 
@@ -72,10 +72,8 @@ export function LevelUpScreen({
     <Dialog open={open} onOpenChange={close}>
       <DialogContent
         variant="full"
-        dir="rtl"
-        lang="fa"
-        closeLabel={fa.close}
-        className="fa-scope gap-0"
+        closeLabel={copy.close}
+        className="gap-0"
         onOpenAutoFocus={(e) => {
           e.preventDefault();
           continueRef.current?.focus();
@@ -86,7 +84,7 @@ export function LevelUpScreen({
         }}
       >
         <div className="flex flex-1 flex-col items-center pt-10 text-center">
-          <p className="text-xs font-semibold text-muted-foreground">{fa.levelUpEyebrow}</p>
+          <p className="text-[11px] font-semibold tracking-[0.08em] text-muted-foreground">{copy.levelUpEyebrow}</p>
           <motion.p
             aria-hidden="true"
             className="mt-1 font-display text-[88px] leading-none font-bold"
@@ -94,14 +92,14 @@ export function LevelUpScreen({
             animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
             transition={reduce ? { duration: 0.2 } : { type: "spring", stiffness: 300, damping: 18 }}
           >
-            {faNum(level)}
+            {formatNumber(level)}
           </motion.p>
-          <DialogTitle className="mt-2 text-[26px]">{fa.levelUpTitle(level)}</DialogTitle>
-          <DialogDescription className="sr-only">{fa.announceLevel(level, tierName)}</DialogDescription>
+          <DialogTitle className="mt-2 text-[26px]">{copy.levelUpTitle(level)}</DialogTitle>
+          <DialogDescription className="sr-only">{copy.announceLevel(level, tierName)}</DialogDescription>
 
           <motion.div {...rise(0)} className="mt-5 flex flex-col items-center gap-1.5">
             <TierBadge tier={tier} name={tierName} size="lg" />
-            {tierChanged && <span className="rounded-full bg-surface-3 px-2.5 py-1 text-xs font-semibold text-muted-foreground">{fa.newTier}</span>}
+            {tierChanged && <span className="rounded-full bg-surface-3 px-2.5 py-1 text-xs font-semibold text-muted-foreground">{copy.newTier}</span>}
           </motion.div>
 
           <div className="mt-6 flex w-full flex-col gap-2.5 text-start">
@@ -110,7 +108,7 @@ export function LevelUpScreen({
                 <Card className="flex items-center gap-3 px-4 py-3.5">
                   <BadgeGlyph badge={badge} />
                   <div className="min-w-0 flex-1">
-                    <p className="text-xs text-muted-foreground">{fa.levelBadge}</p>
+                    <p className="text-xs text-muted-foreground">{copy.levelBadge}</p>
                     <p className="text-[15px] font-semibold">{badge.name}</p>
                   </div>
                   <RarityLabel pct={badge.rarityPct} />
@@ -126,7 +124,7 @@ export function LevelUpScreen({
                         <LockOpen className="size-4 text-foreground" strokeWidth={2.2} aria-hidden="true" />
                       </span>
                       <p className="min-w-0 flex-1 text-[15px] font-semibold">{featureName[f]}</p>
-                      <span className="text-xs text-muted-foreground">{fa.unlockedNow}</span>
+                      <span className="text-xs text-muted-foreground">{copy.unlockedNow}</span>
                     </CardRow>
                   ))}
                 </Card>
@@ -137,16 +135,16 @@ export function LevelUpScreen({
 
         <div className={shareStyle === "icon" ? "mt-6 flex gap-2.5" : "mt-6 flex flex-col gap-2.5"}>
           <Button ref={continueRef} size="lg" className={shareStyle === "icon" ? "flex-1" : undefined} onClick={() => close(false)}>
-            {fa.continue}
+            {copy.continue}
           </Button>
           {shareStyle === "icon" ? (
-            <Button variant="secondary" size="icon-lg" aria-label={fa.share} onClick={share}>
+            <Button variant="secondary" size="icon-lg" aria-label={copy.share} onClick={share}>
               <Share2 aria-hidden="true" />
             </Button>
           ) : (
             <Button variant="secondary" size="lg" onClick={share}>
               <Share2 aria-hidden="true" />
-              {fa.share}
+              {copy.share}
             </Button>
           )}
         </div>

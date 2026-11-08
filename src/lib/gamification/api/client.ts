@@ -1,6 +1,10 @@
 import type { ZodType } from "zod";
 
 import {
+  EquipResult,
+  MyClub,
+  PurchaseResult,
+  ShopCatalog,
   QuestBoard,
   BadgeCatalog,
   PinResult,
@@ -15,6 +19,10 @@ import {
   type BadgeCatalog as Catalog,
   type PinResult as Pinned,
   type QuestBoard as Board,
+  type EquipResult as Equipped,
+  type MyClub as Club,
+  type PurchaseResult as Purchased,
+  type ShopCatalog as ShopCat,
 } from "../schemas";
 
 export type ApiErrorCode = "offline" | "server" | "conflict" | "insufficient_balance" | "invalid_response";
@@ -44,6 +52,14 @@ export type PredictionInput = {
   timeZone: string;
 };
 
+export type PurchaseInput = {
+  itemId: string;
+  /** Same key on a retry of the same tap: charged once. */
+  idempotencyKey: string;
+  /** The free-coin price the user saw; a different server price is a 409, never a surprise charge. */
+  price: number;
+};
+
 export type LiveAnswerInput = {
   idempotencyKey: string;
   matchId: string;
@@ -68,6 +84,14 @@ export interface GamificationApi {
   pinBadges(badgeIds: string[]): Promise<Pinned>;
   /** Open quests (daily count per the A/B flag, weekly from its unlock level, seasonal, group). */
   getQuests(): Promise<Board>;
+  getShop(): Promise<ShopCat>;
+  /** The user has seen the shop: newly unlocked items stop being "New" next time. */
+  markShopSeen(): Promise<{ ok: true }>;
+  /** 402 insufficient_balance, 409 conflict (price changed, already owned, not unlocked, freezes full). */
+  purchase(input: PurchaseInput): Promise<Purchased>;
+  equip(itemId: string): Promise<Equipped>;
+  /** Your club, or a friend's by id. */
+  getMyClub(userId?: string): Promise<Club>;
 }
 
 function parse<T>(schema: ZodType<T>, data: unknown): T {
@@ -87,6 +111,11 @@ export function validated(api: GamificationApi): GamificationApi {
     getBadges: async () => parse(BadgeCatalog, await api.getBadges()),
     pinBadges: async (ids) => parse(PinResult, await api.pinBadges(ids)),
     getQuests: async () => parse(QuestBoard, await api.getQuests()),
+    getShop: async () => parse(ShopCatalog, await api.getShop()),
+    markShopSeen: () => api.markShopSeen(),
+    purchase: async (i) => parse(PurchaseResult, await api.purchase(i)),
+    equip: async (id) => parse(EquipResult, await api.equip(id)),
+    getMyClub: async (id) => parse(MyClub, await api.getMyClub(id)),
   };
 }
 
@@ -123,5 +152,10 @@ export function createHttpApi(baseUrl: string): GamificationApi {
     getBadges: () => call("/me/badges") as Promise<Catalog>,
     pinBadges: (badgeIds) => call("/me/badges/pinned", { method: "PUT", body: JSON.stringify({ badgeIds }) }) as Promise<Pinned>,
     getQuests: () => call("/me/quests") as Promise<Board>,
+    getShop: () => call("/shop") as Promise<ShopCat>,
+    markShopSeen: () => call("/shop/seen", { method: "POST" }) as Promise<{ ok: true }>,
+    purchase: (i) => post("/shop/purchases", i) as Promise<Purchased>,
+    equip: (itemId) => call("/me/club/equip", { method: "POST", body: JSON.stringify({ itemId }) }) as Promise<Equipped>,
+    getMyClub: (userId) => call(userId ? `/clubs/${userId}` : "/me/club") as Promise<Club>,
   };
 }

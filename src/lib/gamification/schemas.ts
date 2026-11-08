@@ -182,31 +182,60 @@ export type QuestBoard = z.infer<typeof QuestBoard>;
 export const ShopSlot = z.enum(["kit", "stadium", "boots", "frame", "freeze"]);
 export type ShopSlot = z.infer<typeof ShopSlot>;
 
+/** How a cosmetic looks: its two colours (data, like a club's shirt colours). */
+export const ItemLook = z.object({ primary: z.string(), secondary: z.string() });
+export type ItemLook = z.infer<typeof ItemLook>;
+
 export const ShopItem = z.object({
   id: z.string(),
   slot: ShopSlot,
   name: z.string(),
+  detail: z.string().optional(),
+  look: ItemLook.optional(),
+  /** Price in free coins; `premium` only when premium coins are on. */
   price: z.object({ free: z.number().int().nonnegative(), premium: z.number().int().nonnegative().optional() }),
   requiredLevel: z.number().int().positive(),
+  /** Unlocked since you last opened the shop. */
   isNew: z.boolean(),
   owned: z.boolean(),
   equipped: z.boolean(),
 });
 export type ShopItem = z.infer<typeof ShopItem>;
 
+export const ShopCatalog = z.object({ items: z.array(ShopItem) });
+export type ShopCatalog = z.infer<typeof ShopCatalog>;
+
+/** A cosmetic as it appears on a club (yours or a friend's). */
+export const ClubItem = z.object({ id: z.string(), name: z.string(), look: ItemLook.optional() });
+export type ClubItem = z.infer<typeof ClubItem>;
+
 export const MyClub = z.object({
   userId: z.string(),
   name: z.string(),
-  kit: z.string().nullable(),
-  stadium: z.string().nullable(),
-  boots: z.string().nullable(),
-  frame: z.string().nullable(),
+  kit: ClubItem.nullable(),
+  stadium: ClubItem.nullable(),
+  boots: ClubItem.nullable(),
+  frame: ClubItem.nullable(),
   pinnedBadges: z.array(Badge).max(3),
   level: z.number().int().positive(),
   tier: TierId,
   streak: z.number().int().nonnegative(),
 });
 export type MyClub = z.infer<typeof MyClub>;
+
+/** What a purchase did, in the server's numbers. */
+export const PurchaseResult = z.object({
+  item: ShopItem,
+  coins: Coins,
+  /** Free coins are spent first, then premium. */
+  spent: z.object({ free: z.number().int().nonnegative(), premium: z.number().int().nonnegative() }),
+  /** Set when the purchase changed the streak (a freeze). */
+  streak: Streak.optional(),
+});
+export type PurchaseResult = z.infer<typeof PurchaseResult>;
+
+export const EquipResult = z.object({ club: MyClub });
+export type EquipResult = z.infer<typeof EquipResult>;
 
 export const LevelCurve = z.object({
   /** Cumulative XP for level L = base·(L−1) + growth·(L−1)(L−2). */

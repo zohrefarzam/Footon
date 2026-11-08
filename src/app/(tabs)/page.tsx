@@ -10,9 +10,7 @@ import { InviteTile } from "@/components/footon/invite-tile";
 import { MatchRow } from "@/components/footon/match-row";
 import { ShopPreview } from "@/components/footon/shop-preview";
 import { Card } from "@/components/ui/card";
-import { invites, matches, shop } from "@/lib/mock-data";
-
-const SHOP_PICKS = ["celebration", "banter", "league-look"];
+import { invites, matches } from "@/lib/mock-data";
 
 /**
  * Home: tonight's big 2x matches first (with a quiet "All matches" link to the
@@ -21,7 +19,6 @@ const SHOP_PICKS = ["celebration", "banter", "league-look"];
  */
 export default function HomePage() {
   const big = matches.filter((m) => m.boost && m.status !== "finished");
-  const shopItems = shop.flatMap((g) => g.items).filter((i) => SHOP_PICKS.includes(i.id));
 
   return (
     <AppShell>
@@ -58,7 +55,7 @@ export default function HomePage() {
         <FantasyUnlock className="flex-[1.4]" />
       </div>
 
-      {shopItems.length > 0 && <ShopPreview items={shopItems} />}
+      <ShopPreview />
     </AppShell>
   );
 }

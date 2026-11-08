@@ -16,8 +16,13 @@ import {
   toStreak,
   type Badge,
   type BadgeCatalog,
+  type ClubItem,
+  type MyClub,
+  type PurchaseResult,
   type Quest,
   type QuestBoard,
+  type ShopItem,
+  type ShopSlot,
   type FeatureFlags,
   type GamificationConfig,
   type RewardAction,
@@ -26,7 +31,8 @@ import {
   type StreakUpdate,
   type UserProgress,
 } from "../schemas";
-import { ApiError, type ApiErrorCode, type GamificationApi, type LiveAnswerInput, type PredictionInput } from "./client";
+import { ApiError, type ApiErrorCode, type GamificationApi, type LiveAnswerInput, type PredictionInput, type PurchaseInput } from "./client";
+import { CATALOG as SHOP, FRIEND_CLUBS, type CatalogItem } from "./mock-shop";
 import { advanceQuests, QUEST_TEMPLATES, seedQuests, type QuestEvent, type QuestState, type QuestTemplate } from "./mock-quests";
 import { cappedXp, comboMultiplierFor, levelFromXp, levelUpsBetween, streakOnPrediction, streakStatusOn } from "./mock-rules";
 
@@ -60,6 +66,10 @@ export type MockState = {
   earned: Record<string, string>;
   pinned: string[];
   quests: QuestState;
+  /** Shop: what you own, what's on your club, and the level you last opened the shop at. */
+  owned: string[];
+  equipped: Record<Exclude<ShopSlot, "freeze">, string | null>;
+  shopSeenLevel: number;
 };
 
 export type MockOptions = {
@@ -120,6 +130,9 @@ export function createMockApi(opts: MockOptions = {}): MockGamificationApi {
     earned: { "level-5": "2026-10-20T19:00:00Z", "first-win": "2026-10-12T21:00:00Z", prophet: "2026-10-28T20:40:00Z" },
     pinned: ["prophet"],
     quests: seedQuests(templates),
+    owned: ["kit-academy"],
+    equipped: { kit: "kit-academy", stadium: null, boots: null, frame: null },
+    shopSeenLevel: 4,
     ...opts.initial,
   });
   let s = seed();
@@ -151,6 +164,89 @@ export function createMockApi(opts: MockOptions = {}): MockGamificationApi {
     if (s.earned[id] || !catalog.some((b) => b.id === id)) return null;
     s.earned[id] = now().toISOString();
     return badge(id);
+  }
+
+  const levelNow = () => levelFromXp(s.totalXp, curve, config.maxLevel);
+  const unlockLevel = (c: CatalogItem) => (typeof c.unlock === "number" ? c.unlock : config.unlocks[c.unlock]);
+  const priceOf = (c: CatalogItem) => (c.price === "firstKit" ? flags.firstKitPrice : c.price);
+
+  function toItem(c: CatalogItem): ShopItem {
+    const req = unlockLevel(c);
+    const owned = s.owned.includes(c.id);
+    return {
+      id: c.id,
+      slot: c.slot,
+      name: c.name,
+      ...(c.detail ? { detail: c.detail } : {}),
+      ...(c.look ? { look: c.look } : {}),
+      // premium prices only exist while premium coins are switched on
+      price: { free: priceOf(c), ...(flags.premiumCoins ? { premium: Math.ceil(priceOf(c) / 10) } : {}) },
+      requiredLevel: req,
+      isNew: levelNow() >= req && req > s.shopSeenLevel && !owned,
+      owned,
+      equipped: c.slot !== "freeze" && s.equipped[c.slot] === c.id,
+    };
+  }
+
+  const clubItem = (id: string | null | undefined): ClubItem | null => {
+    const c = SHOP.find((x) => x.id === id);
+    return c ? { id: c.id, name: c.name, ...(c.look ? { look: c.look } : {}) } : null;
+  };
+
+  function club(userId = "me"): MyClub {
+    if (userId === "me") {
+      const level = levelNow();
+      const st = streakStatusOn(s.streak, matchDayKey(now(), tzNow()), matchDays(tzNow()));
+      return {
+        userId: "me",
+        name: "Your club",
+        kit: clubItem(s.equipped.kit),
+        stadium: clubItem(s.equipped.stadium),
+        boots: clubItem(s.equipped.boots),
+        frame: clubItem(s.equipped.frame),
+        pinnedBadges: s.pinned.map(badge),
+        level,
+        tier: tierFor(level, config).id,
+        streak: st.status === "active" ? st.current : 0,
+      };
+    }
+    const f = FRIEND_CLUBS[userId];
+    if (!f) throw new ApiError("server", "No such club");
+    return {
+      userId,
+      name: f.name,
+      kit: clubItem(f.kit),
+      stadium: clubItem(f.stadium),
+      boots: clubItem(f.boots),
+      frame: clubItem(f.frame),
+      pinnedBadges: f.badges.map((id) => ({ ...badge(id), earnedAt: "2026-10-01T00:00:00Z" })),
+      level: f.level,
+      tier: tierFor(f.level, config).id,
+      streak: f.streak,
+    };
+  }
+
+  const purchases = new Map<string, PurchaseResult>();
+
+  function purchase(i: PurchaseInput): PurchaseResult {
+    const hit = purchases.get(i.idempotencyKey);
+    if (hit) return hit;
+    const c = SHOP.find((x) => x.id === i.itemId);
+    if (!c || levelNow() < unlockLevel(c)) throw new ApiError("conflict", "Not unlocked");
+    if (c.slot !== "freeze" && s.owned.includes(c.id)) throw new ApiError("conflict", "Already yours");
+    if (c.slot === "freeze" && s.streak.freezesHeld >= config.streak.maxFreezes) throw new ApiError("conflict", "Freezes full");
+    const price = priceOf(c);
+    if (price !== i.price) throw new ApiError("conflict", "Price changed");
+    const premium = flags.premiumCoins ? s.coins.premium : 0;
+    if (s.coins.free + premium < price) throw new ApiError("insufficient_balance");
+    // free coins go first, premium only covers the rest
+    const spent = { free: Math.min(s.coins.free, price), premium: Math.max(0, price - s.coins.free) };
+    s.coins = { free: s.coins.free - spent.free, premium: s.coins.premium - spent.premium };
+    if (c.slot === "freeze") s.streak = { ...s.streak, freezesHeld: s.streak.freezesHeld + 1 };
+    else s.owned = [...s.owned, c.id];
+    const r: PurchaseResult = { item: toItem(c), coins: s.coins, spent, ...(c.slot === "freeze" ? { streak: s.streak } : {}) };
+    purchases.set(i.idempotencyKey, r);
+    return r;
   }
 
   function progress(tz: string): UserProgress {
@@ -309,6 +405,21 @@ export function createMockApi(opts: MockOptions = {}): MockGamificationApi {
         rollDay(tzNow());
         return { quests: activeQuests(levelFromXp(s.totalXp, curve, config.maxLevel)).map(toQuest), serverNow: now().toISOString() };
       }),
+    getShop: () => respond(() => ({ items: SHOP.map(toItem) })),
+    markShopSeen: () =>
+      respond(() => {
+        s.shopSeenLevel = levelNow();
+        return { ok: true as const };
+      }),
+    purchase: (i) => respond(() => purchase(i)),
+    equip: (itemId) =>
+      respond(() => {
+        const c = SHOP.find((x) => x.id === itemId);
+        if (!c || c.slot === "freeze" || !s.owned.includes(itemId)) throw new ApiError("conflict", "Not yours to wear");
+        s.equipped = { ...s.equipped, [c.slot]: itemId };
+        return { club: club() };
+      }),
+    getMyClub: (userId) => respond(() => club(userId)),
     getBadges: () => respond((): BadgeCatalog => ({ badges: catalog.map((b) => badge(b.id)) })),
     pinBadges: (ids: string[]) =>
       respond(() => {
@@ -348,6 +459,7 @@ export function createMockApi(opts: MockOptions = {}): MockGamificationApi {
         s = seed();
         seen.clear();
         rewardedPredictions.clear();
+        purchases.clear();
         offline = false;
         failCode = null;
       },

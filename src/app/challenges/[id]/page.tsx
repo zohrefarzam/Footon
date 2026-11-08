@@ -1,5 +1,6 @@
+import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
-import { Clock } from "lucide-react";
+import { ChevronRight, Clock } from "lucide-react";
 
 import { AppShell } from "@/components/footon/app-shell";
 import { BackButton } from "@/components/footon/back-button";
@@ -16,7 +17,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Card, CardRow } from "@/components/ui/card";
 import { challengesWithMatch } from "@/lib/challenges";
 import { splitPool } from "@/lib/economy";
-import { challenges, people, predictionSlips, prematchChat, wallet } from "@/lib/mock-data";
+import { challenges, clubIds, people, predictionSlips, prematchChat, wallet } from "@/lib/mock-data";
 import { kickoffISO } from "@/lib/dates";
 import { cn } from "@/lib/utils";
 
@@ -90,6 +91,16 @@ export default async function ChallengePage({ params }: PageProps<"/challenges/[
           <span className={cn("flex-1 text-[15px] font-semibold", p.you && "text-primary")}>{p.name}</span>
           {c.from?.initial === p.initial && <span className="text-xs text-muted-foreground">created it</span>}
           {c.mine && p.you && <span className="text-xs text-muted-foreground">created it</span>}
+          {clubIds[p.initial] && (
+            <Link
+              href={`/club/${clubIds[p.initial]}`}
+              aria-label={`${p.name}'s club`}
+              className="-my-2 flex h-11 items-center gap-0.5 rounded-md ps-2 text-xs font-semibold text-muted-foreground outline-none hover:text-foreground focus-visible:ring-[3px] focus-visible:ring-ring/60"
+            >
+              Club
+              <ChevronRight className="size-3.5 rtl:rotate-180" aria-hidden="true" />
+            </Link>
+          )}
         </CardRow>
       ))}
       <p className="border-t border-line px-4 py-3 text-xs text-muted-foreground">

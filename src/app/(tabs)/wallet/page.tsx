@@ -3,6 +3,7 @@ import { ShoppingBag } from "lucide-react";
 
 import { AppShell } from "@/components/footon/app-shell";
 import { Coin, CoinAmount } from "@/components/footon/coin";
+import { CoinBalance } from "@/components/footon/gamification/coin-balance";
 import { StarterMissions } from "@/components/footon/missions";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -37,14 +38,16 @@ export default function WalletPage() {
         <div className="flex items-center gap-3 px-4 pt-4 pb-3.5">
           <Coin className="size-10 text-xl" />
           <div>
-            <p className="font-display text-[56px] leading-[0.9] font-bold text-live">{fmt(wallet.coins)}</p>
+            <p className="font-display text-[56px] leading-[0.9] font-bold text-live">
+              <CoinBalance fallback={wallet.coins} />
+            </p>
             <p className="mt-1 text-[13px] text-muted-foreground">coins to play with</p>
           </div>
         </div>
         <dl className="grid grid-cols-3 border-t border-line">
           {[
             { term: "Points", value: fmt(profile.points), desc: "Right calls only. They rank you." },
-            { term: "Coins", value: fmt(wallet.coins), desc: "Entries, leagues, extras." },
+            { term: "Coins", value: <CoinBalance fallback={wallet.coins} />, desc: "Entries, leagues, extras." },
             { term: "Prizes", value: "Weekly", desc: "From sponsors, by rank." },
           ].map((x) => (
             <div key={x.term} className="flex flex-col gap-1 px-3 py-3 [&+&]:border-s [&+&]:border-line">

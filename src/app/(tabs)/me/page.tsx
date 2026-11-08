@@ -1,15 +1,16 @@
 import Link from "next/link";
-import { Lock, Settings, UserRound } from "lucide-react";
+import { Settings, UserRound } from "lucide-react";
 
 import { AppShell } from "@/components/footon/app-shell";
 import { FavouriteClubs } from "@/components/footon/favourite-clubs";
 import { FormBars } from "@/components/footon/form-bars";
+import { MyClubLink } from "@/components/footon/gamification/club-page";
 import { LevelCard } from "@/components/footon/gamification/level-card";
 import { PinnedBadges } from "@/components/footon/gamification/pinned-badges";
 import { QuestList } from "@/components/footon/gamification/quests";
 import { StreakCounter } from "@/components/footon/gamification/streak";
 import { Button } from "@/components/ui/button";
-import { Card, CardRow } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import { clubDirectory, profile, recentForm } from "@/lib/mock-data";
 import { cn } from "@/lib/utils";
 
@@ -17,12 +18,6 @@ const RANK = 8;
 const OF = 30;
 
 
-const collection = [
-  { label: "Players", count: 3 },
-  { label: "Boots", count: 2 },
-  { label: "Stadiums", count: 1 },
-  { label: "Kits", locked: "Unlocks at level 5" },
-];
 
 export default function MePage() {
   const wins = recentForm.filter((r) => r === "W").length;
@@ -148,23 +143,11 @@ export default function MePage() {
 
       <PinnedBadges />
 
-      <section className="flex flex-col gap-2.5">
-        <h2 className="text-[13px] font-medium text-muted-foreground">Collection</h2>
-        <Card className="overflow-hidden">
-          {collection.map((c) => (
-            <CardRow key={c.label} className="py-3">
-              <span className={cn("flex-1 text-[15px] font-semibold", c.locked && "text-muted-foreground")}>{c.label}</span>
-              {c.locked ? (
-                <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                  <Lock className="size-3.5" />
-                  {c.locked}
-                </span>
-              ) : (
-                <span className="font-display text-xl font-bold">{c.count}</span>
-              )}
-            </CardRow>
-          ))}
-        </Card>
+      <section aria-labelledby="club-title" className="flex flex-col gap-2.5">
+        <h2 id="club-title" className="text-[13px] font-medium text-muted-foreground">
+          My Club
+        </h2>
+        <MyClubLink />
       </section>
     </AppShell>
   );

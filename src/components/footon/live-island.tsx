@@ -5,6 +5,7 @@ import Link from "next/link";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { ArrowRight, ChevronUp } from "lucide-react";
 
+import { useProgress } from "@/lib/gamification/queries";
 import { cn } from "@/lib/utils";
 import { Coin } from "./coin";
 import { LiveDot } from "./live";
@@ -28,7 +29,9 @@ export type IslandLive = {
  * expand and answer in place; tap the coins to open your wallet. Collapses on
  * scroll, outside tap or Escape. Without a live match it's just the wallet.
  */
-export function LiveIsland({ coins, live }: { coins: number; live?: IslandLive }) {
+export function LiveIsland({ coins: fallback, live }: { coins: number; live?: IslandLive }) {
+  // the server's balance once it's loaded (purchases and rewards land there); the prop until then
+  const coins = useProgress().data?.coins.free ?? fallback;
   const [open, setOpen] = useState(false);
   const [answer, setAnswer] = useState<"yes" | "no" | null>(null);
   const ref = useRef<HTMLDivElement>(null);

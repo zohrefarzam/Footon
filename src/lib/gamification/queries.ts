@@ -3,10 +3,19 @@
 import { useMutation, useQuery, useQueryClient, type QueryClient } from "@tanstack/react-query";
 
 import { api } from "./api";
+import { ApiError, type PurchaseInput } from "./api/client";
 import { expandReward } from "./celebrations/expand";
 import { celebrations } from "./celebrations/store";
 import { curveFor, levelProgress, tierFor } from "./level";
-import { toStreak, type GamificationConfig, type QuestBoard, type RewardResult, type UserProgress } from "./schemas";
+import {
+  toStreak,
+  type GamificationConfig,
+  type PurchaseResult,
+  type QuestBoard,
+  type RewardResult,
+  type ShopCatalog,
+  type UserProgress,
+} from "./schemas";
 
 export const gamificationKeys = {
   config: ["gamification", "config"] as const,
@@ -14,11 +23,55 @@ export const gamificationKeys = {
   progress: ["gamification", "progress"] as const,
   badges: ["gamification", "badges"] as const,
   quests: ["gamification", "quests"] as const,
+  shop: ["gamification", "shop"] as const,
+  club: (userId = "me") => ["gamification", "club", userId] as const,
 };
 
 export const useConfig = () => useQuery({ queryKey: gamificationKeys.config, queryFn: api.getConfig, staleTime: Infinity });
 export const useFlags = () => useQuery({ queryKey: gamificationKeys.flags, queryFn: api.getFlags, staleTime: Infinity });
 export const useProgress = () => useQuery({ queryKey: gamificationKeys.progress, queryFn: api.getProgress, staleTime: 60_000 });
+export const useShop = () => useQuery({ queryKey: gamificationKeys.shop, queryFn: api.getShop, staleTime: 60_000 });
+export const useMyClub = (userId = "me") =>
+  useQuery({ queryKey: gamificationKeys.club(userId), queryFn: () => api.getMyClub(userId === "me" ? undefined : userId), staleTime: 60_000 });
+
+/**
+ * Buy one item. The button using this waits for `isPending`; the cache only
+ * changes when the server answers (its coins, its item state, its freezes).
+ * A refusal (409 / 402) refetches what may have changed underneath.
+ */
+export function usePurchase() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (input: PurchaseInput) => api.purchase(input),
+    onSuccess: (r: PurchaseResult) => {
+      qc.setQueryData<ShopCatalog>(gamificationKeys.shop, (c) => (c ? { items: c.items.map((i) => (i.id === r.item.id ? r.item : i)) } : c));
+      qc.setQueryData<UserProgress>(gamificationKeys.progress, (p) => (p ? { ...p, coins: r.coins, ...(r.streak ? { streak: r.streak } : {}) } : p));
+    },
+    onError: (e) => {
+      if (e instanceof ApiError && (e.code === "conflict" || e.code === "insufficient_balance")) {
+        void qc.invalidateQueries({ queryKey: gamificationKeys.shop });
+        void qc.invalidateQueries({ queryKey: gamificationKeys.progress });
+      }
+    },
+  });
+}
+
+/** Put an owned item on your club; the server answers with the club as it now is. */
+export function useEquip() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (itemId: string) => api.equip(itemId),
+    onSuccess: ({ club }, itemId) => {
+      qc.setQueryData(gamificationKeys.club("me"), club);
+      qc.setQueryData<ShopCatalog>(gamificationKeys.shop, (c) => {
+        if (!c) return c;
+        const slot = c.items.find((i) => i.id === itemId)?.slot;
+        return { items: c.items.map((i) => (i.slot === slot ? { ...i, equipped: i.id === itemId } : i)) };
+      });
+    },
+  });
+}
+
 export const useQuests = () => useQuery({ queryKey: gamificationKeys.quests, queryFn: api.getQuests, staleTime: 60_000 });
 export const useBadges = () => useQuery({ queryKey: gamificationKeys.badges, queryFn: api.getBadges, staleTime: 60_000 });
 

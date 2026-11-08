@@ -39,8 +39,8 @@ Adding shadcn components: `npx shadcn@latest add <name>`, then **restyle it to t
 
 ```
 src/
-  app/                    routes (/, /welcome, /play, /match/[id], /challenges/new, /challenges/[id], /styleguide)
-    (tabs)/               /, /challenges, /predictions, /live, /me, /fantasy, /wallet, /shop — layout holds the sticky LiveIsland and the Dock (persist across tabs)
+  app/                    routes (/, /welcome, /play, /match/[id], /challenges/new, /challenges/[id], /club/[userId], /styleguide)
+    (tabs)/               /, /challenges, /predictions, /live, /me, /me/club, /fantasy, /wallet, /shop — layout holds the sticky LiveIsland and the Dock (persist across tabs)
     globals.css           ALL design tokens, utilities, keyframes
     providers.tsx         client providers: TanStack Query cache, outbox binding, CelebrationHost
   components/
@@ -52,14 +52,16 @@ src/
                           match-scoreboard, match-preview, match-days, countdown, back-button, coin, number-ticker, form-bars,
                           progress-ring, team-crest, live, empty-state, match-filter, match-list, invite-strip, streak,
                           prematch-calls, fantasy-unlock, football, ball-switch, splash, splash-gate, nav-icons,
-                          missions, match-tables, shop, prediction-builder, challenge-list,
-                          challenge-gate, boost-badge, favourite-clubs,
-                          shop-preview, shop-icons)
+                          missions, match-tables, prediction-builder, challenge-list,
+                          challenge-gate, boost-badge, favourite-clubs, shop-preview)
       gamification/       XP / level / badges / streak / quests / shop: celebration-host, xp-gain-burst,
                           level-progress-bar, level-card, level-up-screen, tier-badge, locked-feature-gate,
                           rarity-label, badge-glyph, celebration-toast, badge-toast, badge-wall, pinned-badges,
                           streak (StreakChip, StreakCounter, FreezeIndicator, StreakTick), streak-broken-sheet, combo-meter,
-                          quests (QuestCard, QuestList, QuestToast)
+                          quests (QuestCard, QuestList, QuestToast), shop-grid (ShopGrid, ShopItemCard),
+                          shop-view, item-preview (ItemPreview, PurchaseConfirm), club-view (MyClubView,
+                          ItemSwatch, Shirt, Boots), club-page (ClubPage, MyClubLink), share-card
+                          (ShareCardRenderer, drawClubCard), coin-balance
   lib/
     utils.ts              cn()
     dates.ts              day labels relative to the mock today ("Yesterday", "Thu 5 Nov")
@@ -80,7 +82,7 @@ src/
       outbox.ts           prediction actions on their way to the server (retry, idempotency keys)
       share.ts            share to a Telegram group (Mini App → Web Share → link)
       celebrations/       expand.ts (RewardResult → ordered moments) + store.ts (the queue)
-      api/                client.ts (interface, HTTP client, Zod-validated wrapper), mock.ts + mock-rules.ts + mock-quests.ts (in-memory MOCK SERVER), index.ts
+      api/                client.ts (interface, HTTP client, Zod-validated wrapper), mock.ts + mock-rules.ts + mock-quests.ts + mock-shop.ts (in-memory MOCK SERVER), index.ts
   fonts/                  Barlow Condensed woff2
   proxy.ts                first-run redirect: `/` → `/welcome` until `footon_onboarded` is set
 ```
@@ -88,7 +90,7 @@ src/
 Rules:
 - Pages are Server Components. Put `"use client"` only on the smallest interactive leaf (see `match-filter.tsx`, `create-league-form.tsx`).
 - Product UI goes in `components/footon`. `components/ui` holds only generic primitives.
-- No data fetching inside `components/`; pass data in as props. One exception: gamification state (level, XP, coins, streak) is per-user server state shared by many leaves, so `components/footon/gamification` and the gated tiles read it through the hooks in `lib/gamification/queries.ts`, never by calling the API directly.
+- No data fetching inside `components/`; pass data in as props. One exception: gamification state (level, XP, coins, streak) is per-user server state shared by many leaves, so `components/footon/gamification`, the gated tiles, `ShopPreview` and the `LiveIsland` coin balance read it through the hooks in `lib/gamification/queries.ts`, never by calling the API directly.
 - Check `/styleguide` after changing tokens or primitives.
 
 ## Design principles
@@ -206,7 +208,7 @@ Rules:
 | --- | --- |
 | `AppShell` | Mobile column. `dock={false}` for focus mode (live match, create flow); otherwise it reserves room for the dock, which `app/(tabs)/layout.tsx` renders once. |
 | `Dock` | Floating glass nav, 5 tabs: Home · Challenges · Predictions · Live · Profile, with the `nav-icons` set (Predictions = a crystal ball; its label reads "Predict" under 360px). Active item: filled icon + white label + lime dot. The Live tab carries a pulsing `LiveDot` while a match is on. No centre "+": creating lives on the Challenges screen. Fantasy and favourite team are not tabs (Fantasy is reached from its Home card and Profile; favourite team lives in Profile settings). |
-| `LiveIsland` | Sticky top pill on every dock tab, rendered once by `app/(tabs)/layout.tsx`. Left: live minute, score and the open question (lime `Q4 open` chip, soft-lime `Q4 · Yes` once answered); tap to expand over the page and answer in place. Right: the wallet (coins → `/wallet`). Collapses on scroll, outside tap or Escape. With no live match it shows only the wallet. Pages don't render their own coin badge. |
+| `LiveIsland` | Sticky top pill on every dock tab, rendered once by `app/(tabs)/layout.tsx`. Left: live minute, score and the open question (lime `Q4 open` chip, soft-lime `Q4 · Yes` once answered); tap to expand over the page and answer in place. Right: the wallet (coins → `/wallet`; the server's balance once it loads, so purchases and rewards show at once). Collapses on scroll, outside tap or Escape. With no live match it shows only the wallet. Pages don't render their own coin badge. |
 | `QuestionCard` | The live question. Yes/No → crowd split + drawn check + shimmer. Timer ring is amber. `compact` = one-row widget. |
 | `MatchCentre` | Match page frame (after FotMob): sticky top bar (back · title) → dotted scoreboard that scrolls away (the top bar then crossfades to the compact score + live minute) → sticky underline `Tabs` for sections. Sections arrive as server-rendered nodes; only the frame is client. |
 | `LiveMatch` | A live match in `MatchCentre`. Scoreboard: xl crests, scorers under each name, red-card glyphs, display score, `LiveMinute`, match clock bar. Sections: **Predict** (first, amber dot while a question is open) · Chat · Facts · Stats · Lineups · Table · H2H; a section only shows when there's data. With your league: Predict = `QuestionCard` → `ComboMeter` → league card (standings tiles, "N of M asked", your calls right, streak, lime `+points`) → `CrowdPoll`. Without: `CrowdPoll` + a dashed "Start a league" card (the one lime CTA). |
@@ -232,12 +234,11 @@ Rules:
 | `BoostBadge` | A big match (`match.boost`): amber-soft pill, lucide `Zap` + "2x" (amber: it's a boost). On `MatchRow` (amber "2x" over the day), challenge rows, Home's big matches, the scoreboard ("Wins pay 2x") and the builder. Boosts coins a right prediction wins, never points. |
 | `LevelProgressBar` | (gamification) XP · Level · Badges strip under the live island on every dock tab (`app/(tabs)/layout.tsx`) → `/me#level`. Neutral track, filled from the inline start with `scaleX`. Reads the server's progress; skeleton until it loads. |
 | `FavouriteClubs` | Profile's "Your clubs": crest chips with ✕, "Add club" opens a sheet with a search field (name or code, clear ✕, "No club matches" empty state, result count announced) over the crest grid of `clubDirectory` (`aria-pressed`, soft-lime when picked). |
-| `ShopPreview` | Home's shop card: full width, dotted, neutral; "Shop" + "Opening soon" over three real items with their amber coin prices. Links to `/shop`. Never lime, never after a loss or on a low balance. |
+| `ShopPreview` | Home's shop card: full width, dotted, neutral; "Shop" (+ "N new") over three items you could get now (newly unlocked first) with their amber prices. Links to `/shop`. Never lime; hidden when your balance can't cover any of them (and never after a loss). |
 | `SegmentedTabs` | 2–4 filters with sliding lime pill. |
 | `CoinBadge` / `Coin` / `CoinAmount` | Wallet pill. Coins are always amber with an "F". `CoinAmount` is a coin figure in a row: gains amber, spends neutral with a minus (an entry isn't a loss). |
 | `StarterMissions` | First-week missions (15,000 over 7 days): progress, open rows first, done rows muted with the reason they paid. |
 | `MatchTables` | "Two tables, same calls" card on a match: Free table (always open, top 3 get coins) and Coin table (your league's pool, or "Start a league"). Footer: entry never changes rank. `poolLine()` gives "winner takes 5,700". |
-| `Shop` | Phase 2 "coming soon" shop: item rows → sheet saying it's not open yet, nothing charged, lime "Notify me". Fires `track()` events. |
 | `NumberTicker` | Count-up for rewards. |
 | `FormBars` | Last-N results as bars (height + colour). `fill` stretches them across the width (Profile's recent-form card). |
 | `FantasyUnlock` | Compact Home tile, a bit wider than `InviteTile` (it matters more), gated by level (`unlocks.fantasy`, L8). Locked must read as locked: dashed border (the "locked" card style), lock icon + "Fantasy locked", the neutral XP track to the level it needs and "Level 8 required". Under 360px "locked" and the level label drop; lock + dashed border carry it. Locked is **disabled**: not a link, no chevron, still visible. Open: solid soft-lime "Fantasy open", links to `/fantasy` (whose page keeps the same gate for direct URLs). |
@@ -264,7 +265,7 @@ Rules:
 - **Full time:** ticking `+450`, streak pill with lime "Next match 2x", podium (yours lime-soft, tallest), match-timeline of calls (lime filled dots = right, red rings = wrong), rematch chat replies, lime "Rematch with same friends".
 - **Fantasy (`/fantasy`, was My team):** stats header (display 56), striped pitch with shirt tokens (selected = lime, captain = amber "C"), captain + transfers list, lime "Save lineup".
 - **Create league:** entry slider uses `ENTRY_TIERS`; the pool preview under it; "Prediction stakes": a "Same stake for everyone" switch with `STAKE_STEPS` chips and a "Most one player can stake" cap slider (both shown on the ticket); the lime CTA carries the total cost (create + your entry). Short of coins → disabled "Need N more coins" + "Ways to earn".
-- **Profile:** silver league card (light zinc, dotted, slight 3D tilt on hover) with score + 30-tick rank strip, recent-form card (win rate, won/lost/void, full-width `FormBars`), a Level card (`#level`, `LevelCard`: level, tier, badges, XP track, the next two unlocks shown locked), a Streak card (`StreakCounter`), **Season and league** quests (`QuestList`), `FavouriteClubs`, amber boost tokens, `PinnedBadges` (up to 3 + "All badges" → `BadgeWall` sheet), collection list (locked rows muted with a lock).
+- **Profile:** silver league card (light zinc, dotted, slight 3D tilt on hover) with score + 30-tick rank strip, recent-form card (win rate, won/lost/void, full-width `FormBars`), a Level card (`#level`, `LevelCard`: level, tier, badges, XP track, the next two unlocks shown locked), a Streak card (`StreakCounter`), **Season and league** quests (`QuestList`), `FavouriteClubs`, amber boost tokens, `PinnedBadges` (up to 3 + "All badges" → `BadgeWall` sheet), **My Club** (`MyClubLink` → `/me/club`).
 
 ## Gamification (XP, level, badges, streak, quests)
 
@@ -283,6 +284,7 @@ From the gamification brief. Code in `lib/gamification` and `components/footon/g
 - **Streak** = consecutive match days with a real prediction (the server counts it; the day is the match's start date in the user's timezone). Checked-calendar glyph, amber. A broken run reads as 0, never red; `StreakBrokenSheet` says so once per run, kindly, with the best run and one lime "Start a new run" (→ `/live`). Freezes show as filled vs dashed slots.
 - **Combo** = right answers in a row inside one match (3 → ×2 XP, 5 → ×3, a wrong answer resets it). It only ever multiplies XP, never points or coins. `ComboMeter` shows the steps under the pips instead of explaining them.
 - **Quests.** Daily (easy · with friends · challenge; how many is the `dailyQuestCount` flag), weekly from `unlocks.weeklyQuests`, seasonal, group. The server moves them with each action and pays a finished quest inside that action's `RewardResult` (`questProgress[].completedNow` + `reward`); the client never counts. Time left is worked out from the board's `serverNow`, not the device clock. Expired quests just stop coming back: no message, no penalty. Progress is a neutral track; a done quest gets a soft-lime check (it's a win), its reward XP neutral and coins amber.
+- **Shop + My Club.** Locked items show with their level; you can try anything on before buying. The buy button waits for the server, the balance after a buy is the server's, and refusals never charge (402 → "Need N more coins", 409 → "That changed…" + refresh, offline → retry with the same key). "New" clears once the shop has been seen. My Club is visible to friends and shareable as an image card; sharing is always a button.
 - **Mock server.** Without `NEXT_PUBLIC_GAMIFICATION_API` the in-memory mock runs (resets on reload). `/styleguide` has controls to grant XP, jump levels, resolve a live question right/wrong, predict today, roll to a new day (dailies reset), break the streak, go offline and fail the next call.
 
 | Component | Purpose / rules |
@@ -300,6 +302,11 @@ From the gamification brief. Code in `lib/gamification` and `components/footon/g
 | `StreakBrokenSheet` | Glass sheet, neutral calendar icon, "That run's over", best run in display 56, lime "Start a new run". `StreakBrokenWatcher` (in `CelebrationHost`) shows it once per broken run, after the splash and between celebrations. |
 | `QuestList` / `QuestCard` | One divided card of quest rows for the given kinds (title + "N of M done"). Row: shape-coded icon per kind/difficulty, title, "Easy · Resets in 6h", neutral track with `1/2` in display, reward on the end (+XP, amber coins). Done: muted, soft-lime check that pops once. `feature` puts the list behind a `LockedFeatureGate` row. Fires `quest_list_viewed` once. |
 | `QuestToast` | "QUEST DONE", soft-lime check, title, "+40 XP · 40 coins". Plays after the XP moment. |
+| `ShopGrid` / `ShopItemCard` | Sections (Keep your run, Kits, Stadiums, Boots, Frames), two tiles a row. Tile states read in words and shape: locked (dashed, lock, "Level 10"), on your club (soft-lime, check), owned, new (outlined "New" tag), buyable (amber price). Every tile opens the preview, locked ones too. |
+| `ItemPreview` / `PurchaseConfirm` | Sheet: the item tried on your own `MyClubView` (freeze: your freezes), then the one action that fits: Buy (lime, price on the button) → confirm ("1,500 coins. You'll have 4,950 left.", Buy it / Not now), Put it on, or the disabled reason (level, "Need N more coins" + Ways to earn, freezes full). Confirm waits for the server; a lost request retries with the same idempotency key ("Nothing was charged"); a 409 stops it and refreshes the shop. Success: drawn check "It's yours" + lime "Put it on". |
+| `MyClubView` | A club as friends see it: frame colour on the border, stadium stands behind, kit + boots in front, name, tier + level, streak, pinned badges. `preview` swaps one slot for the try-on. One `aria-label` sums it up. |
+| `ClubPage` / `MyClubLink` | `/me/club` (yours: share + "Customise in the shop") and `/club/[userId]` (a friend's, look only; linked from challenge League rows). Profile shows yours compact. |
+| `ShareCardRenderer` | Secondary "Share to Telegram": draws the club on a 1080×1350 canvas with the page's own fonts (`drawClubCard`), then Telegram Mini App → Web Share with the PNG → download + `t.me/share` link. Fires `card_shared`. |
 | `ComboMeter` | Live Predict tab, under the question: flame tile, "N right in a row", one pip per answer up to the top step with ×2 / ×3 under their pips, the current multiplier (amber when > ×1). `role="img"` with the whole state in its label. |
 
 ## Economy (coins, points, prizes)
@@ -313,7 +320,7 @@ From the Footon economy doc. Numbers live in `lib/economy.ts`; mock state in `mo
 - **Predictions carry a coin stake.** Each prediction costs a stake (the player's pick, at least `PREDICTION_MIN_STAKE`, or the challenge's fixed amount); a challenge can cap the total per player. A right one pays `payout()` = stake × `PAYOUT_MULTIPLIER` (2), ×`BOOST_MULTIPLIER` again on a big (`boost`) match, plus `POINTS_PER_RIGHT_CALL` points. Stakes and payouts are coins (amber); rank still reads points only.
 - **Never sell advantage.** Nothing that earns points (the 2x boost) is for sale; no mystery boxes; coins can't be cashed out or sent. Packs are 18+ with a monthly limit.
 - **Wallet (`/wallet`):** balance + Points/Coins/Prizes strip, first-week missions, this week's mission and caps (amber bars: allowances), ways to earn, activity, the rules line.
-- **Shop (`/shop`, Phase 2):** real items and prices, no payment. Tap → "Coming soon" sheet → "Notify me". We measure opens, item taps, notify taps.
+- **Shop (`/shop`):** cosmetics for My Club (kits, stadiums, boots, frames) and the Streak Freeze, bought with free coins (premium coins only while the `premiumCoins` flag is on, and always after free ones). Nothing in it touches a prediction, a point or a prize. See "Gamification" for the flow.
 
 ## Adapting shadcn components
 

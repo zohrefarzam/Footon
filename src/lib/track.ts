@@ -7,10 +7,6 @@
  * item_purchased…) is tracked server-side and must never be sent from here.
  */
 export type TrackEvents = {
-  // shop (Phase 2 intent test, until the cosmetic shop replaces it)
-  shop_open: Record<string, never>;
-  shop_item_tap: { item: string };
-  shop_notify: { item: string };
   // gamification surfaces
   shop_viewed: { surface?: string };
   card_shared: { surface: "level_up" | "my_club"; method: "telegram" | "web_share" | "download" | "link" };

@@ -1,12 +1,13 @@
 import { AppShell } from "@/components/footon/app-shell";
 import { BackButton } from "@/components/footon/back-button";
-import { Shop } from "@/components/footon/shop";
-import { shop } from "@/lib/mock-data";
+import { ShopView } from "@/components/footon/gamification/shop-view";
+import { copy } from "@/lib/gamification/strings";
 
 /**
- * Shop, Phase 2: "coming soon". Real items and prices so we can measure intent
- * (opens, item taps, "Notify me") before building payment. Reached from the
- * Wallet header and Home's shop card; never offered after a loss or when coins run low.
+ * The cosmetic shop: kits, stadiums, boots, frames and the Streak Freeze for
+ * your club. Every item shows, locked ones with their level; you can try any
+ * of them on before buying. Reached from the Wallet header and Home's shop
+ * card; never offered after a loss or on a low balance.
  */
 export default function ShopPage() {
   return (
@@ -15,14 +16,11 @@ export default function ShopPage() {
         <BackButton href="/wallet" />
         <h1 className="text-[26px] font-bold tracking-[-0.03em]">Shop</h1>
       </header>
-      <p className="-mt-2 text-sm text-muted-foreground">Opening soon. Nothing here is charged yet.</p>
+      <p className="-mt-2 text-sm text-muted-foreground">{copy.shopIntro}</p>
 
-      <Shop groups={shop} />
+      <ShopView />
 
-      <p className="text-center text-xs text-balance text-muted-foreground">
-        Bought coins are for more play and extras. They never buy points, rank or prizes. No mystery boxes, and coins can&apos;t be cashed
-        out.
-      </p>
+      <p className="text-center text-xs text-balance text-muted-foreground">{copy.shopRules}</p>
     </AppShell>
   );
 }

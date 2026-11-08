@@ -169,3 +169,67 @@ describe("mock server: quests", () => {
     expect(board.quests.every((q) => Date.parse(q.expiresAt) > Date.parse(board.serverNow))).toBe(true);
   });
 });
+
+describe("mock server: shop", () => {
+  const shop = (over: Parameters<typeof createMockApi>[0] = {}) => createMockApi({ latencyMs: 0, now, quests: [], ...over });
+  const buy = (id: string, key: string, price: number) => ({ itemId: id, idempotencyKey: key, price });
+
+  it("charges free coins once per idempotency key", async () => {
+    const api = shop();
+    const a = await api.purchase(buy("kit-home", "b1", 1500));
+    expect(a).toMatchObject({ item: { id: "kit-home", owned: true }, coins: { free: 4950 }, spent: { free: 1500, premium: 0 } });
+    expect(await api.purchase(buy("kit-home", "b1", 1500))).toEqual(a);
+    expect(api.dev.state().coins.free).toBe(4950);
+  });
+
+  it("refuses without charging: changed price, not unlocked, already owned", async () => {
+    const api = shop();
+    await expect(api.purchase(buy("kit-home", "b1", 999))).rejects.toMatchObject({ code: "conflict" });
+    await expect(api.purchase(buy("stadium-terrace", "b2", 5000))).rejects.toMatchObject({ code: "conflict" }); // level 10
+    await expect(api.purchase(buy("kit-academy", "b3", 0))).rejects.toMatchObject({ code: "conflict" }); // owned
+    expect(api.dev.state().coins.free).toBe(6450);
+  });
+
+  it("says insufficient balance, and premium coins only count while they're on", async () => {
+    const poor = shop({ initial: { coins: { free: 1000, premium: 5000 } } });
+    await expect(poor.purchase(buy("kit-home", "b1", 1500))).rejects.toMatchObject({ code: "insufficient_balance" });
+    const premium = shop({ initial: { coins: { free: 1000, premium: 5000 } }, flags: { ...defaultFlags, premiumCoins: true } });
+    const r = await premium.purchase(buy("kit-home", "b1", 1500));
+    expect(r.spent).toEqual({ free: 1000, premium: 500 }); // free first
+    expect(r.coins).toEqual({ free: 0, premium: 4500 });
+  });
+
+  it("prices the first kit from the A/B flag", async () => {
+    const { items } = await shop({ flags: { ...defaultFlags, firstKitPrice: 900 } }).getShop();
+    expect(items.find((i) => i.id === "kit-home")?.price.free).toBe(900);
+  });
+
+  it("sells freezes up to the most you can hold", async () => {
+    const api = shop(); // holds 1 of 2
+    const r = await api.purchase(buy("freeze", "f1", 2500));
+    expect(r.streak?.freezesHeld).toBe(2);
+    await expect(api.purchase(buy("freeze", "f2", 2500))).rejects.toMatchObject({ code: "conflict" });
+  });
+
+  it("marks newly unlocked items as new until the shop is seen", async () => {
+    const api = shop();
+    expect((await api.getShop()).items.filter((i) => i.isNew).map((i) => i.id)).toEqual(["kit-home", "kit-away", "kit-night", "frame-pitch"]);
+    await api.markShopSeen();
+    expect((await api.getShop()).items.some((i) => i.isNew)).toBe(false);
+  });
+
+  it("puts on owned items only, and the club shows them", async () => {
+    const api = shop();
+    await expect(api.equip("kit-home")).rejects.toMatchObject({ code: "conflict" });
+    await api.purchase(buy("kit-home", "b1", 1500));
+    const { club } = await api.equip("kit-home");
+    expect(club.kit).toMatchObject({ id: "kit-home", name: "Home kit" });
+    expect((await api.getShop()).items.find((i) => i.id === "kit-home")?.equipped).toBe(true);
+  });
+
+  it("shows a friend's club, not one it doesn't know", async () => {
+    const api = shop();
+    await expect(api.getMyClub("sara")).resolves.toMatchObject({ name: "Sara's club", level: 12, tier: "startingXI", kit: { id: "kit-night" } });
+    await expect(api.getMyClub("nobody")).rejects.toBeTruthy();
+  });
+});

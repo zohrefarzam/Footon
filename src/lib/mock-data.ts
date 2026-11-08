@@ -611,6 +611,9 @@ export const prematchChat = {
 };
 
 /** First names for the initials in league member lists. */
+/** Friends whose club (`/club/[userId]`) you can open, by initial. */
+export const clubIds: Record<string, string> = { S: "sara", O: "omid" };
+
 export const people: Record<string, string> = {
   Y: "You",
   S: "Sara",
@@ -701,53 +704,3 @@ export const coinActivity: CoinEntry[] = [
   { id: "a-6", label: "2nd on the free table", reason: "AVL v WHU", amount: 300, day: "Sun" },
 ];
 
-/**
- * Shop catalogue. Phase 2 is a "coming soon" shop: real items and prices, no
- * payment. Tapping an item asks if you want to hear when it opens; that tap is
- * the purchase-intent signal. Nothing here sells points, rank or prize odds,
- * and there are no mystery boxes.
- */
-export type ShopItem = {
-  id: string;
-  name: string;
-  detail: string;
-  /** Coin price, or a range for families of looks. */
-  coins?: number | [number, number];
-  /** Real-money price, coin packs only. */
-  price?: string;
-  /** Coins in a pack and its bonus %. */
-  pack?: { coins: number; bonus?: number };
-  icon: "pack" | "celebration" | "banter" | "banner" | "freeze" | "league" | "kit" | "slot";
-};
-
-export const shop: { group: string; note?: string; items: ShopItem[] }[] = [
-  {
-    group: "Coin packs",
-    note: "18+ · monthly limit",
-    items: [
-      { id: "pack-s", name: "Small", detail: "For one big night", price: "$0.99", pack: { coins: 1000 }, icon: "pack" },
-      { id: "pack-m", name: "Medium", detail: "A few weekends", price: "$4.99", pack: { coins: 5500, bonus: 10 }, icon: "pack" },
-      { id: "pack-l", name: "Large", detail: "The season", price: "$9.99", pack: { coins: 11500, bonus: 15 }, icon: "pack" },
-    ],
-  },
-  {
-    group: "Match moments",
-    items: [
-      { id: "celebration", name: "Goal celebration", detail: "Takes over your league's screen", coins: [100, 750], icon: "celebration" },
-      { id: "banter", name: "Banter card", detail: "Drop it in chat after a big call", coins: 500, icon: "banter" },
-      { id: "revenge", name: "Revenge banner", detail: "For the rematch", coins: 500, icon: "banner" },
-    ],
-  },
-  {
-    group: "Keep your run",
-    items: [{ id: "freeze", name: "Streak freeze", detail: "Miss a match, keep your streak", coins: 2500, icon: "freeze" }],
-  },
-  {
-    group: "Looks",
-    items: [
-      { id: "league-look", name: "League look", detail: "Crest and trophy room", coins: 5000, icon: "league" },
-      { id: "club-look", name: "Fantasy club look", detail: "Kit, crest, stadium", coins: [2500, 10000], icon: "kit" },
-      { id: "slot", name: "Extra fantasy slot", detail: "One more friends' fantasy league", coins: 1000, icon: "slot" },
-    ],
-  },
-];

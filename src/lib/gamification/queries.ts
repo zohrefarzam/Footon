@@ -6,18 +6,20 @@ import { api } from "./api";
 import { expandReward } from "./celebrations/expand";
 import { celebrations } from "./celebrations/store";
 import { curveFor, levelProgress, tierFor } from "./level";
-import { toStreak, type GamificationConfig, type RewardResult, type UserProgress } from "./schemas";
+import { toStreak, type GamificationConfig, type QuestBoard, type RewardResult, type UserProgress } from "./schemas";
 
 export const gamificationKeys = {
   config: ["gamification", "config"] as const,
   flags: ["gamification", "flags"] as const,
   progress: ["gamification", "progress"] as const,
   badges: ["gamification", "badges"] as const,
+  quests: ["gamification", "quests"] as const,
 };
 
 export const useConfig = () => useQuery({ queryKey: gamificationKeys.config, queryFn: api.getConfig, staleTime: Infinity });
 export const useFlags = () => useQuery({ queryKey: gamificationKeys.flags, queryFn: api.getFlags, staleTime: Infinity });
 export const useProgress = () => useQuery({ queryKey: gamificationKeys.progress, queryFn: api.getProgress, staleTime: 60_000 });
+export const useQuests = () => useQuery({ queryKey: gamificationKeys.quests, queryFn: api.getQuests, staleTime: 60_000 });
 export const useBadges = () => useQuery({ queryKey: gamificationKeys.badges, queryFn: api.getBadges, staleTime: 60_000 });
 
 /**
@@ -79,6 +81,20 @@ export function applyReward(qc: QueryClient, result: RewardResult) {
     void qc.invalidateQueries({ queryKey: gamificationKeys.progress });
   }
   if (result.newBadges.length > 0) void qc.invalidateQueries({ queryKey: gamificationKeys.badges });
+  if (result.questProgress.length > 0) {
+    const byId = new Map(result.questProgress.map((q) => [q.questId, q]));
+    qc.setQueryData<QuestBoard>(gamificationKeys.quests, (board) =>
+      board
+        ? {
+            ...board,
+            quests: board.quests.map((q) => {
+              const u = byId.get(q.id);
+              return u ? { ...q, progress: u.progress, completed: q.completed || u.completedNow || u.progress >= u.target } : q;
+            }),
+          }
+        : board,
+    );
+  }
 
   const items = expandReward(result, prev ? { totalXp: prev.totalXp, level: prev.level } : null, config ? (l) => tierFor(l, config).id : undefined);
   celebrations.getState().enqueue(result.id, items);

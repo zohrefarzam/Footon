@@ -1,10 +1,11 @@
 import { describe, expect, it } from "vitest";
 
+import { defaultFlags } from "../config";
 import { validated } from "./client";
 import { createMockApi } from "./mock";
 
 const now = () => new Date("2026-11-03T18:00:00Z");
-const make = () => createMockApi({ latencyMs: 0, now, fixtures: [{ kickoff: "2026-11-02T20:00:00Z" }, { kickoff: "2026-11-03T20:00:00Z" }] });
+const make = () => createMockApi({ latencyMs: 0, now, quests: [], fixtures: [{ kickoff: "2026-11-02T20:00:00Z" }, { kickoff: "2026-11-03T20:00:00Z" }] });
 const pred = (key: string, count = 1, matchId = "m1") => ({ idempotencyKey: key, matchId, kickoff: "2026-11-03T20:00:00Z", count, timeZone: "UTC" });
 
 describe("mock gamification server", () => {
@@ -104,7 +105,7 @@ describe("mock server: streak", () => {
   const at = (day: string) => () => new Date(`${day}T12:00:00Z`);
 
   it("reports a broken run, and the next prediction starts at 1 keeping the best", async () => {
-    const api = createMockApi({ latencyMs: 0, now: at("2026-11-03"), fixtures });
+    const api = createMockApi({ latencyMs: 0, now: at("2026-11-03"), fixtures, quests: [] });
     api.dev.breakStreak();
     const p = await api.getProgress();
     expect(p.streak.status).toBe("broken");
@@ -117,10 +118,54 @@ describe("mock server: streak", () => {
       latencyMs: 0,
       now: at("2026-11-09"),
       fixtures,
+      quests: [],
       initial: { streak: { current: 6, best: 6, lastDayKey: "2026-11-08", freezesHeld: 0, status: "active" } },
     });
     const r = await api.submitPrediction({ ...pred("k1"), kickoff: "2026-11-09T20:00:00Z", timeZone: "UTC" });
     expect(r.streak).toMatchObject({ current: 7, milestone: 7 });
     expect(r.newBadges.map((b) => b.id)).toEqual(["streak-7"]);
+  });
+});
+
+describe("mock server: quests", () => {
+  const withQuests = (over: Parameters<typeof createMockApi>[0] = {}) =>
+    createMockApi({ latencyMs: 0, now, fixtures: [{ kickoff: "2026-11-03T20:00:00Z" }], ...over });
+
+  it("pays a finished quest inside the action's own result", async () => {
+    const api = withQuests();
+    const r = await api.submitPrediction(pred("k1"));
+    expect(r.questProgress.find((q) => q.questId === "d-easy")).toMatchObject({ completedNow: true, reward: { xp: 30, coins: 30 } });
+    expect(r.xpGained).toBe(20 + 30);
+    expect(r.coinsGained).toBe(20 + 30);
+    const again = await api.submitPrediction(pred("k2", 1, "m2"));
+    expect(again.questProgress.find((q) => q.questId === "d-easy")).toBeUndefined();
+  });
+
+  it("opens as many dailies as the flag says", async () => {
+    const two = await withQuests({ flags: { ...defaultFlags, dailyQuestCount: 2 } }).getQuests();
+    expect(two.quests.filter((q) => q.kind === "daily").map((q) => q.difficulty)).toEqual(["easy", "social"]);
+    const three = await withQuests().getQuests();
+    expect(three.quests.filter((q) => q.kind === "daily")).toHaveLength(3);
+  });
+
+  it("opens weekly quests only from their unlock level", async () => {
+    const low = withQuests({ initial: { totalXp: 900 } }); // level 5
+    expect((await low.getQuests()).quests.some((q) => q.kind === "weekly")).toBe(false);
+    expect((await withQuests().getQuests()).quests.some((q) => q.kind === "weekly")).toBe(true); // level 7
+  });
+
+  it("expires dailies silently: a fresh set, nothing taken away", async () => {
+    const api = withQuests();
+    await api.submitPrediction(pred("k1"));
+    const xp = api.dev.state().totalXp;
+    api.dev.expireDailyQuests();
+    const board = await api.getQuests();
+    expect(board.quests.find((q) => q.id === "d-easy")).toMatchObject({ progress: 0, completed: false });
+    expect(api.dev.state().totalXp).toBe(xp);
+  });
+
+  it("dates every quest after the server's now", async () => {
+    const board = await withQuests().getQuests();
+    expect(board.quests.every((q) => Date.parse(q.expiresAt) > Date.parse(board.serverNow))).toBe(true);
   });
 });

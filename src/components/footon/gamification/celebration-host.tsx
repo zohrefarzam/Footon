@@ -2,7 +2,6 @@
 
 import { useEffect } from "react";
 import { AnimatePresence } from "motion/react";
-import { CircleCheck } from "lucide-react";
 
 import { useSplashDone } from "@/components/footon/splash-gate";
 import { isBlocking, type Celebration } from "@/lib/gamification/celebrations/expand";
@@ -13,8 +12,8 @@ import type { FeatureFlags, GamificationConfig } from "@/lib/gamification/schema
 import { copy } from "@/lib/gamification/strings";
 import { track } from "@/lib/track";
 import { BadgeToast } from "./badge-toast";
-import { CelebrationToast } from "./celebration-toast";
 import { LevelUpScreen } from "./level-up-screen";
+import { QuestToast } from "./quests";
 import { StreakBrokenWatcher } from "./streak-broken-sheet";
 import { StreakTick } from "./streak";
 import { XpGainBurst } from "./xp-gain-burst";
@@ -141,14 +140,7 @@ function Toast({ c, onDismiss }: { c: Celebration; onDismiss: () => void }) {
     case "badge":
       return <BadgeToast badge={c.badge} onDismiss={onDismiss} />;
     case "quest":
-      return (
-        <CelebrationToast
-          icon={<CircleCheck className="size-5" strokeWidth={2.2} />}
-          title={copy.announceQuest(c.quest.title)}
-          onDismiss={onDismiss}
-          dismissLabel={copy.skip}
-        />
-      );
+      return <QuestToast title={c.quest.title} reward={c.quest.reward} onDismiss={onDismiss} />;
     default:
       return null;
   }

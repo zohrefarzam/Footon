@@ -24,8 +24,8 @@ export function CelebrationToast({
   detail?: React.ReactNode;
   /** Right-hand slot, e.g. a ticking number. */
   aside?: React.ReactNode;
-  /** `live` (amber) only for boosts: streaks and combos. */
-  tone?: "neutral" | "live";
+  /** `live` (amber) only for boosts (streaks, combos); `win` (soft lime) for something you completed. */
+  tone?: "neutral" | "live" | "win";
   onDismiss: () => void;
   dismissLabel: string;
 }) {
@@ -43,7 +43,7 @@ export function CelebrationToast({
     >
       <span
         aria-hidden="true"
-        className={cn("flex size-11 shrink-0 items-center justify-center rounded-full", tone === "live" ? "bg-live-soft text-live" : "bg-surface-3 text-foreground")}
+        className={cn("flex size-11 shrink-0 items-center justify-center rounded-full", tone === "live" ? "bg-live-soft text-live" : tone === "win" ? "bg-primary-soft text-primary" : "bg-surface-3 text-foreground")}
       >
         {icon}
       </span>

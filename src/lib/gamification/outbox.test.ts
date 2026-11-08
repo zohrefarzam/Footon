@@ -25,7 +25,7 @@ describe("outbox", () => {
   }
 
   it("keeps a failed prediction retryable and shows no reward until the server answers", async () => {
-    const server = createMockApi({ latencyMs: 0, now });
+    const server = createMockApi({ latencyMs: 0, now, quests: [] });
     await seed(server);
     const box = createOutbox(server);
     server.dev.setOffline(true);
@@ -44,7 +44,7 @@ describe("outbox", () => {
   });
 
   it("retries with the same key, so the server rewards once", async () => {
-    const server = createMockApi({ latencyMs: 0, now });
+    const server = createMockApi({ latencyMs: 0, now, quests: [] });
     await seed(server);
     const spy = vi.spyOn(server, "submitPrediction");
     const box = createOutbox(server);
@@ -57,7 +57,7 @@ describe("outbox", () => {
   });
 
   it("ignores a double submit while the first is in flight", async () => {
-    const server = createMockApi({ latencyMs: 20, now });
+    const server = createMockApi({ latencyMs: 20, now, quests: [] });
     await seed(server);
     const spy = vi.spyOn(server, "submitPrediction");
     const box = createOutbox(server);

@@ -6,6 +6,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { ComboMeter } from "@/components/footon/gamification/combo-meter";
 import { LevelProgressBar } from "@/components/footon/gamification/level-progress-bar";
 import { PinnedBadges } from "@/components/footon/gamification/pinned-badges";
+import { QuestList } from "@/components/footon/gamification/quests";
 import { StreakCounter } from "@/components/footon/gamification/streak";
 import { LockedFeatureGate } from "@/components/footon/gamification/locked-feature-gate";
 import { RarityLabel } from "@/components/footon/gamification/rarity-label";
@@ -82,6 +83,16 @@ export function GamificationDemo() {
           variant="secondary"
           size="sm"
           onClick={() => {
+            dev.expireDailyQuests();
+            void qc.invalidateQueries({ queryKey: gamificationKeys.quests });
+          }}
+        >
+          New day
+        </Button>
+        <Button
+          variant="secondary"
+          size="sm"
+          onClick={() => {
             dev.breakStreak();
             void qc.invalidateQueries({ queryKey: gamificationKeys.progress });
           }}
@@ -125,6 +136,7 @@ export function GamificationDemo() {
       <ComboMeter />
       <StreakCounter />
       <PinnedBadges />
+      <QuestList kinds={["daily"]} title="Today's quests" />
 
       <LockedFeatureGate feature="stadium" title="Stadium">
         <p>Open</p>

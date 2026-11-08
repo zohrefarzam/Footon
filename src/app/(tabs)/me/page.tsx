@@ -6,6 +6,7 @@ import { FavouriteClubs } from "@/components/footon/favourite-clubs";
 import { FormBars } from "@/components/footon/form-bars";
 import { LevelCard } from "@/components/footon/gamification/level-card";
 import { PinnedBadges } from "@/components/footon/gamification/pinned-badges";
+import { QuestList } from "@/components/footon/gamification/quests";
 import { StreakCounter } from "@/components/footon/gamification/streak";
 import { Button } from "@/components/ui/button";
 import { Card, CardRow } from "@/components/ui/card";
@@ -89,6 +90,8 @@ export default function MePage() {
         </h2>
         <StreakCounter />
       </section>
+
+      <QuestList kinds={["seasonal", "group"]} title="Season and league" />
 
       <FavouriteClubs clubs={clubDirectory} initial={profile.favoriteTeams} />
 

@@ -58,7 +58,8 @@ src/
       gamification/       XP / level / badges / streak / quests / shop: celebration-host, xp-gain-burst,
                           level-progress-bar, level-card, level-up-screen, tier-badge, locked-feature-gate,
                           rarity-label, badge-glyph, celebration-toast, badge-toast, badge-wall, pinned-badges,
-                          streak (StreakChip, StreakCounter, FreezeIndicator, StreakTick), streak-broken-sheet, combo-meter
+                          streak (StreakChip, StreakCounter, FreezeIndicator, StreakTick), streak-broken-sheet, combo-meter,
+                          quests (QuestCard, QuestList, QuestToast)
   lib/
     utils.ts              cn()
     dates.ts              day labels relative to the mock today ("Yesterday", "Thu 5 Nov")
@@ -79,7 +80,7 @@ src/
       outbox.ts           prediction actions on their way to the server (retry, idempotency keys)
       share.ts            share to a Telegram group (Mini App → Web Share → link)
       celebrations/       expand.ts (RewardResult → ordered moments) + store.ts (the queue)
-      api/                client.ts (interface, HTTP client, Zod-validated wrapper), mock.ts + mock-rules.ts (in-memory MOCK SERVER), index.ts
+      api/                client.ts (interface, HTTP client, Zod-validated wrapper), mock.ts + mock-rules.ts + mock-quests.ts (in-memory MOCK SERVER), index.ts
   fonts/                  Barlow Condensed woff2
   proxy.ts                first-run redirect: `/` → `/welcome` until `footon_onboarded` is set
 ```
@@ -253,7 +254,7 @@ Rules:
 
 - **Splash → Onboarding (`/welcome`):** the launch splash (from `SplashGate`), then 3 steps with a segmented progress bar, back button and wallet badge (ticks to 10,000 on claim). 1) Try one: dealt card stack; the sample question resolves to a right/wrong result; Continue is `secondary` until answered, then lime. 2) Pick clubs: crest tiles with `aria-pressed`, soft-lime when selected. 3) Claim: coin stack + ticking amount, the three numbered steps, lime "Claim 10,000 coins". Claiming or "Skip to Home" sets the `footon_onboarded` cookie. Links to `/` from here use `prefetch={false}` so a pre-cookie redirect isn't cached.
 - **Onboarding (canvas):** dealt card stack on a dotted canvas with one real sample question; three steps as a single numbered row; lime CTA "Claim 10,000 coins" with an inset arrow; "Skip to Home" as a text link.
-- **Home:** (sticky island + `LevelProgressBar` from the tabs layout) → **Big matches · Wins pay 2x** (`MatchRow`s; an "All matches" text link in the section header → `/live`, no button) → two compact tiles (`InviteTile`, `FantasyUnlock`) → `ShopPreview`. No big matches → `EmptyState`. Your challenges live on the Challenges tab and open predictions on the Predictions tab, not Home. Browsing every fixture is the Live tab's job; don't put the full match list back on Home.
+- **Home:** (sticky island + `LevelProgressBar` from the tabs layout) → **Big matches · Wins pay 2x** (`MatchRow`s; an "All matches" text link in the section header → `/live`, no button) → **Today's quests** and **This week** (`QuestList`; weekly shows locked below its level) → two compact tiles (`InviteTile`, `FantasyUnlock`) → `ShopPreview`. No big matches → `EmptyState`. Your challenges live on the Challenges tab and open predictions on the Predictions tab, not Home. Browsing every fixture is the Live tab's job; don't put the full match list back on Home.
 - **Predictions (`/predictions`, its own dock tab):** title + "N matches open" → Open · Staked · Could win strip (display numbers, coins amber) → **Open · editable until kickoff** (one divided card, a group per match: crests, name, `BoostBadge`, "Edit until", secondary Edit pill → `/match/[id]`; each pick as a row with type icon, summary, stake → `payout()`) → **Settled** (✓ rows soft-lime with `+50 pts` and coins, ✗ rows muted with the stake) → "Predict another match" text link → `/live`. No lime CTA.
 - **Create league:** close button, a live **invite ticket** (lime, notched, dashed tear line) that updates as you edit; name input, stake slider, mode switches, reward note, then `Copy` (secondary) + `Create and share` (lime).
 - **Live tab (`/live`):** FotMob's Matches screen via `MatchDays`: title + "Live only" switch → day strip (Yesterday · **Today** · Tomorrow · dates) → one folding card per competition (your own matches live on Home, not pinned here). No lime CTA here: your live match row and the island's "Q4 open" already take you in. Your live match → `/play`; everything else → `/match/[id]`.
@@ -263,7 +264,7 @@ Rules:
 - **Full time:** ticking `+450`, streak pill with lime "Next match 2x", podium (yours lime-soft, tallest), match-timeline of calls (lime filled dots = right, red rings = wrong), rematch chat replies, lime "Rematch with same friends".
 - **Fantasy (`/fantasy`, was My team):** stats header (display 56), striped pitch with shirt tokens (selected = lime, captain = amber "C"), captain + transfers list, lime "Save lineup".
 - **Create league:** entry slider uses `ENTRY_TIERS`; the pool preview under it; "Prediction stakes": a "Same stake for everyone" switch with `STAKE_STEPS` chips and a "Most one player can stake" cap slider (both shown on the ticket); the lime CTA carries the total cost (create + your entry). Short of coins → disabled "Need N more coins" + "Ways to earn".
-- **Profile:** silver league card (light zinc, dotted, slight 3D tilt on hover) with score + 30-tick rank strip, recent-form card (win rate, won/lost/void, full-width `FormBars`), a Level card (`#level`, `LevelCard`: level, tier, badges, XP track, the next two unlocks shown locked), a Streak card (`StreakCounter`), `FavouriteClubs`, amber boost tokens, `PinnedBadges` (up to 3 + "All badges" → `BadgeWall` sheet), collection list (locked rows muted with a lock).
+- **Profile:** silver league card (light zinc, dotted, slight 3D tilt on hover) with score + 30-tick rank strip, recent-form card (win rate, won/lost/void, full-width `FormBars`), a Level card (`#level`, `LevelCard`: level, tier, badges, XP track, the next two unlocks shown locked), a Streak card (`StreakCounter`), **Season and league** quests (`QuestList`), `FavouriteClubs`, amber boost tokens, `PinnedBadges` (up to 3 + "All badges" → `BadgeWall` sheet), collection list (locked rows muted with a lock).
 
 ## Gamification (XP, level, badges, streak, quests)
 
@@ -281,7 +282,8 @@ From the gamification brief. Code in `lib/gamification` and `components/footon/g
 - **Badges.** Four families (level, achievement, social, seasonal), each awarded once, told apart by tile shape (`BadgeGlyph`). Rarity is always "% of players who have it". Level badges ride on their Level Up screen; the rest arrive as a `BadgeToast`. Unearned badges stay visible on the wall (dashed, muted, lock). Pinning waits for the server (max `pinnedBadgesMax`).
 - **Streak** = consecutive match days with a real prediction (the server counts it; the day is the match's start date in the user's timezone). Checked-calendar glyph, amber. A broken run reads as 0, never red; `StreakBrokenSheet` says so once per run, kindly, with the best run and one lime "Start a new run" (→ `/live`). Freezes show as filled vs dashed slots.
 - **Combo** = right answers in a row inside one match (3 → ×2 XP, 5 → ×3, a wrong answer resets it). It only ever multiplies XP, never points or coins. `ComboMeter` shows the steps under the pips instead of explaining them.
-- **Mock server.** Without `NEXT_PUBLIC_GAMIFICATION_API` the in-memory mock runs (resets on reload). `/styleguide` has controls to grant XP, jump levels, resolve a live question right/wrong, predict today, break the streak, go offline and fail the next call.
+- **Quests.** Daily (easy · with friends · challenge; how many is the `dailyQuestCount` flag), weekly from `unlocks.weeklyQuests`, seasonal, group. The server moves them with each action and pays a finished quest inside that action's `RewardResult` (`questProgress[].completedNow` + `reward`); the client never counts. Time left is worked out from the board's `serverNow`, not the device clock. Expired quests just stop coming back: no message, no penalty. Progress is a neutral track; a done quest gets a soft-lime check (it's a win), its reward XP neutral and coins amber.
+- **Mock server.** Without `NEXT_PUBLIC_GAMIFICATION_API` the in-memory mock runs (resets on reload). `/styleguide` has controls to grant XP, jump levels, resolve a live question right/wrong, predict today, roll to a new day (dailies reset), break the streak, go offline and fail the next call.
 
 | Component | Purpose / rules |
 | --- | --- |
@@ -296,6 +298,8 @@ From the gamification brief. Code in `lib/gamification` and `components/footon/g
 | `BadgeWall` / `PinnedBadges` | The full wall as a bottom sheet (grouped by family, earned count, Pin / Pinned toggles with `aria-pressed`, others disabled when full, a polite note on a refused pin). Profile shows the pinned ones plus dashed "Pin a badge" slots. |
 | `StreakChip` / `StreakCounter` / `FreezeIndicator` / `StreakTick` | Strip chip (hidden with no run); Profile card (display 56 count, best, amber track to the next 3/7/14/30 reward, freezes); the celebration (count ticks over, milestone / freeze-used / best as detail). |
 | `StreakBrokenSheet` | Glass sheet, neutral calendar icon, "That run's over", best run in display 56, lime "Start a new run". `StreakBrokenWatcher` (in `CelebrationHost`) shows it once per broken run, after the splash and between celebrations. |
+| `QuestList` / `QuestCard` | One divided card of quest rows for the given kinds (title + "N of M done"). Row: shape-coded icon per kind/difficulty, title, "Easy · Resets in 6h", neutral track with `1/2` in display, reward on the end (+XP, amber coins). Done: muted, soft-lime check that pops once. `feature` puts the list behind a `LockedFeatureGate` row. Fires `quest_list_viewed` once. |
+| `QuestToast` | "QUEST DONE", soft-lime check, title, "+40 XP · 40 coins". Plays after the XP moment. |
 | `ComboMeter` | Live Predict tab, under the question: flame tile, "N right in a row", one pip per answer up to the top step with ×2 / ×3 under their pips, the current multiplier (amber when > ×1). `role="img"` with the whole state in its label. |
 
 ## Economy (coins, points, prizes)

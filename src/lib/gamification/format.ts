@@ -14,3 +14,12 @@ export const formatSigned = (n: number) => (n === 0 ? "0" : `${n < 0 ? "−" : "
 export const formatPercent = (value0to100: number) => pct.format(value0to100 / 100);
 /** `×2` / `×0.5` */
 export const formatTimes = (n: number) => `×${dec.format(n)}`;
+
+/** Coarse time left, for quest resets: `45m`, `6h`, `3d`. Never negative. */
+export function formatTimeLeft(ms: number): string {
+  const m = Math.max(0, Math.floor(ms / 60_000));
+  if (m < 60) return `${Math.max(1, m)}m`;
+  const h = Math.floor(m / 60);
+  if (h < 48) return `${h}h`;
+  return `${Math.floor(h / 24)}d`;
+}

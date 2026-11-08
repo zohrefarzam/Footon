@@ -90,6 +90,8 @@ export const QuestProgress = z.object({
   progress: z.number().int().nonnegative(),
   target: z.number().int().positive(),
   completedNow: z.boolean(),
+  /** What finishing it paid (already included in the result's totals). */
+  reward: z.object({ xp: z.number().int().nonnegative(), coins: z.number().int().nonnegative() }).optional(),
 });
 export type QuestProgress = z.infer<typeof QuestProgress>;
 
@@ -169,6 +171,13 @@ export const Quest = z.object({
   completed: z.boolean(),
 });
 export type Quest = z.infer<typeof Quest>;
+
+/**
+ * The quests open for this user. `serverNow` lets the UI say how long is left
+ * without trusting the device clock. Expired quests are simply not in here.
+ */
+export const QuestBoard = z.object({ quests: z.array(Quest), serverNow: z.string() });
+export type QuestBoard = z.infer<typeof QuestBoard>;
 
 export const ShopSlot = z.enum(["kit", "stadium", "boots", "frame", "freeze"]);
 export type ShopSlot = z.infer<typeof ShopSlot>;

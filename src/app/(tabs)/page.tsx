@@ -5,6 +5,7 @@ import { AppShell } from "@/components/footon/app-shell";
 import { BoostBadge } from "@/components/footon/boost-badge";
 import { EmptyState } from "@/components/footon/empty-state";
 import { FantasyUnlock } from "@/components/footon/fantasy-unlock";
+import { QuestList } from "@/components/footon/gamification/quests";
 import { InviteTile } from "@/components/footon/invite-tile";
 import { MatchRow } from "@/components/footon/match-row";
 import { ShopPreview } from "@/components/footon/shop-preview";
@@ -47,6 +48,9 @@ export default function HomePage() {
       ) : (
         <EmptyState title="Nothing big on yet" body="Every fixture is on the Live tab. Pick one and make a call." action={{ label: "Browse matches", href: "/live" }} />
       )}
+
+      <QuestList kinds={["daily"]} title="Today's quests" />
+      <QuestList kinds={["weekly"]} title="This week" feature="weeklyQuests" />
 
       {/* compact tiles: invites and fantasy stay tile-sized */}
       <div className="flex gap-2.5">

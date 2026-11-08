@@ -70,6 +70,21 @@ export const copy = {
   brokenCta: "Start a new run",
   brokenLater: "Not now",
 
+  // Quests
+  questsToday: "Today's quests",
+  questsWeek: "This week",
+  questsLong: "Season and league",
+  weeklyQuests: "Weekly quests",
+  doneOf: (d: number, t: number) => `${n(d)} of ${n(t)} done`,
+  questDifficulty: { easy: "Easy", social: "With friends", challenge: "Challenge" },
+  questKind: { daily: "Daily", weekly: "Weekly", seasonal: "Season", group: "League" },
+  resetsIn: (left: string) => `Resets in ${left}`,
+  endsIn: (left: string) => `Ends in ${left}`,
+  questDone: "Done",
+  questDoneEyebrow: "QUEST DONE",
+  questReward: (xp: number, coins: number) => `+${n(xp)} XP · ${n(coins)} coins`,
+  questAria: (title: string, p: number, t: number, done: boolean) => (done ? `${title}, done` : `${title}, ${n(p)} of ${n(t)}`),
+
   // Combo (right answers in a row, in one match)
   comboLabel: "Combo",
   comboCount: (c: number) => (c === 0 ? "No run yet" : `${n(c)} right in a row`),

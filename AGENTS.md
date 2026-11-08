@@ -238,7 +238,7 @@ Rules:
 | `Shop` | Phase 2 "coming soon" shop: item rows → sheet saying it's not open yet, nothing charged, lime "Notify me". Fires `track()` events. |
 | `NumberTicker` | Count-up for rewards. |
 | `FormBars` | Last-N results as bars (height + colour). `fill` stretches them across the width (Profile's recent-form card). |
-| `FantasyUnlock` | Compact Home tile, a bit wider than `InviteTile` (it matters more), gated by level (`unlocks.fantasy`, L8). Locked must read as locked: dashed border (the "locked" card style), lock icon + "Fantasy locked", the neutral XP track to the level it needs and "Level 8 required". Under 360px "locked" and the level label drop; lock + dashed border carry it. Open: solid soft-lime "Fantasy open". Always links to `/fantasy` (which shows the same gate). |
+| `FantasyUnlock` | Compact Home tile, a bit wider than `InviteTile` (it matters more), gated by level (`unlocks.fantasy`, L8). Locked must read as locked: dashed border (the "locked" card style), lock icon + "Fantasy locked", the neutral XP track to the level it needs and "Level 8 required". Under 360px "locked" and the level label drop; lock + dashed border carry it. Locked is **disabled**: not a link, no chevron, still visible. Open: solid soft-lime "Fantasy open", links to `/fantasy` (whose page keeps the same gate for direct URLs). |
 | `InviteTile` | Compact Home tile: "Invites" + count over the senders' avatars ("Sara +2"). Links to `/invites`, where Join / Decline happen. |
 | `ProgressRing` | Circular progress for compact spots. |
 | `TeamCrest` | 3-letter code placeholder until real crests are licensed. |

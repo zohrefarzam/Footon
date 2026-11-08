@@ -6,6 +6,7 @@ import { beforeAll, describe, expect, it, vi } from "vitest";
 import { defaultFlags, mockConfig } from "@/lib/gamification/config";
 import { gamificationKeys } from "@/lib/gamification/queries";
 import type { UserProgress } from "@/lib/gamification/schemas";
+import { FantasyUnlock } from "@/components/footon/fantasy-unlock";
 import { LevelUpScreen } from "./level-up-screen";
 import { LockedFeatureGate } from "./locked-feature-gate";
 
@@ -80,6 +81,23 @@ describe("LockedFeatureGate", () => {
     withData(gated(), null);
     expect(screen.queryByText("Open fantasy")).toBeNull();
     expect(screen.queryByRole("group")).toBeNull();
+  });
+});
+
+describe("FantasyUnlock", () => {
+  it("is disabled while locked: visible, not a link", async () => {
+    withData(<FantasyUnlock />, progress(7, 1640));
+    expect(screen.queryByRole("link")).toBeNull();
+    const tile = screen.getByRole("group");
+    expect(tile).toHaveAttribute("aria-disabled", "true");
+    expect(tile).toHaveAccessibleName(/Level 8 required/);
+    await userEvent.click(tile); // nothing to follow
+    expect(screen.queryByRole("link")).toBeNull();
+  });
+
+  it("links to /fantasy once unlocked", () => {
+    withData(<FantasyUnlock />, progress(8, 1750));
+    expect(screen.getByRole("link", { name: "Fantasy is open" })).toHaveAttribute("href", "/fantasy");
   });
 });
 

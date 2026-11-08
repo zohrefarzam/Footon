@@ -94,7 +94,7 @@ export function QuestionCard({
     return (
       <section
         aria-label={`Question ${question.index} of ${question.total}`}
-        className={cn("flex items-center gap-3 rounded-2xl border border-[#284a3c] bg-surface-2 py-2.5 ps-2.5 pe-2", className)}
+        className={cn("flex items-center gap-3 rounded-2xl border border-line-raised bg-surface-2 py-2.5 ps-2.5 pe-2", className)}
       >
         {ring}
         <div className="min-w-0 flex-1">
@@ -132,7 +132,7 @@ export function QuestionCard({
         animate={{ y: 0, rotate: 0, opacity: 1 }}
         transition={{ type: "spring", stiffness: 300, damping: 24 }}
         aria-label={`Question ${question.index} of ${question.total}`}
-        className="relative flex flex-col rounded-2xl border border-[#284a3c] bg-surface-2 p-4 shadow-[0_24px_48px_-20px_rgb(0_0_0/0.9)]"
+        className="relative flex flex-col rounded-2xl border border-line-raised bg-surface-2 p-4 shadow-[0_24px_48px_-20px_rgb(0_0_0/0.9)]"
       >
         <div className="flex items-center justify-between">
           <span className="text-[11px] font-semibold tracking-[0.08em] text-muted-foreground">

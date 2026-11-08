@@ -125,6 +125,7 @@ All colours are CSS variables on `:root` in `globals.css`, exposed as Tailwind c
 | `surface-4` | `#1F3D30` | Hover on `surface-3` |
 | `line` | `#15302A` | Hairline border and dividers on `surface` |
 | `line-strong` | `#224236` | Borders on raised elements |
+| `line-raised` | `#284A3C` | Borders on floating cards (question card, `Card variant="raised"`, celebration toasts, the XP burst) |
 | `track` | `#193429` | Empty progress tracks, switch off |
 | `dim` / `dim-strong` | `#2E4B3F` / `#4A675A` | Score colons, inactive bars and ticks |
 | `foreground` | `#F3F8F4` | Primary text |
@@ -325,13 +326,14 @@ From the gamification brief. Code in `lib/gamification` and `components/footon/g
 | `XpGainBurst` | "+20 XP" pill under the island with the coins it paid and the track moving from the old server total to the new one; amber ×2 for a combo, muted ×0.5 past the soft cap. Not interactive. |
 | `LevelUpScreen` | Full-screen floodlit dialog (centre circle behind the number): level in display 88, tier tile ("New tier" when it changed), the level badge with its rarity, what just unlocked, lime Continue, secondary Share (`levelUpShareStyle`: full button or icon). |
 | `TierBadge` | Tier chip (`sm`) or tile (`lg`), neutral, icon per tier. |
-| `LevelCard` | Profile's level card. |
+| `LevelCard` | Profile's level card, in the division/league card anatomy: `TierRoundel` + "Reserve tier" + badge count, `LV 7` in display 44 with "110 XP to Level 8", the neutral track with `290/400 XP`, then the next two unlocks as locked rows. |
+| `TierRoundel` | A tier as a neutral competition roundel (disc, inner ring, tier icon). Used by `LevelCard` and the Level Up screen. |
 | `LockedFeatureGate` | See above. Pending (before the server answers) holds the space without claiming locked or open. |
 | `RarityLabel` / `BadgeGlyph` | "9.5% of players have it"; a badge as a small round medallion (gold / turf / locked with a lock), for toasts, the club view and Level Up. |
 | `CelebrationToast` | Short non-blocking moment above the dock (eyebrow, title, detail, optional aside). Base for `BadgeToast` and `StreakTick`. |
 | `BadgeToast` | "NEW BADGE" + medallion + name + rarity. |
 | `BadgeWall` / `PinnedBadges` | The full wall as a bottom sheet (grouped by family, earned count, every badge an `AchievementBadge` with a Pin / Pinned toggle (`aria-pressed`) in its footer, others disabled when full, a polite note on a refused pin). Profile (`#achievements`) shows the pinned medallions plus dotted, dashed "Pin a badge" slots. |
-| `StreakChip` / `StreakCounter` / `FreezeIndicator` / `StreakTick` | Strip chip (hidden with no run); Profile card (display 56 count, best, amber track to the next 3/7/14/30 reward, freezes); the celebration (count ticks over, milestone / freeze-used / best as detail). |
+| `StreakChip` / `StreakCounter` / `FreezeIndicator` / `StreakTick` | Strip chip (hidden with no run); Profile card in the same anatomy (amber calendar roundel + "Match-day streak" + best, the run in display 44, amber track toward the next 3/7/14/30 reward with a caption, freezes as a footer row); the celebration (count ticks over, milestone / freeze-used / best as detail). |
 | `StreakBrokenSheet` | Glass sheet, neutral calendar icon, "That run's over", best run in display 56, lime "Start a new run". `StreakBrokenWatcher` (in `CelebrationHost`) shows it once per broken run, after the splash and between celebrations. |
 | `QuestList` / `QuestCard` | One divided card of quest rows for the given kinds (title + "N of M done"). Row: shape-coded icon per kind/difficulty, title, "Easy · Resets in 6h", neutral track with `1/2` in display, reward on the end (+XP, amber coins). Done: muted, soft-lime check that pops once. `feature` puts the list behind a `LockedFeatureGate` row. Fires `quest_list_viewed` once. |
 | `QuestsTile` | Home's one line about quests: list icon, "Quests · 1 of 3 done", the next open daily quest with its neutral track and `0/1`, chevron → `/quests`. All done → soft-lime check "All done today". `Skeleton` while loading. |

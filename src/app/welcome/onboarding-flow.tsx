@@ -251,7 +251,7 @@ function TryStep({ sample, answer, onAnswer }: { sample: Sample; answer: "yes" |
             initial={reduce ? false : { opacity: 0, y: 40, rotate: -3 }}
             animate={{ opacity: 1, y: 0, rotate: 0 }}
             transition={{ ...spring, delay: 0.2 }}
-            className="relative flex min-h-[220px] flex-col rounded-2xl border border-[#284a3c] bg-surface-2 p-4 shadow-[0_24px_48px_-20px_rgb(0_0_0/0.9)]"
+            className="relative flex min-h-[220px] flex-col rounded-2xl border border-line-raised bg-surface-2 p-4 shadow-[0_24px_48px_-20px_rgb(0_0_0/0.9)]"
           >
             <div className="flex items-center justify-between gap-3">
               <span className="flex items-center gap-1.5 text-[11px] font-semibold tracking-[0.08em] text-live">

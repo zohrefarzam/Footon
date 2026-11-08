@@ -62,38 +62,44 @@ export function StreakCounter({ className }: { className?: string }) {
   if (!s || !config) return <Skeleton className={cn("h-[168px] rounded-xl", className)} />;
 
   const current = live(s);
-  const prev = [0, ...config.streak.milestones].filter((m) => m <= current).pop() ?? 0;
   const next = config.streak.milestones.find((m) => m > current) ?? null;
-  const pct = next ? (current - prev) / (next - prev) : 1;
+  // the run so far against the next reward (3 of 7), so a fresh milestone never reads as empty
+  const pct = next ? current / next : 1;
 
   return (
-    <Card className={cn("flex flex-col gap-3 p-4", className)}>
-      <div className="flex items-end gap-3">
+    <Card className={cn("overflow-hidden", className)}>
+      {/* same anatomy as the division and league cards: roundel + title, the big number, the strip */}
+      <div className="flex items-center gap-3 px-4 pt-4">
         <span
           aria-hidden="true"
-          className={cn("flex size-11 shrink-0 items-center justify-center rounded-md", current > 0 ? "bg-live-soft text-live" : "bg-surface-3 text-muted-foreground")}
+          className={cn("flex size-10 shrink-0 items-center justify-center rounded-full", current > 0 ? "bg-live-soft text-live" : "bg-surface-3 text-muted-foreground")}
         >
-          <CalendarCheck className="size-5" strokeWidth={2.2} />
+          <CalendarCheck className="size-[18px]" strokeWidth={2.2} />
         </span>
-        <p className="flex min-w-0 flex-1 items-baseline gap-2">
-          <span className="font-display text-[56px] leading-[0.9] font-bold">{formatNumber(current)}</span>
-          <span className="text-sm text-muted-foreground">{copy.streakUnit(current)}</span>
-        </p>
-        <span className="shrink-0 text-xs text-muted-foreground">{copy.bestRun(s.best)}</span>
-      </div>
-
-      {current === 0 ? (
-        <p className="text-xs text-muted-foreground">{copy.streakNone}</p>
-      ) : next ? (
-        <div className="flex flex-col gap-1.5">
-          <span aria-hidden="true" className="relative block h-1.5 overflow-hidden rounded-full bg-track">
-            <span className="absolute inset-0 origin-left rounded-full bg-live transition-transform duration-700 ease-out-soft rtl:origin-right" style={{ transform: `scaleX(${pct})` }} />
-          </span>
-          <p className="text-xs text-muted-foreground">{copy.toMilestone(next - current, next)}</p>
+        <div className="min-w-0 flex-1">
+          <p className="truncate text-[15px] font-semibold">{copy.streakTitle}</p>
+          <p className="mt-0.5 text-xs text-muted-foreground">{copy.bestRun(s.best)}</p>
         </div>
-      ) : null}
-
-      <div className="flex items-center gap-2.5 border-t border-line pt-3">
+      </div>
+      <div className="flex items-end gap-3 px-4 pt-3">
+        <p className="font-display text-[44px] leading-[0.9] font-bold">
+          {formatNumber(current)}
+          <span className="ms-1.5 text-xl text-muted-foreground">{copy.matchDays(current)}</span>
+        </p>
+      </div>
+      <div className="px-4 pt-3 pb-4">
+        {current === 0 ? (
+          <p className="text-xs text-muted-foreground">{copy.streakNone}</p>
+        ) : (
+          <>
+            <span aria-hidden="true" className="relative block h-2 overflow-hidden rounded-full bg-track">
+              <span className="absolute inset-0 origin-left rounded-full bg-live transition-transform duration-700 ease-out-soft rtl:origin-right" style={{ transform: `scaleX(${pct})` }} />
+            </span>
+            {next && <p className="mt-1.5 text-xs text-muted-foreground">{copy.toMilestone(next - current, next)}</p>}
+          </>
+        )}
+      </div>
+      <div className="flex items-center gap-2.5 border-t border-line px-4 py-3">
         <FreezeIndicator held={s.freezesHeld} max={config.streak.maxFreezes} />
         <span className="text-xs text-muted-foreground">{copy.freezes(s.freezesHeld, config.streak.maxFreezes)}</span>
       </div>

@@ -14,6 +14,26 @@ export const TIER_ICON: Record<TierId, LucideIcon> = {
   gaffer: ClipboardList,
 };
 
+const ROUNDEL = { md: { box: "size-10", icon: "size-[18px]" }, lg: { box: "size-16", icon: "size-7" } } as const;
+
+/**
+ * A tier as a competition roundel (like `LeagueBadge`: competitions are round):
+ * a neutral disc with an inner ring and the tier's icon. Neutral, never lime
+ * or gold: a tier is a rank, not a win or a trophy.
+ */
+export function TierRoundel({ tier, size = "md", className }: { tier: TierId; size?: keyof typeof ROUNDEL; className?: string }) {
+  const Icon = TIER_ICON[tier];
+  return (
+    <span aria-hidden="true" className={cn("relative inline-flex shrink-0 items-center justify-center", ROUNDEL[size].box, className)}>
+      <svg viewBox="0 0 40 40" className="absolute inset-0 size-full">
+        <circle cx="20" cy="20" r="18.5" fill="var(--surface-3)" stroke="var(--dim-strong)" strokeWidth="1.5" />
+        <circle cx="20" cy="20" r="14.5" fill="none" stroke="var(--dim-strong)" strokeOpacity=".5" strokeWidth="1" />
+      </svg>
+      <Icon className={cn("relative text-foreground", ROUNDEL[size].icon)} strokeWidth={2} />
+    </span>
+  );
+}
+
 /**
  * The tier a level sits in (Academy … Gaffer). Neutral: a tier is a rank, not
  * a win, so it never takes lime. `sm` = chip, `lg` = the Level Up tile.
@@ -23,9 +43,7 @@ export function TierBadge({ tier, name, size = "sm", className }: { tier: TierId
   if (size === "lg") {
     return (
       <span className={cn("inline-flex flex-col items-center gap-2", className)}>
-        <span className="flex size-16 items-center justify-center rounded-2xl border border-line-strong bg-surface-2">
-          <Icon className="size-7 text-foreground" strokeWidth={1.8} aria-hidden="true" />
-        </span>
+        <TierRoundel tier={tier} size="lg" />
         <span className="text-[15px] font-semibold">{name}</span>
       </span>
     );

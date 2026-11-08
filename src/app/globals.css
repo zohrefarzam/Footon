@@ -23,6 +23,7 @@
   --surface-4: #1f3d30; /* hover on surface-3 */
   --line: #15302a; /* hairline border on surface */
   --line-strong: #224236; /* border on surface-2 / raised */
+  --line-raised: #284a3c; /* border on floating cards: question card, raised Card, toasts */
   --track: #193429; /* empty progress tracks, switch off */
   --dim: #2e4b3f; /* dim fills: score colons, inactive bars */
   --dim-strong: #4a675a; /* tick marks on dim fills */
@@ -92,6 +93,7 @@
   --color-surface-4: var(--surface-4);
   --color-line: var(--line);
   --color-line-strong: var(--line-strong);
+  --color-line-raised: var(--line-raised);
   --color-track: var(--track);
   --color-dim: var(--dim);
   --color-dim-strong: var(--dim-strong);

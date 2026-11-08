@@ -51,7 +51,7 @@ export function XpGainBurst({
       exit={reduce ? { opacity: 0 } : { opacity: 0, y: -8, transition: { duration: 0.2 } }}
       transition={reduce ? { duration: 0.15 } : { type: "spring", stiffness: 420, damping: 26 }}
       className={cn(
-        "pointer-events-none flex w-[220px] flex-col gap-2 rounded-2xl border border-line-strong bg-surface-2 px-4 pt-2.5 pb-3 shadow-[0_16px_40px_-16px_rgb(0_0_0/0.9)]",
+        "pointer-events-none flex w-[220px] flex-col gap-2 rounded-2xl border border-line-raised bg-surface-2 px-4 pt-2.5 pb-3 shadow-[0_16px_40px_-16px_rgb(0_0_0/0.9)]",
         className,
       )}
     >

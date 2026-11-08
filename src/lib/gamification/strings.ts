@@ -7,6 +7,7 @@ import type { FeatureId } from "./schemas";
  */
 export const copy = {
   levelShort: "LV",
+  tierTitle: (tier: string) => `${tier} tier`,
   levelRequired: (l: number) => `Level ${n(l)} required`,
   levelN: (l: number) => `Level ${n(l)}`,
   xpOf: (into: number, span: number) => `${n(into)} of ${n(span)} XP`,
@@ -54,6 +55,8 @@ export const copy = {
 
   // Streak (match days in a row)
   streakEyebrow: "STREAK",
+  streakTitle: "Match-day streak",
+  matchDays: (d: number) => (d === 1 ? "match day" : "match days"),
   streakUnit: (d: number) => (d === 1 ? "match day in a row" : "match days in a row"),
   streakNone: "Call any match to start a run.",
   bestRun: (d: number) => `Best ${n(d)}`,

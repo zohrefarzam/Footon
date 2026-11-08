@@ -10,15 +10,20 @@ import { cn } from "@/lib/utils";
  */
 export function CelebrationToast({
   icon,
+  eyebrow,
   title,
   detail,
+  aside,
   tone = "neutral",
   onDismiss,
   dismissLabel,
 }: {
   icon: React.ReactNode;
+  eyebrow?: string;
   title: string;
   detail?: React.ReactNode;
+  /** Right-hand slot, e.g. a ticking number. */
+  aside?: React.ReactNode;
   /** `live` (amber) only for boosts: streaks and combos. */
   tone?: "neutral" | "live";
   onDismiss: () => void;
@@ -38,14 +43,16 @@ export function CelebrationToast({
     >
       <span
         aria-hidden="true"
-        className={cn("flex size-10 shrink-0 items-center justify-center rounded-full", tone === "live" ? "bg-live-soft text-live" : "bg-surface-3 text-foreground")}
+        className={cn("flex size-11 shrink-0 items-center justify-center rounded-full", tone === "live" ? "bg-live-soft text-live" : "bg-surface-3 text-foreground")}
       >
         {icon}
       </span>
       <span className="min-w-0 flex-1">
+        {eyebrow && <span className="block text-[11px] font-semibold tracking-[0.08em] text-muted-foreground">{eyebrow}</span>}
         <span className="block text-[15px] font-semibold text-balance">{title}</span>
         {detail && <span className="mt-0.5 block text-xs text-muted-foreground">{detail}</span>}
       </span>
+      {aside}
     </motion.button>
   );
 }

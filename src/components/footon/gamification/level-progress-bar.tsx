@@ -7,6 +7,7 @@ import { formatNumber } from "@/lib/gamification/format";
 import { useLevel } from "@/lib/gamification/queries";
 import { copy } from "@/lib/gamification/strings";
 import { cn } from "@/lib/utils";
+import { StreakChip } from "./streak";
 import { TIER_ICON } from "./tier-badge";
 
 /**
@@ -59,7 +60,7 @@ export function LevelProgressBar({ className }: { className?: string }) {
         {formatNumber(progress.level)}
       </span>
       <XpTrack pct={bar.pct} className="flex-1" />
-      <span aria-hidden="true" className="shrink-0 font-display text-[13px] font-bold text-muted-foreground">
+      <span aria-hidden="true" className="shrink-0 font-display text-[13px] font-bold text-muted-foreground max-[359px]:hidden">
         {bar.isMax ? (
           copy.maxLevel
         ) : (
@@ -68,6 +69,7 @@ export function LevelProgressBar({ className }: { className?: string }) {
           </>
         )}
       </span>
+      <StreakChip className="border-s border-line ps-2.5" />
       <span aria-hidden="true" className="flex shrink-0 items-center gap-0.5 border-s border-line ps-2.5 font-display text-[15px] font-bold">
         <Award className="size-3.5 text-muted-foreground" strokeWidth={2.2} />
         {formatNumber(progress.badgeCount)}

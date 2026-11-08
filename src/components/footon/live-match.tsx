@@ -3,9 +3,10 @@ import { ArrowRight } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { ComboMeter } from "./gamification/combo-meter";
 import { LockedFeatureGate } from "./gamification/locked-feature-gate";
 import { ENTRY_TIERS, splitPool } from "@/lib/economy";
-import { HOT_STREAK, type Match } from "@/lib/mock-data";
+import type { Match } from "@/lib/mock-data";
 import { kickoffISO } from "@/lib/dates";
 import { cn } from "@/lib/utils";
 import { BackButton } from "./back-button";
@@ -21,7 +22,6 @@ import { MatchStats } from "./match-stats";
 import { poolLine } from "./match-tables";
 import { HeadToHead, MatchTable } from "./match-table";
 import { QuestionCard, type LiveQuestion } from "./question-card";
-import { StreakFlame } from "./streak";
 
 const ordinal = ["1st", "2nd", "3rd", "4th", "5th"];
 
@@ -49,6 +49,7 @@ export function LiveMatch({ match: m, league, backHref = "/" }: { match: Match; 
   const predict = league ? (
     <>
       <QuestionCard question={league.question} reward={{ matchId: m.id, questionId: `q${league.question.index}`, kickoffAt: kickoffISO(m) }} />
+      <ComboMeter />
 
       <Card className="overflow-hidden">
         <div className="flex items-center justify-between px-4 pt-3.5 pb-2.5">
@@ -83,7 +84,6 @@ export function LiveMatch({ match: m, league, backHref = "/" }: { match: Match; 
               </span>{" "}
               calls right tonight
             </p>
-            {you.streak >= HOT_STREAK && <StreakFlame count={you.streak} />}
             <span className="font-display text-lg font-bold text-primary">+{you.points}</span>
           </div>
         )}

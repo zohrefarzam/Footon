@@ -1,10 +1,10 @@
-import { Award, Eye, Flame, Handshake, Snowflake, Trophy, Users, type LucideIcon } from "lucide-react";
+import { Award, CalendarCheck, Eye, Flame, Handshake, Leaf, Snowflake, Trophy, Users, type LucideIcon } from "lucide-react";
 
 import type { Badge, BadgeFamily } from "@/lib/gamification/schemas";
 import { cn } from "@/lib/utils";
 import { TIER_ICON } from "./tier-badge";
 
-const ICONS: Record<string, LucideIcon> = { trophy: Trophy, eye: Eye, flame: Flame, users: Users, handshake: Handshake, snowflake: Snowflake, ...TIER_ICON };
+const ICONS: Record<string, LucideIcon> = { trophy: Trophy, eye: Eye, flame: Flame, calendar: CalendarCheck, leaf: Leaf, users: Users, handshake: Handshake, snowflake: Snowflake, ...TIER_ICON };
 
 /**
  * Family is told by the tile's shape as well as its tone: level = rounded

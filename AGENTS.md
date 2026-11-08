@@ -57,7 +57,8 @@ src/
                           shop-preview, shop-icons)
       gamification/       XP / level / badges / streak / quests / shop: celebration-host, xp-gain-burst,
                           level-progress-bar, level-card, level-up-screen, tier-badge, locked-feature-gate,
-                          rarity-label, badge-glyph, celebration-toast
+                          rarity-label, badge-glyph, celebration-toast, badge-toast, badge-wall, pinned-badges,
+                          streak (StreakChip, StreakCounter, FreezeIndicator, StreakTick), streak-broken-sheet, combo-meter
   lib/
     utils.ts              cn()
     dates.ts              day labels relative to the mock today ("Yesterday", "Thu 5 Nov")
@@ -207,7 +208,7 @@ Rules:
 | `LiveIsland` | Sticky top pill on every dock tab, rendered once by `app/(tabs)/layout.tsx`. Left: live minute, score and the open question (lime `Q4 open` chip, soft-lime `Q4 · Yes` once answered); tap to expand over the page and answer in place. Right: the wallet (coins → `/wallet`). Collapses on scroll, outside tap or Escape. With no live match it shows only the wallet. Pages don't render their own coin badge. |
 | `QuestionCard` | The live question. Yes/No → crowd split + drawn check + shimmer. Timer ring is amber. `compact` = one-row widget. |
 | `MatchCentre` | Match page frame (after FotMob): sticky top bar (back · title) → dotted scoreboard that scrolls away (the top bar then crossfades to the compact score + live minute) → sticky underline `Tabs` for sections. Sections arrive as server-rendered nodes; only the frame is client. |
-| `LiveMatch` | A live match in `MatchCentre`. Scoreboard: xl crests, scorers under each name, red-card glyphs, display score, `LiveMinute`, match clock bar. Sections: **Predict** (first, amber dot while a question is open) · Chat · Facts · Stats · Lineups · Table · H2H; a section only shows when there's data. With your league: Predict = `QuestionCard` → league card (standings tiles, "N of M asked", your calls right, streak, lime `+points`) → `CrowdPoll`. Without: `CrowdPoll` + a dashed "Start a league" card (the one lime CTA). |
+| `LiveMatch` | A live match in `MatchCentre`. Scoreboard: xl crests, scorers under each name, red-card glyphs, display score, `LiveMinute`, match clock bar. Sections: **Predict** (first, amber dot while a question is open) · Chat · Facts · Stats · Lineups · Table · H2H; a section only shows when there's data. With your league: Predict = `QuestionCard` → `ComboMeter` → league card (standings tiles, "N of M asked", your calls right, streak, lime `+points`) → `CrowdPoll`. Without: `CrowdPoll` + a dashed "Start a league" card (the one lime CTA). |
 | `CrowdPoll` | "Who wins?" 1 · X · 2 poll with the total votes. The split stays hidden until you vote, then each choice fills to its share; yours soft-lime. Free, no coins. On live and upcoming match pages. |
 | `MatchFacts` | Event timeline, newest first: minute pill in a centre column, home events on the start side, away on the end side; goals carry the running score; "Half time" and "Kick-off" rules. Icons: `Football` (goal), booking-card glyphs, lucide `ArrowRightLeft` (sub), `MonitorPlay` (VAR). |
 | `MatchStats` | value · label · value rows with a split bar; the side ahead is bright, the other dims. Neutral, never lime. |
@@ -223,7 +224,7 @@ Rules:
 | `MatchList` | Now/Today/Upcoming `SegmentedTabs` that actually filter one divided list of `MatchRow`s. |
 | `InviteStrip` | All pending league invites as a swipeable row of cards (Challenges) (who, league, stake, match, members; Decline / Join). Join is `secondary` since several show at once; joined cards turn soft-lime with "Open" → `/challenges/[id]` (the next step). Header has "See all" → `/invites`. |
 | `InviteRow` | One invite as a row in the `/invites` list (one divided card): crests + match, members, coin limit. Join / ✕ resolve in place: drawn check "You're in …", or "Declined" with Undo. |
-| `StreakFlame` | Hot streak (`streak ≥ HOT_STREAK`, 3): amber-soft pill, lucide `Flame` + count in display font. Amber because a streak is a boost. Pops in once, never loops. |
+| `StreakFlame` | Hot streak on a finished/listed match (`streak ≥ HOT_STREAK`, 3): amber-soft pill, lucide `Flame` + count in display font. Amber because a streak is a boost. Pops in once, never loops. The flame means "right in a row inside a match" (the live version is `ComboMeter`); the match-day streak uses a checked calendar instead. |
 | `PredictionBuilder` | Your own predictions on a match (Predict tab of `/match/[id]` and `/challenges/[id]`). Type tiles (Win / draw, Goals, Corners, Yellow cards, Red card, Penalty) toggle rows into one divided slip; each row: options as soft-lime radio chips, a coin stake (numeric field + `STAKE_STEPS` chips, at least `PREDICTION_MIN_STAKE`), and what it wins (`payout()`). A challenge's `rules` can fix the stake ("set by Sara") and cap the total. One lime "Lock in N predictions · cost"; over the cap / short of coins / unpicked → disabled with the reason (short adds "Ways to earn"). Locked slips stay editable until kickoff (secondary "Edit predictions"); after kickoff they read back ✓ Right / ✗ Wrong. |
 | `ChallengeList` / `ChallengeRow` | Challenges as Joined · Invited · Expired `SegmentedTabs` over one divided card. Row: name (+ `BoostBadge`), match codes + time, who made it, entry, players, then your place / "Invite" / "Expired". Every row opens `/challenges/[id]` (your live one → `/play`). `ChallengeRow` is reused on Home. |
 | `ChallengeGate` | An invite on its challenge page: the rules (entry, stake per prediction, cap, pool), secondary Decline + lime "Accept · entry". Accepting reveals the `PredictionBuilder` in place; declining leaves Undo. |
@@ -262,7 +263,7 @@ Rules:
 - **Full time:** ticking `+450`, streak pill with lime "Next match 2x", podium (yours lime-soft, tallest), match-timeline of calls (lime filled dots = right, red rings = wrong), rematch chat replies, lime "Rematch with same friends".
 - **Fantasy (`/fantasy`, was My team):** stats header (display 56), striped pitch with shirt tokens (selected = lime, captain = amber "C"), captain + transfers list, lime "Save lineup".
 - **Create league:** entry slider uses `ENTRY_TIERS`; the pool preview under it; "Prediction stakes": a "Same stake for everyone" switch with `STAKE_STEPS` chips and a "Most one player can stake" cap slider (both shown on the ticket); the lime CTA carries the total cost (create + your entry). Short of coins → disabled "Need N more coins" + "Ways to earn".
-- **Profile:** silver league card (light zinc, dotted, slight 3D tilt on hover) with score + 30-tick rank strip, recent-form card (win rate, won/lost/void, full-width `FormBars`), a Level card (`#level`, `LevelCard`: level, tier, badges, XP track, the next two unlocks shown locked), `FavouriteClubs`, amber boost tokens, achievement tiles, collection list (locked rows muted with a lock).
+- **Profile:** silver league card (light zinc, dotted, slight 3D tilt on hover) with score + 30-tick rank strip, recent-form card (win rate, won/lost/void, full-width `FormBars`), a Level card (`#level`, `LevelCard`: level, tier, badges, XP track, the next two unlocks shown locked), a Streak card (`StreakCounter`), `FavouriteClubs`, amber boost tokens, `PinnedBadges` (up to 3 + "All badges" → `BadgeWall` sheet), collection list (locked rows muted with a lock).
 
 ## Gamification (XP, level, badges, streak, quests)
 
@@ -277,7 +278,10 @@ From the gamification brief. Code in `lib/gamification` and `components/footon/g
 - **Colour roles.** XP and level are neutral (a rank, not a win). Tiers differ by name + icon shape (`TIER_ICON`), never by colour. Streak and combo are amber (they're boosts). Coins stay amber. The Level Up screen's one lime thing is Continue; Share is secondary.
 - **Numbers come from config** (`useConfig()`): curve, tiers, unlocks, caps, streak milestones, combo steps, quest counts. A/B flags (`useFlags()`): daily quest count, Level Up share style, curve variant, first kit price, premium coins (off).
 - **Analytics.** The client tracks only what the user saw or tapped (`level_up_viewed`, `badge_toast_viewed`, `card_shared`…). Server events (xp_earned, level_up, badge_earned, streak_*, quest_*, item_purchased) are never sent from the client.
-- **Mock server.** Without `NEXT_PUBLIC_GAMIFICATION_API` the in-memory mock runs (resets on reload). `/styleguide` has controls to grant XP, jump levels, go offline and fail the next call.
+- **Badges.** Four families (level, achievement, social, seasonal), each awarded once, told apart by tile shape (`BadgeGlyph`). Rarity is always "% of players who have it". Level badges ride on their Level Up screen; the rest arrive as a `BadgeToast`. Unearned badges stay visible on the wall (dashed, muted, lock). Pinning waits for the server (max `pinnedBadgesMax`).
+- **Streak** = consecutive match days with a real prediction (the server counts it; the day is the match's start date in the user's timezone). Checked-calendar glyph, amber. A broken run reads as 0, never red; `StreakBrokenSheet` says so once per run, kindly, with the best run and one lime "Start a new run" (→ `/live`). Freezes show as filled vs dashed slots.
+- **Combo** = right answers in a row inside one match (3 → ×2 XP, 5 → ×3, a wrong answer resets it). It only ever multiplies XP, never points or coins. `ComboMeter` shows the steps under the pips instead of explaining them.
+- **Mock server.** Without `NEXT_PUBLIC_GAMIFICATION_API` the in-memory mock runs (resets on reload). `/styleguide` has controls to grant XP, jump levels, resolve a live question right/wrong, predict today, break the streak, go offline and fail the next call.
 
 | Component | Purpose / rules |
 | --- | --- |
@@ -287,7 +291,12 @@ From the gamification brief. Code in `lib/gamification` and `components/footon/g
 | `LevelCard` | Profile's level card. |
 | `LockedFeatureGate` | See above. Pending (before the server answers) holds the space without claiming locked or open. |
 | `RarityLabel` / `BadgeGlyph` | "9.5% of players have it"; a badge's icon tile, family told by shape (level square, achievement circle, social soft square, seasonal dashed ring). |
-| `CelebrationToast` | Short non-blocking moment above the dock (streak, badge, quest). |
+| `CelebrationToast` | Short non-blocking moment above the dock (eyebrow, title, detail, optional aside). Base for `BadgeToast` and `StreakTick`. |
+| `BadgeToast` | "NEW BADGE" + glyph + name + rarity. Neutral. |
+| `BadgeWall` / `PinnedBadges` | The full wall as a bottom sheet (grouped by family, earned count, Pin / Pinned toggles with `aria-pressed`, others disabled when full, a polite note on a refused pin). Profile shows the pinned ones plus dashed "Pin a badge" slots. |
+| `StreakChip` / `StreakCounter` / `FreezeIndicator` / `StreakTick` | Strip chip (hidden with no run); Profile card (display 56 count, best, amber track to the next 3/7/14/30 reward, freezes); the celebration (count ticks over, milestone / freeze-used / best as detail). |
+| `StreakBrokenSheet` | Glass sheet, neutral calendar icon, "That run's over", best run in display 56, lime "Start a new run". `StreakBrokenWatcher` (in `CelebrationHost`) shows it once per broken run, after the splash and between celebrations. |
+| `ComboMeter` | Live Predict tab, under the question: flame tile, "N right in a row", one pip per answer up to the top step with ×2 / ×3 under their pips, the current multiplier (amber when > ×1). `role="img"` with the whole state in its label. |
 
 ## Economy (coins, points, prizes)
 

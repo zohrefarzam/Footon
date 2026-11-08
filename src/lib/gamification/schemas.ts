@@ -107,6 +107,10 @@ export type Coins = z.infer<typeof Coins>;
 export const ComboMultiplier = z.union([z.literal(1), z.literal(2), z.literal(3)]);
 export type ComboMultiplier = z.infer<typeof ComboMultiplier>;
 
+/** In-match correctness combo: right answers in a row and the XP multiplier they earn. */
+export const Combo = z.object({ count: z.number().int().nonnegative(), multiplier: ComboMultiplier });
+export type Combo = z.infer<typeof Combo>;
+
 export const RewardAction = z.enum(["prediction", "liveAnswer", "liveResult", "quest", "dev"]);
 export type RewardAction = z.infer<typeof RewardAction>;
 
@@ -123,7 +127,10 @@ export const RewardResult = z.object({
   newBadges: z.array(Badge),
   streak: StreakUpdate,
   questProgress: z.array(QuestProgress),
+  /** The multiplier this action's XP was paid at. */
   comboMultiplier: ComboMultiplier,
+  /** The combo after this action (reset to 0 by a wrong answer). */
+  combo: Combo,
   dailyXp: DailyXp,
   coins: Coins,
 });
@@ -136,11 +143,18 @@ export const UserProgress = z.object({
   coins: Coins,
   dailyXp: DailyXp,
   streak: Streak,
-  combo: z.object({ count: z.number().int().nonnegative(), multiplier: ComboMultiplier }),
+  combo: Combo,
   pinnedBadges: z.array(z.string()).max(3),
   badgeCount: z.number().int().nonnegative(),
 });
 export type UserProgress = z.infer<typeof UserProgress>;
+
+/** Every badge there is, earned or not (`earnedAt` null = not yet). Locked ones stay visible. */
+export const BadgeCatalog = z.object({ badges: z.array(Badge) });
+export type BadgeCatalog = z.infer<typeof BadgeCatalog>;
+
+export const PinResult = z.object({ pinnedBadges: z.array(z.string()).max(3) });
+export type PinResult = z.infer<typeof PinResult>;
 
 export const Quest = z.object({
   id: z.string(),

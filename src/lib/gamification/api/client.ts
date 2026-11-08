@@ -1,6 +1,8 @@
 import type { ZodType } from "zod";
 
 import {
+  BadgeCatalog,
+  PinResult,
   FeatureFlags,
   GamificationConfig,
   RewardResult,
@@ -9,6 +11,8 @@ import {
   type GamificationConfig as Config,
   type RewardResult as Reward,
   type UserProgress as Progress,
+  type BadgeCatalog as Catalog,
+  type PinResult as Pinned,
 } from "../schemas";
 
 export type ApiErrorCode = "offline" | "server" | "conflict" | "insufficient_balance" | "invalid_response";
@@ -57,6 +61,9 @@ export interface GamificationApi {
   getProgress(): Promise<Progress>;
   submitPrediction(input: PredictionInput): Promise<Reward>;
   answerLiveQuestion(input: LiveAnswerInput): Promise<Reward>;
+  getBadges(): Promise<Catalog>;
+  /** Replace the pinned set (max `pinnedBadgesMax`, earned badges only). 409 when it no longer fits. */
+  pinBadges(badgeIds: string[]): Promise<Pinned>;
 }
 
 function parse<T>(schema: ZodType<T>, data: unknown): T {
@@ -73,6 +80,8 @@ export function validated(api: GamificationApi): GamificationApi {
     getProgress: async () => parse(UserProgress, await api.getProgress()),
     submitPrediction: async (i) => parse(RewardResult, await api.submitPrediction(i)),
     answerLiveQuestion: async (i) => parse(RewardResult, await api.answerLiveQuestion(i)),
+    getBadges: async () => parse(BadgeCatalog, await api.getBadges()),
+    pinBadges: async (ids) => parse(PinResult, await api.pinBadges(ids)),
   };
 }
 
@@ -106,5 +115,7 @@ export function createHttpApi(baseUrl: string): GamificationApi {
     getProgress: () => call("/me/progress") as Promise<Progress>,
     submitPrediction: (i) => post("/predictions", i) as Promise<Reward>,
     answerLiveQuestion: (i) => post(`/live/${i.matchId}/questions/${i.questionId}/answer`, i) as Promise<Reward>,
+    getBadges: () => call("/me/badges") as Promise<Catalog>,
+    pinBadges: (badgeIds) => call("/me/badges/pinned", { method: "PUT", body: JSON.stringify({ badgeIds }) }) as Promise<Pinned>,
   };
 }

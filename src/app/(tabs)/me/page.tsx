@@ -1,10 +1,12 @@
 import Link from "next/link";
-import { Eye, Flame, Lock, Settings, Trophy, UserRound } from "lucide-react";
+import { Lock, Settings, UserRound } from "lucide-react";
 
 import { AppShell } from "@/components/footon/app-shell";
 import { FavouriteClubs } from "@/components/footon/favourite-clubs";
 import { FormBars } from "@/components/footon/form-bars";
 import { LevelCard } from "@/components/footon/gamification/level-card";
+import { PinnedBadges } from "@/components/footon/gamification/pinned-badges";
+import { StreakCounter } from "@/components/footon/gamification/streak";
 import { Button } from "@/components/ui/button";
 import { Card, CardRow } from "@/components/ui/card";
 import { clubDirectory, profile, recentForm } from "@/lib/mock-data";
@@ -13,11 +15,6 @@ import { cn } from "@/lib/utils";
 const RANK = 8;
 const OF = 30;
 
-const achievements = [
-  { label: "Prophet", icon: Eye, tone: "bg-primary-soft text-primary" },
-  { label: "Streak 5", icon: Flame, tone: "bg-live-soft text-live" },
-  { label: "First win", icon: Trophy, tone: "bg-[#1c1c21] text-[#e4e4e7]" },
-];
 
 const collection = [
   { label: "Players", count: 3 },
@@ -86,6 +83,13 @@ export default function MePage() {
         <LevelCard />
       </section>
 
+      <section aria-labelledby="streak-title" className="flex flex-col gap-2.5">
+        <h2 id="streak-title" className="text-[13px] font-medium text-muted-foreground">
+          Streak
+        </h2>
+        <StreakCounter />
+      </section>
+
       <FavouriteClubs clubs={clubDirectory} initial={profile.favoriteTeams} />
 
       <section className="flex flex-col gap-2.5">
@@ -139,22 +143,7 @@ export default function MePage() {
         </div>
       </Card>
 
-      <section className="flex flex-col gap-2.5">
-        <h2 className="text-[13px] font-medium text-muted-foreground">Achievements</h2>
-        <ul className="grid grid-cols-3 gap-2">
-          {achievements.map(({ label, icon: Icon, tone }) => (
-            <li
-              key={label}
-              className="flex flex-col gap-2.5 rounded-lg border border-line bg-surface p-3 transition-[transform,border-color] duration-200 ease-spring hover:-translate-y-0.5 hover:border-line-strong"
-            >
-              <span className={cn("flex size-8 items-center justify-center rounded-sm", tone)}>
-                <Icon className="size-[17px]" />
-              </span>
-              <span className="text-[13px] font-semibold">{label}</span>
-            </li>
-          ))}
-        </ul>
-      </section>
+      <PinnedBadges />
 
       <section className="flex flex-col gap-2.5">
         <h2 className="text-[13px] font-medium text-muted-foreground">Collection</h2>

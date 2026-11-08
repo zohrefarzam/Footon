@@ -36,6 +36,45 @@ export const copy = {
   close: "Close",
   locked: "locked",
   rarity: "of players have it",
+
+  // Badges
+  newBadge: "NEW BADGE",
+  badgesTitle: "Badges",
+  allBadges: "All badges",
+  earnedOf: (e: number, t: number) => `${n(e)} of ${n(t)}`,
+  notEarned: "Not yet",
+  pin: "Pin",
+  pinned: "Pinned",
+  pinBadge: (name: string) => `Pin ${name}`,
+  unpinBadge: (name: string) => `Unpin ${name}`,
+  pinFull: (max: number) => `Pin up to ${n(max)}. Unpin one to swap.`,
+  pinSlot: "Pin a badge",
+  pinFailed: "Couldn't save that. Try again.",
+  badgeFamily: { level: "Level", achievement: "Achievements", social: "Social", seasonal: "Seasonal" },
+
+  // Streak (match days in a row)
+  streakEyebrow: "STREAK",
+  streakUnit: (d: number) => (d === 1 ? "match day in a row" : "match days in a row"),
+  streakNone: "Call any match to start a run.",
+  bestRun: (d: number) => `Best ${n(d)}`,
+  bestRunLabel: "Your best run",
+  toMilestone: (left: number, at: number) => `${n(left)} more to the ${n(at)}-day reward`,
+  milestoneHit: (d: number) => `${n(d)}-day reward unlocked`,
+  freezeUsed: "A freeze kept your run alive",
+  freezes: (held: number, max: number) => `${n(held)} of ${n(max)} streak freezes`,
+  freezeShort: "Freezes",
+
+  // Broken streak: no blame, no alarm
+  brokenTitle: "That run's over",
+  brokenBody: (best: number) => `Your best is still ${n(best)} match ${best === 1 ? "day" : "days"}. Every run starts with one call.`,
+  brokenCta: "Start a new run",
+  brokenLater: "Not now",
+
+  // Combo (right answers in a row, in one match)
+  comboLabel: "Combo",
+  comboCount: (c: number) => (c === 0 ? "No run yet" : `${n(c)} right in a row`),
+  comboAria: (c: number, m: number, next: { at: number; multiplier: number } | null) =>
+    `Combo: ${n(c)} right in a row, XP ${formatTimes(m)}${next ? `. ${formatTimes(next.multiplier)} at ${n(next.at)}` : ""}`,
 } as const;
 
 /** What a level opens, for the Level Up screen, the Level card and locked gates. */

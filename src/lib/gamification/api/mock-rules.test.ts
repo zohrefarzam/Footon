@@ -3,7 +3,7 @@ import { describe, expect, it } from "vitest";
 import { mockConfig } from "../config";
 import { matchDayKey } from "../day";
 import type { Streak } from "../schemas";
-import { cappedXp, levelFromXp, levelUpsBetween, streakOnPrediction, streakStatusOn } from "./mock-rules";
+import { cappedXp, comboMultiplierFor, levelFromXp, levelUpsBetween, streakOnPrediction, streakStatusOn } from "./mock-rules";
 
 const curve = mockConfig.curves.default;
 const M = [3, 7, 14, 30];
@@ -75,5 +75,11 @@ describe("streak (mock server)", () => {
     // the same instant is still 3 Nov in London, but a 00:30 Tehran kickoff is the 4th there
     expect(matchDayKey("2026-11-03T21:00:00Z", "Asia/Tehran")).toBe("2026-11-04");
     expect(matchDayKey("2026-11-03T21:00:00Z", "Europe/London")).toBe("2026-11-03");
+  });
+});
+
+describe("combo steps (mock server)", () => {
+  it("takes the highest step reached", () => {
+    expect([0, 2, 3, 4, 5, 9].map((c) => comboMultiplierFor(c, mockConfig.combo))).toEqual([1, 1, 2, 2, 3, 3]);
   });
 });

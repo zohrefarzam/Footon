@@ -1,6 +1,6 @@
 "use client";
 
-import { useQuery, type QueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient, type QueryClient } from "@tanstack/react-query";
 
 import { api } from "./api";
 import { expandReward } from "./celebrations/expand";
@@ -12,11 +12,28 @@ export const gamificationKeys = {
   config: ["gamification", "config"] as const,
   flags: ["gamification", "flags"] as const,
   progress: ["gamification", "progress"] as const,
+  badges: ["gamification", "badges"] as const,
 };
 
 export const useConfig = () => useQuery({ queryKey: gamificationKeys.config, queryFn: api.getConfig, staleTime: Infinity });
 export const useFlags = () => useQuery({ queryKey: gamificationKeys.flags, queryFn: api.getFlags, staleTime: Infinity });
 export const useProgress = () => useQuery({ queryKey: gamificationKeys.progress, queryFn: api.getProgress, staleTime: 60_000 });
+export const useBadges = () => useQuery({ queryKey: gamificationKeys.badges, queryFn: api.getBadges, staleTime: 60_000 });
+
+/**
+ * Pin a set of badges. The server answers with the pinned set, which goes
+ * into the cache as-is; on a 409 (the set no longer fits) we refetch.
+ */
+export function usePinBadges() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (ids: string[]) => api.pinBadges(ids),
+    onSuccess: ({ pinnedBadges }) => {
+      qc.setQueryData<UserProgress>(gamificationKeys.progress, (p) => (p ? { ...p, pinnedBadges } : p));
+    },
+    onError: () => void qc.invalidateQueries({ queryKey: gamificationKeys.progress }),
+  });
+}
 
 /**
  * Everything a level bar needs, from the server's numbers. Null until both
@@ -55,11 +72,13 @@ export function applyReward(qc: QueryClient, result: RewardResult) {
       coins: result.coins,
       dailyXp: result.dailyXp,
       streak: toStreak(result.streak),
+      combo: result.combo,
       badgeCount: prev.badgeCount + result.newBadges.length,
     });
+  } else {
+    void qc.invalidateQueries({ queryKey: gamificationKeys.progress });
   }
-  // anything we can't patch exactly (combo, quests) refreshes from the server
-  void qc.invalidateQueries({ queryKey: gamificationKeys.progress, refetchType: prev ? "none" : "active" });
+  if (result.newBadges.length > 0) void qc.invalidateQueries({ queryKey: gamificationKeys.badges });
 
   const items = expandReward(result, prev ? { totalXp: prev.totalXp, level: prev.level } : null, config ? (l) => tierFor(l, config).id : undefined);
   celebrations.getState().enqueue(result.id, items);

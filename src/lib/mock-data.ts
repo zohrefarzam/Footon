@@ -628,7 +628,6 @@ export const profile = {
   name: "You",
   /** Total points: skill only, from right calls. Rank and prizes read this. */
   points: 4820,
-  streak: { current: 3, best: 6 },
   referral: { code: "FOOT-Y7K2", bonus: 1500, joined: 2 },
   /** Clubs you follow; picked in onboarding, edited on Profile. */
   favoriteTeams: ["LIV"],

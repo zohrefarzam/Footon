@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import { AnimatePresence } from "motion/react";
-import { CalendarCheck, CircleCheck } from "lucide-react";
+import { CircleCheck } from "lucide-react";
 
 import { useSplashDone } from "@/components/footon/splash-gate";
 import { isBlocking, type Celebration } from "@/lib/gamification/celebrations/expand";
@@ -12,10 +12,11 @@ import { useConfig, useFlags } from "@/lib/gamification/queries";
 import type { FeatureFlags, GamificationConfig } from "@/lib/gamification/schemas";
 import { copy } from "@/lib/gamification/strings";
 import { track } from "@/lib/track";
-import { BadgeGlyph } from "./badge-glyph";
+import { BadgeToast } from "./badge-toast";
 import { CelebrationToast } from "./celebration-toast";
 import { LevelUpScreen } from "./level-up-screen";
-import { RarityLabel } from "./rarity-label";
+import { StreakBrokenWatcher } from "./streak-broken-sheet";
+import { StreakTick } from "./streak";
 import { XpGainBurst } from "./xp-gain-burst";
 
 /** How long each non-blocking moment stays before the next one plays (ms). */
@@ -100,6 +101,7 @@ export function CelebrationHost() {
       <div className="pointer-events-none fixed inset-x-0 bottom-[calc(100px+env(safe-area-inset-bottom))] z-40 mx-auto flex max-w-[430px] px-5">
         <AnimatePresence>{current && <Toast key={current.key} c={current} onDismiss={advance} />}</AnimatePresence>
       </div>
+      <StreakBrokenWatcher />
       {current?.kind === "levelUp" && config && flags && (
         <LevelUp key={current.key} c={current} config={config} shareStyle={flags.levelUpShareStyle} onDone={advance} />
       )}
@@ -135,26 +137,9 @@ function LevelUp({
 function Toast({ c, onDismiss }: { c: Celebration; onDismiss: () => void }) {
   switch (c.kind) {
     case "streak":
-      return (
-        <CelebrationToast
-          tone="live"
-          icon={<CalendarCheck className="size-5" strokeWidth={2.2} />}
-          title={copy.announceStreak(c.streak.current)}
-          detail={c.streak.best > c.streak.current ? copy.best(c.streak.best) : undefined}
-          onDismiss={onDismiss}
-          dismissLabel={copy.skip}
-        />
-      );
+      return <StreakTick streak={c.streak} onDismiss={onDismiss} />;
     case "badge":
-      return (
-        <CelebrationToast
-          icon={<BadgeGlyph badge={c.badge} size="sm" className="bg-transparent" />}
-          title={copy.announceBadge(c.badge.name)}
-          detail={<RarityLabel pct={c.badge.rarityPct} />}
-          onDismiss={onDismiss}
-          dismissLabel={copy.skip}
-        />
-      );
+      return <BadgeToast badge={c.badge} onDismiss={onDismiss} />;
     case "quest":
       return (
         <CelebrationToast

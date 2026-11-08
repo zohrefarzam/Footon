@@ -85,3 +85,10 @@ export function streakStatusOn(s: Streak, todayKey: string, matchDays: readonly 
   const missed = matchDays.filter((d) => d > s.lastDayKey! && d < todayKey).length;
   return missed > s.freezesHeld ? { ...s, status: "broken" } : s;
 }
+
+/** The combo multiplier for `count` right answers in a row: the highest step reached. */
+export function comboMultiplierFor(count: number, steps: readonly { at: number; multiplier: 1 | 2 | 3 }[]): 1 | 2 | 3 {
+  let m: 1 | 2 | 3 = 1;
+  for (const step of steps) if (count >= step.at) m = step.multiplier;
+  return m;
+}

@@ -3,15 +3,21 @@
 import { useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 
+import { ComboMeter } from "@/components/footon/gamification/combo-meter";
 import { LevelProgressBar } from "@/components/footon/gamification/level-progress-bar";
+import { PinnedBadges } from "@/components/footon/gamification/pinned-badges";
+import { StreakCounter } from "@/components/footon/gamification/streak";
 import { LockedFeatureGate } from "@/components/footon/gamification/locked-feature-gate";
 import { RarityLabel } from "@/components/footon/gamification/rarity-label";
 import { TierBadge } from "@/components/footon/gamification/tier-badge";
 import { XpGainBurst } from "@/components/footon/gamification/xp-gain-burst";
 import { Button } from "@/components/ui/button";
 import { mockApi } from "@/lib/gamification/api";
+import { userTimeZone } from "@/lib/gamification/day";
 import { xpForLevel } from "@/lib/gamification/level";
+import type { RewardResult } from "@/lib/gamification/schemas";
 import { applyReward, gamificationKeys, useLevel } from "@/lib/gamification/queries";
+import { mockToday } from "@/lib/mock-data";
 
 /**
  * Gamification pieces plus a control panel for the MOCK server (styleguide
@@ -25,16 +31,28 @@ export function GamificationDemo() {
   const [busy, setBusy] = useState(false);
 
   if (!mockApi) return <p className="text-sm text-muted-foreground">Demo controls need the mock API.</p>;
-  const dev = mockApi.dev;
+  const mock = mockApi;
+  const dev = mock.dev;
 
-  const grant = async (xp: number) => {
+  const run = async (call: () => Promise<RewardResult>) => {
     setBusy(true);
     try {
-      applyReward(qc, await dev.grantXp(xp));
+      applyReward(qc, await call());
     } finally {
       setBusy(false);
     }
   };
+  const grant = (xp: number) => run(() => dev.grantXp(xp));
+  const predictToday = () =>
+    run(() =>
+      mock.submitPrediction({
+        idempotencyKey: `demo_${Date.now()}`,
+        matchId: `demo-${Date.now()}`,
+        kickoff: `${mockToday}T20:00:00Z`,
+        count: 1,
+        timeZone: userTimeZone(),
+      }),
+    );
   const levelsUp = (n: number) => (lv ? xpForLevel(lv.progress.level + n, lv.curve) - lv.progress.totalXp : 0);
 
   return (
@@ -50,6 +68,25 @@ export function GamificationDemo() {
         </Button>
         <Button variant="secondary" size="sm" disabled={busy || !lv} onClick={() => grant(levelsUp(3))}>
           Three levels
+        </Button>
+        <Button variant="secondary" size="sm" disabled={busy} onClick={() => run(() => dev.resolveLiveQuestion(true))}>
+          Right answer
+        </Button>
+        <Button variant="secondary" size="sm" disabled={busy} onClick={() => run(() => dev.resolveLiveQuestion(false))}>
+          Wrong answer
+        </Button>
+        <Button variant="secondary" size="sm" disabled={busy} onClick={predictToday}>
+          Predict today
+        </Button>
+        <Button
+          variant="secondary"
+          size="sm"
+          onClick={() => {
+            dev.breakStreak();
+            void qc.invalidateQueries({ queryKey: gamificationKeys.progress });
+          }}
+        >
+          Break streak
         </Button>
         <Button
           variant={offline ? "soft" : "secondary"}
@@ -85,6 +122,9 @@ export function GamificationDemo() {
         {lv && <XpGainBurst xpGained={20} coinsGained={20} fromXp={lv.progress.totalXp - 20} toXp={lv.progress.totalXp} level={lv.progress.level} reduced={false} comboMultiplier={2} curve={lv.curve} maxLevel={lv.config.maxLevel} />}
       </div>
       <RarityLabel pct={9.5} />
+      <ComboMeter />
+      <StreakCounter />
+      <PinnedBadges />
 
       <LockedFeatureGate feature="stadium" title="Stadium">
         <p>Open</p>

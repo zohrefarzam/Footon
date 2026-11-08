@@ -4,21 +4,48 @@
  * can be built against real-shaped results. State lives in memory and resets
  * on a full reload.
  *
- * `dev` controls (offline, forced failures, XP grants) drive the styleguide's
- * demo panel and the tests. They don't exist on the real API.
+ * `dev` controls (offline, forced failures, XP grants, resolving live
+ * questions, breaking the streak) drive the styleguide's demo panel and the
+ * tests. They don't exist on the real API: there, live results are pushed by
+ * the server and land through the same `applyReward()`.
  */
 import { mockConfig, defaultFlags } from "../config";
 import { matchDayKey } from "../day";
 import { curveFor, tierFor } from "../level";
-import { toStreak, type Badge, type FeatureFlags, type GamificationConfig, type RewardAction, type RewardResult, type Streak, type UserProgress } from "../schemas";
+import {
+  toStreak,
+  type Badge,
+  type BadgeCatalog,
+  type FeatureFlags,
+  type GamificationConfig,
+  type RewardAction,
+  type RewardResult,
+  type Streak,
+  type StreakUpdate,
+  type UserProgress,
+} from "../schemas";
 import { ApiError, type ApiErrorCode, type GamificationApi, type LiveAnswerInput, type PredictionInput } from "./client";
-import { cappedXp, levelFromXp, levelUpsBetween, streakOnPrediction, streakStatusOn } from "./mock-rules";
+import { cappedXp, comboMultiplierFor, levelFromXp, levelUpsBetween, streakOnPrediction, streakStatusOn } from "./mock-rules";
 
 /** Mock server's reward table (the backend owns the real one). */
 const XP_PER_PREDICTION = 20;
 const XP_PER_LIVE_ANSWER = 15;
+const XP_PER_RIGHT_ANSWER = 25;
 
 const LEVEL_BADGE_RARITY: Record<number, number> = { 5: 38, 10: 14, 15: 6, 20: 2.5, 25: 0.8, 30: 0.1 };
+
+/** Every non-level badge the mock server knows. Earned state lives in `MockState.earned`. */
+const CATALOG: Omit<Badge, "earnedAt">[] = [
+  { id: "first-win", family: "achievement", name: "First win", description: "Your first right call", icon: "trophy", rarityPct: 71 },
+  { id: "prophet", family: "achievement", name: "Prophet", description: "Called a 0–0 before kickoff", icon: "eye", rarityPct: 9.5 },
+  { id: "hat-trick", family: "achievement", name: "Hat-trick", description: "3 right in a row in one match", icon: "flame", rarityPct: 22 },
+  { id: "perfect-five", family: "achievement", name: "Perfect five", description: "5 right in a row in one match", icon: "flame", rarityPct: 4.2 },
+  { id: "streak-7", family: "achievement", name: "Week in", description: "7 match days in a row", icon: "calendar", rarityPct: 12 },
+  { id: "streak-30", family: "achievement", name: "Season ticket", description: "30 match days in a row", icon: "calendar", rarityPct: 0.9 },
+  { id: "league-founder", family: "social", name: "Founder", description: "Started a league", icon: "users", rarityPct: 18 },
+  { id: "first-invite", family: "social", name: "Plus one", description: "A friend joined from your invite", icon: "handshake", rarityPct: 27 },
+  { id: "autumn-2026", family: "seasonal", name: "Autumn 2026", description: "Played a match day this autumn", icon: "leaf", rarityPct: 41 },
+];
 
 export type MockState = {
   totalXp: number;
@@ -26,7 +53,8 @@ export type MockState = {
   daily: { dayKey: string; earned: number };
   streak: Streak;
   combo: number;
-  badges: Badge[];
+  /** Badge id → earnedAt. */
+  earned: Record<string, string>;
   pinned: string[];
 };
 
@@ -46,23 +74,20 @@ export type MockDevControls = {
   failNext(code: ApiErrorCode): void;
   /** Server-side XP grant, for demoing multi-level-ups. Returns a real-shaped result. */
   grantXp(xp: number): Promise<RewardResult>;
+  /** The server settling a live question you answered: right extends the combo, wrong resets it. */
+  resolveLiveQuestion(correct: boolean): Promise<RewardResult>;
+  /** Pretend match days went by without a prediction and no freeze covered them. */
+  breakStreak(): void;
   state(): MockState;
   reset(): void;
 };
 
 export type MockGamificationApi = GamificationApi & { dev: MockDevControls };
 
-function levelBadge(level: number, config: GamificationConfig): Badge | null {
+function levelBadge(level: number, config: GamificationConfig): Omit<Badge, "earnedAt"> | null {
   if (!(level in LEVEL_BADGE_RARITY)) return null;
-  return {
-    id: `level-${level}`,
-    family: "level",
-    name: `${tierFor(level, config).name}`,
-    icon: tierFor(level, config).id,
-    rarityPct: LEVEL_BADGE_RARITY[level],
-    level,
-    earnedAt: null,
-  };
+  const tier = tierFor(level, config);
+  return { id: `level-${level}`, family: "level", name: tier.name, description: `Reached level ${level}`, icon: tier.id, rarityPct: LEVEL_BADGE_RARITY[level], level };
 }
 
 export function createMockApi(opts: MockOptions = {}): MockGamificationApi {
@@ -72,17 +97,18 @@ export function createMockApi(opts: MockOptions = {}): MockGamificationApi {
   const now = opts.now ?? (() => new Date());
   const latency = opts.latencyMs ?? 350;
 
+  const catalog: Omit<Badge, "earnedAt">[] = [
+    ...Object.keys(LEVEL_BADGE_RARITY).map((l) => levelBadge(Number(l), config)!),
+    ...CATALOG,
+  ];
+
   const seed = (): MockState => ({
     totalXp: 1640, // level 7, 290 of 400 into it
     coins: { free: 6450, premium: 0 },
     daily: { dayKey: "", earned: 240 },
     streak: { current: 3, best: 6, lastDayKey: null, freezesHeld: 1, status: "active" },
     combo: 0,
-    badges: [
-      { ...levelBadge(5, config)!, earnedAt: "2026-10-20T19:00:00Z" },
-      { id: "first-win", family: "achievement", name: "First win", icon: "trophy", rarityPct: 71, earnedAt: "2026-10-12T21:00:00Z" },
-      { id: "prophet", family: "achievement", name: "Prophet", icon: "eye", rarityPct: 9.5, earnedAt: "2026-10-28T20:40:00Z" },
-    ],
+    earned: { "level-5": "2026-10-20T19:00:00Z", "first-win": "2026-10-12T21:00:00Z", prophet: "2026-10-28T20:40:00Z" },
     pinned: ["prophet"],
     ...opts.initial,
   });
@@ -106,22 +132,29 @@ export function createMockApi(opts: MockOptions = {}): MockGamificationApi {
     return structuredClone(fn());
   }
 
-  const matchDays = (tz: string) =>
-    [...new Set((opts.fixtures ?? []).map((f) => matchDayKey(f.kickoff, tz)))].sort();
+  const tzNow = () => (typeof Intl !== "undefined" ? Intl.DateTimeFormat().resolvedOptions().timeZone : "UTC");
+  const matchDays = (tz: string) => [...new Set((opts.fixtures ?? []).map((f) => matchDayKey(f.kickoff, tz)))].sort();
+  const badge = (id: string): Badge => ({ ...catalog.find((b) => b.id === id)!, earnedAt: s.earned[id] ?? null });
 
-  function progress(tz = "UTC"): UserProgress {
+  /** Awards a badge once; null if already held or unknown. */
+  function award(id: string): Badge | null {
+    if (s.earned[id] || !catalog.some((b) => b.id === id)) return null;
+    s.earned[id] = now().toISOString();
+    return badge(id);
+  }
+
+  function progress(tz: string): UserProgress {
     rollDay(tz);
-    const level = levelFromXp(s.totalXp, curve, config.maxLevel);
     return {
       userId: "me",
       totalXp: s.totalXp,
-      level,
+      level: levelFromXp(s.totalXp, curve, config.maxLevel),
       coins: s.coins,
       dailyXp: dailyXp(),
       streak: streakStatusOn(s.streak, matchDayKey(now(), tz), matchDays(tz)),
-      combo: { count: s.combo, multiplier: comboMultiplier() },
+      combo: { count: s.combo, multiplier: comboMultiplierFor(s.combo, config.combo) },
       pinnedBadges: s.pinned,
-      badgeCount: s.badges.length,
+      badgeCount: Object.keys(s.earned).length,
     };
   }
 
@@ -131,22 +164,23 @@ export function createMockApi(opts: MockOptions = {}): MockGamificationApi {
     if (s.daily.dayKey !== today) s.daily = { dayKey: today, earned: 0 };
   }
 
-  const dailyXp = () => ({
-    earned: s.daily.earned,
-    softCap: config.dailyXp.softCap,
-    reduced: s.daily.earned >= config.dailyXp.softCap,
-  });
+  const dailyXp = () => ({ earned: s.daily.earned, softCap: config.dailyXp.softCap, reduced: s.daily.earned >= config.dailyXp.softCap });
 
-  function comboMultiplier(): 1 | 2 | 3 {
-    let m: 1 | 2 | 3 = 1;
-    for (const step of config.combo) if (s.combo >= step.at) m = step.multiplier;
-    return m;
-  }
-
-  /** Apply one rewarded action and build its result. */
-  function reward(action: RewardAction, baseXp: number, coins: number, tz: string, dayKey: string | null): RewardResult {
+  /**
+   * Apply one rewarded action and build its result. `multiplier` is the combo
+   * multiplier for this action (live results only); the daily cap applies
+   * after it.
+   */
+  function reward(
+    action: RewardAction,
+    baseXp: number,
+    coins: number,
+    tz: string,
+    dayKey: string | null,
+    multiplier: 1 | 2 | 3 = 1,
+    extraBadges: (Badge | null)[] = [],
+  ): RewardResult {
     rollDay(tz);
-    const multiplier = comboMultiplier();
     // dev grants skip the cap so a demo can land on an exact level
     const xpGained =
       action === "dev" ? baseXp : cappedXp(baseXp * multiplier, s.daily.earned, config.dailyXp.softCap, config.dailyXp.overCapRate);
@@ -156,17 +190,17 @@ export function createMockApi(opts: MockOptions = {}): MockGamificationApi {
     s.coins = { ...s.coins, free: s.coins.free + coins };
     const level = levelFromXp(s.totalXp, curve, config.maxLevel);
 
-    const levelUps = levelUpsBetween(before, level, config, (l) => {
-      const b = levelBadge(l, config);
-      return b && !s.badges.some((x) => x.id === b.id) ? { ...b, earnedAt: now().toISOString() } : null;
-    });
-    const newBadges = levelUps.flatMap((u) => (u.badge ? [u.badge] : []));
-    s.badges.push(...newBadges);
+    const levelUps = levelUpsBetween(before, level, config, (l) => (levelBadge(l, config) ? award(`level-${l}`) : null));
 
-    const streak = dayKey
-      ? streakOnPrediction(streakStatusOn(s.streak, dayKey, matchDays(tz)), dayKey, matchDays(tz), config.streak.milestones)
-      : { ...s.streak, incrementedNow: false, milestone: null, freezeUsed: false };
+    let streak: StreakUpdate = { ...s.streak, incrementedNow: false, milestone: null, freezeUsed: false };
+    if (dayKey) {
+      streak = streakOnPrediction(streakStatusOn(s.streak, dayKey, matchDays(tz)), dayKey, matchDays(tz), config.streak.milestones);
+      if (streak.milestone === 7) extraBadges.push(award("streak-7"));
+      if (streak.milestone === 30) extraBadges.push(award("streak-30"));
+    }
     s.streak = toStreak(streak);
+
+    const newBadges = [...levelUps.flatMap((u) => (u.badge ? [u.badge] : [])), ...extraBadges.filter((b): b is Badge => b !== null)];
 
     return {
       id: `rr_${++seq}_${now().getTime()}`,
@@ -180,6 +214,7 @@ export function createMockApi(opts: MockOptions = {}): MockGamificationApi {
       streak,
       questProgress: [],
       comboMultiplier: multiplier,
+      combo: { count: s.combo, multiplier: comboMultiplierFor(s.combo, config.combo) },
       dailyXp: dailyXp(),
       coins: s.coins,
     };
@@ -197,7 +232,7 @@ export function createMockApi(opts: MockOptions = {}): MockGamificationApi {
   return {
     getConfig: () => respond(() => config),
     getFlags: () => respond(() => flags),
-    getProgress: () => respond(() => progress(typeof Intl !== "undefined" ? Intl.DateTimeFormat().resolvedOptions().timeZone : "UTC")),
+    getProgress: () => respond(() => progress(tzNow())),
     submitPrediction: (i: PredictionInput) =>
       respond(() =>
         once(i.idempotencyKey, () => {
@@ -210,10 +245,38 @@ export function createMockApi(opts: MockOptions = {}): MockGamificationApi {
       respond(() =>
         once(i.idempotencyKey, () => reward("liveAnswer", XP_PER_LIVE_ANSWER, XP_PER_LIVE_ANSWER, i.timeZone, matchDayKey(i.kickoff, i.timeZone))),
       ),
+    getBadges: () => respond((): BadgeCatalog => ({ badges: catalog.map((b) => badge(b.id)) })),
+    pinBadges: (ids: string[]) =>
+      respond(() => {
+        const unique = [...new Set(ids)];
+        if (unique.length > config.pinnedBadgesMax || unique.some((id) => !s.earned[id])) throw new ApiError("conflict");
+        s.pinned = unique;
+        return { pinnedBadges: s.pinned };
+      }),
     dev: {
       setOffline: (o) => void (offline = o),
       failNext: (c) => void (failCode = c),
       grantXp: (xp) => respond(() => reward("dev", xp, 0, "UTC", null)),
+      resolveLiveQuestion: (correct) =>
+        respond(() => {
+          if (!correct) {
+            s.combo = 0;
+            return reward("liveResult", 0, 0, tzNow(), null);
+          }
+          s.combo += 1;
+          const badges = [s.combo === 3 ? award("hat-trick") : null, s.combo === 5 ? award("perfect-five") : null];
+          return reward("liveResult", XP_PER_RIGHT_ANSWER, XP_PER_RIGHT_ANSWER, tzNow(), null, comboMultiplierFor(s.combo, config.combo), badges);
+        }),
+      breakStreak: () => {
+        const days = matchDays(tzNow());
+        const today = matchDayKey(now(), tzNow());
+        const earlier = days.filter((d) => d < today);
+        // last counted day = before every match day we have, so all of them were missed
+        const first = earlier[0] ?? today;
+        const d = new Date(`${first}T00:00:00Z`);
+        d.setUTCDate(d.getUTCDate() - 3);
+        s.streak = { ...s.streak, current: Math.max(s.streak.current, 6), best: Math.max(s.streak.best, 6), lastDayKey: d.toISOString().slice(0, 10), freezesHeld: 0, status: "active" };
+      },
       state: () => structuredClone(s),
       reset: () => {
         s = seed();

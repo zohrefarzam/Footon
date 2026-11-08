@@ -71,6 +71,9 @@ export const copy = {
   brokenLater: "Not now",
 
   // Quests
+  questsTitle: "Quests",
+  next: "Next",
+  allDoneToday: "All done today",
   questsToday: "Today's quests",
   questsWeek: "This week",
   questsLong: "Season and league",

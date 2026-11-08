@@ -72,7 +72,7 @@ export function LiveIsland({ coins: fallback, live }: { coins: number; live?: Is
       initial={false}
       animate={{ borderRadius: open ? 26 : 23 }}
       transition={spring}
-      className="pointer-events-auto overflow-hidden border border-[#26262c] bg-black shadow-[0_12px_32px_-12px_rgb(0_0_0/0.95)]"
+      className="pointer-events-auto overflow-hidden border border-line-strong bg-[#030d09] shadow-[0_12px_32px_-12px_rgb(0_0_0/0.95)]"
     >
       <div className="flex items-center ps-1">
         {live ? (
@@ -129,7 +129,7 @@ export function LiveIsland({ coins: fallback, live }: { coins: number; live?: Is
         ) : (
           <span className="flex-1" />
         )}
-        {live && <span aria-hidden="true" className="h-5 w-px shrink-0 bg-[#2a2a30]" />}
+        {live && <span aria-hidden="true" className="h-5 w-px shrink-0 bg-surface-4" />}
         {wallet}
       </div>
 
@@ -157,7 +157,7 @@ export function LiveIsland({ coins: fallback, live }: { coins: number; live?: Is
                         className={cn(
                           "flex h-11 items-center justify-center rounded-md text-[15px] font-bold outline-none transition-[transform,filter] duration-200 ease-spring active:scale-95 focus-visible:ring-[3px] focus-visible:ring-ring/60",
                           a === "yes"
-                            ? "bg-primary text-primary-foreground shadow-[inset_0_1px_0_rgb(255_255_255/0.45)] hover:brightness-105"
+                            ? "bg-primary text-primary-foreground hover:brightness-105"
                             : "border border-line-strong bg-surface-3",
                         )}
                       >

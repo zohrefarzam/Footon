@@ -32,7 +32,7 @@ export function FormBars({
             fill ? "flex-1 rounded-[5px]" : "w-2.5 rounded-[3px]",
             r === "W" && "h-full bg-win",
             r === "L" && "h-2/5 bg-loss",
-            r === "V" && "h-[15%] min-h-1.5 bg-[#3f3f46]",
+            r === "V" && "h-[15%] min-h-1.5 bg-dim",
           )}
           style={{ animationDelay: `${i * 50}ms` }}
         />

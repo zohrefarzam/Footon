@@ -2,21 +2,18 @@ import Link from "next/link";
 import { Settings, UserRound } from "lucide-react";
 
 import { AppShell } from "@/components/footon/app-shell";
+import { RankStrip } from "@/components/footon/division-card";
 import { FavouriteClubs } from "@/components/footon/favourite-clubs";
 import { FormBars } from "@/components/footon/form-bars";
 import { MyClubLink } from "@/components/footon/gamification/club-page";
 import { LevelCard } from "@/components/footon/gamification/level-card";
 import { PinnedBadges } from "@/components/footon/gamification/pinned-badges";
-import { QuestList } from "@/components/footon/gamification/quests";
 import { StreakCounter } from "@/components/footon/gamification/streak";
+import { PitchMarkings } from "@/components/footon/pitch-markings";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { clubDirectory, profile, recentForm } from "@/lib/mock-data";
-import { cn } from "@/lib/utils";
-
-const RANK = 8;
-const OF = 30;
-
+import { clubDirectory, division, profile, recentForm } from "@/lib/mock-data";
+import { cn, ordinal } from "@/lib/utils";
 
 
 export default function MePage() {
@@ -24,50 +21,42 @@ export default function MePage() {
   const losses = recentForm.filter((r) => r === "L").length;
   const voids = recentForm.length - wins - losses;
   const rate = Math.round((wins / Math.max(1, wins + losses)) * 100);
+  const RANK = division.rows.find((r) => r.you)?.rank ?? division.size;
+  const OF = division.size;
 
   return (
-    <AppShell className="gap-5 pt-3.5">
-      <header className="flex h-10 items-center justify-between">
+    <AppShell wide className="gap-5 pt-3.5 lg:grid lg:grid-cols-2 lg:items-start lg:gap-x-6">
+      <header className="flex h-10 items-center justify-between lg:col-span-2">
         <h1 className="text-[22px] font-bold tracking-[-0.03em]">Profile</h1>
         <Button variant="secondary" size="icon" aria-label="Settings" className="size-10">
           <Settings />
         </Button>
       </header>
 
-      {/* Silver league card — tilts slightly on hover */}
+      {/* Silver division card — a silver trading card, tilts slightly on hover */}
       <div className="group perspective-[900px]">
-        <section className="rounded-3xl bg-[#d4d4d8] bg-[radial-gradient(rgb(9_9_11/0.12)_1px,transparent_1px)] bg-[length:12px_12px] p-5 text-background shadow-[0_24px_50px_-24px_rgb(212_212_216/0.35)] transition-transform duration-500 ease-spring-soft group-hover:-translate-y-0.5 group-hover:rotate-x-6 group-hover:-rotate-y-8">
+        <section className="relative isolate overflow-hidden rounded-3xl bg-silver p-5 text-background shadow-[0_24px_50px_-24px_rgb(201_212_206/0.35)] transition-transform duration-500 ease-spring-soft group-hover:-translate-y-0.5 group-hover:rotate-x-6 group-hover:-rotate-y-8 [--pitch-line:rgb(6_20_15/0.12)]">
+          <PitchMarkings variant="box" className="-z-10" />
           <div className="flex items-start justify-between">
             <div>
-              <p className="text-[11px] font-bold tracking-[0.12em]">SILVER LEAGUE</p>
+              <p className="text-[11px] font-bold tracking-[0.12em]">{division.name.toUpperCase()} DIVISION</p>
               <p className="mt-2 font-display text-[64px] leading-[0.95] font-bold">{profile.points.toLocaleString("en-US")}</p>
               <p className="text-[13px] font-semibold opacity-70">Total points</p>
             </div>
-            <span className="flex size-[60px] items-center justify-center rounded-[18px] bg-background text-[#d4d4d8]" aria-hidden="true">
+            <span className="flex size-[60px] items-center justify-center rounded-[18px] bg-background text-silver" aria-hidden="true">
               <UserRound className="size-7" strokeWidth={1.8} />
             </span>
           </div>
           <div className="mt-[18px]">
             <div className="flex justify-between text-xs font-semibold">
               <span>
-                Rank {RANK} of {OF}
+                {ordinal(RANK)} of {OF} · week {division.week}
               </span>
-              <Link href="/" className="underline underline-offset-3">
+              <Link href="/leaderboard" className="-my-3 py-3 underline underline-offset-3">
                 View leaderboard
               </Link>
             </div>
-            <div role="img" aria-label={`Rank ${RANK} of ${OF}`} className="mt-2 grid h-4 grid-cols-30 items-end gap-0.5">
-              {Array.from({ length: OF }, (_, i) => (
-                <span
-                  key={i}
-                  className={cn(
-                    "rounded-[2px]",
-                    i + 1 === RANK ? "h-4 bg-background" : "h-2",
-                    i + 1 < RANK ? "bg-background/55" : i + 1 > RANK && "bg-background/18",
-                  )}
-                />
-              ))}
-            </div>
+            <RankStrip rank={RANK} size={OF} promote={division.promote} relegate={division.relegate} tone="light" className="mt-2" />
           </div>
         </section>
       </div>
@@ -85,8 +74,6 @@ export default function MePage() {
         </h2>
         <StreakCounter />
       </section>
-
-      <QuestList kinds={["seasonal", "group"]} title="Season and league" />
 
       <FavouriteClubs clubs={clubDirectory} initial={profile.favoriteTeams} />
 

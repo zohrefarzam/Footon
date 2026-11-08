@@ -6,6 +6,7 @@ import { AppShell } from "@/components/footon/app-shell";
 import { BackButton } from "@/components/footon/back-button";
 import { ChallengeGate } from "@/components/footon/challenge-gate";
 import { CoinAmount } from "@/components/footon/coin";
+import { LeagueBadge } from "@/components/footon/league-badge";
 import { LeagueChat } from "@/components/footon/league-chat";
 import { MatchCentre, type MatchSection } from "@/components/footon/match-centre";
 import { MatchFacts } from "@/components/footon/match-facts";
@@ -13,6 +14,7 @@ import { MatchInfo, MatchNews, TeamForm } from "@/components/footon/match-previe
 import { CompactScore, MatchScoreboard } from "@/components/footon/match-scoreboard";
 import { poolLine } from "@/components/footon/match-tables";
 import { PredictionBuilder } from "@/components/footon/prediction-builder";
+import { Standings } from "@/components/footon/standings";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Card, CardRow } from "@/components/ui/card";
 import { challengesWithMatch } from "@/lib/challenges";
@@ -42,6 +44,7 @@ export default async function ChallengePage({ params }: PageProps<"/challenges/[
   const builder = (
     <PredictionBuilder
       match={{ id: m.id, status: m.status, kickoff: m.kickoff, kickoffAt: kickoffISO(m), home: m.home.name, away: m.away.name, boost: !!m.boost }}
+      teams={{ home: m.home, away: m.away }}
       initial={c.status === "invited" ? [] : predictionSlips[m.id]}
       rules={{ ...c.rules, league: c.name, setBy }}
       balance={wallet.coins - (c.status === "invited" ? c.entry : 0)}
@@ -77,32 +80,56 @@ export default async function ChallengePage({ params }: PageProps<"/challenges/[
   const members = c.members.map((x) => ({ name: people[x] ?? x, initial: x, you: x === "Y" }));
   const league = (
     <Card className="overflow-hidden">
-      <div className="flex items-center justify-between px-4 pt-3.5 pb-2.5">
-        <span className="text-[13px] font-medium text-muted-foreground">Players</span>
-        <span className="text-xs text-muted-foreground">
-          Pool <CoinAmount value={splitPool(c.entry, c.members.length).pool} className="text-sm" />
+      <div className="flex items-center gap-3 px-4 pt-4">
+        <LeagueBadge name={c.name} />
+        <div className="min-w-0 flex-1">
+          <p className="truncate text-[15px] font-semibold">{c.name}</p>
+          <p className="mt-0.5 text-xs text-muted-foreground">
+            {members.length} players · {c.mine ? "made by you" : c.from ? `made by ${c.from.name}` : ""}
+          </p>
+        </div>
+        <span className="text-end text-xs text-muted-foreground">
+          Pool
+          <CoinAmount value={splitPool(c.entry, c.members.length).pool} className="block text-base" />
         </span>
       </div>
-      {members.map((p) => (
-        <CardRow key={p.initial} className="py-3">
-          <Avatar className="size-8">
-            <AvatarFallback className={cn(p.you && "bg-primary text-primary-foreground")}>{p.initial}</AvatarFallback>
-          </Avatar>
-          <span className={cn("flex-1 text-[15px] font-semibold", p.you && "text-primary")}>{p.name}</span>
-          {c.from?.initial === p.initial && <span className="text-xs text-muted-foreground">created it</span>}
-          {c.mine && p.you && <span className="text-xs text-muted-foreground">created it</span>}
-          {clubIds[p.initial] && (
-            <Link
-              href={`/club/${clubIds[p.initial]}`}
-              aria-label={`${p.name}'s club`}
-              className="-my-2 flex h-11 items-center gap-0.5 rounded-md ps-2 text-xs font-semibold text-muted-foreground outline-none hover:text-foreground focus-visible:ring-[3px] focus-visible:ring-ring/60"
-            >
-              Club
-              <ChevronRight className="size-3.5 rtl:rotate-180" aria-hidden="true" />
-            </Link>
-          )}
-        </CardRow>
-      ))}
+      {c.table?.length ? (
+        <Standings rows={c.table} caption={`${c.name} standings`} className="mt-1" />
+      ) : (
+        <>
+          <p className="px-4 pt-3 pb-1 text-[11px] font-semibold tracking-[0.08em] text-muted-foreground uppercase">Table starts at kickoff</p>
+          {members.map((p) => (
+            <CardRow key={p.initial} className="py-3">
+              <Avatar className="size-8">
+                <AvatarFallback className={cn(p.you && "bg-primary text-primary-foreground")}>{p.initial}</AvatarFallback>
+              </Avatar>
+              <span className={cn("flex-1 text-[15px] font-semibold", p.you && "text-primary")}>{p.name}</span>
+              {c.from?.initial === p.initial && <span className="text-xs text-muted-foreground">created it</span>}
+              {c.mine && p.you && <span className="text-xs text-muted-foreground">created it</span>}
+              <span className="font-display text-lg font-bold text-muted-foreground">0</span>
+            </CardRow>
+          ))}
+        </>
+      )}
+      {/* friends' clubs: open to look at, from the league */}
+      {members.some((p) => clubIds[p.initial]) && (
+        <div className="flex flex-wrap items-center gap-2 border-t border-line px-4 py-2.5">
+          <span className="text-xs text-muted-foreground">Clubs</span>
+          {members
+            .filter((p) => clubIds[p.initial])
+            .map((p) => (
+              <Link
+                key={p.initial}
+                href={`/club/${clubIds[p.initial]}`}
+                aria-label={`${p.name}'s club`}
+                className="flex h-11 items-center gap-0.5 rounded-md px-1 text-xs font-semibold text-muted-foreground outline-none hover:text-foreground focus-visible:ring-[3px] focus-visible:ring-ring/60"
+              >
+                {p.name}
+                <ChevronRight className="size-3.5 rtl:rotate-180" aria-hidden="true" />
+              </Link>
+            ))}
+        </div>
+      )}
       <p className="border-t border-line px-4 py-3 text-xs text-muted-foreground">
         {c.entry.toLocaleString("en-US")} entry each · {pool}. Points decide it; stakes never change your rank.
       </p>

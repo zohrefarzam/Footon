@@ -20,7 +20,7 @@ function Card({
         "flex flex-col text-card-foreground",
         variant === "default" && "rounded-xl border border-line bg-surface",
         variant === "raised" &&
-          "rounded-2xl border border-[#34343b] bg-surface-2 shadow-[0_24px_48px_-20px_rgb(0_0_0/0.9)]",
+          "rounded-2xl border border-[#284a3c] bg-surface-2 shadow-[0_24px_48px_-20px_rgb(0_0_0/0.9)]",
         variant === "dashed" && "rounded-xl border border-dashed border-line-strong bg-transparent",
         className,
       )}

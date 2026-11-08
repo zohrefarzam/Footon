@@ -44,7 +44,7 @@ export function Pitch() {
                 <svg aria-hidden="true" width="40" height="40" viewBox="0 0 24 24">
                   <path
                     d="M8 3 3 6l2 4 2-1v12h10V9l2 1 2-4-5-3a4 4 0 0 1-8 0z"
-                    fill={on ? "var(--primary)" : "#1c1c21"}
+                    fill={on ? "var(--primary)" : "var(--surface-2)"}
                     stroke={on ? "var(--primary)" : "rgb(255 255 255 / 0.35)"}
                     strokeWidth="1.2"
                     strokeLinejoin="round"
@@ -59,7 +59,7 @@ export function Pitch() {
               <span
                 className={cn(
                   "rounded-[6px] px-1.5 py-px font-display text-xs font-bold tracking-wide",
-                  on ? "bg-primary text-primary-foreground" : "bg-black/45 text-[#e4e4e7]",
+                  on ? "bg-primary text-primary-foreground" : "bg-black/45 text-[#e1ebe5]",
                 )}
               >
                 {pos}

@@ -38,11 +38,11 @@ export function MatchStats({ stats, home, away }: { stats: MatchStat[]; home: st
               </div>
               <div aria-hidden="true" className="flex h-1.5 gap-[3px]">
                 <span
-                  className={cn("rounded-full", lead === "away" ? "bg-[#3f3f46]" : "bg-foreground")}
+                  className={cn("rounded-full", lead === "away" ? "bg-dim" : "bg-foreground")}
                   style={{ width: `${(st.home / total) * 100}%` }}
                 />
                 <span
-                  className={cn("rounded-full", lead === "home" ? "bg-[#3f3f46]" : "bg-foreground")}
+                  className={cn("rounded-full", lead === "home" ? "bg-dim" : "bg-foreground")}
                   style={{ width: `${(st.away / total) * 100}%` }}
                 />
               </div>

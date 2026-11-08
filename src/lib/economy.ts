@@ -34,6 +34,7 @@ export const COSTS = {
  * picks the amount, at least this minimum, unless the challenge fixed it.
  */
 export const PREDICTION_MIN_STAKE = {
+  score: 100,
   result: 100,
   goals: 100,
   corners: 100,

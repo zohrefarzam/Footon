@@ -1,6 +1,7 @@
 /**
  * Product analytics, stubbed: events go to `window.dataLayer` if present.
- * Wire this to the real analytics client.
+ * Wire this to the real analytics client. Sponsor banners on Home report taps
+ * (`promo_tap`, with the promo id and slot position).
  *
  * Client events are UI-only: what the user SAW or TAPPED. Anything the server
  * decides (xp_earned, level_up, badge_earned, streak_*, quest_*,
@@ -16,6 +17,8 @@ export type TrackEvents = {
   quest_list_viewed: { count: number };
   quest_completed_viewed: { quest: string };
   streak_broken_viewed: { best: number };
+  // Home's partner slot: which sponsor banner was tapped, and where it sat
+  promo_tap: { id: string; slot: number };
 };
 export type TrackEvent = keyof TrackEvents;
 

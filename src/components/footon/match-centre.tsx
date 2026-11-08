@@ -47,6 +47,20 @@ export function MatchCentre({
     return () => io.disconnect();
   }, []);
 
+  // deep links: `/challenges/ch-1#league` opens on that section (read after mount, so SSR stays on the default)
+  useEffect(() => {
+    const open = () => {
+      const v = window.location.hash.slice(1);
+      if (sections.some((s) => s.value === v)) setTab(v);
+    };
+    const raf = requestAnimationFrame(open);
+    window.addEventListener("hashchange", open);
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener("hashchange", open);
+    };
+  }, [sections]);
+
   const changeTab = (v: string) => {
     setTab(v);
     // keep the tab bar where it is: if the board has scrolled away, jump to the top of the section

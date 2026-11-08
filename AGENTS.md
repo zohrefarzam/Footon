@@ -40,12 +40,12 @@ Adding shadcn components: `npx shadcn@latest add <name>`, then **restyle it to t
 ```
 src/
   app/                    routes (/, /welcome, /play, /match/[id], /challenges/new, /challenges/[id], /club/[userId], /styleguide)
-    (tabs)/               /, /challenges, /predictions, /live, /me, /me/club, /fantasy, /wallet, /shop — layout holds the sticky LiveIsland and the Dock (persist across tabs)
+    (tabs)/               /, /challenges, /predictions, /live, /me, /me/club, /quests, /leaderboard, /fantasy, /wallet, /shop — layout holds the sticky LiveIsland and the Dock (persist across tabs)
     globals.css           ALL design tokens, utilities, keyframes
     providers.tsx         client providers: TanStack Query cache, outbox binding, CelebrationHost
   components/
     ui/                   shadcn primitives, restyled (button, badge, card, input, label,
-                          switch, slider, avatar, separator, progress, dialog, tabs)
+                          switch, slider, avatar, separator, progress, dialog, tabs, skeleton)
     footon/               product components (app-shell, dock, live-island, question-card,
                           match-row, segmented-tabs, match-centre, live-match, crowd-poll,
                           match-facts, match-stats, match-lineups, match-table, league-chat,
@@ -53,7 +53,10 @@ src/
                           progress-ring, team-crest, live, empty-state, match-filter, match-list, invite-strip, streak,
                           prematch-calls, fantasy-unlock, football, ball-switch, splash, splash-gate, nav-icons,
                           missions, match-tables, prediction-builder, challenge-list,
-                          challenge-gate, boost-badge, favourite-clubs, shop-preview)
+                          challenge-gate, boost-badge, favourite-clubs, shop-preview,
+                          section-heading, pitch-markings, match-hero,
+                          league-badge, standings, league-card, division-card, result-card, promo-banner, promo-link, kit-avatar,
+                          achievement-badge, score-picker)
       gamification/       XP / level / badges / streak / quests / shop: celebration-host, xp-gain-burst,
                           level-progress-bar, level-card, level-up-screen, tier-badge, locked-feature-gate,
                           rarity-label, badge-glyph, celebration-toast, badge-toast, badge-wall, pinned-badges,
@@ -63,11 +66,11 @@ src/
                           ItemSwatch, Shirt, Boots), club-page (ClubPage, MyClubLink), share-card
                           (ShareCardRenderer, drawClubCard), coin-balance
   lib/
-    utils.ts              cn()
+    utils.ts              cn(), ordinal()
     dates.ts              day labels relative to the mock today ("Yesterday", "Thu 5 Nov")
     mock-data.ts          typed mock data mirroring the canvas — replace with API, keep types
     economy.ts            coin rules: entry tiers, pool split + burn, costs, caps, prediction stakes + payout. Never hard-code these in UI
-    predictions.ts        prediction types (Win/draw, Goals, Corners, Yellow cards, Red card, Penalty) and their options
+    predictions.ts        prediction types (Correct score, Win/draw, Goals, Corners, Yellow cards, Red card, Penalty), their options, scorePick()/parseScore()
     challenges.ts         challenge + match join, and where each challenge links
     track.ts              typed analytics stub: UI-only events (shop, surfaces seen, shares)
     gamification/         XP · level · badges · streak · quests · shop (see "Gamification")
@@ -104,35 +107,42 @@ Rules:
 7. **Learn by doing.** Teach with a real interaction (onboarding asks a sample question), not with explanatory paragraphs or numbered lists.
 8. **Motion confirms, never decorates.** Every animation answers "what just changed?" Springs for things you touch; ease-out for things that appear.
 9. **Not AI-generic.** No gradient washes, glowing blobs, emoji, left-border accent cards, "✨" sparkle icons or glassmorphism everywhere. Glass is allowed on exactly two surfaces: the dock and bottom sheets.
+10. **Football first, tastefully.** Footon is a stadium at night: a green-tinted ground, a calm grass green for the brand (flat buttons: no gloss, no glow), and football's own language (pitch lines, scoreboards, league tables, medals, kit colours). Pitch texture lives only on **hero canvases** (scoreboards, the Home match hero, the score picker, the leaderboard header, result cards, empty states): `floodlight` (one top light + turf stripes) or `bg-turf`, plus `PitchMarkings`. Never on list cards, buttons or every card.
 
 ## Colour
 
 All colours are CSS variables on `:root` in `globals.css`, exposed as Tailwind colours (`bg-surface`, `text-live`, `border-line-strong`…). **Never hard-code a hex in a component** if a token exists. A few one-off greys (e.g. `#27272a` tracks, `#3a3a42` avatar fill) are allowed inline; promote one to a token the second time you need it.
 
-### Neutrals (zinc ladder, darkest to lightest)
+### Neutrals (stadium-green ladder, darkest to lightest)
 
 | Token | Hex | Use |
 | --- | --- | --- |
-| `background` | `#09090B` | App ground |
-| `surface` | `#111114` | Cards, list groups, inputs |
-| `surface-2` | `#18181B` | Raised: question card, pills, dock, coin badge |
-| `surface-3` | `#232328` | Secondary buttons, chat bubbles |
-| `line` | `#1E1E23` | Hairline border and dividers on `surface` |
-| `line-strong` | `#2E2E35` | Borders on raised elements |
-| `foreground` | `#FAFAFA` | Primary text |
-| `muted-foreground` | `#A1A1AA` | Secondary text. Passes 4.5:1 on every surface |
-| `subtle` | `#71717A` | **Decoration / ≥24px text only**: placeholders, axis labels, "vs". Fails AA for small text |
-| `nav-muted` | `#8E8E97` | Inactive dock items |
+| `background` | `#06140F` | App ground (deep stadium green) |
+| `surface` | `#0B1E17` | Cards, list groups, inputs |
+| `surface-hover` | `#0F251C` | Hover on a row inside a `surface` card |
+| `surface-2` | `#11281F` | Raised: question card, pills, dock, coin badge |
+| `surface-3` | `#183327` | Secondary buttons, chat bubbles |
+| `surface-4` | `#1F3D30` | Hover on `surface-3` |
+| `line` | `#15302A` | Hairline border and dividers on `surface` |
+| `line-strong` | `#224236` | Borders on raised elements |
+| `track` | `#193429` | Empty progress tracks, switch off |
+| `dim` / `dim-strong` | `#2E4B3F` / `#4A675A` | Score colons, inactive bars and ticks |
+| `foreground` | `#F3F8F4` | Primary text |
+| `muted-foreground` | `#9DB1A6` | Secondary text. Passes 4.5:1 on every surface |
+| `subtle` | `#62786D` | **Decoration / ≥24px text only**: placeholders, axis labels, "vs". Fails AA for small text |
+| `nav-muted` | `#8AA095` | Inactive dock items |
 
 ### Colour roles (accents)
 
 | Role | Token | Means | Use it for | Never for |
 | --- | --- | --- | --- | --- |
-| **Primary / win / you** | `primary` `#C8F542` on `primary-foreground` `#0B0F02` | "Do this", "you got it right", "this is you" | Main CTA, Yes, win bars, correct calls, your rank, active dock dot, active segmented pill | Decoration, headings, links, more than one CTA |
+| **Primary / win / you** | `primary` `#43B883` (calm grass green, matte, never neon) on `primary-foreground` `#04170E` | "Do this", "you got it right", "this is you" | Main CTA, Yes, win bars, correct calls, your rank, active dock dot, active segmented pill | Decoration, headings, links, more than one CTA |
 | Primary soft | `primary-soft` + `primary-line` + `text-primary` | Selected / on | Selected chips, quick replies, "ask" button, your standings tile, toggled states | Main actions |
-| **Live** | `live` `#FFB547`, `live-soft`, `live-foreground` | "Happening now", "time", "money" | LIVE minute, pulsing dot, countdown ring, coins, boosts | Wins, buttons, selection |
+| **Live** | `live` `#FFA83E`, `live-soft`, `live-foreground` | "Happening now", "time", "money" | LIVE minute, pulsing dot, countdown ring, coins, boosts | Wins, buttons, selection |
+| **Trophy** | `gold` `#F5C451`, `gold-soft`, `gold-line`, `gold-foreground`; medals `silver` `#C9D4CE`, `bronze` `#D9925E` | "A trophy moment" | 1st/2nd/3rd medal discs in tables, a won league (finished 1st), gold-tier achievements, the Silver division card | Coins (amber), actions, "you" (lime), live |
 | **Loss** | `loss` `#F87171`, `loss-soft` | Wrong / lost | Loss bars, wrong calls, destructive actions | Errors that aren't the user's fault (use neutral copy) |
-| Pitch | `pitch`, `pitch-2`, `pitch-line` | The field | Fantasy pitch and match line-ups | Anywhere else |
+| Pitch | `pitch`, `pitch-2`, `pitch-line` | The field | Fantasy pitch, match line-ups, `PitchMarkings` on hero canvases | Fills on cards or buttons |
+| Kit colours | data (`team.colors`, `LeagueBadge`) | A club's / league's identity | Crests, the hero's kit stripe and the soft pool of each side's colour behind its crest on hero canvases | Text, UI states |
 | Booking | `booking-yellow`, `booking-red` | A referee's card | The card glyphs in `MatchFacts` and next to a team with a red | Anything that isn't a literal yellow/red card |
 
 Accessibility for colour:
@@ -154,6 +164,8 @@ Accessibility for colour:
 | Caption | Geist | 12–13, 400, muted | Row subtitles |
 | Code / IDs | `font-mono` | 11–12, 500 | `#sun9k`, invite links, char counters |
 
+| Section heading | `font-display` uppercase (`SectionHeading`) | 17, 700, `tracking-[0.04em]` | "BIG MATCHES", "YOUR LEAGUES", "CALL THE SCORE" |
+
 Rules: no font sizes under 11px. Use `tabular-nums` (`font-display` already looks tabular) for anything that ticks. Large Geist headings get negative tracking; Barlow never does.
 
 ## Shape, spacing, elevation
@@ -162,7 +174,8 @@ Rules: no font sizes under 11px. Use `tabular-nums` (`font-display` already look
 - **Spacing:** 4px grid. Screen gutter 20px (`px-5`). Vertical rhythm between screen sections 18px (`gap-[18px]` in `AppShell`). Card padding 16px; row padding `px-4 py-3.5`.
 - **Touch targets** ≥ 44px (`size="default"` and up). `sm` (32–36px) only for secondary chips inside a row.
 - **Elevation:** flat by default (borders, not shadows). Shadows only on floating things: question card (`variant="raised"`), dock, live island.
-- **Width:** mobile column, `max-w-[430px]`, centred. Design at 390×844.
+- **Width:** mobile column, `max-w-[430px]` (560px from `md`), centred. Design at 390×844. `AppShell wide` opens a 1080px desktop grid (`lg:`) for Home (match column + competition column, interleaved on phones with `order-*` inside `contents` wrappers), Profile and Leaderboard. Don't stretch single-list screens.
+- **Textures:** `bg-dots` (quiet: locked/dashed states, the invite ticket), `bg-turf` (mown stripes), `floodlight` (top light + stripes, hero canvases only), `PitchMarkings` (centre circle or penalty box SVG, plus `corners` for corner-flag arcs; `aria-hidden`, behind content with `-z-10` in an `isolate` parent). The floodlight is white at 5%, never tinted.
 
 ## Motion
 
@@ -180,6 +193,9 @@ Tokens (in `globals.css`): `ease-spring` (overshoot, for presses and toggles), `
 | Shimmer status | "Waiting for 75'…" | `text-shimmer` utility |
 | Live pulse | Live dot only | `animate-live-pulse` |
 | Countdown | Question timer | Amber ring `stroke-dashoffset`, linear |
+| Score roll | `ScorePicker` | Digit rolls up/down on change (spring), fade only with reduced motion |
+| Drawn check (CSS) | "Locked in" confirmation | `animate-draw` on a path with `pathLength={1}` + `[stroke-dasharray:1]` |
+| Skeleton | `loading.tsx` | `Skeleton` breathes (`animate-skeleton`) |
 
 Rules:
 - Animate `transform`, `opacity`, `filter` only. Never `transition: all`; name the properties.
@@ -198,8 +214,9 @@ Rules:
 - **Switch**: lime track, dark thumb when on. Put it in a `CardRow` with a `<label htmlFor>`.
 - **Slider**: lime range + glowing thumb. Show the discrete stop labels under it in display font.
 - **Avatar / AvatarGroup**: initials fallback; your own avatar is lime.
-- **Progress**: lime on `#27272a`.
-- **Dialog**: Radix Dialog. `variant="sheet"` (default) is a glass bottom sheet with a grabber, for invites, achievements and the quick-reply palette; `variant="center"` for short confirmations; `variant="full"` (the whole column on a dotted canvas) only for the Level Up screen. Always a `DialogTitle`; the close button is built in.
+- **Progress**: lime on `track`.
+- **Skeleton**: `surface-2` block that breathes; shape it like what's coming. Used by `app/match/[id]/loading.tsx`.
+- **Dialog**: Radix Dialog. `variant="sheet"` (default) is a glass bottom sheet with a grabber, for invites, achievements and the quick-reply palette; `variant="center"` for short confirmations; `variant="full"` (the whole column on a floodlit canvas with centre-circle markings) only for the Level Up screen. Always a `DialogTitle`; the close button is built in.
 - **Tabs**: Radix Tabs as a scrollable underline bar (lime underline on the active tab) for *sections* of one screen, like the match page. For 2–4 *filters* over one list use `SegmentedTabs`.
 
 ### Product (`components/footon`)
@@ -228,7 +245,7 @@ Rules:
 | `InviteStrip` | All pending league invites as a swipeable row of cards (Challenges) (who, league, stake, match, members; Decline / Join). Join is `secondary` since several show at once; joined cards turn soft-lime with "Open" → `/challenges/[id]` (the next step). Header has "See all" → `/invites`. |
 | `InviteRow` | One invite as a row in the `/invites` list (one divided card): crests + match, members, coin limit. Join / ✕ resolve in place: drawn check "You're in …", or "Declined" with Undo. |
 | `StreakFlame` | Hot streak on a finished/listed match (`streak ≥ HOT_STREAK`, 3): amber-soft pill, lucide `Flame` + count in display font. Amber because a streak is a boost. Pops in once, never loops. The flame means "right in a row inside a match" (the live version is `ComboMeter`); the match-day streak uses a checked calendar instead. |
-| `PredictionBuilder` | Your own predictions on a match (Predict tab of `/match/[id]` and `/challenges/[id]`). Type tiles (Win / draw, Goals, Corners, Yellow cards, Red card, Penalty) toggle rows into one divided slip; each row: options as soft-lime radio chips, a coin stake (numeric field + `STAKE_STEPS` chips, at least `PREDICTION_MIN_STAKE`), and what it wins (`payout()`). A challenge's `rules` can fix the stake ("set by Sara") and cap the total. One lime "Lock in N predictions · cost"; over the cap / short of coins / unpicked → disabled with the reason (short adds "Ways to earn"). Locked slips stay editable until kickoff (secondary "Edit predictions"); after kickoff they read back ✓ Right / ✗ Wrong. |
+| `PredictionBuilder` | Your own predictions on a match (Predict tab of `/match/[id]` and `/challenges/[id]`). `ScorePicker` first (correct score), then type tiles (Win / draw, Goals, Corners, Yellow cards, Red card, Penalty) toggle rows into one divided slip; each row: options as soft-lime radio chips, a coin stake (numeric field + `STAKE_STEPS` chips, at least `PREDICTION_MIN_STAKE`), and what it wins (`payout()`). A challenge's `rules` can fix the stake ("set by Sara") and cap the total. Header status chip: dashed "Draft" → soft-lime "Locked in" (check) → "Locked at kickoff" (lock). One lime "Lock in N predictions · cost"; locking in shows a `role="status"` confirmation with a drawn check; over the cap / short of coins / unpicked → disabled with the reason (short adds "Ways to earn"). Lock-ins go through the gamification `outbox` (a quiet "Saved · syncing" / "Saved on this phone, not sent yet · Retry" line under the confirmation; no reward until the server answers). Locked slips stay editable until kickoff (secondary "Edit predictions"); after kickoff they read back ✓ Right / ✗ Wrong. |
 | `ChallengeList` / `ChallengeRow` | Challenges as Joined · Invited · Expired `SegmentedTabs` over one divided card. Row: name (+ `BoostBadge`), match codes + time, who made it, entry, players, then your place / "Invite" / "Expired". Every row opens `/challenges/[id]` (your live one → `/play`). `ChallengeRow` is reused on Home. |
 | `ChallengeGate` | An invite on its challenge page: the rules (entry, stake per prediction, cap, pool), secondary Decline + lime "Accept · entry". Accepting reveals the `PredictionBuilder` in place; declining leaves Undo. |
 | `BoostBadge` | A big match (`match.boost`): amber-soft pill, lucide `Zap` + "2x" (amber: it's a boost). On `MatchRow` (amber "2x" over the day), challenge rows, Home's big matches, the scoreboard ("Wins pay 2x") and the builder. Boosts coins a right prediction wins, never points. |
@@ -239,7 +256,19 @@ Rules:
 | `CoinBadge` / `Coin` / `CoinAmount` | Wallet pill. Coins are always amber with an "F". `CoinAmount` is a coin figure in a row: gains amber, spends neutral with a minus (an entry isn't a loss). |
 | `StarterMissions` | First-week missions (15,000 over 7 days): progress, open rows first, done rows muted with the reason they paid. |
 | `MatchTables` | "Two tables, same calls" card on a match: Free table (always open, top 3 get coins) and Coin table (your league's pool, or "Start a league"). Footer: entry never changes rank. `poolLine()` gives "winner takes 5,700". |
-| `NumberTicker` | Count-up for rewards. |
+| `NumberTicker` | Count-up for rewards. Starts from `from` on both server and client (hydration-safe), jumps to the value with reduced motion. |
+| `SectionHeading` | Matchday section title (display, uppercase) + optional inline `meta` + one quiet text link outside the `<h2>`. Use for screen section headings on dock tabs. |
+| `PitchMarkings` | Decorative pitch lines (`centre` / `box` / `none`) and optional `corners` (corner-flag arcs) for hero canvases. |
+| `PromoBanner` / `PromoCarousel` | Home's partner slot for commercial banners: the partner's own colours (`promo.colors`, data like a kit), the partner name and a "Sponsored" label always visible, a display headline, one line, a pill naming where the tap goes (`ArrowUpRight` + new tab for partner sites, `rel="sponsored"`), and a drawn picture (`trophy` / `boot` / `screen`). The whole card is one link; taps fire `track("promo_tap")`. Several banners scroll in a snap row with the next one peeking. |
+| `KitAvatar` | A player in a league table as a tiny shirt with their initial; yours is green. Used by `Standings`. |
+| `MatchHero` | Home's match centre for the one fixture that matters now (your live league match, else the next big one): kit stripe, corner flags, crests facing off over a faint pool of each side's colour, score or kickoff on a scoreboard plate + countdown, competition, your league + place, the open question, then a matchday-ticket tear line (dashed, notched) above the stub holding the screen's one flat green CTA. |
+| `LeagueBadge` | A friends' league as a competition roundel (clubs are shields, competitions are round), kit colours hashed from the name; `tone="silver"` = the division. On challenge rows, league cards, the challenge League tab and the leaderboard. |
+| `Standings` / `RankCell` / `RankMove` | A real `<table>` leaderboard: gold/silver/bronze medal discs for 1–3, movement chevrons (shape + colour), `KitAvatar` shirt + name, `Right` (right/calls) and points; your row soft-lime with `aria-current`. `zones` draws Promotion / Drop zone lines; rows with a fixed `rank` that skip places get a gap row. `compact` for cards. |
+| `LeagueCard` | Home's competition card: badge, match + players, your place in display numbers with `gapLine()` ("50 pts clear of Sara"), compact `Standings`, link to the league. |
+| `DivisionCard` / `RankStrip` | Your weekly division: badge, week, place `8th of 30`, points to promotion (`toPromotion()`), and the whole division as ticks (promotion zone lime-tinted, drop zone short and red, you tall). Links to `/leaderboard`. `RankStrip tone="light"` sits on the silver Profile card. |
+| `ResultCard` | Your latest result: full-time score, then +points (lime) · right/calls · your place (gold trophy when you won), and a right/wrong bar with the streak. Points only. |
+| `AchievementBadge` | A badge as a medallion tile (server `Badge`): gold medal for trophy-type badges (`tier: "gold"`: wins, top streaks, the top tiers), turf medal for the rest, dashed + lock when not earned yet; name and rarity under it, optional footer (the wall's Pin toggle). `BadgeGlyph` is the same medallion small (toasts, club view, Level Up). |
+| `ScorePicker` | "Call the score" in `PredictionBuilder`: both sides with crests and a −/+ goal stepper (stacks vertically under 380px). First tap adds a `score` prediction to the slip; its stake lives in the slip row. |
 | `FormBars` | Last-N results as bars (height + colour). `fill` stretches them across the width (Profile's recent-form card). |
 | `FantasyUnlock` | Compact Home tile, a bit wider than `InviteTile` (it matters more), gated by level (`unlocks.fantasy`, L8). Locked must read as locked: dashed border (the "locked" card style), lock icon + "Fantasy locked", the neutral XP track to the level it needs and "Level 8 required". Under 360px "locked" and the level label drop; lock + dashed border carry it. Locked is **disabled**: not a link, no chevron, still visible. Open: solid soft-lime "Fantasy open", links to `/fantasy` (whose page keeps the same gate for direct URLs). |
 | `InviteTile` | Compact Home tile: "Invites" + count over the senders' avatars ("Sara +2"). Links to `/invites`, where Join / Decline happen. |
@@ -255,7 +284,10 @@ Rules:
 
 - **Splash → Onboarding (`/welcome`):** the launch splash (from `SplashGate`), then 3 steps with a segmented progress bar, back button and wallet badge (ticks to 10,000 on claim). 1) Try one: dealt card stack; the sample question resolves to a right/wrong result; Continue is `secondary` until answered, then lime. 2) Pick clubs: crest tiles with `aria-pressed`, soft-lime when selected. 3) Claim: coin stack + ticking amount, the three numbered steps, lime "Claim 10,000 coins". Claiming or "Skip to Home" sets the `footon_onboarded` cookie. Links to `/` from here use `prefetch={false}` so a pre-cookie redirect isn't cached.
 - **Onboarding (canvas):** dealt card stack on a dotted canvas with one real sample question; three steps as a single numbered row; lime CTA "Claim 10,000 coins" with an inset arrow; "Skip to Home" as a text link.
-- **Home:** (sticky island + `LevelProgressBar` from the tabs layout) → **Big matches · Wins pay 2x** (`MatchRow`s; an "All matches" text link in the section header → `/live`, no button) → **Today's quests** and **This week** (`QuestList`; weekly shows locked below its level) → two compact tiles (`InviteTile`, `FantasyUnlock`) → `ShopPreview`. No big matches → `EmptyState`. Your challenges live on the Challenges tab and open predictions on the Predictions tab, not Home. Browsing every fixture is the Live tab's job; don't put the full match list back on Home.
+- **Home:** (sticky island + `LevelProgressBar` from the tabs layout) → `PromoCarousel` (the partner slot) → **Big fixtures · Wins pay 2x** (`MatchRow`s; "All matches" → `/live`) → two compact tiles (`InviteTile`, `FantasyUnlock`) → `QuestsTile` (one row: "1 of 3 done" + the next quest → `/quests`) → `ShopPreview`. No big matches → `EmptyState`. Keep Home short: leagues live on Challenges, standings on `/leaderboard`, quests on `/quests`, results on each match. `MatchHero`, `LeagueCard`, `DivisionCard` and `ResultCard` stay available (styleguide) but are not on Home.
+- **Quests (`/quests`, from Home's quests tile):** back → Home, title, then **Today** (daily), **This week** (weekly; a locked row below its level), **Season and league**, each a `QuestList` under a `SectionHeading`. No lime CTA: quests move by playing.
+- **Leaderboard (`/leaderboard`, from the division card and Profile):** floodlit header (silver `LeagueBadge`, week, `8th of 30`, points, to promotion, `RankStrip`, the rule line) → **Table** (`Standings` with zones) → **Friends' leagues** (each → its league table via `#league`). No lime CTA.
+- **Section deep links:** `MatchCentre` opens the section named in the URL hash after mount (`/challenges/ch-3#league`, `/play#league`). Your challenges live on the Challenges tab and open predictions on the Predictions tab, not Home. Browsing every fixture is the Live tab's job; don't put the full match list back on Home.
 - **Predictions (`/predictions`, its own dock tab):** title + "N matches open" → Open · Staked · Could win strip (display numbers, coins amber) → **Open · editable until kickoff** (one divided card, a group per match: crests, name, `BoostBadge`, "Edit until", secondary Edit pill → `/match/[id]`; each pick as a row with type icon, summary, stake → `payout()`) → **Settled** (✓ rows soft-lime with `+50 pts` and coins, ✗ rows muted with the stake) → "Predict another match" text link → `/live`. No lime CTA.
 - **Create league:** close button, a live **invite ticket** (lime, notched, dashed tear line) that updates as you edit; name input, stake slider, mode switches, reward note, then `Copy` (secondary) + `Create and share` (lime).
 - **Live tab (`/live`):** FotMob's Matches screen via `MatchDays`: title + "Live only" switch → day strip (Yesterday · **Today** · Tomorrow · dates) → one folding card per competition (your own matches live on Home, not pinned here). No lime CTA here: your live match row and the island's "Q4 open" already take you in. Your live match → `/play`; everything else → `/match/[id]`.
@@ -265,7 +297,7 @@ Rules:
 - **Full time:** ticking `+450`, streak pill with lime "Next match 2x", podium (yours lime-soft, tallest), match-timeline of calls (lime filled dots = right, red rings = wrong), rematch chat replies, lime "Rematch with same friends".
 - **Fantasy (`/fantasy`, was My team):** stats header (display 56), striped pitch with shirt tokens (selected = lime, captain = amber "C"), captain + transfers list, lime "Save lineup".
 - **Create league:** entry slider uses `ENTRY_TIERS`; the pool preview under it; "Prediction stakes": a "Same stake for everyone" switch with `STAKE_STEPS` chips and a "Most one player can stake" cap slider (both shown on the ticket); the lime CTA carries the total cost (create + your entry). Short of coins → disabled "Need N more coins" + "Ways to earn".
-- **Profile:** silver league card (light zinc, dotted, slight 3D tilt on hover) with score + 30-tick rank strip, recent-form card (win rate, won/lost/void, full-width `FormBars`), a Level card (`#level`, `LevelCard`: level, tier, badges, XP track, the next two unlocks shown locked), a Streak card (`StreakCounter`), **Season and league** quests (`QuestList`), `FavouriteClubs`, amber boost tokens, `PinnedBadges` (up to 3 + "All badges" → `BadgeWall` sheet), **My Club** (`MyClubLink` → `/me/club`).
+- **Profile:** silver division card (`silver`, penalty-box lines, slight 3D tilt on hover) with score + `RankStrip` and "View leaderboard" → `/leaderboard`, a Level card (`#level`, `LevelCard`: level, tier, badges, XP track, the next two unlocks shown locked), a Streak card (`StreakCounter`), `FavouriteClubs`, recent-form card (win rate, won/lost/void, full-width `FormBars`), amber boost tokens, **Badges** (`#achievements`, `PinnedBadges`: pinned medallions + dashed "Pin a badge" slots, "N of M", "All badges" → `BadgeWall` sheet), **My Club** (`MyClubLink` → `/me/club`).
 
 ## Gamification (XP, level, badges, streak, quests)
 
@@ -318,6 +350,7 @@ From the Footon economy doc. Numbers live in `lib/economy.ts`; mock state in `mo
 - **Coins are earned with a reason.** Starter coins come mission by mission (onboarding pays only mission one, 1,000); every coin row says why ("Watched to the end").
 - **Never sell pressure.** No shop or purchase prompt after a loss or on a low balance, no fake timers, no "sold out". Short of coins → say how many and link to ways to earn (`/wallet`). The shop is reached from the Wallet header and Home's `ShopPreview` card, nowhere else.
 - **Predictions carry a coin stake.** Each prediction costs a stake (the player's pick, at least `PREDICTION_MIN_STAKE`, or the challenge's fixed amount); a challenge can cap the total per player. A right one pays `payout()` = stake × `PAYOUT_MULTIPLIER` (2), ×`BOOST_MULTIPLIER` again on a big (`boost`) match, plus `POINTS_PER_RIGHT_CALL` points. Stakes and payouts are coins (amber); rank still reads points only.
+- **Sponsor banners** (`promos`): always labelled "Sponsored" with the partner named; no countdowns, "last chance" or scarcity; never shown after a loss; never sell points or rank. Prize partners give prizes by points.
 - **Never sell advantage.** Nothing that earns points (the 2x boost) is for sale; no mystery boxes; coins can't be cashed out or sent. Packs are 18+ with a monthly limit.
 - **Wallet (`/wallet`):** balance + Points/Coins/Prizes strip, first-week missions, this week's mission and caps (amber bars: allowances), ways to earn, activity, the rules line.
 - **Shop (`/shop`):** cosmetics for My Club (kits, stadiums, boots, frames) and the Streak Freeze, bought with free coins (premium coins only while the `premiumCoins` flag is on, and always after free ones). Nothing in it touches a prediction, a point or a prize. See "Gamification" for the flow.
@@ -353,7 +386,8 @@ When you add a new shadcn component:
 
 - ❌ White or light-grey filled buttons.
 - ❌ Two lime CTAs in the same view (Yes/No pair excepted).
-- ❌ Lime for coins or live; amber for wins.
+- ❌ Lime for coins or live; amber for wins; gold for coins or actions.
+- ❌ Pitch textures (`floodlight`, `bg-turf`, `PitchMarkings`) on ordinary list cards.
 - ❌ Gradients as backgrounds, glows, blobs, emoji, sparkle icons.
 - ❌ `subtle` grey for small body text.
 - ❌ New colours, fonts or radii without adding a token here and in `globals.css`.

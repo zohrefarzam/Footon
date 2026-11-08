@@ -34,7 +34,7 @@ function Slip({ m, settled = false }: { m: Match; settled?: boolean }) {
       <Link
         href={`/match/${m.id}`}
         aria-label={`${m.home.name} v ${m.away.name}, ${settled ? "settled" : `edit until ${when}`}${boosted ? ", wins pay 2x" : ""}`}
-        className="flex items-center gap-3 px-4 pt-3.5 pb-2.5 outline-none transition-colors hover:bg-[#141417] focus-visible:ring-[3px] focus-visible:ring-inset focus-visible:ring-ring/60"
+        className="flex items-center gap-3 px-4 pt-3.5 pb-2.5 outline-none transition-colors hover:bg-surface-hover focus-visible:ring-[3px] focus-visible:ring-inset focus-visible:ring-ring/60"
       >
         <span className="flex shrink-0" aria-hidden="true">
           <TeamCrest code={m.home.code} colors={m.home.colors} size="sm" />

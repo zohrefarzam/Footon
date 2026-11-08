@@ -3,8 +3,10 @@ import { ArrowRight } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { LockedFeatureGate } from "./gamification/locked-feature-gate";
 import { ENTRY_TIERS, splitPool } from "@/lib/economy";
 import { HOT_STREAK, type Match } from "@/lib/mock-data";
+import { kickoffISO } from "@/lib/dates";
 import { cn } from "@/lib/utils";
 import { BackButton } from "./back-button";
 import { CrowdPoll } from "./crowd-poll";
@@ -46,7 +48,7 @@ export function LiveMatch({ match: m, league, backHref = "/" }: { match: Match; 
 
   const predict = league ? (
     <>
-      <QuestionCard question={league.question} />
+      <QuestionCard question={league.question} reward={{ matchId: m.id, questionId: `q${league.question.index}`, kickoffAt: kickoffISO(m) }} />
 
       <Card className="overflow-hidden">
         <div className="flex items-center justify-between px-4 pt-3.5 pb-2.5">
@@ -107,12 +109,14 @@ export function LiveMatch({ match: m, league, backHref = "/" }: { match: Match; 
             Start a league on this match and the live questions open here. Entry from {ENTRY_TIERS[0].toLocaleString("en-US")}, the pool goes to the top caller.
           </p>
         </div>
-        <Button asChild size="lg" className="w-full">
-          <Link href="/challenges/new">
-            Start a league
-            <ArrowRight className="rtl:rotate-180" aria-hidden="true" />
-          </Link>
-        </Button>
+        <LockedFeatureGate feature="createLeague" variant="button" title="Start a league" className="w-full">
+          <Button asChild size="lg" className="w-full">
+            <Link href="/challenges/new">
+              Start a league
+              <ArrowRight className="rtl:rotate-180" aria-hidden="true" />
+            </Link>
+          </Button>
+        </LockedFeatureGate>
       </Card>
     </>
   );

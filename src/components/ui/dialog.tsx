@@ -11,6 +11,8 @@ import { cn } from "@/lib/utils";
  * - `variant="sheet"` (default): bottom sheet in the mobile column, glass, grabber.
  *   Use it for invites, achievements, the quick-reply palette.
  * - `variant="center"`: a small centred card for confirmations.
+ * - `variant="full"`: the whole mobile column, for the rare moment that holds
+ *   the user (the Level Up screen). Dotted canvas, no glass.
  * Radix handles focus trap, Escape, scroll lock and aria wiring — keep it.
  */
 const Dialog = DialogPrimitive.Root;
@@ -37,7 +39,7 @@ function DialogContent({
   variant = "sheet",
   closeLabel = "Close",
   ...props
-}: React.ComponentProps<typeof DialogPrimitive.Content> & { variant?: "sheet" | "center"; closeLabel?: string }) {
+}: React.ComponentProps<typeof DialogPrimitive.Content> & { variant?: "sheet" | "center" | "full"; closeLabel?: string }) {
   return (
     <DialogPortal>
       <DialogOverlay />
@@ -49,11 +51,15 @@ function DialogContent({
             "glass inset-x-0 bottom-0 mx-auto max-h-[85dvh] w-full max-w-[430px] overflow-y-auto rounded-t-[28px] border-b-0 px-5 pt-3 pb-[calc(20px+env(safe-area-inset-bottom))] data-[state=open]:animate-in data-[state=open]:slide-in-from-bottom data-[state=closed]:animate-out data-[state=closed]:slide-out-to-bottom",
           variant === "center" &&
             "top-1/2 left-1/2 w-[calc(min(100vw,430px)-40px)] -translate-1/2 rounded-3xl bg-surface-2 p-5 shadow-[0_24px_48px_-20px_rgb(0_0_0/0.9)] data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95",
+          variant === "full" &&
+            "inset-0 mx-auto w-full max-w-[430px] overflow-y-auto border-0 bg-background px-5 pt-[calc(28px+env(safe-area-inset-top))] pb-[calc(20px+env(safe-area-inset-bottom))] data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=closed]:animate-out data-[state=closed]:fade-out-0",
           className,
         )}
         {...props}
       >
         {variant === "sheet" && <span aria-hidden="true" className="mx-auto h-1 w-10 shrink-0 rounded-full bg-line-strong" />}
+        {/* dotted canvas behind the content (a separate layer: twMerge treats bg-dots as a background colour) */}
+        {variant === "full" && <span aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10 bg-dots" />}
         {children}
         <DialogPrimitive.Close
           aria-label={closeLabel}

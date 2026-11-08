@@ -16,6 +16,7 @@ import { CoinAmount } from "@/components/footon/coin";
 import { StreakFlame } from "@/components/footon/streak";
 import { Card } from "@/components/ui/card";
 import { challenges, HOT_STREAK, matches, predictionSlips, wallet, type Match } from "@/lib/mock-data";
+import { kickoffISO } from "@/lib/dates";
 import { cn } from "@/lib/utils";
 
 export function generateStaticParams() {
@@ -105,7 +106,7 @@ export default async function MatchPage({ params }: PageProps<"/match/[id]">) {
 
   const builder = (
     <PredictionBuilder
-      match={{ id: m.id, status: m.status, kickoff: m.kickoff, home: m.home.name, away: m.away.name, boost: !!m.boost }}
+      match={{ id: m.id, status: m.status, kickoff: m.kickoff, kickoffAt: kickoffISO(m), home: m.home.name, away: m.away.name, boost: !!m.boost }}
       initial={predictionSlips[m.id]}
       rules={pool && { ...pool.rules, league: pool.name, setBy: pool.mine ? undefined : pool.from?.name }}
       balance={wallet.coins}

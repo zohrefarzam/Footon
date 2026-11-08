@@ -118,7 +118,10 @@
   /* Type: Geist for UI, Geist Mono for codes, Barlow Condensed for scores and coins */
   --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-geist-mono), ui-monospace, monospace;
-  --font-display: var(--font-barlow), "Arial Narrow", sans-serif;
+  /* Vazirmatn is limited to Arabic script (unicode-range), so it only draws Persian digits here */
+  --font-display: var(--font-vazirmatn), var(--font-barlow), "Arial Narrow", sans-serif;
+  /* Persian (gamification surfaces): Vazirmatn for Arabic script, Geist for Latin terms like XP */
+  --font-fa: var(--font-vazirmatn), var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
 }
 
 @theme {
@@ -160,6 +163,15 @@
   -webkit-background-clip: text;
   color: transparent;
   animation: var(--animate-shimmer);
+}
+
+/*
+ * A Persian, right-to-left gamification surface. Use on the wrapper that sets
+ * dir="rtl" lang="fa" (see `FaScope`). Persian never takes negative tracking.
+ */
+@utility fa-scope {
+  font-family: var(--font-fa);
+  letter-spacing: normal;
 }
 
 /* Glass surface for the dock and bottom sheets */

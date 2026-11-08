@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 
 import { Button } from "@/components/ui/button";
+import { userTimeZone } from "@/lib/gamification/day";
+import { outbox } from "@/lib/gamification/outbox";
 import { cn } from "@/lib/utils";
 
 type Answer = "yes" | "no";
@@ -30,11 +32,14 @@ export type LiveQuestion = {
 export function QuestionCard({
   question,
   onAnswer,
+  reward,
   compact = false,
   className,
 }: {
   question: LiveQuestion;
   onAnswer?: (a: Answer) => void;
+  /** Sends the answer to the gamification server (XP, streak). Omit for demo cards. */
+  reward?: { matchId: string; questionId: string; kickoffAt: string };
   compact?: boolean;
   className?: string;
 }) {
@@ -51,6 +56,13 @@ export function QuestionCard({
   const pick = (a: Answer) => {
     setAnswer(a);
     onAnswer?.(a);
+    if (reward) {
+      const key = `live_${reward.matchId}_${reward.questionId}`; // one answer per question
+      void outbox.getState().send({
+        kind: "liveAnswer",
+        input: { idempotencyKey: key, matchId: reward.matchId, questionId: reward.questionId, kickoff: reward.kickoffAt, answer: a, timeZone: userTimeZone() },
+      });
+    }
   };
 
   const r = 18;

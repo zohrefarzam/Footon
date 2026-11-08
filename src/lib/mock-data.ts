@@ -371,7 +371,6 @@ matches.push(
   },
 );
 
-export const fantasyProgress = { done: 3, total: 5 };
 
 export const league = {
   name: "Sunday Rivals",
@@ -627,17 +626,12 @@ export const people: Record<string, string> = {
 
 export const profile = {
   name: "You",
-  level: 7,
   /** Total points: skill only, from right calls. Rank and prizes read this. */
   points: 4820,
-  xp: 640,
-  xpNext: 1000,
   streak: { current: 3, best: 6 },
   referral: { code: "FOOT-Y7K2", bonus: 1500, joined: 2 },
   /** Clubs you follow; picked in onboarding, edited on Profile. */
   favoriteTeams: ["LIV"],
-  /** Placeholder until the XP / Level / Badge doc lands. */
-  badges: 3,
   /** Calls you have running right now (shown in the island). */
   activeCalls: 2,
 };

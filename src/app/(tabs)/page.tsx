@@ -9,7 +9,7 @@ import { InviteTile } from "@/components/footon/invite-tile";
 import { MatchRow } from "@/components/footon/match-row";
 import { ShopPreview } from "@/components/footon/shop-preview";
 import { Card } from "@/components/ui/card";
-import { fantasyProgress, invites, matches, shop } from "@/lib/mock-data";
+import { invites, matches, shop } from "@/lib/mock-data";
 
 const SHOP_PICKS = ["celebration", "banter", "league-look"];
 
@@ -51,7 +51,7 @@ export default function HomePage() {
       {/* compact tiles: invites and fantasy stay tile-sized */}
       <div className="flex gap-2.5">
         {invites.length > 0 && <InviteTile invites={invites} className="flex-1" />}
-        <FantasyUnlock done={fantasyProgress.done} total={fantasyProgress.total} className="flex-[1.4]" />
+        <FantasyUnlock className="flex-[1.4]" />
       </div>
 
       {shopItems.length > 0 && <ShopPreview items={shopItems} />}

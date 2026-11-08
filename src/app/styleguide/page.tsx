@@ -24,6 +24,7 @@ import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { GamificationDemo } from "./gamification-demo";
 
 const swatches = [
   ["background", "#09090B", "App ground"],
@@ -117,8 +118,7 @@ export default function StyleguidePage() {
           <TeamCrest code="MCI" size="lg" />
         </div>
         <div className="grid max-w-sm gap-3">
-          <FantasyUnlock done={3} total={5} />
-          <FantasyUnlock done={5} total={5} />
+          <FantasyUnlock />
         </div>
       </Section>
 
@@ -207,6 +207,10 @@ export default function StyleguidePage() {
             </DialogContent>
           </Dialog>
         </div>
+      </Section>
+
+      <Section title="Gamification (mock server)">
+        <GamificationDemo />
       </Section>
     </main>
   );

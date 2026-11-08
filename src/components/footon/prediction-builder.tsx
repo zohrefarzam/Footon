@@ -16,6 +16,8 @@ import {
   type Prediction,
   type PredictionType,
 } from "@/lib/predictions";
+import { newIdempotencyKey, outbox, useOutboxEntry, type OutboxEntry } from "@/lib/gamification/outbox";
+import { userTimeZone } from "@/lib/gamification/day";
 import { cn } from "@/lib/utils";
 import { BoostBadge } from "./boost-badge";
 import { Coin, CoinAmount } from "./coin";
@@ -40,7 +42,13 @@ export function TypeIcon({ type, className }: { type: PredictionType; className?
 }
 
 export type PredictionBuilderProps = {
-  match: { id: string; status: "live" | "upcoming" | "finished"; kickoff?: string; home: string; away: string; boost?: boolean };
+  match: {
+    id: string;
+    status: "live" | "upcoming" | "finished";
+    kickoff?: string;
+    /** Kickoff instant (ISO): the server keys the streak day from it. */
+    kickoffAt?: string;
+    home: string; away: string; boost?: boolean };
   /** What you've already locked on this match. */
   initial?: Prediction[];
   /** The challenge's stake rules, when you play this match in one. */
@@ -59,8 +67,22 @@ export function PredictionBuilder({ match: m, initial = [], rules, balance }: Pr
   const [items, setItems] = useState<Prediction[]>(initial);
   const [locked, setLocked] = useState(initial.length > 0);
   const [seq, setSeq] = useState(0);
+  const [sendKey, setSendKey] = useState<string | null>(null);
+  const sending = useOutboxEntry(sendKey);
   const fixed = rules && rules.stake !== "free" ? rules.stake.fixed : undefined;
   const editing = open && !locked;
+
+  // the slip is saved the moment you lock it; the server call (and any
+  // reward) follows, and a failed send stays retryable with the same key
+  const lockIn = () => {
+    setLocked(true);
+    const key = newIdempotencyKey(`pred_${m.id}`);
+    setSendKey(key);
+    void outbox.getState().send({
+      kind: "prediction",
+      input: { idempotencyKey: key, matchId: m.id, kickoff: m.kickoffAt ?? new Date().toISOString(), count: items.length, timeZone: userTimeZone() },
+    });
+  };
 
   const minFor = (t: PredictionType) => fixed ?? PREDICTION_MIN_STAKE[t];
   const toggleType = (t: PredictionType) => {
@@ -302,7 +324,7 @@ export function PredictionBuilder({ match: m, initial = [], rules, balance }: Pr
                 Pick an answer for {unpicked === 1 ? "1 more" : `${unpicked} more`}
               </Button>
             ) : (
-              <Button size="lg" disabled={lowStake} onClick={() => setLocked(true)} className="justify-between ps-5 pe-4">
+              <Button size="lg" disabled={lowStake} onClick={lockIn} className="justify-between ps-5 pe-4">
                 <span>
                   Lock in {items.length} {items.length === 1 ? "prediction" : "predictions"}
                 </span>
@@ -324,6 +346,8 @@ export function PredictionBuilder({ match: m, initial = [], rules, balance }: Pr
           </>
         )}
 
+        <SyncStatus entry={sending} onRetry={() => sendKey && void outbox.getState().retry(sendKey)} />
+
         {open && locked && (
           <Button variant="secondary" size="lg" onClick={() => setLocked(false)}>
             <Pencil aria-hidden="true" />
@@ -332,5 +356,22 @@ export function PredictionBuilder({ match: m, initial = [], rules, balance }: Pr
         )}
       </div>
     </section>
+  );
+}
+
+/** "Saved" is never in doubt; this only says whether the server has it yet. */
+function SyncStatus({ entry, onRetry }: { entry: OutboxEntry | undefined; onRetry: () => void }) {
+  return (
+    <div aria-live="polite" className="empty:hidden">
+      {entry?.status === "sending" && <p className="text-shimmer text-center text-xs">Saved · syncing</p>}
+      {entry?.status === "failed" && (
+        <p className="flex items-center justify-center gap-2 text-xs text-muted-foreground">
+          Saved on this phone, not sent yet.
+          <Button variant="secondary" size="sm" className="h-8 rounded-sm px-3" onClick={onRetry}>
+            Retry
+          </Button>
+        </p>
+      )}
+    </div>
   );
 }

@@ -17,6 +17,7 @@ import { Card, CardRow } from "@/components/ui/card";
 import { challengesWithMatch } from "@/lib/challenges";
 import { splitPool } from "@/lib/economy";
 import { challenges, people, predictionSlips, prematchChat, wallet } from "@/lib/mock-data";
+import { kickoffISO } from "@/lib/dates";
 import { cn } from "@/lib/utils";
 
 export function generateStaticParams() {
@@ -39,7 +40,7 @@ export default async function ChallengePage({ params }: PageProps<"/challenges/[
   const pool = poolLine(c.entry, c.members.length + (c.status === "invited" ? 1 : 0));
   const builder = (
     <PredictionBuilder
-      match={{ id: m.id, status: m.status, kickoff: m.kickoff, home: m.home.name, away: m.away.name, boost: !!m.boost }}
+      match={{ id: m.id, status: m.status, kickoff: m.kickoff, kickoffAt: kickoffISO(m), home: m.home.name, away: m.away.name, boost: !!m.boost }}
       initial={c.status === "invited" ? [] : predictionSlips[m.id]}
       rules={{ ...c.rules, league: c.name, setBy }}
       balance={wallet.coins - (c.status === "invited" ? c.entry : 0)}

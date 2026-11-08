@@ -1,6 +1,7 @@
 import { ArrowLeftRight } from "lucide-react";
 
 import { AppShell } from "@/components/footon/app-shell";
+import { LockedFeatureGate } from "@/components/footon/gamification/locked-feature-gate";
 import { Button } from "@/components/ui/button";
 import { Card, CardRow } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
@@ -9,6 +10,8 @@ import { Pitch } from "./pitch";
 export default function FantasyPage() {
   return (
     <AppShell className="gap-4 pt-3.5">
+      <h1 className="sr-only">Fantasy</h1>
+      <LockedFeatureGate feature="fantasy" title="Fantasy">
       <header className="flex items-end justify-between">
         <div>
           <p className="text-[13px] text-muted-foreground">Matchday 12 · live</p>
@@ -57,6 +60,7 @@ export default function FantasyPage() {
 
       {/* ponytail: no save handler — wire to the lineup API when it exists */}
       <Button size="lg">Save lineup</Button>
+      </LockedFeatureGate>
     </AppShell>
   );
 }

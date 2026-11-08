@@ -4,6 +4,7 @@ import { Plus } from "lucide-react";
 import { AppShell } from "@/components/footon/app-shell";
 import { ChallengeList } from "@/components/footon/challenge-list";
 import { InviteStrip } from "@/components/footon/invite-strip";
+import { LockedFeatureGate } from "@/components/footon/gamification/locked-feature-gate";
 import { Button } from "@/components/ui/button";
 import { challengesWithMatch } from "@/lib/challenges";
 import { invites, matches } from "@/lib/mock-data";
@@ -23,12 +24,14 @@ export default function ChallengesPage() {
     <AppShell>
       <header className="flex items-center justify-between gap-3">
         <h1 className="text-[26px] font-bold tracking-[-0.03em]">Challenges</h1>
-        <Button asChild size="sm" className="h-10 rounded-sm px-3.5">
-          <Link href="/challenges/new">
-            <Plus strokeWidth={2.4} aria-hidden="true" />
-            New challenge
-          </Link>
-        </Button>
+        <LockedFeatureGate feature="createLeague" variant="button" size="sm" title="New challenge">
+          <Button asChild size="sm" className="h-10 rounded-sm px-3.5">
+            <Link href="/challenges/new">
+              <Plus strokeWidth={2.4} aria-hidden="true" />
+              New challenge
+            </Link>
+          </Button>
+        </LockedFeatureGate>
       </header>
 
       <div id="invites" className="scroll-mt-20">

@@ -1,13 +1,30 @@
 /**
- * Product analytics, stubbed. The Phase 2 shop exists to measure purchase
- * intent before any payment is built: who opens the shop, taps an item, asks
- * to be notified, and which item gets the taps. Wire this to the real
- * analytics client; until then events go to `window.dataLayer` if present.
+ * Product analytics, stubbed: events go to `window.dataLayer` if present.
+ * Wire this to the real analytics client.
+ *
+ * Client events are UI-only: what the user SAW or TAPPED. Anything the server
+ * decides (xp_earned, level_up, badge_earned, streak_*, quest_*,
+ * item_purchased…) is tracked server-side and must never be sent from here.
  */
-export type TrackEvent = "shop_open" | "shop_item_tap" | "shop_notify";
+export type TrackEvents = {
+  // shop (Phase 2 intent test, until the cosmetic shop replaces it)
+  shop_open: Record<string, never>;
+  shop_item_tap: { item: string };
+  shop_notify: { item: string };
+  // gamification surfaces
+  shop_viewed: { surface?: string };
+  card_shared: { surface: "level_up" | "my_club"; method: "telegram" | "web_share" | "download" | "link" };
+  level_up_viewed: { level: number };
+  badge_toast_viewed: { badge: string };
+  badge_wall_viewed: Record<string, never>;
+  quest_list_viewed: { count: number };
+  quest_completed_viewed: { quest: string };
+  streak_broken_viewed: { best: number };
+};
+export type TrackEvent = keyof TrackEvents;
 
-export function track(event: TrackEvent, props: Record<string, string | number> = {}) {
+export function track<E extends TrackEvent>(event: E, ...[props]: TrackEvents[E] extends Record<string, never> ? [] : [TrackEvents[E]]) {
   if (typeof window === "undefined") return;
   const w = window as Window & { dataLayer?: unknown[] };
-  w.dataLayer?.push({ event, ...props });
+  w.dataLayer?.push({ event, ...(props ?? {}) });
 }

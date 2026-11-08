@@ -1,7 +1,7 @@
 import { Dock } from "@/components/footon/dock";
-import { LevelBar } from "@/components/footon/level-bar";
+import { LevelProgressBar } from "@/components/footon/gamification/level-progress-bar";
 import { LiveIsland } from "@/components/footon/live-island";
-import { liveQuestion, matches, profile, wallet } from "@/lib/mock-data";
+import { liveQuestion, matches, wallet } from "@/lib/mock-data";
 
 /**
  * Shared shell for the dock tabs (Home, Challenges, Live, Profile, plus Fantasy).
@@ -37,7 +37,7 @@ export default function TabsLayout({ children }: LayoutProps<"/">) {
       </div>
       {/* XP · level · badges: scrolls with the page, under the island */}
       <div className="mx-auto w-full max-w-[430px] bg-background px-5 pt-1">
-        <LevelBar level={profile.level} xp={profile.xp} xpNext={profile.xpNext} badges={profile.badges} />
+        <LevelProgressBar />
       </div>
       {children}
       <Dock live={!!live} />

@@ -3,6 +3,7 @@ import { ChevronRight } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
+import { LockedFeatureGate } from "./gamification/locked-feature-gate";
 import { ENTRY_TIERS, FREE_TABLE_REWARDS, splitPool } from "@/lib/economy";
 import { CoinAmount } from "./coin";
 
@@ -57,15 +58,17 @@ export function MatchTables({ joinedFree, coin }: { joinedFree: boolean; coin?: 
             </span>
           </Link>
         ) : (
-          <Link href="/challenges/new" className={rowLink}>
-            <div className="min-w-0 flex-1">
-              <p className="text-[15px] font-semibold">Friends&apos; pool</p>
-              <p className="mt-0.5 text-xs text-muted-foreground">
-                Start a league · entry from {ENTRY_TIERS[0].toLocaleString("en-US")}
-              </p>
-            </div>
-            <ChevronRight className="size-4 text-muted-foreground rtl:rotate-180" aria-hidden="true" />
-          </Link>
+          <LockedFeatureGate feature="createLeague" variant="row" title="Friends' pool" className="border-t border-line">
+            <Link href="/challenges/new" className={rowLink}>
+              <div className="min-w-0 flex-1">
+                <p className="text-[15px] font-semibold">Friends&apos; pool</p>
+                <p className="mt-0.5 text-xs text-muted-foreground">
+                  Start a league · entry from {ENTRY_TIERS[0].toLocaleString("en-US")}
+                </p>
+              </div>
+              <ChevronRight className="size-4 text-muted-foreground rtl:rotate-180" aria-hidden="true" />
+            </Link>
+          </LockedFeatureGate>
         )}
 
         <p className="border-t border-line px-4 py-2.5 text-xs text-muted-foreground">Points rank you on both. Coins in never change your rank.</p>

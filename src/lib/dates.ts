@@ -19,3 +19,13 @@ export function dayLabel(offset = 0) {
 export function longDate(offset = 0) {
   return dateFor(offset).toLocaleDateString("en-GB", { weekday: "long", month: "long", day: "numeric", timeZone: "UTC" });
 }
+
+/**
+ * Mock kickoff instant (ISO, UTC) for a fixture: its day from `dayOffset` and
+ * its `kickoff` time, 20:00 when the mock has none (live and finished rows).
+ * The real API sends a proper instant; this only feeds the mock server.
+ */
+export function kickoffISO(m: { kickoff?: string; dayOffset?: number }) {
+  const day = dateFor(m.dayOffset ?? 0).toISOString().slice(0, 10);
+  return `${day}T${m.kickoff ?? "20:00"}:00Z`;
+}

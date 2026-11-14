@@ -64,7 +64,7 @@ export function PromoBanner({ promo: p, slot, className }: { promo: Promo; slot:
       slot={slot}
       href={p.href}
       external={p.external}
-      aria-label={`تبلیغ ${p.partner}: ${p.headline}. ${p.body} ${p.cta}${p.external ? "، سایت شریک باز می‌شود" : ""}`}
+      aria-label={`تبلیغ ${p.partner}: ${p.headline}. ${p.body} ${p.cta}${p.external ? "، سایت شریک باز میشه" : ""}`}
       className={cn(
         "group relative isolate grid h-[172px] grid-cols-[minmax(0,1fr)_88px] gap-2 overflow-hidden rounded-2xl p-4 outline-none transition-transform duration-200 ease-spring active:scale-[0.98] focus-visible:ring-[3px] focus-visible:ring-ring/60",
         className,

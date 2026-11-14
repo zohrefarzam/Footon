@@ -43,7 +43,7 @@ function QuestionItem({ q }: { q: FriendQuestion }) {
       >
         <div className="min-w-0 flex-1">
           <p className="text-[11px] text-muted-foreground">
-            {q.you ? "تو پرسیدی" : `${q.from} می‌پرسد`} • تا {q.closes}
+            {q.you ? "تو پرسیدی" : `${q.from} می‌پرسه`} • تا {q.closes}
           </p>
           <p className="mt-0.5 text-sm font-semibold">{q.text}</p>
         </div>

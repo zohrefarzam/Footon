@@ -71,7 +71,7 @@ export function ScorePicker({
         <h3 id="score-picker" className="font-display text-[17px] leading-none font-bold tracking-[0.04em] uppercase">
           نتیجه را بگو
         </h3>
-        <span className="text-xs text-muted-foreground">{value ? "در برگهٔ پیش‌بینی‌ات" : "+ را بزن تا بگویی"}</span>
+        <span className="text-xs text-muted-foreground">{value ? "در برگهٔ پیش‌بینی‌ات" : "+ را بزن تا بگی"}</span>
       </div>
       <div className="mt-4 grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-end gap-1">
         <Stepper team={home} value={h} active={!!value} set={(n) => onChange([clamp(n), a])} />

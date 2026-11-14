@@ -23,7 +23,7 @@ export const copy = {
   levelBadge: "نشان سطح",
   continue: "ادامه",
   share: "اشتراک‌گذاری",
-  shareLevelText: (l: number, tier: string) => `همین الان در فوتون به سطح ${n(l)} (${tier}) رسیدم. بیا بازی بعدی را با هم پیش‌بینی کنیم.`,
+  shareLevelText: (l: number, tier: string) => `همین الان توی فوتون رسیدم به سطح ${n(l)} (${tier}). بیا بازی بعدی را با هم پیش‌بینی کنیم.`,
 
   // Celebrations, announced via aria-live
   announceXp: (xp: number, coins: number, multiplier: number) =>
@@ -36,7 +36,7 @@ export const copy = {
   skip: "رد کردن",
   close: "بستن",
   locked: "قفل",
-  rarity: "از بازیکن‌ها دارندش",
+  rarity: "از بازیکن‌ها دارنش",
 
   // Badges
   newBadge: "نشان تازه",
@@ -48,7 +48,7 @@ export const copy = {
   pinned: "سنجاق‌شده",
   pinBadge: (name: string) => `سنجاق کردن ${name}`,
   unpinBadge: (name: string) => `برداشتن سنجاق ${name}`,
-  pinFull: (max: number) => `تا ${n(max)} نشان را می‌توانی سنجاق کنی. برای عوض کردن، یکی را بردار.`,
+  pinFull: (max: number) => `تا ${n(max)} نشان را می‌تونی سنجاق کنی. برای عوض کردن، اول یکی را بردار.`,
   pinSlot: "سنجاق یک نشان",
   pinFailed: "ذخیره نشد. دوباره امتحان کن.",
   badgeFamily: { level: "سطح", achievement: "دستاوردها", social: "دوستان", seasonal: "فصلی" },
@@ -59,7 +59,7 @@ export const copy = {
   // Persian nouns don't change after a number, so the count is only part of the signature
   matchDays: (...[]: [d: number]) => "روز مسابقه",
   streakUnit: (...[]: [d: number]) => "روز مسابقه پشت سر هم",
-  streakNone: "یک بازی را پیش‌بینی کن تا زنجیره شروع شود.",
+  streakNone: "یه بازی را پیش‌بینی کن تا زنجیره‌ات شروع بشه.",
   bestRun: (d: number) => `بهترین ${n(d)}`,
   bestRunLabel: "بهترین زنجیره‌ات",
   toMilestone: (left: number, at: number) => `${n(left)} روز دیگر تا جایزهٔ ${n(at)} روزه`,
@@ -70,7 +70,7 @@ export const copy = {
 
   // Broken streak: no blame, no alarm
   brokenTitle: "این زنجیره تمام شد",
-  brokenBody: (best: number) => `بهترین رکوردت هنوز ${n(best)} روز مسابقه است. هر زنجیره با یک پیش‌بینی شروع می‌شود.`,
+  brokenBody: (best: number) => `بهترین رکوردت هنوز ${n(best)} روز مسابقه‌ست. هر زنجیره با یه پیش‌بینی شروع میشه.`,
   brokenCta: "شروع زنجیرهٔ تازه",
   brokenLater: "حالا نه",
 
@@ -85,7 +85,7 @@ export const copy = {
   doneOf: (d: number, t: number) => `${n(d)} از ${n(t)} انجام شد`,
   questDifficulty: { easy: "آسان", social: "با دوستان", challenge: "چالشی" },
   questKind: { daily: "روزانه", weekly: "هفتگی", seasonal: "فصل", group: "لیگ" },
-  resetsIn: (left: string) => `تازه می‌شود تا ${left} دیگر`,
+  resetsIn: (left: string) => `${left} دیگه تازه میشه`,
   endsIn: (left: string) => `${left} تا پایان`,
   questDone: "انجام شد",
   questDoneEyebrow: "مأموریت انجام شد",
@@ -95,8 +95,8 @@ export const copy = {
   // Shop
   shopTitle: "فروشگاه",
   shopBlurb: "لباس، ورزشگاه و کفش برای باشگاهت",
-  shopIntro: "ظاهر باشگاهت. هیچ‌چیز اینجا پیش‌بینی، امتیاز یا جایزه را عوض نمی‌کند.",
-  shopRules: "سطح خریدنی نیست. سکه هیچ‌وقت امتیاز، رتبه یا جایزه نمی‌خرد و جعبهٔ شانسی هم نداریم.",
+  shopIntro: "اینجا ظاهر باشگاهت را می‌سازی. هیچ‌کدوم از این‌ها پیش‌بینی، امتیاز یا جایزه را عوض نمی‌کنه.",
+  shopRules: "سطح خریدنی نیست. با سکه هیچ‌وقت امتیاز، رتبه یا جایزه نمی‌خری، جعبهٔ شانسی هم نداریم.",
   shopSection: { freeze: "زنجیره‌ات را نگه دار", kit: "لباس‌ها", stadium: "ورزشگاه‌ها", boots: "کفش‌ها", frame: "قاب‌ها" },
   isNew: "تازه",
   owned: "داری",
@@ -105,39 +105,39 @@ export const copy = {
   previewOn: "روی باشگاهت",
   buyLabel: "خرید",
   confirmTitle: (name: string) => `${name} را می‌خری؟`,
-  confirmBody: (price: number, after: number) => `${n(price)} سکه. ${n(after)} سکه برایت می‌ماند.`,
+  confirmBody: (price: number, after: number) => `${n(price)} سکه. ${n(after)} سکه برات می‌مونه.`,
   confirmSplit: (free: number, premium: number) => `اول ${n(free)} سکهٔ رایگان، بعد ${n(premium)} سکهٔ ویژه`,
   confirm: "بخرش",
   cancel: "حالا نه",
-  buying: "در حال خرید…",
+  buying: "داریم می‌خریمش…",
   bought: "مال تو شد",
-  equip: "بپوشانش",
-  equipping: "در حال پوشاندن…",
+  equip: "بپوشونش",
+  equipping: "داریم می‌پوشونیمش…",
   done: "تمام",
   needMore: (c: number) => `${n(c)} سکهٔ دیگر لازم داری`,
   waysToEarn: "راه‌های گرفتن سکه",
-  conflict: "تا داشتی نگاه می‌کردی چیزی عوض شد. ببین و دوباره امتحان کن.",
-  offline: "به فروشگاه وصل نشدیم. چیزی کم نشد.",
+  conflict: "تا داشتی نگاه می‌کردی یه چیزی عوض شد. یه نگاه بنداز و دوباره امتحان کن.",
+  offline: "به فروشگاه وصل نشدیم. سکه‌ای ازت کم نشد.",
   noFunds: "هنوز سکهٔ کافی برای این نداری.",
   tryAgain: "دوباره امتحان کن",
-  freezeFull: (max: number) => `${n(max)} محافظ داری، بیشترین تعداد ممکن`,
+  freezeFull: (max: number) => `${n(max)} تا محافظ داری، بیشتر از این نمیشه`,
   itemAria: (name: string, state: string) => `${name}، ${state}`,
   priceAria: (price: number) => `${n(price)} سکه`,
 
   // My Club
   myClub: "باشگاه من",
-  myClubBlurb: "لباس، ورزشگاه، کفش و نشان‌ها. دوستانت هم می‌بینند.",
-  clubUnavailable: "این باشگاه برای تو باز نیست.",
-  customise: "تغییرش بده در فروشگاه",
+  myClubBlurb: "لباس، ورزشگاه، کفش و نشان‌ها. دوستات هم می‌بیننش.",
+  clubUnavailable: "این باشگاه را نمی‌تونی ببینی.",
+  customise: "توی فروشگاه عوضش کن",
   shareClub: "اشتراک در تلگرام",
-  sharing: "در حال ساختن کارت…",
-  shareClubText: (name: string, level: number, tier: string) => `${name} در فوتون: سطح ${n(level)}، ${tier}. بیا بازی بعدی را با هم پیش‌بینی کنیم.`,
+  sharing: "داریم کارت را می‌سازیم…",
+  shareClubText: (name: string, level: number, tier: string) => `${name} توی فوتون: سطح ${n(level)}، ${tier}. بیا بازی بعدی را با هم پیش‌بینی کنیم.`,
   clubAria: (name: string, level: number, tier: string, kit: string | null, streak: number) =>
     `${name}: سطح ${n(level)}، ${tier}${kit ? `، با ${kit}` : ""}${streak > 0 ? `، ${n(streak)} روز مسابقه پشت سر هم` : ""}`,
 
   // Combo (right answers in a row, in one match)
   comboLabel: "کمبو",
-  comboCount: (c: number) => (c === 0 ? "هنوز زنجیره‌ای نیست" : `${n(c)} درست پشت سر هم`),
+  comboCount: (c: number) => (c === 0 ? "هنوز هیچی پشت سر هم نیست" : `${n(c)} درست پشت سر هم`),
   comboAria: (c: number, m: number, next: { at: number; multiplier: number } | null) =>
     `کمبو: ${n(c)} درست پشت سر هم، XP ${formatTimes(m)}${next ? `. ${formatTimes(next.multiplier)} با ${n(next.at)}` : ""}`,
 } as const;

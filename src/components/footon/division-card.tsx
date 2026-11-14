@@ -26,7 +26,7 @@ export function RankStrip({ rank, size, promote, relegate, tone = "dark", classN
   return (
     <div
       role="img"
-      aria-label={`رتبهٔ ${formatNumber(rank)} از ${formatNumber(size)}. ${formatNumber(promote)} نفر اول صعود و ${formatNumber(relegate)} نفر آخر سقوط می‌کنند.`}
+      aria-label={`رتبهٔ ${formatNumber(rank)} از ${formatNumber(size)}. ${formatNumber(promote)} نفر اول صعود می‌کنن و ${formatNumber(relegate)} نفر آخر سقوط.`}
       className={cn("grid h-5 items-end gap-[3px]", className)}
       style={{ gridTemplateColumns: `repeat(${size}, minmax(0, 1fr))` }}
     >

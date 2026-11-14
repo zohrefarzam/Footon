@@ -29,7 +29,7 @@ export function FantasyUnlock({ href = "/fantasy", className }: { href?: string;
     return (
       <Link
         href={href}
-        aria-label="فانتزی باز است"
+        aria-label="فانتزی بازه"
         className={cn(
           tile,
           "group border-primary-line bg-primary-soft outline-none transition-transform duration-200 ease-spring focus-visible:ring-[3px] focus-visible:ring-ring/60 active:scale-[0.98]",
@@ -66,7 +66,7 @@ export function FantasyUnlock({ href = "/fantasy", className }: { href?: string;
       <span aria-hidden="true" className="flex items-center gap-1.5">
         <Lock className="size-3.5 shrink-0 text-muted-foreground" strokeWidth={2.2} />
         <span className="truncate text-[13px] font-semibold">
-          فانتزی<span className="max-[359px]:hidden"> قفل است</span>
+          فانتزی<span className="max-[359px]:hidden"> قفله</span>
         </span>
       </span>
       <span aria-hidden="true" className="flex items-center gap-2">

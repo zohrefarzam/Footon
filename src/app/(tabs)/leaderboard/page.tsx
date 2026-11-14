@@ -59,7 +59,7 @@ export default function LeaderboardPage() {
             </div>
             <RankStrip rank={you.rank} size={d.size} promote={d.promote} relegate={d.relegate} />
             <p className="text-xs text-muted-foreground">
-              آخر هفته {formatNumber(d.promote)} نفر اول یک دسته بالا می‌روند و {formatNumber(d.relegate)} نفر آخر پایین. فقط پیش‌بینی درست امتیاز دارد.
+              آخر هفته {formatNumber(d.promote)} نفر اول یه دسته میرن بالا و {formatNumber(d.relegate)} نفر آخر میان پایین. فقط پیش‌بینی درست امتیاز داره.
             </p>
           </>
         )}

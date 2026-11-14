@@ -58,7 +58,7 @@ export default async function ChallengePage({ params }: PageProps<"/challenges/[
         <Clock className="size-5 text-muted-foreground" aria-hidden="true" />
         <p className="text-[15px] font-semibold">این دعوت با شروع بازی منقضی شد</p>
         <p className="max-w-[30ch] text-sm text-muted-foreground">
-          چالش {c.from?.name ?? "دوستت"} قبل از جواب تو بسته شد. چیزی کم نشد.
+          چالش {c.from?.name ?? "دوستت"} قبل از اینکه جواب بدی بسته شد. سکه‌ای ازت کم نشد.
         </p>
       </div>
     ) : c.status === "invited" && c.from ? (
@@ -98,7 +98,7 @@ export default async function ChallengePage({ params }: PageProps<"/challenges/[
         <Standings rows={c.table} caption={`جدول ${c.name}`} className="mt-1" />
       ) : (
         <>
-          <p className="px-4 pt-3 pb-1 text-[11px] font-semibold tracking-[0.08em] text-muted-foreground uppercase">جدول با شروع بازی شروع می‌شود</p>
+          <p className="px-4 pt-3 pb-1 text-[11px] font-semibold tracking-[0.08em] text-muted-foreground uppercase">جدول با شروع بازی راه می‌افته</p>
           {members.map((p) => (
             <CardRow key={p.initial} className="py-3">
               <Avatar className="size-8">
@@ -132,7 +132,7 @@ export default async function ChallengePage({ params }: PageProps<"/challenges/[
         </div>
       )}
       <p className="border-t border-line px-4 py-3 text-xs text-muted-foreground">
-        ورودی نفری {formatNumber(c.entry)} • {pool}. امتیاز تعیین می‌کند؛ مبلغ شرط هیچ‌وقت رتبه‌ات را عوض نمی‌کند.
+        ورودی نفری {formatNumber(c.entry)} • {pool}. برنده را امتیاز تعیین می‌کنه؛ مبلغ شرط هیچ‌وقت رتبه‌ات را عوض نمی‌کنه.
       </p>
     </Card>
   );
@@ -147,7 +147,7 @@ export default async function ChallengePage({ params }: PageProps<"/challenges/[
         </>
       ) : (
         <p className="rounded-xl border border-dashed border-line-strong px-4 py-6 text-center text-sm text-muted-foreground">
-          اخبار تیم‌ها و اطلاعات بازی نزدیک شروع اینجا می‌آید.
+          اخبار تیم‌ها و اطلاعات بازی نزدیک شروع اینجا میاد.
         </p>
       )
     ) : (

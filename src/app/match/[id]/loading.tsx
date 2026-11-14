@@ -7,7 +7,7 @@ export default function MatchLoading() {
   return (
     <AppShell dock={false} className="gap-0 pt-0">
       <p className="sr-only" role="status">
-        در حال باز کردن بازی
+        بازی داره باز میشه
       </p>
       <div className="h-14" />
       <div className="floodlight relative isolate -mx-5 flex items-center justify-between gap-3 overflow-hidden border-b border-line px-8 pt-3 pb-6">

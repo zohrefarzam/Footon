@@ -145,7 +145,7 @@ export default function PredictionsPage() {
       </header>
 
       {withSlip.length === 0 ? (
-        <EmptyState title="هنوز پیش‌بینی‌ای نداری" body="یک بازی انتخاب کن و قبل از شروع، گل‌ها، کرنرها یا کارت‌ها را پیش‌بینی کن." action={{ label: "دیدن بازی‌ها", href: "/live" }} />
+        <EmptyState title="هنوز پیش‌بینی‌ای نداری" body="یه بازی انتخاب کن و قبل از شروعش گل، کرنر یا کارت را پیش‌بینی کن." action={{ label: "دیدن بازی‌ها", href: "/live" }} />
       ) : (
         <>
           {open.length > 0 && (
@@ -168,7 +168,7 @@ export default function PredictionsPage() {
           {open.length > 0 && (
             <section aria-labelledby="pred-open" className="flex flex-col gap-2.5">
               <h2 id="pred-open" className="text-[13px] font-medium text-muted-foreground">
-                باز • تا شروع بازی قابل ویرایش
+                باز • تا شروع بازی می‌تونی عوضشون کنی
               </h2>
               <Card className="overflow-hidden">
                 <ul>
@@ -199,7 +199,7 @@ export default function PredictionsPage() {
             href="/live"
             className="-mt-1 flex h-11 items-center justify-center gap-0.5 self-center rounded-md px-3 text-sm font-semibold text-muted-foreground outline-none hover:text-foreground focus-visible:ring-[3px] focus-visible:ring-ring/60"
           >
-            یک بازی دیگر را پیش‌بینی کن
+            یه بازی دیگه را هم پیش‌بینی کن
             <ChevronRight className="size-4 rtl:rotate-180" aria-hidden="true" />
           </Link>
         </>

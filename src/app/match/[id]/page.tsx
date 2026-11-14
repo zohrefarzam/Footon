@@ -33,7 +33,7 @@ function YourResult({ match: m, league }: { match: Match; league?: { name: strin
   if (!you)
     return (
       <p className="rounded-xl border border-dashed border-line-strong px-4 py-6 text-center text-sm text-muted-foreground">
-        این بازی را پیش‌بینی نکردی. پیش‌بینی‌ها قبل از شروع هر بازی باز است.
+        این بازی را پیش‌بینی نکردی. پیش‌بینی هر بازی تا قبل از شروعش بازه.
       </p>
     );
   const won = league?.rank === 1;
@@ -80,7 +80,7 @@ function YourResult({ match: m, league }: { match: Match; league?: { name: strin
         <span className="font-semibold text-foreground">
           {formatNumber(you.right)} از {formatNumber(you.calls)}
         </span>{" "}
-        پیش‌بینی درست{you.streak >= HOT_STREAK ? `، با ${formatNumber(you.streak)} درست پشت سر هم در پایان.` : "."}
+        پیش‌بینی درست{you.streak >= HOT_STREAK ? `، و آخرش ${formatNumber(you.streak)} تا پشت سر هم درست گفتی.` : "."}
       </p>
     </Card>
   );
@@ -164,7 +164,7 @@ export default async function MatchPage({ params }: PageProps<"/match/[id]">) {
     </>
   ) : (
     <p className="rounded-xl border border-dashed border-line-strong px-4 py-6 text-center text-sm text-muted-foreground">
-      اخبار تیم‌ها و اطلاعات بازی نزدیک شروع اینجا می‌آید.
+      اخبار تیم‌ها و اطلاعات بازی نزدیک شروع اینجا میاد.
     </p>
   );
 

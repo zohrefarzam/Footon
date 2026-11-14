@@ -125,7 +125,7 @@ export default function MePage() {
         </div>
         <div className="flex-1">
           <p className="text-[15px] font-semibold">{formatNumber(2)} بوست مانده</p>
-          <p className="mt-0.5 text-xs text-muted-foreground">امتیازت دو برابر • یک بار در هر بازی • به‌دست‌آوردنی، نه فروشی</p>
+          <p className="mt-0.5 text-xs text-muted-foreground">امتیازت دو برابر میشه • هر بازی یک بار • فقط با بازی به دست میاد، فروشی نیست</p>
         </div>
       </Card>
 

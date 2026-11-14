@@ -388,7 +388,7 @@ When you add a new shadcn component:
 ## Copy and content
 
 - Short, spoken, a little cheeky: "Call the next moment.", "You will miss that one.", "Rematch with same friends".
-- All copy is Persian, informal (تو, not شما), short and spoken: «لحظهٔ بعدی را پیش‌بینی کن.», «این یکی رو از دست میدی.». Use the zero-width non-joiner where Persian needs it (پیش‌بینی, می‌برد).
+- All copy is Persian, written in the **`persian-conversational` skill** (`.claude/skills/persian-conversational/SKILL.md`): load it before writing or editing any Persian text. UI copy is its **Light** register with «تو»: spoken verbs (میشه، می‌تونی، میاد، می‌کنه, never می‌شود / است / می‌کند), «را» and «این / آن» kept, no noun sound shifts (خانه not خونه): «تا ۲۱:۰۰ می‌تونی عوضشون کنی.». Mock chat and banter use its **Full** register (رو، اون): «این یکی رو از دست میدی.». ZWNJ always (پیش‌بینی، می‌بره), Persian ی/ک, «گیومه», no em dashes.
 - Questions end with the minute and the Persian question mark: «کارت زرد قبل از دقیقهٔ ۸۰؟».
 - Numbers: Persian digits and separators via `formatNumber` (`۱۰٬۰۰۰`), no decimals for coins, Persian ordinals for ranks (`ordinal(2)` → `دوم`).
 - Never invent stats in UI. Unknown values come from data or show an explicit placeholder.

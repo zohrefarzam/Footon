@@ -41,7 +41,7 @@ export default function FantasyPage() {
           <span className="flex size-[34px] items-center justify-center rounded-sm bg-live-soft font-display text-base font-bold text-live">{formatBoost(2)}</span>
           <div className="flex-1">
             <p className="text-[15px] font-semibold">کاپیتان • امتیاز {formatNumber(2)} برابر</p>
-            <p className="mt-0.5 text-xs text-muted-foreground">مهاجم • امشب بازی دارد</p>
+            <p className="mt-0.5 text-xs text-muted-foreground">مهاجم • امشب بازی داره</p>
           </div>
           <span className="font-display text-xl font-bold text-win">{formatSigned(14)}</span>
         </CardRow>
@@ -51,7 +51,7 @@ export default function FantasyPage() {
           </span>
           <div className="flex-1">
             <p className="text-[15px] font-semibold">نقل‌وانتقال</p>
-            <p className="mt-0.5 text-xs text-muted-foreground">{formatNumber(1)} مورد برای این هفته مانده</p>
+            <p className="mt-0.5 text-xs text-muted-foreground">{formatNumber(1)} تا برای این هفته مونده</p>
           </div>
           <Button variant="secondary" size="sm" className="h-[34px] rounded-sm border-0 bg-track">
             تغییر

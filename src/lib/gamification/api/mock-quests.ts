@@ -23,7 +23,7 @@ export const QUEST_TEMPLATES: QuestTemplate[] = [
     id: "d-easy",
     kind: "daily",
     difficulty: "easy",
-    title: "یک پیش‌بینی بکن",
+    title: "یه پیش‌بینی بکن",
     target: 1,
     reward: { xp: 30, coins: 30 },
     requiredLevel: 1,

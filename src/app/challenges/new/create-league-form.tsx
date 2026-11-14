@@ -20,8 +20,8 @@ import { formatNumber, formatSigned } from "@/lib/format";
 const SLOTS = 3;
 const fmt = formatNumber;
 const MODES = [
-  { id: "system", label: "سؤال‌های زندهٔ فوتون", desc: "ما وسط بازی می‌پرسیم" },
-  { id: "friends", label: "سؤال‌های دوستان", desc: "هر کسی در لیگ می‌تواند بپرسد" },
+  { id: "system", label: "سؤال‌های زندهٔ فوتون", desc: "خودمون وسط بازی می‌پرسیم" },
+  { id: "friends", label: "سؤال‌های دوستان", desc: "هر کسی توی لیگ می‌تونه بپرسه" },
   { id: "pre", label: "پیش‌بینی پیش از بازی", desc: "نتیجه و گلزن‌ها قبل از شروع" },
 ] as const;
 
@@ -122,13 +122,13 @@ export function CreateLeagueForm({ balance }: { balance: number }) {
           ))}
         </div>
         <p className="text-xs text-muted-foreground" aria-live="polite">
-          با {fmt(SLOTS + 1)} نفر: صندوق <span className="font-display text-sm font-bold text-live">{fmt(split.pool)}</span>، {fmt(split.burned)} می‌سوزد،
-          برنده <span className="font-display text-sm font-bold text-live">{fmt(split.payouts[0])}</span> می‌برد. امتیاز تعیین می‌کند.
+          با {fmt(SLOTS + 1)} نفر: صندوق <span className="font-display text-sm font-bold text-live">{fmt(split.pool)}</span>، {fmt(split.burned)} می‌سوزه،
+          برنده <span className="font-display text-sm font-bold text-live">{fmt(split.payouts[0])}</span> می‌بره. برنده را امتیاز تعیین می‌کنه.
         </p>
       </div>
 
       <div className="flex flex-col gap-2">
-        <span className="text-[13px] font-medium text-muted-foreground">چه چیزهایی پیش‌بینی می‌کنید؟</span>
+        <span className="text-[13px] font-medium text-muted-foreground">سر چی پیش‌بینی می‌کنید؟</span>
         <Card className="overflow-hidden rounded-lg">
           {MODES.map((m) => (
             <CardRow key={m.id} className="py-3.5">
@@ -153,7 +153,7 @@ export function CreateLeagueForm({ balance }: { balance: number }) {
             <label htmlFor="fixed-stake" className="flex-1 cursor-pointer">
               <span className="block text-[15px] font-semibold">مبلغ یکسان برای همه</span>
               <span className="mt-0.5 block text-xs text-muted-foreground">
-                {fixedStake ? "هر پیش‌بینی همین مبلغ پایین را دارد" : "هر بازیکن مبلغ خودش را انتخاب می‌کند"}
+                {fixedStake ? "همهٔ پیش‌بینی‌ها همین مبلغ پایین را دارن" : "هر کسی مبلغ خودش را انتخاب می‌کنه"}
               </span>
             </label>
             <Switch id="fixed-stake" checked={fixedStake} onCheckedChange={setFixedStake} />
@@ -198,7 +198,7 @@ export function CreateLeagueForm({ balance }: { balance: number }) {
               onValueChange={([v]) => setCapIndex(v)}
               className="px-3"
             />
-            <p className="text-xs text-muted-foreground">روی همهٔ پیش‌بینی‌هایش در این بازی.</p>
+            <p className="text-xs text-muted-foreground">جمع شرط‌هاش روی این بازی.</p>
           </div>
         </Card>
       </div>
@@ -206,7 +206,7 @@ export function CreateLeagueForm({ balance }: { balance: number }) {
       <p className="flex items-center gap-2.5 text-[13px] text-muted-foreground">
         <Coin className="size-[18px] text-[9px]" />
         <span>
-          <span className="font-semibold text-live">{formatSigned(1500)}</span> برای هر دوستی که اولین بازی‌اش را تمام کند
+          <span className="font-semibold text-live">{formatSigned(1500)}</span> برای هر دوستی که اولین بازی‌اش را تا آخر بازی کنه
         </span>
       </p>
 
@@ -240,7 +240,7 @@ export function CreateLeagueForm({ balance }: { balance: number }) {
         <p className="text-center text-xs text-muted-foreground">
           {short > 0 ? (
             <>
-              جایزه‌های جدول رایگان و مأموریت‌ها سکه‌ات را پر می‌کنند.{" "}
+              با جایزه‌های جدول رایگان و مأموریت‌ها سکه‌ات دوباره پر میشه.{" "}
               <Link href="/wallet" className="font-semibold text-foreground underline underline-offset-3">
                 راه‌های گرفتن سکه
               </Link>

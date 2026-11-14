@@ -166,7 +166,7 @@ export function PredictionBuilder({ match: m, teams, initial = [], rules, balanc
           {fixed ? (
             <>
               <span className="font-display text-sm font-bold text-live">{formatCoins(fixed)}</span> برای هر پیش‌بینی
-              {rules.setBy ? `، تعیین‌شده توسط ${rules.setBy}` : ""}
+              {rules.setBy ? `، به انتخاب ${rules.setBy}` : ""}
             </>
           ) : (
             "مبلغ هر پیش‌بینی با خودت"
@@ -259,7 +259,7 @@ export function PredictionBuilder({ match: m, teams, initial = [], rules, balanc
                         {fixed ? (
                           <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
                             مبلغ <CoinAmount value={fixed} className="text-[15px]" />
-                            {rules?.setBy && <span>تعیین‌شده توسط {rules.setBy}</span>}
+                            {rules?.setBy && <span>به انتخاب {rules.setBy}</span>}
                           </span>
                         ) : (
                           <>
@@ -341,7 +341,7 @@ export function PredictionBuilder({ match: m, teams, initial = [], rules, balanc
         </Card>
       ) : (
         <p className="rounded-xl border border-dashed border-line-strong px-4 py-5 text-center text-sm text-muted-foreground">
-          {open ? "یکی از نوع‌های بالا را بزن تا اولین پیش‌بینی‌ات اضافه شود." : "روی این بازی پیش‌بینی‌ای نداری."}
+          {open ? "یکی از گزینه‌های بالا را بزن تا اولین پیش‌بینی‌ات اضافه بشه." : "روی این بازی پیش‌بینی‌ای نداری."}
         </p>
       )}
 
@@ -387,7 +387,7 @@ export function PredictionBuilder({ match: m, teams, initial = [], rules, balanc
             )}
             {short > 0 && (
               <p className="text-center text-xs text-muted-foreground">
-                جایزه‌های جدول رایگان و مأموریت‌ها سکه‌ات را پر می‌کنند.{" "}
+                با جایزه‌های جدول رایگان و مأموریت‌ها سکه‌ات دوباره پر میشه.{" "}
                 <Link href="/wallet" className="font-semibold text-foreground underline underline-offset-3">
                   راه‌های گرفتن سکه
                 </Link>
@@ -406,7 +406,7 @@ export function PredictionBuilder({ match: m, teams, initial = [], rules, balanc
               <span className="font-semibold text-primary">
                 {formatNumber(items.length)} پیش‌بینی ثبت شد.
               </span>{" "}
-              <span className="text-muted-foreground">تا {m.kickoff} می‌توانی عوضشان کنی.</span>
+              <span className="text-muted-foreground">تا {m.kickoff} می‌تونی عوضشون کنی.</span>
             </p>
           </div>
         )}
@@ -427,10 +427,10 @@ export function PredictionBuilder({ match: m, teams, initial = [], rules, balanc
 function SyncStatus({ entry, onRetry }: { entry: OutboxEntry | undefined; onRetry: () => void }) {
   return (
     <div aria-live="polite" className="empty:hidden">
-      {entry?.status === "sending" && <p className="text-shimmer text-center text-xs">ذخیره شد • در حال همگام‌سازی</p>}
+      {entry?.status === "sending" && <p className="text-shimmer text-center text-xs">ذخیره شد • داریم می‌فرستیمش</p>}
       {entry?.status === "failed" && (
         <p className="flex items-center justify-center gap-2 text-xs text-muted-foreground">
-          روی همین گوشی ذخیره شد، هنوز فرستاده نشده.
+          روی همین گوشی ذخیره شده، ولی هنوز فرستاده نشده.
           <Button variant="secondary" size="sm" className="h-8 rounded-sm px-3" onClick={onRetry}>
             دوباره
           </Button>

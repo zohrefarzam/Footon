@@ -154,7 +154,7 @@ export function QuestionCard({
               className="mt-4 flex h-12 items-center justify-center rounded-md bg-surface-3 text-sm font-semibold text-muted-foreground"
               aria-live="polite"
             >
-              جواب‌ها قفل شد. این یکی را از دست دادی.
+              جواب‌ها قفل شد. این یکی از دستت رفت.
             </motion.p>
           ) : !answer ? (
             <motion.div

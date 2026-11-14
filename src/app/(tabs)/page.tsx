@@ -42,7 +42,7 @@ export default function HomePage() {
           </Card>
         </section>
       ) : (
-        <EmptyState title="فعلاً بازی بزرگی نیست" body="همهٔ بازی‌ها در بخش زنده هست. یکی را انتخاب کن و پیش‌بینی کن." action={{ label: "دیدن بازی‌ها", href: "/live" }} />
+        <EmptyState title="فعلاً بازی بزرگی نیست" body="همهٔ بازی‌ها توی بخش زنده‌ست. یکی را انتخاب کن و پیش‌بینی‌ات را بکن." action={{ label: "دیدن بازی‌ها", href: "/live" }} />
       )}
 
       {/* compact tiles: invites and fantasy stay tile-sized */}

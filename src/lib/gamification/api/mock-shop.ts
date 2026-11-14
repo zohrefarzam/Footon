@@ -18,11 +18,11 @@ export type CatalogItem = {
 };
 
 export const CATALOG: CatalogItem[] = [
-  { id: "freeze", slot: "freeze", name: "محافظ زنجیره", detail: "یک روز مسابقه را از دست بده، زنجیره‌ات بماند", price: 2500, unlock: "shopFreeze" },
+  { id: "freeze", slot: "freeze", name: "محافظ زنجیره", detail: "یه روز مسابقه را جا بنداز، زنجیره‌ات می‌مونه", price: 2500, unlock: "shopFreeze" },
 
   // the kit you start with: owned and on from day one
-  { id: "kit-academy", slot: "kit", name: "لباس آکادمی", detail: "جایی که همه شروع می‌کنند", look: { primary: "#2e4b3f", secondary: "#9db1a6" }, price: 0, unlock: 1 },
-  { id: "kit-home", slot: "kit", name: "لباس اول", detail: "اولین رنگ‌های واقعی‌ات", look: { primary: "#1d4ed8", secondary: "#fafafa" }, price: "firstKit", unlock: "myClubKit" },
+  { id: "kit-academy", slot: "kit", name: "لباس آکادمی", detail: "همه از همین‌جا شروع می‌کنن", look: { primary: "#2e4b3f", secondary: "#9db1a6" }, price: 0, unlock: 1 },
+  { id: "kit-home", slot: "kit", name: "لباس اول", detail: "اولین رنگ‌های واقعی باشگاهت", look: { primary: "#1d4ed8", secondary: "#fafafa" }, price: "firstKit", unlock: "myClubKit" },
   { id: "kit-away", slot: "kit", name: "لباس دوم", look: { primary: "#f3f8f4", secondary: "#0b1e17" }, price: 2500, unlock: "myClubKit" },
   { id: "kit-night", slot: "kit", name: "لباس شب", detail: "برای بازی‌های آخر شب", look: { primary: "#111114", secondary: "#8b5cf6" }, price: 4000, unlock: "myClubKit" },
 

@@ -47,9 +47,9 @@ export default function WalletPage() {
         </div>
         <dl className="grid grid-cols-3 border-t border-line">
           {[
-            { term: "امتیاز", value: fmt(profile.points), desc: "فقط از پیش‌بینی درست. رتبه‌ات را می‌سازد." },
-            { term: "سکه", value: <CoinBalance fallback={wallet.coins} />, desc: "ورودی، لیگ‌ها، چیزهای اضافه." },
-            { term: "جایزه", value: "هفتگی", desc: "از حامیان، بر اساس رتبه." },
+            { term: "امتیاز", value: fmt(profile.points), desc: "فقط از پیش‌بینی درست. رتبه‌ات را می‌سازه." },
+            { term: "سکه", value: <CoinBalance fallback={wallet.coins} />, desc: "برای ورودی، لیگ‌ها و چیزهای اضافه." },
+            { term: "جایزه", value: "هفتگی", desc: "از حامی‌ها، به رتبه‌های بالا می‌رسه." },
           ].map((x) => (
             <div key={x.term} className="flex flex-col gap-1 px-3 py-3 [&+&]:border-s [&+&]:border-line">
               <dt className="text-[11px] font-semibold tracking-[0.08em] text-muted-foreground uppercase">{x.term}</dt>
@@ -134,7 +134,7 @@ export default function WalletPage() {
       </section>
 
       <p className="text-center text-xs text-muted-foreground text-balance">
-        سکه نقد نمی‌شود و به دوستان فرستاده نمی‌شود. خرید سکه هیچ‌وقت امتیاز، رتبه یا جایزه نمی‌خرد.
+        سکه نقد نمیشه و نمیشه برای دوستات بفرستی‌اش. با خرید سکه هم هیچ‌وقت امتیاز، رتبه یا جایزه نمی‌خری.
       </p>
     </AppShell>
   );

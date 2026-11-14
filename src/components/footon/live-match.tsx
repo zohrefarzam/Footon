@@ -56,7 +56,7 @@ export function LiveMatch({ match: m, league, backHref = "/" }: { match: Match; 
           <span className="text-[13px] font-medium text-muted-foreground">{league.name}</span>
           {m.progress && (
             <span className="text-xs text-muted-foreground">
-              <span className="font-display text-sm font-bold text-foreground">{formatNumber(m.progress.asked)}</span> از {formatNumber(m.progress.total)} سؤال پرسیده شد
+              <span className="font-display text-sm font-bold text-foreground">{formatNumber(m.progress.asked)}</span> از {formatNumber(m.progress.total)} سؤال پرسیده شده
             </span>
           )}
         </div>
@@ -111,7 +111,7 @@ export function LiveMatch({ match: m, league, backHref = "/" }: { match: Match; 
         <div>
           <p className="text-[15px] font-semibold">لحظهٔ بعدی را با دوستانت پیش‌بینی کن</p>
           <p className="mt-0.5 text-[13px] text-muted-foreground">
-            روی این بازی یک لیگ بساز تا سؤال‌های زنده اینجا باز شوند. ورودی از {formatNumber(ENTRY_TIERS[0])}، صندوق به بهترین پیش‌بینی‌کننده می‌رسد.
+            روی این بازی یه لیگ بساز تا سؤال‌های زنده اینجا باز بشن. ورودی از {formatNumber(ENTRY_TIERS[0])}، صندوق هم به بهترین پیش‌بینی‌کننده می‌رسه.
           </p>
         </div>
         <LockedFeatureGate feature="createLeague" variant="button" title="ساختن لیگ" className="w-full">
@@ -137,7 +137,7 @@ export function LiveMatch({ match: m, league, backHref = "/" }: { match: Match; 
             content: (
               <Card className="overflow-hidden pb-1">
                 <Standings rows={league.standings} caption={`جدول ${league.name}`} />
-                <p className="border-t border-line px-4 py-3 text-xs text-muted-foreground">امتیاز پیش‌بینی‌های درست تعیین می‌کند. مبلغ شرط هیچ‌وقت رتبه‌ات را عوض نمی‌کند.</p>
+                <p className="border-t border-line px-4 py-3 text-xs text-muted-foreground">برنده را امتیاز پیش‌بینی‌های درست تعیین می‌کنه. مبلغ شرط هیچ‌وقت رتبه‌ات را عوض نمی‌کنه.</p>
               </Card>
             ),
           },

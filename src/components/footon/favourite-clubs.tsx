@@ -63,7 +63,7 @@ export function FavouriteClubs({ clubs, initial }: { clubs: Team[]; initial: str
               </DialogTrigger>
               <DialogContent>
                 <DialogTitle>باشگاه‌های تو</DialogTitle>
-                <DialogDescription>هر چندتا که دوست داری دنبال کن. بازی‌هایشان اول نشان داده می‌شوند.</DialogDescription>
+                <DialogDescription>هر چندتا دوست داری دنبال کن. بازی‌هاشون اول نشون داده میشه.</DialogDescription>
                 <div className="relative mt-2">
                   <label htmlFor="club-search" className="sr-only">
                     جست‌وجوی باشگاه
@@ -137,7 +137,7 @@ export function FavouriteClubs({ clubs, initial }: { clubs: Team[]; initial: str
             </Dialog>
           </li>
         </ul>
-        {mine.length === 0 && <p className="px-1 text-xs text-muted-foreground">هنوز باشگاهی نداری. یکی اضافه کن تا بازی‌هایش را اول ببینی.</p>}
+        {mine.length === 0 && <p className="px-1 text-xs text-muted-foreground">هنوز باشگاهی نداری. یکی اضافه کن تا بازی‌هاش را اول ببینی.</p>}
       </Card>
     </section>
   );

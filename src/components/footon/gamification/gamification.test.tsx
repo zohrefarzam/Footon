@@ -98,7 +98,7 @@ describe("FantasyUnlock", () => {
 
   it("links to /fantasy once unlocked", () => {
     withData(<FantasyUnlock />, progress(8, 1750));
-    expect(screen.getByRole("link", { name: "فانتزی باز است" })).toHaveAttribute("href", "/fantasy");
+    expect(screen.getByRole("link", { name: "فانتزی بازه" })).toHaveAttribute("href", "/fantasy");
   });
 });
 

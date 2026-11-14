@@ -41,7 +41,7 @@ export function Dock({ live = false, className }: { live?: boolean; className?: 
             key={href}
             href={href}
             aria-current={active ? "page" : undefined}
-            aria-label={showLive ? `${label}، یک بازی زنده است` : undefined}
+            aria-label={showLive ? `${label}، یه بازی زنده‌ست` : undefined}
             className={cn(
               "flex h-full min-w-0 flex-col items-center justify-center gap-[3px] rounded-[18px] text-[11px] whitespace-nowrap outline-none transition-[color,transform] duration-200 ease-spring active:scale-90 focus-visible:ring-[3px] focus-visible:ring-ring/60",
               active ? "font-semibold text-foreground" : "font-medium text-nav-muted hover:text-foreground",

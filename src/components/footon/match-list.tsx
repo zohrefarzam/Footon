@@ -28,7 +28,7 @@ function pick(matches: Match[], f: Filter) {
 const empty: Record<Filter, string> = {
   الان: "الان بازی زنده‌ای نیست. «امروز» را ببین.",
   امروز: "امروز بازی دیگری نیست.",
-  "پیش رو": "هنوز بازی‌ای برنامه‌ریزی نشده.",
+  "پیش رو": "هنوز بازی‌ای توی برنامه نیست.",
 };
 
 /** Segmented filter + one divided list of match rows. Every row opens its match. */

@@ -25,7 +25,7 @@ export function Countdown({ kickoff, dayOffset = 0, className }: { kickoff: stri
   }, [kickoff, dayOffset]);
 
   if (left === null) return <span className={className}>&nbsp;</span>;
-  if (left === 0) return <span className={className}>به‌زودی شروع می‌شود</span>;
+  if (left === 0) return <span className={className}>الان شروع میشه</span>;
 
   return (
     <span className={className} role="timer" aria-label={`حدود ${formatNumber(Math.ceil(left / 60))} دقیقه تا شروع`}>

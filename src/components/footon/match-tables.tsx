@@ -16,7 +16,7 @@ const rowLink =
 /** "برنده ۵٬۷۰۰ می‌برد", or "اول ۲٬۳۲۷ • دوم ۹۹۸" from 5 players up. */
 export function poolLine(entry: number, players: number) {
   const { payouts } = splitPool(entry, players);
-  return payouts.length === 1 ? `برنده ${formatNumber(payouts[0])} می‌برد` : `اول ${formatNumber(payouts[0])} • دوم ${formatNumber(payouts[1])}`;
+  return payouts.length === 1 ? `برنده ${formatNumber(payouts[0])} می‌بره` : `اول ${formatNumber(payouts[0])} • دوم ${formatNumber(payouts[1])}`;
 }
 
 /**
@@ -38,7 +38,7 @@ export function MatchTables({ joinedFree, coin }: { joinedFree: boolean; coin?: 
           <div className="min-w-0 flex-1">
             <p className="text-[15px] font-semibold">جدول رایگان</p>
             <p className="mt-0.5 text-xs text-muted-foreground">
-              همیشه باز • سه نفر اول {FREE_TABLE_REWARDS.map((n) => formatNumber(n)).join(" / ")} سکه می‌گیرند
+              همیشه باز • سه نفر اول {FREE_TABLE_REWARDS.map((n) => formatNumber(n)).join(" / ")} سکه می‌گیرن
             </p>
           </div>
           {joinedFree ? <Badge variant="soft">عضوی</Badge> : <Badge variant="outline">رایگان</Badge>}
@@ -71,7 +71,7 @@ export function MatchTables({ joinedFree, coin }: { joinedFree: boolean; coin?: 
           </LockedFeatureGate>
         )}
 
-        <p className="border-t border-line px-4 py-2.5 text-xs text-muted-foreground">رتبه در هر دو با امتیاز است. سکه‌ای که می‌گذاری هیچ‌وقت رتبه‌ات را عوض نمی‌کند.</p>
+        <p className="border-t border-line px-4 py-2.5 text-xs text-muted-foreground">رتبه توی هر دو با امتیازه. سکه‌ای که می‌ذاری هیچ‌وقت رتبه‌ات را عوض نمی‌کنه.</p>
       </Card>
     </section>
   );

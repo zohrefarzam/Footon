@@ -25,9 +25,9 @@ const inSegment: Record<Segment, Challenge["status"][]> = {
   منقضی: ["expired"],
 };
 const empty: Record<Segment, string> = {
-  عضوی: "هنوز در هیچ چالشی نیستی. یک دعوت را قبول کن یا خودت یکی بساز.",
+  عضوی: "هنوز توی هیچ چالشی نیستی. یه دعوت را قبول کن یا خودت یکی بساز.",
   "دعوت‌شده": "دعوتی در انتظار نیست.",
-  منقضی: "چیزی منقضی نشده. سریع جواب می‌دهی.",
+  منقضی: "چیزی منقضی نشده. سریع جواب میدی.",
 };
 
 /** One challenge as a divided row: name, who, match, entry, players, then your place or what's next. */

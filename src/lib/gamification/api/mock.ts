@@ -52,8 +52,8 @@ const CATALOG: Omit<Badge, "earnedAt">[] = [
   { id: "perfect-five", family: "achievement", name: "پنج بی‌نقص", description: "۵ درست پشت سر هم در یک بازی", icon: "flame", tier: "gold", rarityPct: 4.2 },
   { id: "streak-7", family: "achievement", name: "یک هفتهٔ کامل", description: "۷ روز مسابقه پشت سر هم", icon: "calendar", tier: "standard", rarityPct: 12 },
   { id: "streak-30", family: "achievement", name: "بلیت فصل", description: "۳۰ روز مسابقه پشت سر هم", icon: "calendar", tier: "gold", rarityPct: 0.9 },
-  { id: "league-founder", family: "social", name: "بنیان‌گذار", description: "یک لیگ ساختی", icon: "users", tier: "standard", rarityPct: 18 },
-  { id: "first-invite", family: "social", name: "یکی بیشتر", description: "دوستی با دعوت تو آمد", icon: "handshake", tier: "standard", rarityPct: 27 },
+  { id: "league-founder", family: "social", name: "بنیان‌گذار", description: "یه لیگ ساختی", icon: "users", tier: "standard", rarityPct: 18 },
+  { id: "first-invite", family: "social", name: "یکی بیشتر", description: "یه دوست با دعوت تو اومد", icon: "handshake", tier: "standard", rarityPct: 27 },
   { id: "autumn-2026", family: "seasonal", name: "پاییز ۱۴۰۵", description: "این پاییز یک روز مسابقه بازی کردی", icon: "leaf", tier: "standard", rarityPct: 41 },
 ];
 

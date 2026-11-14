@@ -151,7 +151,7 @@ export function OnboardingFlow({ data }: { data: OnboardingData }) {
             </ArrowCta>
           )}
           <p className="text-[13px] text-muted-foreground">
-            قبلاً اینجا بوده‌ای؟{" "}
+            قبلاً اینجا بودی؟{" "}
             <Link
               href="/"
               prefetch={false}
@@ -362,9 +362,9 @@ function TryStep({ sample, answer, onAnswer }: { sample: Sample; answer: "yes" |
       <p className="mt-3 text-[15px] text-muted-foreground">
         {resolved
           ? right
-            ? `در یک بازی واقعی این ${formatSigned(sample.reward)} امتیاز است. امتیاز رتبه‌ات را می‌سازد؛ سکه راهت می‌دهد.`
-            : "بعدی را می‌گیری. همیشه یک بعدی هست."
-          : "رایگان. برای شروع ثبت‌نام لازم نیست."}
+            ? `توی یه بازی واقعی این میشه ${formatSigned(sample.reward)} امتیاز. امتیاز رتبه‌ات را می‌سازه؛ سکه راهت میده توی لیگ‌ها.`
+            : "بعدی را می‌گیری. همیشه یه بعدی هست."
+          : "رایگانه. برای شروع لازم نیست ثبت‌نام کنی."}
       </p>
     </div>
   );
@@ -376,8 +376,8 @@ function ClubsStep({ clubs, selected, onToggle }: { clubs: Team[]; selected: str
   const reduce = useReducedMotion();
   return (
     <div className="flex flex-1 flex-col pt-6">
-      <Headline title="طرفدار کدام تیمی؟" sub="بازی‌هایشان اول می‌آید." />
-      <p className="mt-3 text-[15px] text-muted-foreground">هر چندتا که دوست داری انتخاب کن. هر وقت خواستی عوضش کن.</p>
+      <Headline title="طرفدار کدام تیمی؟" sub="بازی‌هاشون اول میاد." />
+      <p className="mt-3 text-[15px] text-muted-foreground">هر چندتا دوست داری انتخاب کن. هر وقت خواستی می‌تونی عوضشون کنی.</p>
 
       <ul className="mt-6 grid grid-cols-4 gap-2" aria-label="باشگاه‌ها">
         {clubs.map((club, i) => {
@@ -462,7 +462,7 @@ function ClaimStep({ coins, steps, claimed }: { coins: number; steps: { title: s
         <p className="relative mt-1 text-[13px] font-medium text-muted-foreground">اولین مأموریت: باشگاه‌هایت را انتخاب کردی</p>
       </div>
 
-      <Headline title="اولین سکه‌هایت." sub="تمام هفته بیشتر بگیر." />
+      <Headline title="اولین سکه‌هایت." sub="تا آخر هفته کلی سکهٔ دیگه هم داری." />
 
       <ol className="mt-5 grid grid-cols-3 gap-3 border-t border-line pt-4">
         {steps.map((s, i) => (

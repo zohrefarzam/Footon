@@ -55,7 +55,7 @@ export function ChallengeGate({ league, from, entry, players, rules, kickoff, po
                   {from.name} <span className="font-normal text-muted-foreground">دعوتت کرده به</span> {league}
                 </p>
                 <p className="text-xs text-muted-foreground">
-                  {formatNumber(players)} نفر • قبل از شروع بازی جواب بده{kickoff ? `، ${kickoff}` : ""}
+                  {formatNumber(players)} نفر • تا شروع بازی جواب بده{kickoff ? `، ${kickoff}` : ""}
                 </p>
               </div>
             </div>

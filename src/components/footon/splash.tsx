@@ -76,7 +76,7 @@ export function Splash({ onDone }: { onDone: () => void }) {
     <motion.div
       ref={scope}
       role="status"
-      aria-label="فوتون در حال باز شدن است"
+      aria-label="فوتون داره باز میشه"
       exit={{ opacity: 0, scale: 1.04, filter: "blur(8px)" }}
       transition={{ duration: 0.35, ease: [0.2, 0.8, 0.2, 1] }}
       className="bg-dots fixed inset-0 z-50 flex flex-col items-center justify-center overflow-hidden bg-background"

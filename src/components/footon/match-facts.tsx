@@ -122,7 +122,7 @@ export function MatchFacts({
         {showHT && firstHalfAt === -1 && marker("بین دو نیمه")}
         {withScore.length === 0 && (
           <li className="px-4 py-5 text-center text-sm text-muted-foreground">
-            {finished ? "گل، کارت یا تعویضی ثبت نشد." : "فعلاً آرام است. گل‌ها، کارت‌ها و تعویض‌ها اینجا می‌آیند."}
+            {finished ? "گل، کارت یا تعویضی ثبت نشد." : "فعلاً آرامه. گل‌ها، کارت‌ها و تعویض‌ها اینجا میان."}
           </li>
         )}
         {marker("شروع بازی")}

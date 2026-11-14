@@ -31,7 +31,7 @@ function Stepper({ team, value, set, active }: { team: Team; value: number; set:
               animate={{ y: 0, opacity: 1 }}
               exit={reduce ? { opacity: 0 } : { y: -18, opacity: 0 }}
               transition={{ type: "spring", stiffness: 500, damping: 32 }}
-              className={cn("font-display text-[52px] leading-none font-bold tabular-nums", !active && "text-subtle")}
+              className={cn("font-display text-[52px] leading-none font-bold", !active && "text-subtle")}
             >
               {formatNumber(value)}
             </motion.span>

@@ -18,7 +18,7 @@ export function MatchStats({ stats, home, away }: { stats: MatchStat[]; home: st
           const v = (side: "home" | "away") => (
             <span
               className={cn(
-                "font-display text-lg leading-none font-bold tabular-nums",
+                "font-display text-lg leading-none font-bold",
                 lead && lead !== side && "text-muted-foreground",
               )}
             >

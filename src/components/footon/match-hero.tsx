@@ -91,7 +91,7 @@ export function MatchHero({
             {live || m.status === "finished" ? (
               /* stadium scoreboard plate */
               <p
-                className="flex items-center rounded-md border border-line-strong bg-background/80 px-3.5 py-1.5 font-display text-[52px] leading-none font-bold tabular-nums"
+                className="flex items-center rounded-md border border-line-strong bg-background/80 px-3.5 py-1.5 font-display text-[52px] leading-none font-bold"
                 aria-label={`${m.home.name} ${formatNumber(h)}، ${m.away.name} ${formatNumber(a)}`}
               >
                 {formatNumber(h)}
@@ -100,7 +100,7 @@ export function MatchHero({
               </p>
             ) : (
               <>
-                <p className="rounded-md border border-line-strong bg-background/80 px-3 py-1.5 font-display text-[40px] leading-none font-bold tabular-nums">
+                <p className="rounded-md border border-line-strong bg-background/80 px-3 py-1.5 font-display text-[40px] leading-none font-bold">
                   {m.kickoff}
                 </p>
                 {(m.dayOffset ?? 0) === 0 && m.kickoff ? (

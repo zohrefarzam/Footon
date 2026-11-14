@@ -63,7 +63,7 @@ export function LiveIsland({ coins: fallback, live }: { coins: number; live?: Is
       className="flex h-11 shrink-0 items-center gap-1.5 rounded-full ps-2 pe-3.5 outline-none transition-[transform,background-color] duration-200 ease-spring hover:bg-white/5 active:scale-95 focus-visible:ring-[3px] focus-visible:ring-ring/60"
     >
       <Coin className="size-[22px]" />
-      <span className="font-display text-lg font-bold tabular-nums">{formatNumber(coins)}</span>
+      <span className="font-display text-lg font-bold">{formatNumber(coins)}</span>
     </Link>
   );
 
@@ -86,11 +86,11 @@ export function LiveIsland({ coins: fallback, live }: { coins: number; live?: Is
             className="flex h-11 min-w-0 flex-1 items-center gap-2 rounded-full ps-3 pe-2 outline-none focus-visible:ring-[3px] focus-visible:ring-ring/60"
           >
             <LiveDot />
-            <span className="shrink-0 font-display text-base font-bold whitespace-nowrap text-live tabular-nums">{formatMinute(live.minute)}</span>
+            <span className="shrink-0 font-display text-base font-bold whitespace-nowrap text-live">{formatMinute(live.minute)}</span>
             {/* separate flex items so home sits on the right (its side in RTL) */}
             <span className="flex min-w-0 items-center gap-1.5 overflow-hidden font-display text-[17px] font-bold tracking-wide">
               <span className="shrink-0 max-[359px]:hidden">{live.home}</span>
-              <span className="flex shrink-0 whitespace-nowrap tabular-nums">
+              <span className="flex shrink-0 whitespace-nowrap">
                 {formatNumber(live.score[0])}–{formatNumber(live.score[1])}
               </span>
               <span className="shrink-0 max-[359px]:hidden">{live.away}</span>
@@ -150,7 +150,7 @@ export function LiveIsland({ coins: fallback, live }: { coins: number; live?: Is
             transition={{ height: spring, opacity: { duration: reduce ? 0 : 0.2 }, filter: { duration: reduce ? 0 : 0.25 } }}
           >
             <div className="flex flex-col gap-3 px-4 pt-1 pb-3.5">
-              <p className="text-[19px] leading-tight font-bold tracking-[-0.02em] text-balance">{live.question}</p>
+              <p className="text-[19px] leading-snug font-bold text-balance">{live.question}</p>
 
               <AnimatePresence mode="wait" initial={false}>
                 {!answer ? (

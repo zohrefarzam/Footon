@@ -86,7 +86,7 @@ export function MatchFacts({
                 ) : null}
               </span>
               {e.score && (
-                <span className="flex shrink-0 items-center font-display text-[15px] font-bold tabular-nums">
+                <span className="flex shrink-0 items-center font-display text-[15px] font-bold">
                   {formatNumber(e.score[0])}
                   <span className="mx-0.5 text-muted-foreground">–</span>
                   {formatNumber(e.score[1])}

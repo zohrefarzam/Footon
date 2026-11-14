@@ -38,8 +38,9 @@ function Slip({ m, settled = false }: { m: Match; settled?: boolean }) {
         className="flex items-center gap-3 px-4 pt-3.5 pb-2.5 outline-none transition-colors hover:bg-surface-hover focus-visible:ring-[3px] focus-visible:ring-inset focus-visible:ring-ring/60"
       >
         <span className="flex shrink-0" aria-hidden="true">
-          <TeamCrest code={m.home.code} colors={m.home.colors} size="sm" />
-          <TeamCrest code={m.away.code} colors={m.away.colors} size="sm" className="-ms-3.5" />
+          {/* home first (right in RTL) and on top; away tucks in behind it */}
+          <TeamCrest code={m.home.code} colors={m.home.colors} size="xs" className="relative z-10 size-[30px]" />
+          <TeamCrest code={m.away.code} colors={m.away.colors} size="xs" className="-ms-2.5 size-[30px] opacity-90" />
         </span>
         <span className="min-w-0 flex-1">
           <span className="flex items-center gap-2 text-[15px] font-semibold">

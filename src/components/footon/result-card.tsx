@@ -48,7 +48,7 @@ export function ResultCard({
           <span className={cn("truncate text-sm font-semibold", h < a && "text-muted-foreground")}>{m.home.name}</span>
           <TeamCrest code={m.home.code} colors={m.home.colors} size="sm" />
         </span>
-        <span className="flex items-center rounded-sm bg-surface-2 px-2.5 py-1 font-display text-[26px] leading-none font-bold tabular-nums">
+        <span className="flex items-center rounded-sm bg-surface-2 px-2.5 py-1 font-display text-[26px] leading-none font-bold">
           {formatNumber(h)}
           <span className="mx-1.5 text-dim">:</span>
           {formatNumber(a)}

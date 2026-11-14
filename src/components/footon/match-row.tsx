@@ -56,7 +56,7 @@ export function MatchRow({ match, href, className }: { match: Match; href?: stri
           live ? "bg-live-soft" : done ? "bg-surface-2" : "",
         )}
       >
-        <span className={cn("flex items-center font-display text-[19px] leading-none font-bold tabular-nums", !live && !done && "text-[17px]")}>
+        <span className={cn("flex items-center font-display text-[19px] leading-none font-bold", !live && !done && "text-[17px]")}>
           {live || done ? (
             <>
               {formatNumber(h)}
@@ -96,7 +96,7 @@ export function MatchRow({ match, href, className }: { match: Match; href?: stri
             </>
           ) : (
             <>
-              <span className="font-display text-[15px] leading-none font-bold text-primary tabular-nums">{formatSigned(you.points)}</span>
+              <span className="font-display text-[15px] leading-none font-bold text-primary">{formatSigned(you.points)}</span>
               {hot ? <StreakFlame count={you.streak} /> : <span className="text-[11px] leading-none text-muted-foreground">امتیاز</span>}
             </>
           )

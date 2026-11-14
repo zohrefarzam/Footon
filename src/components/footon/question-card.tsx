@@ -142,7 +142,7 @@ export function QuestionCard({
           {ring}
         </div>
 
-        <h2 className="mt-1.5 text-[26px] leading-[1.15] font-bold tracking-[-0.03em] text-balance">{question.text}</h2>
+        <h2 className="mt-1.5 text-[24px] leading-[1.4] font-bold text-balance">{question.text}</h2>
         {question.hint && <p className="mt-1.5 text-[13px] text-muted-foreground">{question.hint}</p>}
 
         <AnimatePresence mode="wait" initial={false}>

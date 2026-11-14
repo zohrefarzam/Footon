@@ -64,8 +64,9 @@ export function InviteRow({ invite }: { invite: InviteWithMatch }) {
             </div>
 
             <div className="flex items-center gap-2 text-[13px]">
-              <TeamCrest code={m.home.code} colors={m.home.colors} size="sm" />
-              <TeamCrest code={m.away.code} colors={m.away.colors} size="sm" className="-ms-3.5" />
+              {/* home first (right in RTL) and on top; away tucks in behind it */}
+              <TeamCrest code={m.home.code} colors={m.home.colors} size="xs" className="relative z-10 size-[30px]" />
+              <TeamCrest code={m.away.code} colors={m.away.colors} size="xs" className="-ms-2.5 size-[30px] opacity-90" />
               <span className="min-w-0 flex-1 truncate font-semibold">
                 {matchup(m.home.name, m.away.name)}
               </span>

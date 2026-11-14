@@ -1,4 +1,4 @@
-import { formatNumber } from "./format";
+import { formatNumber, ltr } from "./format";
 
 /**
  * Footon's in-game economy: the fixed rules every coin screen reads from.
@@ -88,4 +88,4 @@ export function splitPool(entry: number, players: number): PoolSplit {
 export const formatCoins = (n: number) => formatNumber(Math.round(n));
 
 /** `+۱٬۵۰۰` / `−۵۰۰` with a real minus sign. */
-export const formatDelta = (n: number) => `${n < 0 ? "−" : "+"}${formatCoins(Math.abs(n))}`;
+export const formatDelta = (n: number) => ltr(`${n < 0 ? "−" : "+"}${formatCoins(Math.abs(n))}`);

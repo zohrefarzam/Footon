@@ -66,7 +66,7 @@ export function PromoBanner({ promo: p, slot, className }: { promo: Promo; slot:
       external={p.external}
       aria-label={`تبلیغ ${p.partner}: ${p.headline}. ${p.body} ${p.cta}${p.external ? "، سایت شریک باز میشه" : ""}`}
       className={cn(
-        "group relative isolate grid h-[172px] grid-cols-[minmax(0,1fr)_88px] gap-2 overflow-hidden rounded-2xl p-4 outline-none transition-transform duration-200 ease-spring active:scale-[0.98] focus-visible:ring-[3px] focus-visible:ring-ring/60",
+        "group relative isolate grid h-[188px] grid-cols-[minmax(0,1fr)_88px] gap-3 overflow-hidden rounded-2xl p-4 outline-none transition-transform duration-200 ease-spring active:scale-[0.98] focus-visible:ring-[3px] focus-visible:ring-ring/60",
         className,
       )}
     >
@@ -75,9 +75,9 @@ export function PromoBanner({ promo: p, slot, className }: { promo: Promo; slot:
       <span aria-hidden="true" className="absolute inset-x-0 bottom-0 -z-10 h-1" style={{ background: accent }} />
 
       <span aria-hidden="true" className="flex min-w-0 flex-col" style={{ color: ink }}>
-        <span className="truncate pe-2 text-[11px] font-semibold tracking-[0.08em] uppercase">{p.partner}</span>
-        <span className="mt-2 line-clamp-2 font-display text-[25px] max-[359px]:text-[21px] leading-[0.95] font-bold tracking-[0.01em] text-balance uppercase">{p.headline}</span>
-        <span className="mt-1.5 line-clamp-2 text-[12px] leading-snug opacity-80 max-[359px]:line-clamp-1">{p.body}</span>
+        <span className="truncate pe-2 text-[12px] font-semibold opacity-80">{p.partner}</span>
+        <span className="mt-1.5 line-clamp-2 font-display text-[23px] leading-[1.3] font-extrabold text-balance max-[359px]:text-[20px]">{p.headline}</span>
+        <span className="mt-1 line-clamp-2 text-[12px] leading-relaxed opacity-80 max-[359px]:line-clamp-1">{p.body}</span>
         <span
           className="mt-auto inline-flex h-8 w-fit items-center gap-1 rounded-full px-3 text-[13px] font-semibold whitespace-nowrap transition-transform duration-200 ease-spring group-hover:translate-x-0.5 rtl:group-hover:-translate-x-0.5"
           style={{ background: ink, color: ground }}

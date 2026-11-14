@@ -9,7 +9,7 @@ import { Coin } from "@/components/footon/coin";
 import { SectionHeading } from "@/components/footon/section-heading";
 import { Card, CardRow } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { formatNumber, formatTimeLeft } from "@/lib/gamification/format";
+import { formatNumber, formatTimeLeft, ltr } from "@/lib/gamification/format";
 import { useQuests } from "@/lib/gamification/queries";
 import type { FeatureId, Quest } from "@/lib/gamification/schemas";
 import { copy } from "@/lib/gamification/strings";
@@ -77,7 +77,7 @@ export function QuestCard({ quest: q, serverNow }: { quest: Quest; serverNow: st
         )}
       </div>
       <div aria-hidden="true" className={cn("flex shrink-0 flex-col items-end gap-0.5", q.completed && "opacity-60")}>
-        <span className="font-display text-[15px] leading-none font-bold">+{formatNumber(q.reward.xp)} XP</span>
+        <span className="font-display text-[15px] leading-none font-bold">{ltr(`+${formatNumber(q.reward.xp)} XP`)}</span>
         <span className="inline-flex items-center gap-1 font-display text-[15px] leading-none font-bold text-live">
           <Coin className="size-3.5 text-[7px]" />
           {formatNumber(q.reward.coins)}

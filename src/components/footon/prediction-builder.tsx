@@ -275,7 +275,7 @@ export function PredictionBuilder({ match: m, teams, initial = [], rules, balanc
                                 onChange={(e) => update(p.id, { stake: Number(toLatinDigits(e.target.value).replace(/\D/g, "").slice(0, 5)) || 0 })}
                                 onBlur={() => p.stake < min && update(p.id, { stake: min })}
                                 aria-describedby={`stake-min-${p.id}`}
-                                className="h-9 w-[92px] rounded-sm border border-line-strong bg-surface-2 ps-2.5 pe-8 font-display text-base font-bold tabular-nums outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/60"
+                                className="h-9 w-[92px] rounded-sm border border-line-strong bg-surface-2 ps-2.5 pe-8 font-display text-base font-bold outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/60"
                               />
                               <Coin className="pointer-events-none absolute end-2 top-1/2 size-4 -translate-y-1/2 text-[8px]" />
                             </div>

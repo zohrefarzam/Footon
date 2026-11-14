@@ -23,7 +23,7 @@ export function AchievementBadge({ badge: b, footer, className }: { badge: Badge
     >
       <BadgeGlyph badge={b} locked={locked} />
       <span className={cn("w-full truncate text-[13px] font-semibold", locked && "text-muted-foreground")}>{b.name}</span>
-      <span className="line-clamp-2 text-[11px] leading-tight text-muted-foreground">
+      <span className="line-clamp-2 text-[11px] leading-snug text-muted-foreground">
         <span className="sr-only">{locked ? `${copy.notEarned}. ` : ""}</span>
         {locked && b.description ? (
           b.description

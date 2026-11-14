@@ -199,7 +199,7 @@ function ArrowCta({
 
 function Headline({ title, sub }: { title: string; sub: string }) {
   return (
-    <h1 className="text-[32px] leading-[1.05] font-bold tracking-[-0.04em] text-balance">
+    <h1 className="text-[30px] leading-[1.35] font-extrabold text-balance">
       {title}
       <br />
       <span className="text-muted-foreground">{sub}</span>
@@ -264,7 +264,7 @@ function TryStep({ sample, answer, onAnswer }: { sample: Sample; answer: "yes" |
                 {sample.match} • <span className="text-live">{formatMinute(sample.minute)}</span>
               </span>
             </div>
-            <h2 className="mt-3 text-[26px] leading-[1.15] font-bold tracking-[-0.03em] text-balance">{sample.text}</h2>
+            <h2 className="mt-3 text-[24px] leading-[1.4] font-bold text-balance">{sample.text}</h2>
 
             <div className="mt-auto pt-5">
               <AnimatePresence mode="wait" initial={false}>

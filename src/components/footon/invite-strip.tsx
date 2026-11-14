@@ -8,7 +8,7 @@ import { Check, ChevronRight, X } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarGroup } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import type { Invite, Match } from "@/lib/mock-data";
-import { formatNumber } from "@/lib/format";
+import { formatNumber, matchup } from "@/lib/format";
 import { matchWhen } from "@/lib/dates";
 
 export type InviteWithMatch = Invite & { match: Match };
@@ -99,7 +99,7 @@ export function InviteStrip({ invites }: { invites: InviteWithMatch[] }) {
                     <div className="flex items-center gap-3">
                       <div className="min-w-0 flex-1">
                         <p className="font-display text-lg leading-none font-bold">
-                          {m.home.code} <span className="text-muted-foreground">-</span> {m.away.code}
+                          {matchup(m.home.code, m.away.code)}
                         </p>
                         <div className="mt-1.5 flex items-center gap-2">
                           <span className="font-display text-sm font-bold text-muted-foreground">

@@ -1,4 +1,4 @@
-import { formatNumber as n, formatTimes } from "./format";
+import { formatNumber as n, formatTimes, ltr } from "./format";
 import type { FeatureId } from "./schemas";
 
 /**
@@ -27,7 +27,7 @@ export const copy = {
 
   // Celebrations, announced via aria-live
   announceXp: (xp: number, coins: number, multiplier: number) =>
-    `+${n(xp)} XP و ${n(coins)} سکه${multiplier > 1 ? `، کمبوی ${formatTimes(multiplier)}` : ""}`,
+    `${ltr(`+${n(xp)} XP`)} و ${n(coins)} سکه${multiplier > 1 ? `، کمبوی ${formatTimes(multiplier)}` : ""}`,
   announceLevel: (l: number, tier: string) => `سطح ${n(l)}، ${tier}`,
   announceStreak: (d: number) => `${n(d)} روز مسابقه پشت سر هم`,
   announceBadge: (name: string) => `نشان تازه: ${name}`,
@@ -89,7 +89,7 @@ export const copy = {
   endsIn: (left: string) => `${left} تا پایان`,
   questDone: "انجام شد",
   questDoneEyebrow: "مأموریت انجام شد",
-  questReward: (xp: number, coins: number) => `+${n(xp)} XP • ${n(coins)} سکه`,
+  questReward: (xp: number, coins: number) => `${ltr(`+${n(xp)} XP`)} • ${n(coins)} سکه`,
   questAria: (title: string, p: number, t: number, done: boolean) => (done ? `${title}، انجام شد` : `${title}، ${n(p)} از ${n(t)}`),
 
   // Shop

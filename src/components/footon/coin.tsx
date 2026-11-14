@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils";
 import { NumberTicker } from "./number-ticker";
-import { formatNumber } from "@/lib/format";
+import { formatNumber, formatSigned } from "@/lib/format";
 
 /** The Footon coin ("ف"). Amber, always — coins are never lime. */
 export function Coin({ className }: { className?: string }) {
@@ -35,7 +35,7 @@ export function CoinBadge({
       )}
     >
       <Coin />
-      <span className="font-display text-lg font-bold tabular-nums">
+      <span className="font-display text-lg font-bold">
         {animate ? <NumberTicker value={value} /> : formatNumber(value)}
       </span>
       <span className="sr-only">سکه</span>
@@ -59,9 +59,9 @@ export function CoinAmount({
   className?: string;
 }) {
   const spend = signed && value < 0;
-  const text = `${signed ? (value < 0 ? "−" : "+") : ""}${formatNumber(Math.abs(value))}`;
+  const text = signed ? formatSigned(value) : formatNumber(Math.abs(value));
   return (
-    <span className={cn("inline-flex shrink-0 items-center gap-1 font-display text-lg font-bold tabular-nums", spend ? "text-muted-foreground" : "text-live", className)}>
+    <span className={cn("inline-flex shrink-0 items-center gap-1 font-display text-lg font-bold", spend ? "text-muted-foreground" : "text-live", className)}>
       {text}
       <Coin className="size-4 text-[8px]" />
       <span className="sr-only">{spend ? "سکه خرج شد" : "سکه"}</span>

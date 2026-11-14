@@ -18,7 +18,7 @@ import { userTimeZone } from "@/lib/gamification/day";
 import { xpForLevel } from "@/lib/gamification/level";
 import type { RewardResult } from "@/lib/gamification/schemas";
 import { applyReward, gamificationKeys, useLevel } from "@/lib/gamification/queries";
-import { mockToday } from "@/lib/mock-data";
+import { mockToday, wallet } from "@/lib/mock-data";
 
 /**
  * Gamification pieces plus a control panel for the MOCK server (styleguide
@@ -58,7 +58,7 @@ export function GamificationDemo() {
 
   return (
     <div className="flex flex-col gap-4">
-      <LevelProgressBar />
+      <LevelProgressBar coins={wallet.coins} />
 
       <div className="flex flex-wrap gap-2">
         <Button variant="secondary" size="sm" disabled={busy} onClick={() => grant(40)}>

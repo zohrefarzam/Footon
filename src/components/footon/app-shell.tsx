@@ -20,7 +20,7 @@ export function AppShell({
       <main
         className={cn(
           "relative mx-auto flex w-full max-w-[430px] flex-col gap-[18px] px-5 pt-3",
-          // dock tabs sit under the sticky island from the (tabs) layout
+          // dock tabs sit under the sticky top bar from the (tabs) layout
           dock ? "pb-[calc(110px+env(safe-area-inset-bottom))]" : "min-h-dvh pb-6",
           className,
         )}

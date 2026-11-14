@@ -77,7 +77,7 @@ export function CelebrationHost() {
       <div aria-live="polite" aria-atomic="true" className="sr-only">
         {text}
       </div>
-      {/* top: XP under the island */}
+      {/* top: XP under the top bar */}
       <div className="pointer-events-none fixed inset-x-0 top-[calc(66px+env(safe-area-inset-top))] z-40 mx-auto flex max-w-[430px] justify-center px-5">
         <AnimatePresence>
           {current?.kind === "xp" && config && flags && (

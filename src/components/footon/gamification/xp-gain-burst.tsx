@@ -9,7 +9,7 @@ import type { LevelCurve } from "@/lib/gamification/schemas";
 import { cn } from "@/lib/utils";
 
 /**
- * "+20 XP" pill that rises in under the island after a rewarded action, with
+ * "+20 XP" pill that rises in under the top bar after a rewarded action, with
  * the coins it paid (amber, they're coins) and a short track filling from the
  * old server total to the new one. Combo shows as an amber ×2 (a boost);
  * past the daily soft cap a muted ×0.5 says why the number is smaller.

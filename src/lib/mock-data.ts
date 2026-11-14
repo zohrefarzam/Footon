@@ -700,7 +700,7 @@ export const profile = {
   referral: { code: "FOOT-Y7K2", bonus: 1500, joined: 2 },
   /** Clubs you follow; picked in onboarding, edited on Profile. */
   favoriteTeams: ["LIV"],
-  /** Calls you have running right now (shown in the island). */
+  /** Calls you have running right now. */
   activeCalls: 2,
 };
 

@@ -41,13 +41,13 @@ Adding shadcn components: `npx shadcn@latest add <name>`, then **restyle it to t
 ```
 src/
   app/                    routes (/, /welcome, /play, /match/[id], /challenges/new, /challenges/[id], /club/[userId], /styleguide)
-    (tabs)/               /, /challenges, /predictions, /live, /me, /me/club, /quests, /leaderboard, /fantasy, /wallet, /shop — layout holds the sticky LiveIsland and the Dock (persist across tabs)
+    (tabs)/               /, /challenges, /predictions, /live, /me, /me/club, /quests, /leaderboard, /fantasy, /wallet, /shop — layout holds the sticky top bar (`LevelProgressBar`: level, XP, streak, badges, wallet) and the Dock (persist across tabs)
     globals.css           ALL design tokens, utilities, keyframes
     providers.tsx         client providers: TanStack Query cache, outbox binding, CelebrationHost
   components/
     ui/                   shadcn primitives, restyled (button, badge, card, input, label,
                           switch, slider, avatar, separator, progress, dialog, tabs, skeleton)
-    footon/               product components (app-shell, dock, live-island, question-card,
+    footon/               product components (app-shell, dock, question-card,
                           match-row, segmented-tabs, match-centre, live-match, crowd-poll,
                           match-facts, match-stats, match-lineups, match-table, league-chat,
                           match-scoreboard, match-preview, match-days, countdown, back-button, coin, number-ticker, form-bars,
@@ -95,7 +95,7 @@ src/
 Rules:
 - Pages are Server Components. Put `"use client"` only on the smallest interactive leaf (see `match-filter.tsx`, `create-league-form.tsx`).
 - Product UI goes in `components/footon`. `components/ui` holds only generic primitives.
-- No data fetching inside `components/`; pass data in as props. One exception: gamification state (level, XP, coins, streak) is per-user server state shared by many leaves, so `components/footon/gamification`, the gated tiles, `ShopPreview` and the `LiveIsland` coin balance read it through the hooks in `lib/gamification/queries.ts`, never by calling the API directly.
+- No data fetching inside `components/`; pass data in as props. One exception: gamification state (level, XP, coins, streak) is per-user server state shared by many leaves, so `components/footon/gamification`, the gated tiles, `ShopPreview` and the top bar's coin balance read it through the hooks in `lib/gamification/queries.ts`, never by calling the API directly.
 - Check `/styleguide` after changing tokens or primitives.
 
 ## Design principles
@@ -176,7 +176,7 @@ Rules: no font sizes under 11px. Use `tabular-nums` (`font-display` already look
 - **Radius scale:** chips/pills `rounded-full`; small buttons `rounded-sm` (10px); buttons/inputs `rounded-md` (14px); large buttons `rounded-lg` (16px); cards `rounded-xl` (18px) to `rounded-2xl` (22px); sheets/dock `rounded-3xl` / 24–28px. Nested radius = outer radius − padding.
 - **Spacing:** 4px grid. Screen gutter 20px (`px-5`). Vertical rhythm between screen sections 18px (`gap-[18px]` in `AppShell`). Card padding 16px; row padding `px-4 py-3.5`.
 - **Touch targets** ≥ 44px (`size="default"` and up). `sm` (32–36px) only for secondary chips inside a row.
-- **Elevation:** flat by default (borders, not shadows). Shadows only on floating things: question card (`variant="raised"`), dock, live island.
+- **Elevation:** flat by default (borders, not shadows). Shadows only on floating things: question card (`variant="raised"`), dock.
 - **Width:** mobile only. One phone column, `max-w-[430px]`, centred on any larger screen; design at 390×844 and check 320px. No tablet or desktop layouts: no `sm:`/`md:`/`lg:` breakpoints, no wide grids. Small-phone tweaks use `max-[359px]:` / `min-[360px]:` only.
 - **Textures:** `bg-dots` (quiet: locked/dashed states, the invite ticket), `bg-turf` (mown stripes), `floodlight` (top light + stripes, hero canvases only), `PitchMarkings` (centre circle or penalty box SVG, plus `corners` for corner-flag arcs; `aria-hidden`, behind content with `-z-10` in an `isolate` parent). The floodlight is white at 5%, never tinted.
 
@@ -188,7 +188,6 @@ Tokens (in `globals.css`): `ease-spring` (overshoot, for presses and toggles), `
 | --- | --- | --- |
 | Press | Every button / tappable | `active:scale-95` + `ease-spring` (built into `Button`) |
 | Sliding pill | Segmented tabs | `motion` `layoutId` spring |
-| Island morph | Live island | `motion.div layout`, radius + width spring, blur-in body |
 | Card deal | Question card | Spring in from `y:24, rotate:-2`; two cards peek behind |
 | Number tick | Rewards, wallet | `NumberTicker` (ease-out 1.2s) |
 | Draw check | Answer locked | SVG `pathLength` 0→1, 450ms |
@@ -228,7 +227,6 @@ Rules:
 | --- | --- |
 | `AppShell` | Mobile column. `dock={false}` for focus mode (live match, create flow); otherwise it reserves room for the dock, which `app/(tabs)/layout.tsx` renders once. |
 | `Dock` | Floating glass nav, 5 tabs: Home · Challenges · Predictions · Live · Profile, with the `nav-icons` set (Predictions = a crystal ball; its label reads "Predict" under 360px). Active item: filled icon + white label + lime dot. The Live tab carries a pulsing `LiveDot` while a match is on. No centre "+": creating lives on the Challenges screen. Fantasy and favourite team are not tabs (Fantasy is reached from its Home card and Profile; favourite team lives in Profile settings). |
-| `LiveIsland` | Sticky top pill on every dock tab, rendered once by `app/(tabs)/layout.tsx`. Left: live minute, score and the open question (lime `Q4 open` chip, soft-lime `Q4 · Yes` once answered); tap to expand over the page and answer in place. Right: the wallet (coins → `/wallet`; the server's balance once it loads, so purchases and rewards show at once). Collapses on scroll, outside tap or Escape. With no live match it shows only the wallet. Pages don't render their own coin badge. |
 | `QuestionCard` | The live question. Yes/No → crowd split + drawn check + shimmer. Timer ring is amber. `compact` = one-row widget. |
 | `MatchCentre` | Match page frame (after FotMob): sticky top bar (back · title) → dotted scoreboard that scrolls away (the top bar then crossfades to the compact score + live minute) → sticky underline `Tabs` for sections. Sections arrive as server-rendered nodes; only the frame is client. |
 | `LiveMatch` | A live match in `MatchCentre`. Scoreboard: xl crests, scorers under each name, red-card glyphs, display score, `LiveMinute`, match clock bar. Sections: **Predict** (first, amber dot while a question is open) · Chat · Facts · Stats · Lineups · Table · H2H; a section only shows when there's data. With your league: Predict = `QuestionCard` → `ComboMeter` → league card (standings tiles, "N of M asked", your calls right, streak, lime `+points`) → `CrowdPoll`. Without: `CrowdPoll` + a dashed "Start a league" card (the one lime CTA). |
@@ -252,7 +250,7 @@ Rules:
 | `ChallengeList` / `ChallengeRow` | Challenges as Joined · Invited · Expired `SegmentedTabs` over one divided card. Row: name (+ `BoostBadge`), match codes + time, who made it, entry, players, then your place / "Invite" / "Expired". Every row opens `/challenges/[id]` (your live one → `/play`). `ChallengeRow` is reused on Home. |
 | `ChallengeGate` | An invite on its challenge page: the rules (entry, stake per prediction, cap, pool), secondary Decline + lime "Accept · entry". Accepting reveals the `PredictionBuilder` in place; declining leaves Undo. |
 | `BoostBadge` | A big match (`match.boost`): amber-soft pill, lucide `Zap` + "2x" (amber: it's a boost). On `MatchRow` (amber "2x" over the day), challenge rows, Home's big matches, the scoreboard ("Wins pay 2x") and the builder. Boosts coins a right prediction wins, never points. |
-| `LevelProgressBar` | (gamification) XP · Level · Badges strip under the live island on every dock tab (`app/(tabs)/layout.tsx`) → `/me#level`. Neutral track, filled from the inline start with `scaleX`. Reads the server's progress; skeleton until it loads. |
+| `LevelProgressBar` | (gamification) The sticky top bar on every dock tab (`app/(tabs)/layout.tsx`), one 44px pill with two links: level chip, neutral XP track (filled from the inline start with `scaleX`), XP numbers (hidden under 400px), streak, badges (hidden under 360px) → `/me#level`; then the wallet (amount + «ل» coin) → `/wallet`, showing the server's balance once it loads so purchases and rewards show at once. Skeleton for the level part until progress loads. Pages don't render their own coin badge. There is no live island: a live match is reached from the Live tab (pulsing dot on the dock) and its rows. |
 | `FavouriteClubs` | Profile's "Your clubs": crest chips with ✕, "Add club" opens a sheet with a search field (name or code, clear ✕, "No club matches" empty state, result count announced) over the crest grid of `clubDirectory` (`aria-pressed`, soft-lime when picked). |
 | `ShopPreview` | Home's shop card: full width, dotted, neutral; "Shop" (+ "N new") over three items you could get now (newly unlocked first) with their amber prices. Links to `/shop`. Never lime; hidden when your balance can't cover any of them (and never after a loss). |
 | `SegmentedTabs` | 2–4 filters with sliding lime pill. |
@@ -288,13 +286,13 @@ Rules:
 
 - **Splash → Onboarding (`/welcome`):** the launch splash (from `SplashGate`), then 3 steps with a segmented progress bar, back button and wallet badge (ticks to 10,000 on claim). 1) Try one: dealt card stack; the sample question resolves to a right/wrong result; Continue is `secondary` until answered, then lime. 2) Pick clubs: crest tiles with `aria-pressed`, soft-lime when selected. 3) Claim: coin stack + ticking amount, the three numbered steps, lime "Claim 10,000 coins". Claiming or "Skip to Home" sets the `luckyfan_onboarded` cookie. Links to `/` from here use `prefetch={false}` so a pre-cookie redirect isn't cached.
 - **Onboarding (canvas):** dealt card stack on a dotted canvas with one real sample question; three steps as a single numbered row; lime CTA "Claim 10,000 coins" with an inset arrow; "Skip to Home" as a text link.
-- **Home:** (sticky island + `LevelProgressBar` from the tabs layout) → `PromoCarousel` (the partner slot) → **Big fixtures · Wins pay 2x** (`MatchRow`s; "All matches" → `/live`) → two compact tiles (`InviteTile`, `FantasyUnlock`) → `QuestsTile` (one row: "1 of 3 done" + the next quest → `/quests`) → `ShopPreview`. No big matches → `EmptyState`. Keep Home short: leagues live on Challenges, standings on `/leaderboard`, quests on `/quests`, results on each match. `MatchHero`, `LeagueCard`, `DivisionCard` and `ResultCard` stay available (styleguide) but are not on Home.
+- **Home:** (the sticky `LevelProgressBar` top bar from the tabs layout) → `PromoCarousel` (the partner slot) → **Big fixtures · Wins pay 2x** (`MatchRow`s; "All matches" → `/live`) → two compact tiles (`InviteTile`, `FantasyUnlock`) → `QuestsTile` (one row: "1 of 3 done" + the next quest → `/quests`) → `ShopPreview`. No big matches → `EmptyState`. Keep Home short: leagues live on Challenges, standings on `/leaderboard`, quests on `/quests`, results on each match. `MatchHero`, `LeagueCard`, `DivisionCard` and `ResultCard` stay available (styleguide) but are not on Home.
 - **Quests (`/quests`, from Home's quests tile):** back → Home, title, then **Today** (daily), **This week** (weekly; a locked row below its level), **Season and league**, each a `QuestList` under a `SectionHeading`. No lime CTA: quests move by playing.
 - **Leaderboard (`/leaderboard`, from the division card and Profile):** floodlit header (silver `LeagueBadge`, week, `8th of 30`, points, to promotion, `RankStrip`, the rule line) → **Table** (`Standings` with zones) → **Friends' leagues** (each → its league table via `#league`). No lime CTA.
 - **Section deep links:** `MatchCentre` opens the section named in the URL hash after mount (`/challenges/ch-3#league`, `/play#league`). Your challenges live on the Challenges tab and open predictions on the Predictions tab, not Home. Browsing every fixture is the Live tab's job; don't put the full match list back on Home.
 - **Predictions (`/predictions`, its own dock tab):** title + "N matches open" → Open · Staked · Could win strip (display numbers, coins amber) → **Open · editable until kickoff** (one divided card, a group per match: crests, name, `BoostBadge`, "Edit until", secondary Edit pill → `/match/[id]`; each pick as a row with type icon, summary, stake → `payout()`) → **Settled** (✓ rows soft-lime with `+50 pts` and coins, ✗ rows muted with the stake) → "Predict another match" text link → `/live`. No lime CTA.
 - **Create league:** close button, a live **invite ticket** (lime, notched, dashed tear line) that updates as you edit; name input, stake slider, mode switches, reward note, then `Copy` (secondary) + `Create and share` (lime).
-- **Live tab (`/live`):** FotMob's Matches screen via `MatchDays`: title + "Live only" switch → day strip (Yesterday · **Today** · Tomorrow · dates) → one folding card per competition (your own matches live on Home, not pinned here). No lime CTA here: your live match row and the island's "Q4 open" already take you in. Your live match → `/play`; everything else → `/match/[id]`.
+- **Live tab (`/live`):** FotMob's Matches screen via `MatchDays`: title + "Live only" switch → day strip (Yesterday · **Today** · Tomorrow · dates) → one folding card per competition (your own matches live on Home, not pinned here). No lime CTA here: your live match row already takes you in. Your live match → `/play`; everything else → `/match/[id]`.
 - **Match page (`/match/[id]`, focus mode):** same `MatchCentre` frame as live. Upcoming: **Predict** (`PredictionBuilder` with the one lime "Lock in", `MatchTables`, `CrowdPoll`) · **Preview** (`MatchInfo`, `TeamForm`, `MatchNews`) · Table · H2H. Finished: **Result** (your +points, streak, right/wrong bars, your resolved predictions, coins) · Facts · Stats · Table · H2H.
 - **Challenge page (`/challenges/[id]`, focus mode):** `MatchCentre` titled with the league. **Predict** (invited → `ChallengeGate`, then the builder with the league's rules; joined → the builder; expired → a read-only note, nothing charged) · Chat (once you're in) · League (players, pool) · Match (preview or facts). Your league's live match redirects to `/play`.
 - **Live match (`/play` for your league, `/match/[id]` for any other live match; focus mode, no dock):** `LiveMatch`. FotMob's flow (score always visible, everything one tap away in sticky section tabs), Lucky Fan's job: Predict is the first tab, and the question card is the first thing in it. Chat is its own tab, not a panel under the details.
@@ -326,7 +324,7 @@ From the gamification brief. Code in `lib/gamification` and `components/footon/g
 
 | Component | Purpose / rules |
 | --- | --- |
-| `XpGainBurst` | "+20 XP" pill under the island with the coins it paid and the track moving from the old server total to the new one; amber ×2 for a combo, muted ×0.5 past the soft cap. Not interactive. |
+| `XpGainBurst` | "+20 XP" pill under the top bar with the coins it paid and the track moving from the old server total to the new one; amber ×2 for a combo, muted ×0.5 past the soft cap. Not interactive. |
 | `LevelUpScreen` | Full-screen floodlit dialog (centre circle behind the number): level in display 88, tier tile ("New tier" when it changed), the level badge with its rarity, what just unlocked, lime Continue, secondary Share (`levelUpShareStyle`: full button or icon). |
 | `TierBadge` | Tier chip (`sm`) or tile (`lg`), neutral, icon per tier. |
 | `LevelCard` | Profile's level card, in the division/league card anatomy: `TierRoundel` + "Reserve tier" + badge count, `LV 7` in display 44 with "110 XP to Level 8", the neutral track with `290/400 XP`, then the next two unlocks as locked rows. |

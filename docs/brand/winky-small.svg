@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-8 -16 272 272" width="272" height="272" role="img" aria-label="Lucky Fan">
+<title>Lucky Fan</title>
+<path d="M128,56 C127,46 136,38 148,34" fill="none" stroke="#FFFFFF" stroke-width="30" stroke-linecap="round"/>
+<g fill="#FFFFFF"><circle cx="142" cy="20" r="21"/><circle cx="162" cy="20" r="21"/><circle cx="142" cy="40" r="21"/><circle cx="162" cy="40" r="21"/></g>
+<path d="M128,56 C127,46 136,38 148,34" fill="none" stroke="#04170E" stroke-width="14" stroke-linecap="round"/>
+<g fill="#04170E"><circle cx="142" cy="20" r="16"/><circle cx="162" cy="20" r="16"/><circle cx="142" cy="40" r="16"/><circle cx="162" cy="40" r="16"/></g>
+<g fill="#43B883"><circle cx="142" cy="20" r="10"/><circle cx="162" cy="20" r="10"/><circle cx="142" cy="40" r="10"/><circle cx="162" cy="40" r="10"/></g>
+<circle cx="128" cy="144" r="104" fill="#FFFFFF"/>
+<circle cx="128" cy="144" r="90" fill="#F3F8F4" stroke="#04170E" stroke-width="14"/>
+<polygon points="128.0,60.0 150.8,76.6 142.1,103.4 113.9,103.4 105.2,76.6" fill="#04170E" stroke="#04170E" stroke-width="6" stroke-linejoin="round"/>
+<ellipse cx="98" cy="136" rx="15" ry="20" fill="#04170E"/>
+<path d="M142,138 Q158,118 174,138" fill="none" stroke="#04170E" stroke-width="13" stroke-linecap="round"/>
+<path d="M94,166 Q130,170 162,160 Q160,208 126,208 Q96,206 94,166Z" fill="#04170E"/>
+<path d="M110,192 Q128,180 148,190 Q140,204 126,204 Q114,202 110,192Z" fill="#FFA83E"/>
+</svg>

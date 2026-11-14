@@ -280,7 +280,8 @@ Rules:
 | `LiveDot` / `LiveMinute` | Pulsing amber dot / "● زنده ۶۷'". |
 | `EmptyState` | Dotted canvas, title, one line, one secondary action. |
 | `Football` | The ball mark. `FootballPattern` (spins) + `FootballShade` (static light) for animation. Neutral, never lime. |
-| `Splash` | Launch brand moment, right to left: the ball drops past the end of «لاکی فن», bounces, then rolls right to sit at the start of the name, uncovering it as it goes (~2.6s). Reduced motion: static wordmark. |
+| `Splash` | Launch brand moment with **Winky** (`winky.tsx`, the mascot: a winking football with a lucky clover sprout): drops in, squashes, bounces twice, the clover pops with a little confetti, it winks, then «لاکی فن» and the tagline rise in (~2.4s). Reduced motion: the finished frame. |
+| `Winky` | The brand mark as a component (sticker-style SVG; `wink`, `sprouted` for the splash's first frame). Masters, variants, colours and usage rules: `docs/brand/README.md`. |
 | `SplashGate` | In the root layout: plays `Splash` on every app open (full page load, any route), never on in-app navigation. Page is `inert` until it lifts; `useSplashDone()` lets a screen hold its entrance animations until then. |
 
 ### Screen patterns (from the canvas)
@@ -374,7 +375,7 @@ The app is Persian only and laid out right to left. Home sits on the right of ev
 - **Pitches are physical.** Line-ups and the fantasy pitch place players with `left`, not the reading direction: a right back stays on his right.
 - **Dates** use the Persian calendar (`fa-IR`): «سه‌شنبه ۱۳ آبان».
 - **Inputs** that take numbers run `toLatinDigits()` first, so a Persian keyboard works.
-- The name is «لاکی فن» everywhere a user sees it (title, splash, share texts and card, the coin's «ل»); "Lucky Fan" only in code and docs. Internal paths keep the old name (`components/footon`).
+- The name is «لاکی فن» everywhere a user sees it (title, splash, share texts and card, the coin's «ل»); "Lucky Fan" only in code and docs. The mark is Winky (`docs/brand/`); the app icon and favicon come from it. Internal paths keep the old name (`components/footon`).
 - Club codes on crests (`LIV`), TV channel names, `XP` and `VAR` stay Latin.
 
 ## Adapting shadcn components

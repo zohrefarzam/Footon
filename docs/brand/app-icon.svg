@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-8 -16 272 272" width="272" height="272" role="img" aria-label="Lucky Fan">
+<title>Lucky Fan</title>
+<rect x="-8" y="-16" width="272" height="272" fill="#06140F"/><g transform="translate(128 120) scale(.8) translate(-128 -120)"><path d="M128,56 C127,46 136,38 148,34" fill="none" stroke="#FFFFFF" stroke-width="28" stroke-linecap="round"/>
+<g fill="#FFFFFF" stroke="#FFFFFF" stroke-width="20" stroke-linejoin="round"><path d="M0,0 L-21.8,-12.7 A12.9,12.9 0 0 1 0,-21.8 A12.9,12.9 0 0 1 21.8,-12.7 Z" transform="translate(152 30) rotate(45)"/><path d="M0,0 L-21.8,-12.7 A12.9,12.9 0 0 1 0,-21.8 A12.9,12.9 0 0 1 21.8,-12.7 Z" transform="translate(152 30) rotate(135)"/><path d="M0,0 L-21.8,-12.7 A12.9,12.9 0 0 1 0,-21.8 A12.9,12.9 0 0 1 21.8,-12.7 Z" transform="translate(152 30) rotate(225)"/><path d="M0,0 L-21.8,-12.7 A12.9,12.9 0 0 1 0,-21.8 A12.9,12.9 0 0 1 21.8,-12.7 Z" transform="translate(152 30) rotate(315)"/></g>
+<circle cx="128" cy="144" r="102" fill="#FFFFFF"/>
+<path d="M128,56 C127,46 136,38 148,34" fill="none" stroke="#04170E" stroke-width="12" stroke-linecap="round"/>
+<path d="M128,56 C127,46 136,38 148,34" fill="none" stroke="#2E8F63" stroke-width="5" stroke-linecap="round"/>
+<g fill="#04170E" stroke="#04170E" stroke-width="10" stroke-linejoin="round"><path d="M0,0 L-21.8,-12.7 A12.9,12.9 0 0 1 0,-21.8 A12.9,12.9 0 0 1 21.8,-12.7 Z" transform="translate(152 30) rotate(45)"/><path d="M0,0 L-21.8,-12.7 A12.9,12.9 0 0 1 0,-21.8 A12.9,12.9 0 0 1 21.8,-12.7 Z" transform="translate(152 30) rotate(135)"/><path d="M0,0 L-21.8,-12.7 A12.9,12.9 0 0 1 0,-21.8 A12.9,12.9 0 0 1 21.8,-12.7 Z" transform="translate(152 30) rotate(225)"/><path d="M0,0 L-21.8,-12.7 A12.9,12.9 0 0 1 0,-21.8 A12.9,12.9 0 0 1 21.8,-12.7 Z" transform="translate(152 30) rotate(315)"/></g>
+<g fill="#43B883"><path d="M0,0 L-21.8,-12.7 A12.9,12.9 0 0 1 0,-21.8 A12.9,12.9 0 0 1 21.8,-12.7 Z" transform="translate(152 30) rotate(45)"/><path d="M0,0 L-21.8,-12.7 A12.9,12.9 0 0 1 0,-21.8 A12.9,12.9 0 0 1 21.8,-12.7 Z" transform="translate(152 30) rotate(135)"/><path d="M0,0 L-21.8,-12.7 A12.9,12.9 0 0 1 0,-21.8 A12.9,12.9 0 0 1 21.8,-12.7 Z" transform="translate(152 30) rotate(225)"/><path d="M0,0 L-21.8,-12.7 A12.9,12.9 0 0 1 0,-21.8 A12.9,12.9 0 0 1 21.8,-12.7 Z" transform="translate(152 30) rotate(315)"/></g>
+<g stroke="#04170E" stroke-width="3.5" stroke-linecap="round"><line x1="157.0" y1="30.0" x2="171.0" y2="30.0"/><line x1="152.0" y1="35.0" x2="152.0" y2="49.0"/><line x1="147.0" y1="30.0" x2="133.0" y2="30.0"/><line x1="152.0" y1="25.0" x2="152.0" y2="11.0"/></g>
+<circle cx="152" cy="30" r="4" fill="#04170E"/>
+<clipPath id="a-clip-icon"><circle cx="128" cy="144" r="90"/></clipPath>
+<circle cx="128" cy="144" r="90" fill="#F3F8F4"/>
+<g clip-path="url(#a-clip-icon)">
+<path d="M146.0,238.5 A90,90 0 0 0 222.5,157.5 A103.5,103.5 0 0 1 146.0,238.5Z" fill="#C9D4CE"/>
+<polygon points="128.0,73.2 145.7,86.1 138.9,106.8 117.1,106.8 110.3,86.1" fill="#04170E" stroke="#04170E" stroke-width="3.9" stroke-linejoin="round"/>
+<line x1="128.0" y1="73.2" x2="128.0" y2="46.8" stroke="#04170E" stroke-width="4.9" stroke-linecap="round"/>
+<line x1="145.7" y1="86.1" x2="170.8" y2="77.9" stroke="#04170E" stroke-width="4.9" stroke-linecap="round"/>
+<line x1="110.3" y1="86.1" x2="85.2" y2="77.9" stroke="#04170E" stroke-width="4.9" stroke-linecap="round"/>
+<polygon points="72.0,93.6 50.6,98.1 39.7,79.2 54.3,63.0 74.3,71.9" fill="#04170E" stroke="#04170E" stroke-width="3.9" stroke-linejoin="round"/>
+<polygon points="184.0,93.6 181.7,71.9 201.7,63.0 216.3,79.2 205.4,98.1" fill="#04170E" stroke="#04170E" stroke-width="3.9" stroke-linejoin="round"/>
+<polygon points="50.8,141.3 37.3,158.5 16.8,151.0 17.5,129.2 38.5,123.2" fill="#04170E" stroke="#04170E" stroke-width="3.9" stroke-linejoin="round"/>
+<polygon points="205.2,141.3 217.5,123.2 238.5,129.2 239.2,151.0 218.7,158.5" fill="#04170E" stroke="#04170E" stroke-width="3.9" stroke-linejoin="round"/>
+</g>
+<circle cx="128" cy="144" r="90" fill="none" stroke="#04170E" stroke-width="10"/>
+<ellipse cx="100" cy="132" rx="12" ry="17" fill="#04170E"/>
+<circle cx="104" cy="125" r="4.5" fill="#FFFFFF"/>
+<path d="M144,134 Q158,118 172,134" fill="none" stroke="#04170E" stroke-width="9" stroke-linecap="round"/>
+<ellipse cx="82" cy="160" rx="10" ry="6" fill="#FFA83E"/>
+<ellipse cx="176" cy="160" rx="10" ry="6" fill="#FFA83E"/>
+<path d="M100,164 Q130,166 158,158 Q156,198 126,198 Q102,196 100,164Z" fill="#04170E" stroke="#04170E" stroke-width="6" stroke-linejoin="round"/>
+<path d="M112,186 Q128,176 146,184 Q140,196 126,196 Q116,194 112,186Z" fill="#FFA83E"/></g>
+</svg>

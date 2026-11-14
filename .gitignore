@@ -39,3 +39,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# logo-design skill: the reference library is 1,400+ third-party trademarks (study only, see
+# .claude/skills/logo-design/TRADEMARKS.md); keep it local. Restore it with:
+#   git clone --depth 1 https://github.com/kaankiziltug/logo-design-skill /tmp/lds && cp -r /tmp/lds/skills/logo-design/assets/library/svg .claude/skills/logo-design/assets/library/
+/.claude/skills/logo-design/assets/library/svg/
+/.claude/skills/logo-design/assets/library/gallery.html

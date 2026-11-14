@@ -31,7 +31,7 @@ export function XpTrack({ pct, className, fillClassName }: { pct: number; classN
 }
 
 /**
- * Level · XP · badges strip under the live island on every dock tab. Reads the
+ * Level • XP • badges strip under the live island on every dock tab. Reads the
  * server's progress; the bar only draws where totalXp sits inside the
  * server's level. Links to the Level card on Profile.
  */
@@ -44,7 +44,7 @@ export function LevelProgressBar({ className }: { className?: string }) {
   const Icon = TIER_ICON[tier.id];
   const label = bar.isMax
     ? `${copy.levelN(progress.level)}, ${tier.name}, ${copy.maxLevel}, ${copy.badges(progress.badgeCount)}`
-    : `${copy.levelN(progress.level)}, ${tier.name}, ${copy.xpOf(bar.into, bar.span)} to ${copy.levelN(progress.level + 1)}, ${copy.badges(progress.badgeCount)}`;
+    : `${copy.levelN(progress.level)}، ${tier.name}، ${copy.xpOf(bar.into, bar.span)} تا ${copy.levelN(progress.level + 1)}، ${copy.badges(progress.badgeCount)}`;
 
   return (
     <Link

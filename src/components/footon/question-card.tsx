@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { userTimeZone } from "@/lib/gamification/day";
 import { outbox } from "@/lib/gamification/outbox";
 import { cn } from "@/lib/utils";
+import { formatNumber, formatPercent } from "@/lib/format";
 
 type Answer = "yes" | "no";
 
@@ -26,7 +27,7 @@ export type LiveQuestion = {
  * The live question, dealt on top of a stack (two cards peek behind it).
  * Before answering: Yes (lime) / No (secondary). After: crowd split bar, a drawn
  * check, and shimmering "Waiting for …" status.
- * `compact` folds it into a one-row widget (ring · question · Yes/No) while the
+ * `compact` folds it into a one-row widget (ring • question • Yes/No) while the
  * chat has the screen; the answer survives the switch.
  */
 export function QuestionCard({
@@ -68,7 +69,7 @@ export function QuestionCard({
   const r = 18;
   const c = 2 * Math.PI * r;
   const ring = (
-    <span className={cn("relative flex shrink-0 items-center justify-center", compact ? "size-8" : "size-10")} aria-label={`${left} seconds left`}>
+    <span className={cn("relative flex shrink-0 items-center justify-center", compact ? "size-8" : "size-10")} aria-label={`${formatNumber(left)} ثانیه مانده`}>
       <svg viewBox="0 0 40 40" className="absolute inset-0 size-full -rotate-90" aria-hidden="true">
         <circle cx="20" cy="20" r={r} fill="none" stroke="var(--track)" strokeWidth="3" />
         <circle
@@ -85,7 +86,7 @@ export function QuestionCard({
         />
       </svg>
       <span aria-hidden="true" className={cn("font-display font-bold text-live", compact ? "text-xs" : "text-sm")}>
-        {left}s
+        {formatNumber(left)}
       </span>
     </span>
   );
@@ -93,29 +94,29 @@ export function QuestionCard({
   if (compact) {
     return (
       <section
-        aria-label={`Question ${question.index} of ${question.total}`}
+        aria-label={`سؤال ${formatNumber(question.index)} از ${formatNumber(question.total)}`}
         className={cn("flex items-center gap-3 rounded-2xl border border-line-raised bg-surface-2 py-2.5 ps-2.5 pe-2", className)}
       >
         {ring}
         <div className="min-w-0 flex-1">
           <p className="text-[11px] font-semibold tracking-[0.08em] text-muted-foreground">
-            Q{question.index}/{question.total}
+            سؤال {formatNumber(question.index)}/{formatNumber(question.total)}
           </p>
           <p className="truncate text-[15px] font-semibold">{question.text}</p>
         </div>
         {answer ? (
           <span className="shrink-0 rounded-full bg-primary-soft px-2.5 py-1 text-xs font-semibold text-primary" aria-live="polite">
-            You said {answer === "yes" ? "Yes" : "No"}
+            گفتی {answer === "yes" ? "بله" : "نه"}
           </span>
         ) : left === 0 ? (
-          <span className="shrink-0 text-xs font-semibold text-muted-foreground">Locked</span>
+          <span className="shrink-0 text-xs font-semibold text-muted-foreground">قفل شد</span>
         ) : (
           <div className="flex shrink-0 gap-1.5">
             <Button size="sm" className="h-9 rounded-sm px-3.5" onClick={() => pick("yes")}>
-              Yes
+              بله
             </Button>
             <Button size="sm" variant="secondary" className="h-9 rounded-sm px-3.5" onClick={() => pick("no")}>
-              No
+              نه
             </Button>
           </div>
         )}
@@ -131,12 +132,12 @@ export function QuestionCard({
         initial={reduce ? false : { y: 24, rotate: -2, opacity: 0 }}
         animate={{ y: 0, rotate: 0, opacity: 1 }}
         transition={{ type: "spring", stiffness: 300, damping: 24 }}
-        aria-label={`Question ${question.index} of ${question.total}`}
+        aria-label={`سؤال ${formatNumber(question.index)} از ${formatNumber(question.total)}`}
         className="relative flex flex-col rounded-2xl border border-line-raised bg-surface-2 p-4 shadow-[0_24px_48px_-20px_rgb(0_0_0/0.9)]"
       >
         <div className="flex items-center justify-between">
           <span className="text-[11px] font-semibold tracking-[0.08em] text-muted-foreground">
-            QUESTION {question.index} OF {question.total}
+            سؤال {formatNumber(question.index)} از {formatNumber(question.total)}
           </span>
           {ring}
         </div>
@@ -153,7 +154,7 @@ export function QuestionCard({
               className="mt-4 flex h-12 items-center justify-center rounded-md bg-surface-3 text-sm font-semibold text-muted-foreground"
               aria-live="polite"
             >
-              Answers locked. You missed this one.
+              جواب‌ها قفل شد. این یکی را از دست دادی.
             </motion.p>
           ) : !answer ? (
             <motion.div
@@ -162,7 +163,7 @@ export function QuestionCard({
               className="mt-4 grid grid-cols-2 gap-2"
             >
               <Button size="lg" className="h-12 text-base font-bold" onClick={() => pick("yes")}>
-                Yes
+                بله
               </Button>
               <Button
                 size="lg"
@@ -170,7 +171,7 @@ export function QuestionCard({
                 className="h-12 text-base font-bold"
                 onClick={() => pick("no")}
               >
-                No
+                نه
               </Button>
             </motion.div>
           ) : (
@@ -182,8 +183,8 @@ export function QuestionCard({
               aria-live="polite"
             >
               <div className="flex justify-between text-[13px] font-semibold">
-                <span>Yes {question.yesShare}%</span>
-                <span className="text-muted-foreground">{100 - question.yesShare}% No</span>
+                <span>بله {formatPercent(question.yesShare)}</span>
+                <span className="text-muted-foreground">{formatPercent(100 - question.yesShare)} نه</span>
               </div>
               <div className="flex h-2 gap-[3px]">
                 <motion.div
@@ -212,8 +213,8 @@ export function QuestionCard({
                     transition={{ duration: 0.45, delay: 0.1, ease: [0.65, 0, 0.35, 1] }}
                   />
                 </svg>
-                <span className="text-sm font-semibold">You said {answer === "yes" ? "Yes" : "No"}</span>
-                <span className="text-shimmer ml-auto text-[13px] font-medium">Waiting for {question.resolvesAt}…</span>
+                <span className="text-sm font-semibold">گفتی {answer === "yes" ? "بله" : "نه"}</span>
+                <span className="text-shimmer ms-auto text-[13px] font-medium">در انتظار {question.resolvesAt}…</span>
               </div>
             </motion.div>
           )}

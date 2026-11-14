@@ -10,15 +10,15 @@ import { ChallengesIcon, HomeIcon, LiveIcon, PredictionsIcon, ProfileIcon, type 
 type Item = { href: string; label: string; /** Shorter label under 360px, where five labels do not fit. */ short?: string; icon: (p: NavIconProps) => React.ReactNode; match: (p: string) => boolean };
 
 const items: Item[] = [
-  { href: "/", label: "Home", icon: HomeIcon, match: (p) => p === "/" },
-  { href: "/challenges", label: "Challenges", icon: ChallengesIcon, match: (p) => p.startsWith("/challenges") },
-  { href: "/predictions", label: "Predictions", short: "Predict", icon: PredictionsIcon, match: (p) => p.startsWith("/predictions") },
-  { href: "/live", label: "Live", icon: LiveIcon, match: (p) => p.startsWith("/live") },
-  { href: "/me", label: "Profile", icon: ProfileIcon, match: (p) => p.startsWith("/me") },
+  { href: "/", label: "خانه", icon: HomeIcon, match: (p) => p === "/" },
+  { href: "/challenges", label: "چالش‌ها", icon: ChallengesIcon, match: (p) => p.startsWith("/challenges") },
+  { href: "/predictions", label: "پیش‌بینی‌ها", short: "پیش‌بینی", icon: PredictionsIcon, match: (p) => p.startsWith("/predictions") },
+  { href: "/live", label: "زنده", icon: LiveIcon, match: (p) => p.startsWith("/live") },
+  { href: "/me", label: "پروفایل", icon: ProfileIcon, match: (p) => p.startsWith("/me") },
 ];
 
 /**
- * Floating glass dock, 5 tabs: Home · Challenges · Predictions · Live · Profile. Active = filled icon + white label + lime dot.
+ * Floating glass dock, 5 tabs: Home • Challenges • Predictions • Live • Profile. Active = filled icon + white label + lime dot.
  * The Live tab carries a pulsing amber dot while a match is on.
  * Rendered once by `app/(tabs)/layout.tsx`; hidden in focus mode.
  */
@@ -27,7 +27,7 @@ export function Dock({ live = false, className }: { live?: boolean; className?: 
 
   return (
     <nav
-      aria-label="Primary"
+      aria-label="ناوبری اصلی"
       className={cn(
         "glass fixed bottom-[calc(18px+env(safe-area-inset-bottom))] left-1/2 z-40 grid h-[66px] w-[calc(min(100vw,430px)-32px)] -translate-x-1/2 grid-cols-5 items-center rounded-[24px] border border-line-strong px-1.5 max-[359px]:px-0.5 shadow-[0_16px_40px_-12px_rgb(0_0_0/0.8)]",
         className,
@@ -41,7 +41,7 @@ export function Dock({ live = false, className }: { live?: boolean; className?: 
             key={href}
             href={href}
             aria-current={active ? "page" : undefined}
-            aria-label={showLive ? `${label}, a match is live` : undefined}
+            aria-label={showLive ? `${label}، یک بازی زنده است` : undefined}
             className={cn(
               "flex h-full min-w-0 flex-col items-center justify-center gap-[3px] rounded-[18px] text-[11px] whitespace-nowrap outline-none transition-[color,transform] duration-200 ease-spring active:scale-90 focus-visible:ring-[3px] focus-visible:ring-ring/60",
               active ? "font-semibold text-foreground" : "font-medium text-nav-muted hover:text-foreground",

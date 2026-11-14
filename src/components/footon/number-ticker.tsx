@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { animate, useReducedMotion } from "motion/react";
+import { formatNumber, ltr } from "@/lib/format";
 
 /**
  * Counts from `from` to `value` with an ease-out curve.
@@ -34,10 +35,10 @@ export function NumberTicker({
   }, [from, value, duration, reduce]);
 
   return (
-    <span className={className} aria-label={`${prefix}${value.toLocaleString("en-US")}`}>
-      <span aria-hidden="true" className="tabular-nums">
+    <span className={className} aria-label={prefix ? ltr(`${prefix}${formatNumber(value)}`) : formatNumber(value)}>
+      <span aria-hidden="true" dir="ltr" className="tabular-nums">
         {prefix}
-        {display.toLocaleString("en-US")}
+        {formatNumber(display)}
       </span>
     </span>
   );

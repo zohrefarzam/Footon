@@ -5,6 +5,7 @@ import { HOT_STREAK, type Match } from "@/lib/mock-data";
 import { cn, ordinal } from "@/lib/utils";
 import { StreakFlame } from "./streak";
 import { TeamCrest } from "./team-crest";
+import { formatNumber, formatSigned } from "@/lib/format";
 
 /**
  * Your latest result: the full-time score, then three broadcast stats (points
@@ -31,15 +32,15 @@ export function ResultCard({
   return (
     <Link
       href={href}
-      aria-label={`${m.home.name} ${h}, ${m.away.name} ${a}, full time. You scored ${you.points} points, ${you.right} of ${you.calls} right${league?.rank ? `, ${ordinal(league.rank)} in ${league.name}` : ""}.`}
+      aria-label={`${m.home.name} ${formatNumber(h)}، ${m.away.name} ${formatNumber(a)}، پایان بازی. ${formatNumber(you.points)} امتیاز گرفتی، ${formatNumber(you.right)} از ${formatNumber(you.calls)} درست${league?.rank ? `، ${ordinal(league.rank)} در ${league.name}` : ""}.`}
       className={cn(
         "group flex flex-col gap-3.5 rounded-xl border border-line bg-surface p-4 outline-none transition-colors hover:bg-surface-hover focus-visible:ring-[3px] focus-visible:ring-ring/60",
         className,
       )}
     >
       <span className="flex items-center gap-2 text-[11px] font-semibold tracking-[0.08em] text-muted-foreground uppercase">
-        Full time{m.day ? ` · ${m.day}` : ""}
-        <ChevronRight className="ms-auto size-4 transition-transform duration-200 ease-spring group-hover:translate-x-0.5 rtl:rotate-180" aria-hidden="true" />
+        پایان بازی{m.day ? ` • ${m.day}` : ""}
+        <ChevronRight className="ms-auto size-4 transition-transform duration-200 ease-spring group-hover:translate-x-0.5 rtl:group-hover:-translate-x-0.5 rtl:rotate-180" aria-hidden="true" />
       </span>
 
       <span aria-hidden="true" className="grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-3">
@@ -47,10 +48,10 @@ export function ResultCard({
           <span className={cn("truncate text-sm font-semibold", h < a && "text-muted-foreground")}>{m.home.name}</span>
           <TeamCrest code={m.home.code} colors={m.home.colors} size="sm" />
         </span>
-        <span className="rounded-sm bg-surface-2 px-2.5 py-1 font-display text-[26px] leading-none font-bold tabular-nums">
-          {h}
+        <span className="flex items-center rounded-sm bg-surface-2 px-2.5 py-1 font-display text-[26px] leading-none font-bold tabular-nums">
+          {formatNumber(h)}
           <span className="mx-1.5 text-dim">:</span>
-          {a}
+          {formatNumber(a)}
         </span>
         <span className="flex min-w-0 items-center gap-2">
           <TeamCrest code={m.away.code} colors={m.away.colors} size="sm" />
@@ -60,15 +61,15 @@ export function ResultCard({
 
       <span aria-hidden="true" className="grid grid-cols-3 divide-x divide-line rounded-lg border border-line bg-background/40 rtl:divide-x-reverse">
         <span className="flex flex-col items-center gap-0.5 py-2.5">
-          <span className="font-display text-[26px] leading-none font-bold text-primary">+{you.points}</span>
-          <span className="text-[11px] text-muted-foreground">points</span>
+          <span className="font-display text-[26px] leading-none font-bold text-primary">{formatSigned(you.points)}</span>
+          <span className="text-[11px] text-muted-foreground">امتیاز</span>
         </span>
         <span className="flex flex-col items-center gap-0.5 py-2.5">
           <span className="font-display text-[26px] leading-none font-bold">
-            {you.right}
-            <span className="text-base text-muted-foreground">/{you.calls}</span>
+            {formatNumber(you.right)}
+            <span className="text-base text-muted-foreground">/{formatNumber(you.calls)}</span>
           </span>
-          <span className="text-[11px] text-muted-foreground">right</span>
+          <span className="text-[11px] text-muted-foreground">درست</span>
         </span>
         <span className="flex flex-col items-center gap-0.5 py-2.5">
           {league?.rank ? (
@@ -79,7 +80,7 @@ export function ResultCard({
           ) : (
             <span className="font-display text-[26px] leading-none font-bold text-muted-foreground">–</span>
           )}
-          <span className="max-w-full truncate px-1 text-[11px] text-muted-foreground">{league ? league.name : "free table"}</span>
+          <span className="max-w-full truncate px-1 text-[11px] text-muted-foreground">{league ? league.name : "جدول رایگان"}</span>
         </span>
       </span>
 

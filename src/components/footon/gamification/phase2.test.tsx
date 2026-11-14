@@ -1,3 +1,5 @@
+import { copy } from "@/lib/gamification/strings";
+import { formatPercent } from "@/lib/format";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
@@ -79,17 +81,17 @@ describe("BadgeWall", () => {
   it("shows badges not earned yet, locked, with no pin", () => {
     setup(<BadgeWall open onOpenChange={() => {}} />, progress(), all);
     expect(screen.getByText("locked")).toBeInTheDocument();
-    expect(screen.getByText("Seasonal")).toBeInTheDocument();
-    expect(screen.queryByRole("button", { name: "Pin locked" })).toBeNull();
-    expect(screen.getByText("4 of 5 earned")).toBeInTheDocument();
+    expect(screen.getByText(copy.badgeFamily.seasonal)).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: copy.pinBadge("locked") })).toBeNull();
+    expect(screen.getByText(`${copy.earnedOf(4, 5)} گرفته‌ای`)).toBeInTheDocument();
   });
 
   it("disables more pins once 3 are pinned, but lets you unpin", () => {
     setup(<BadgeWall open onOpenChange={() => {}} />, progress({ pinnedBadges: ["a", "b", "c"] }), all);
-    expect(screen.getByRole("button", { name: "Pin d" })).toBeDisabled();
-    expect(screen.getByRole("button", { name: "Unpin a" })).toBeEnabled();
-    expect(screen.getByRole("button", { name: "Unpin a" })).toHaveAttribute("aria-pressed", "true");
-    expect(screen.getByText(/Pin up to 3/)).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: copy.pinBadge("d") })).toBeDisabled();
+    expect(screen.getByRole("button", { name: copy.unpinBadge("a") })).toBeEnabled();
+    expect(screen.getByRole("button", { name: copy.unpinBadge("a") })).toHaveAttribute("aria-pressed", "true");
+    expect(screen.getByText(copy.pinFull(3))).toBeInTheDocument();
   });
 
   it("waits for the server: no double submit, then takes its answer", async () => {
@@ -98,63 +100,63 @@ describe("BadgeWall", () => {
     const qc = setup(<BadgeWall open onOpenChange={() => {}} />, progress(), all);
     const user = userEvent.setup();
 
-    await user.click(screen.getByRole("button", { name: "Pin a" }));
-    await waitFor(() => expect(screen.getByRole("button", { name: "Pin b" })).toBeDisabled());
-    await user.click(screen.getByRole("button", { name: "Pin b" }));
+    await user.click(screen.getByRole("button", { name: copy.pinBadge("a") }));
+    await waitFor(() => expect(screen.getByRole("button", { name: copy.pinBadge("b") })).toBeDisabled());
+    await user.click(screen.getByRole("button", { name: copy.pinBadge("b") }));
     expect(pin.calls).toEqual([["a"]]);
 
     resolve({ pinnedBadges: ["a"] });
-    await waitFor(() => expect(screen.getByRole("button", { name: "Unpin a" })).toBeEnabled());
+    await waitFor(() => expect(screen.getByRole("button", { name: copy.unpinBadge("a") })).toBeEnabled());
     expect(qc.getQueryData<UserProgress>(gamificationKeys.progress)?.pinnedBadges).toEqual(["a"]);
   });
 
   it("says so when the server refuses, and changes nothing", async () => {
     pin.impl = () => Promise.reject(new Error("conflict"));
     setup(<BadgeWall open onOpenChange={() => {}} />, progress(), all);
-    await userEvent.setup().click(screen.getByRole("button", { name: "Pin a" }));
-    expect(await screen.findByText("Couldn't save that. Try again.")).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Pin a" })).toHaveAttribute("aria-pressed", "false");
+    await userEvent.setup().click(screen.getByRole("button", { name: copy.pinBadge("a") }));
+    expect(await screen.findByText(copy.pinFailed)).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: copy.pinBadge("a") })).toHaveAttribute("aria-pressed", "false");
   });
 });
 
 describe("ComboMeter", () => {
   it("shows the run and the next step", () => {
     setup(<ComboMeter />, progress({ combo: { count: 2, multiplier: 1 } }));
-    expect(screen.getByRole("img")).toHaveAccessibleName("Combo: 2 right in a row, XP ×1. ×2 at 3");
+    expect(screen.getByRole("img")).toHaveAccessibleName(copy.comboAria(2, 1, { at: 3, multiplier: 2 }));
   });
 
   it("follows the server's combo after each result", async () => {
     const qc = setup(<ComboMeter />, progress({ combo: { count: 2, multiplier: 1 } }));
     applyReward(qc, result({ id: "x1", action: "liveResult", combo: { count: 3, multiplier: 2 }, comboMultiplier: 2 }));
-    await waitFor(() => expect(screen.getByRole("img")).toHaveAccessibleName("Combo: 3 right in a row, XP ×2. ×3 at 5"));
+    await waitFor(() => expect(screen.getByRole("img")).toHaveAccessibleName(copy.comboAria(3, 2, { at: 5, multiplier: 3 })));
     applyReward(qc, result({ id: "x2", action: "liveResult", xpGained: 0, combo: { count: 0, multiplier: 1 } }));
-    await waitFor(() => expect(screen.getByRole("img")).toHaveAccessibleName("Combo: 0 right in a row, XP ×1. ×2 at 3"));
+    await waitFor(() => expect(screen.getByRole("img")).toHaveAccessibleName(copy.comboAria(0, 1, { at: 3, multiplier: 2 })));
   });
 });
 
 describe("Streak", () => {
   it("counts a broken run as 0 and keeps the best", () => {
     setup(<StreakCounter />, progress({ streak: { current: 6, best: 6, lastDayKey: "2026-10-30", freezesHeld: 0, status: "broken" } }));
-    expect(screen.getByText("0")).toBeInTheDocument();
-    expect(screen.getByText("Best 6")).toBeInTheDocument();
-    expect(screen.getByText("Call any match to start a run.")).toBeInTheDocument();
+    expect(screen.getByText("۰")).toBeInTheDocument();
+    expect(screen.getByText(copy.bestRun(6))).toBeInTheDocument();
+    expect(screen.getByText(copy.streakNone)).toBeInTheDocument();
   });
 
   it("shows the next milestone", () => {
     setup(<StreakCounter />, progress());
-    expect(screen.getByText("4 more to the 7-day reward")).toBeInTheDocument();
+    expect(screen.getByText(copy.toMilestone(4, 7))).toBeInTheDocument();
   });
 
   it("labels freezes by count, not colour alone", () => {
     render(<FreezeIndicator held={1} max={2} />);
-    expect(screen.getByRole("img")).toHaveAccessibleName("1 of 2 streak freezes");
+    expect(screen.getByRole("img")).toHaveAccessibleName(copy.freezes(1, 2));
   });
 
   it("breaks the news kindly: best run, one way back, no alarm colours", () => {
     render(<StreakBrokenSheet best={6} open onClose={() => {}} />);
     const dialog = screen.getByRole("dialog");
-    expect(dialog).toHaveAccessibleName("That run's over");
-    expect(screen.getByRole("link", { name: "Start a new run" })).toHaveAttribute("href", "/live");
+    expect(dialog).toHaveAccessibleName(copy.brokenTitle);
+    expect(screen.getByRole("link", { name: copy.brokenCta })).toHaveAttribute("href", "/live");
     expect(dialog.innerHTML).not.toMatch(/text-loss|bg-loss|destructive/);
   });
 });
@@ -165,14 +167,14 @@ describe("Badge medallions", () => {
       <>
         <AchievementBadge badge={{ ...badge("gold", true), tier: "gold" }} />
         <AchievementBadge badge={badge("plain", true)} />
-        <AchievementBadge badge={{ ...badge("later", false), description: "5 right in a row" }} />
+        <AchievementBadge badge={{ ...badge("later", false), description: "۵ درست پشت سر هم" }} />
       </>,
     );
     const [gold, plain, later] = Array.from(container.children) as HTMLElement[];
     expect(gold.className).toMatch(/border-gold-line/);
     expect(plain.className).toMatch(/border-line /);
     expect(later.className).toMatch(/border-dashed/);
-    expect(later).toHaveTextContent("Not yet. 5 right in a row");
-    expect(gold).toHaveTextContent("10% of players have it");
+    expect(later).toHaveTextContent(`${copy.notEarned}. ۵ درست پشت سر هم`);
+    expect(gold).toHaveTextContent(`${formatPercent(10)} ${copy.rarity}`);
   });
 });

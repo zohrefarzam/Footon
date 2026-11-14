@@ -25,7 +25,7 @@ export function Price({ value, className }: { value: number; className?: string 
     <span className={cn("inline-flex items-center gap-1 font-display text-[17px] leading-none font-bold text-live", className)}>
       <Coin className="size-3.5 text-[7px]" />
       {formatNumber(value)}
-      <span className="sr-only"> coins</span>
+      <span className="sr-only"> سکه</span>
     </span>
   );
 }
@@ -45,7 +45,7 @@ export function ShopItemCard({ item, level, onSelect }: { item: ShopItem; level:
         ? copy.equipped
         : state === "owned"
           ? copy.owned
-          : `${state === "new" ? `${copy.isNew}, ` : ""}${copy.priceAria(item.price.free)}`;
+          : `${state === "new" ? `${copy.isNew}، ` : ""}${copy.priceAria(item.price.free)}`;
 
   return (
     <button

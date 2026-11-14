@@ -12,11 +12,11 @@ export default function QuestsPage() {
     <AppShell className="pt-3.5">
       <header className="flex items-center gap-3">
         <BackButton href="/" />
-        <h1 className="text-[26px] font-bold tracking-[-0.03em]">Quests</h1>
+        <h1 className="text-[26px] font-bold tracking-[-0.03em]">مأموریت‌ها</h1>
       </header>
-      <QuestList kinds={["daily"]} title="Today" />
-      <QuestList kinds={["weekly"]} title="This week" feature="weeklyQuests" />
-      <QuestList kinds={["seasonal", "group"]} title="Season and league" />
+      <QuestList kinds={["daily"]} title="امروز" />
+      <QuestList kinds={["weekly"]} title="این هفته" feature="weeklyQuests" />
+      <QuestList kinds={["seasonal", "group"]} title="فصل و لیگ" />
     </AppShell>
   );
 }

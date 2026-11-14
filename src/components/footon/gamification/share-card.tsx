@@ -9,6 +9,7 @@ import { shareToTelegram } from "@/lib/gamification/share";
 import { copy } from "@/lib/gamification/strings";
 import { track } from "@/lib/track";
 import { SHIRT_PATH } from "./club-view";
+import { formatNumber } from "@/lib/format";
 
 export const CARD = { width: 1080, height: 1350 } as const;
 
@@ -93,48 +94,54 @@ export function drawClubCard(ctx: CanvasRenderingContext2D, club: MyClub, tierNa
   roundRect(ctx, x, y, w, h, r);
   ctx.stroke();
 
-  // name, level, tier
+  // name, level, tier: laid out right to left, like the app (start = the right edge)
+  ctx.direction = "rtl";
   ctx.textBaseline = "alphabetic";
+  const start = x + w - 64;
+  const end = x + 64;
+  ctx.textAlign = "right";
   ctx.fillStyle = C.fg;
   ctx.font = `700 64px ${fonts.sans}`;
-  ctx.fillText(club.name, x + 64, y + 680, w - 128);
+  ctx.fillText(club.name, start, y + 680, w - 128);
   ctx.fillStyle = C.muted;
   ctx.font = `700 64px ${fonts.display}`;
-  ctx.fillText("LV", x + 64, y + 860);
-  const lvWidth = ctx.measureText("LV").width;
+  ctx.fillText(copy.levelShort, start, y + 860);
+  const lvWidth = ctx.measureText(copy.levelShort).width;
   ctx.fillStyle = C.fg;
   ctx.font = `700 150px ${fonts.display}`;
-  ctx.fillText(String(club.level), x + 64 + lvWidth + 14, y + 860);
+  ctx.fillText(formatNumber(club.level), start - lvWidth - 18, y + 860);
   ctx.fillStyle = C.muted;
   ctx.font = `600 44px ${fonts.sans}`;
-  ctx.textAlign = "right";
-  ctx.fillText(tierName, x + w - 64, y + 860);
   ctx.textAlign = "left";
+  ctx.fillText(tierName, end, y + 860);
 
   // streak on the start, pinned badges on the end
   const line = y + 940;
   if (club.streak > 0) {
     ctx.fillStyle = C.live;
     ctx.font = `600 40px ${fonts.sans}`;
-    ctx.fillText(`${club.streak} ${copy.streakUnit(club.streak)}`, x + 64, line);
+    ctx.textAlign = "right";
+    ctx.fillText(`${formatNumber(club.streak)} ${copy.streakUnit(club.streak)}`, start, line);
   }
   if (club.pinnedBadges.length > 0) {
     ctx.fillStyle = C.muted;
     ctx.font = `500 34px ${fonts.sans}`;
-    ctx.textAlign = "right";
-    ctx.fillText(club.pinnedBadges.map((b) => b.name).join(" · "), x + w - 64, line, w / 2);
     ctx.textAlign = "left";
+    ctx.fillText(club.pinnedBadges.map((b) => b.name).join(" • "), end, line, w / 2);
   }
 
-  // mark
+  // mark: the Latin wordmark on the start corner, the line on the end
   ctx.fillStyle = C.fg;
   ctx.font = `italic 700 60px ${fonts.display}`;
-  ctx.fillText("FOOTON", 80, H - 120);
+  ctx.direction = "ltr";
+  ctx.textAlign = "right";
+  ctx.fillText("FOOTON", W - 80, H - 120);
+  ctx.direction = "rtl";
   ctx.fillStyle = C.muted;
   ctx.font = `500 34px ${fonts.sans}`;
-  ctx.textAlign = "right";
-  ctx.fillText("Call the next match with me", W - 80, H - 124);
   ctx.textAlign = "left";
+  ctx.fillText("بازی بعدی را با من پیش‌بینی کن", 80, H - 124);
+  ctx.textAlign = "start";
 }
 
 export async function renderClubCard(club: MyClub, tierName: string): Promise<File | null> {
@@ -171,7 +178,7 @@ export function ShareCardRenderer({ club, tierName, className }: { club: MyClub;
 
   return (
     <Button variant="secondary" size="lg" disabled={busy} onClick={share} className={className}>
-      <Send aria-hidden="true" />
+      <Send className="rtl:-scale-x-100" aria-hidden="true" />
       {busy ? copy.sharing : copy.shareClub}
     </Button>
   );

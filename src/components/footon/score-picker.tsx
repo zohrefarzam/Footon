@@ -8,6 +8,7 @@ import { SCORE_MAX } from "@/lib/predictions";
 import { cn } from "@/lib/utils";
 import { PitchMarkings } from "./pitch-markings";
 import { TeamCrest } from "./team-crest";
+import { formatNumber } from "@/lib/format";
 
 /** One side's stepper: − big number +. The number rolls up or down as it changes. */
 function Stepper({ team, value, set, active }: { team: Team; value: number; set: (n: number) => void; active: boolean }) {
@@ -15,11 +16,11 @@ function Stepper({ team, value, set, active }: { team: Team; value: number; set:
   const btn =
     "flex size-11 items-center justify-center rounded-md border border-line-strong bg-surface-3 text-foreground outline-none transition-[transform,background-color] duration-150 ease-spring hover:bg-surface-4 active:scale-90 disabled:opacity-35 focus-visible:ring-[3px] focus-visible:ring-ring/60";
   return (
-    <div className="flex min-w-0 flex-col items-center gap-2" role="group" aria-label={`${team.name} goals`}>
+    <div className="flex min-w-0 flex-col items-center gap-2" role="group" aria-label={`گل‌های ${team.name}`}>
       <TeamCrest code={team.code} colors={team.colors} size="lg" />
       <span className="w-full truncate text-center text-[13px] font-semibold">{team.name}</span>
       <div className="flex items-center gap-1 max-[379px]:flex-col-reverse">
-        <button type="button" className={btn} onClick={() => set(value - 1)} disabled={value <= 0} aria-label={`One fewer ${team.name} goal`}>
+        <button type="button" className={btn} onClick={() => set(value - 1)} disabled={value <= 0} aria-label={`یک گل کمتر برای ${team.name}`}>
           <Minus className="size-4" strokeWidth={2.6} />
         </button>
         <span className="relative flex h-14 w-10 items-center justify-center overflow-hidden" aria-live="polite">
@@ -32,11 +33,11 @@ function Stepper({ team, value, set, active }: { team: Team; value: number; set:
               transition={{ type: "spring", stiffness: 500, damping: 32 }}
               className={cn("font-display text-[52px] leading-none font-bold tabular-nums", !active && "text-subtle")}
             >
-              {value}
+              {formatNumber(value)}
             </motion.span>
           </AnimatePresence>
         </span>
-        <button type="button" className={btn} onClick={() => set(value + 1)} disabled={value >= SCORE_MAX} aria-label={`One more ${team.name} goal`}>
+        <button type="button" className={btn} onClick={() => set(value + 1)} disabled={value >= SCORE_MAX} aria-label={`یک گل بیشتر برای ${team.name}`}>
           <Plus className="size-4" strokeWidth={2.6} />
         </button>
       </div>
@@ -68,9 +69,9 @@ export function ScorePicker({
       <PitchMarkings corners className="-z-10" />
       <div className="flex items-baseline justify-between gap-3">
         <h3 id="score-picker" className="font-display text-[17px] leading-none font-bold tracking-[0.04em] uppercase">
-          Call the score
+          نتیجه را بگو
         </h3>
-        <span className="text-xs text-muted-foreground">{value ? "In your slip" : "Tap + to call it"}</span>
+        <span className="text-xs text-muted-foreground">{value ? "در برگهٔ پیش‌بینی‌ات" : "+ را بزن تا بگویی"}</span>
       </div>
       <div className="mt-4 grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-end gap-1">
         <Stepper team={home} value={h} active={!!value} set={(n) => onChange([clamp(n), a])} />

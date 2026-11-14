@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 export function BackButton({ href = "/" }: { href?: string }) {
   const router = useRouter();
   return (
-    <Button asChild variant="secondary" size="icon-sm" aria-label="Back" className="rounded-[11px]">
+    <Button asChild variant="secondary" size="icon-sm" aria-label="بازگشت" className="rounded-[11px]">
       <Link
         href={href}
         onClick={(e) => {

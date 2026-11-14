@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { clubDirectory, division, profile, recentForm } from "@/lib/mock-data";
 import { cn, ordinal } from "@/lib/utils";
+import { formatBoost, formatNumber } from "@/lib/format";
 
 
 export default function MePage() {
@@ -27,8 +28,8 @@ export default function MePage() {
   return (
     <AppShell className="gap-5 pt-3.5">
       <header className="flex h-10 items-center justify-between">
-        <h1 className="text-[22px] font-bold tracking-[-0.03em]">Profile</h1>
-        <Button variant="secondary" size="icon" aria-label="Settings" className="size-10">
+        <h1 className="text-[22px] font-bold tracking-[-0.03em]">پروفایل</h1>
+        <Button variant="secondary" size="icon" aria-label="تنظیمات" className="size-10">
           <Settings />
         </Button>
       </header>
@@ -39,9 +40,9 @@ export default function MePage() {
           <PitchMarkings variant="box" className="-z-10" />
           <div className="flex items-start justify-between">
             <div>
-              <p className="text-[11px] font-bold tracking-[0.12em]">{division.name.toUpperCase()} DIVISION</p>
-              <p className="mt-2 font-display text-[64px] leading-[0.95] font-bold">{profile.points.toLocaleString("en-US")}</p>
-              <p className="text-[13px] font-semibold opacity-70">Total points</p>
+              <p className="text-[11px] font-bold tracking-[0.12em]">دستهٔ {division.name}</p>
+              <p className="mt-2 font-display text-[64px] leading-[0.95] font-bold">{formatNumber(profile.points)}</p>
+              <p className="text-[13px] font-semibold opacity-70">کل امتیاز</p>
             </div>
             <span className="flex size-[60px] items-center justify-center rounded-[18px] bg-background text-silver" aria-hidden="true">
               <UserRound className="size-7" strokeWidth={1.8} />
@@ -50,10 +51,10 @@ export default function MePage() {
           <div className="mt-[18px]">
             <div className="flex justify-between text-xs font-semibold">
               <span>
-                {ordinal(RANK)} of {OF} · week {division.week}
+                {ordinal(RANK)} از {formatNumber(OF)} • هفتهٔ {formatNumber(division.week)}
               </span>
               <Link href="/leaderboard" className="-my-3 py-3 underline underline-offset-3">
-                View leaderboard
+                دیدن جدول
               </Link>
             </div>
             <RankStrip rank={RANK} size={OF} promote={division.promote} relegate={division.relegate} tone="light" className="mt-2" />
@@ -63,14 +64,14 @@ export default function MePage() {
 
       <section id="level" aria-labelledby="level-title" className="flex scroll-mt-24 flex-col gap-2.5">
         <h2 id="level-title" className="text-[13px] font-medium text-muted-foreground">
-          Level
+          سطح
         </h2>
         <LevelCard />
       </section>
 
       <section aria-labelledby="streak-title" className="flex flex-col gap-2.5">
         <h2 id="streak-title" className="text-[13px] font-medium text-muted-foreground">
-          Streak
+          زنجیره
         </h2>
         <StreakCounter />
       </section>
@@ -78,25 +79,25 @@ export default function MePage() {
       <FavouriteClubs clubs={clubDirectory} initial={profile.favoriteTeams} />
 
       <section className="flex flex-col gap-2.5">
-        <h2 className="text-[13px] font-medium text-muted-foreground">Recent form</h2>
+        <h2 className="text-[13px] font-medium text-muted-foreground">وضعیت اخیر</h2>
         <Card className="gap-4 p-4">
           <div className="flex items-end justify-between gap-4">
             <div>
               <p className="font-display text-[56px] leading-[0.9] font-bold">
-                {rate}
-                <span className="text-[28px] text-muted-foreground">%</span>
+                {formatNumber(rate)}
+                <span className="text-[28px] text-muted-foreground">٪</span>
               </p>
-              <p className="mt-1 text-[13px] text-muted-foreground">Calls right, last {recentForm.length}</p>
+              <p className="mt-1 text-[13px] text-muted-foreground">پیش‌بینی درست، {formatNumber(recentForm.length)} تای آخر</p>
             </div>
             <dl className="flex gap-4 text-center">
               {[
-                { label: "Won", value: wins, tone: "text-win" },
-                { label: "Lost", value: losses, tone: "text-loss" },
-                { label: "Void", value: voids, tone: "text-muted-foreground" },
+                { label: "برد", value: wins, tone: "text-win" },
+                { label: "باخت", value: losses, tone: "text-loss" },
+                { label: "باطل", value: voids, tone: "text-muted-foreground" },
               ].map((s) => (
                 <div key={s.label} className="flex flex-col-reverse">
                   <dt className="mt-1 text-xs text-muted-foreground">{s.label}</dt>
-                  <dd className={cn("font-display text-[28px] leading-none font-bold", s.tone)}>{s.value}</dd>
+                  <dd className={cn("font-display text-[28px] leading-none font-bold", s.tone)}>{formatNumber(s.value)}</dd>
                 </div>
               ))}
             </dl>
@@ -104,8 +105,8 @@ export default function MePage() {
           <div>
             <FormBars results={recentForm} fill className="h-14" />
             <div className="mt-2 flex justify-between text-[11px] font-medium text-muted-foreground" aria-hidden="true">
-              <span>Oldest</span>
-              <span>Latest</span>
+              <span>قدیمی‌تر</span>
+              <span>تازه‌تر</span>
             </div>
           </div>
         </Card>
@@ -118,13 +119,13 @@ export default function MePage() {
               key={i}
               className="flex h-11 w-[34px] items-center justify-center rounded-sm bg-live font-display text-[17px] font-bold text-live-foreground shadow-[inset_0_-3px_0_rgb(0_0_0/0.2)]"
             >
-              2x
+              {formatBoost(2)}
             </span>
           ))}
         </div>
         <div className="flex-1">
-          <p className="text-[15px] font-semibold">2 boosts left</p>
-          <p className="mt-0.5 text-xs text-muted-foreground">Double your points · once per match · earned, never sold</p>
+          <p className="text-[15px] font-semibold">{formatNumber(2)} بوست مانده</p>
+          <p className="mt-0.5 text-xs text-muted-foreground">امتیازت دو برابر • یک بار در هر بازی • به‌دست‌آوردنی، نه فروشی</p>
         </div>
       </Card>
 
@@ -132,7 +133,7 @@ export default function MePage() {
 
       <section aria-labelledby="club-title" className="flex flex-col gap-2.5">
         <h2 id="club-title" className="text-[13px] font-medium text-muted-foreground">
-          My Club
+          باشگاه من
         </h2>
         <MyClubLink />
       </section>

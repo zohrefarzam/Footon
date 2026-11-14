@@ -223,13 +223,13 @@ describe("mock server: shop", () => {
     await expect(api.equip("kit-home")).rejects.toMatchObject({ code: "conflict" });
     await api.purchase(buy("kit-home", "b1", 1500));
     const { club } = await api.equip("kit-home");
-    expect(club.kit).toMatchObject({ id: "kit-home", name: "Home kit" });
+    expect(club.kit).toMatchObject({ id: "kit-home", name: "لباس اول" });
     expect((await api.getShop()).items.find((i) => i.id === "kit-home")?.equipped).toBe(true);
   });
 
   it("shows a friend's club, not one it doesn't know", async () => {
     const api = shop();
-    await expect(api.getMyClub("sara")).resolves.toMatchObject({ name: "Sara's club", level: 12, tier: "startingXI", kit: { id: "kit-night" } });
+    await expect(api.getMyClub("sara")).resolves.toMatchObject({ name: "باشگاه سارا", level: 12, tier: "startingXI", kit: { id: "kit-night" } });
     await expect(api.getMyClub("nobody")).rejects.toBeTruthy();
   });
 });

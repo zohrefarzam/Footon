@@ -1,3 +1,5 @@
+import { formatNumber } from "./format";
+
 /**
  * Footon's in-game economy: the fixed rules every coin screen reads from.
  * Source: "Footon internal economy" (strategy doc). Keep the numbers here so the
@@ -82,8 +84,8 @@ export function splitPool(entry: number, players: number): PoolSplit {
   return { pool, burned, payouts: [first, net - first] };
 }
 
-/** `10,000`: coins never show decimals. */
-export const formatCoins = (n: number) => Math.round(n).toLocaleString("en-US");
+/** `۱۰٬۰۰۰`: coins never show decimals. */
+export const formatCoins = (n: number) => formatNumber(Math.round(n));
 
-/** `+1,500` / `−500` with a real minus sign. */
+/** `+۱٬۵۰۰` / `−۵۰۰` with a real minus sign. */
 export const formatDelta = (n: number) => `${n < 0 ? "−" : "+"}${formatCoins(Math.abs(n))}`;

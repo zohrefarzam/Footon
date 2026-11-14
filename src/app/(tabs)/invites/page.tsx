@@ -15,12 +15,12 @@ export default function InvitesPage() {
   return (
     <AppShell>
       <header className="flex items-center gap-3">
-        <Button asChild variant="secondary" size="icon-sm" aria-label="Back to home" className="rounded-[11px]">
+        <Button asChild variant="secondary" size="icon-sm" aria-label="بازگشت به خانه" className="rounded-[11px]">
           <Link href="/">
-            <ChevronLeft />
+            <ChevronLeft className="rtl:rotate-180" />
           </Link>
         </Button>
-        <h1 className="text-[26px] font-bold tracking-[-0.03em]">Invites</h1>
+        <h1 className="text-[26px] font-bold tracking-[-0.03em]">دعوت‌ها</h1>
       </header>
 
       <ul className="flex flex-col divide-y divide-line overflow-hidden rounded-[20px] border border-line bg-surface">

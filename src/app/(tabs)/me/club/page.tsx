@@ -8,7 +8,7 @@ export default function MyClubPage() {
     <AppShell className="pt-3.5">
       <header className="flex items-center gap-3">
         <BackButton href="/me" />
-        <h1 className="text-[26px] font-bold tracking-[-0.03em]">My Club</h1>
+        <h1 className="text-[26px] font-bold tracking-[-0.03em]">باشگاه من</h1>
       </header>
       <ClubPage />
     </AppShell>

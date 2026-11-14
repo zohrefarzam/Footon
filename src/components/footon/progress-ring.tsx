@@ -1,4 +1,5 @@
 import { cn } from "@/lib/utils";
+import { formatNumber } from "@/lib/format";
 
 /** Circular progress (e.g. fantasy unlock "3/5"). Lime arc on a zinc track. */
 export function ProgressRing({
@@ -22,7 +23,7 @@ export function ProgressRing({
   return (
     <span
       role="img"
-      aria-label={`${value} of ${max}`}
+      aria-label={`${formatNumber(value)} از ${formatNumber(max)}`}
       className={cn("relative inline-flex items-center justify-center", className)}
       style={{ width: size, height: size }}
     >

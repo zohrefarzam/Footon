@@ -14,14 +14,15 @@ import { Switch } from "@/components/ui/switch";
 import { COSTS, ENTRY_TIERS, STAKE_STEPS, splitPool } from "@/lib/economy";
 import { cn } from "@/lib/utils";
 import { league } from "@/lib/mock-data";
+import { formatNumber, formatSigned } from "@/lib/format";
 
 /** Invite slots on the ticket; with you that's the pool size we preview. */
 const SLOTS = 3;
-const fmt = (n: number) => n.toLocaleString("en-US");
+const fmt = formatNumber;
 const MODES = [
-  { id: "system", label: "System live questions", desc: "We ask during the match" },
-  { id: "friends", label: "Friends' questions", desc: "Anyone in the league can ask" },
-  { id: "pre", label: "Pre-match picks", desc: "Score and scorers before kickoff" },
+  { id: "system", label: "سؤال‌های زندهٔ فوتون", desc: "ما وسط بازی می‌پرسیم" },
+  { id: "friends", label: "سؤال‌های دوستان", desc: "هر کسی در لیگ می‌تواند بپرسد" },
+  { id: "pre", label: "پیش‌بینی پیش از بازی", desc: "نتیجه و گلزن‌ها قبل از شروع" },
 ] as const;
 
 /**
@@ -57,26 +58,26 @@ export function CreateLeagueForm({ balance }: { balance: number }) {
   return (
     <>
       {/* Live invite ticket — updates as the form changes */}
-      <section aria-label="Invite preview" className="relative overflow-hidden rounded-2xl bg-primary text-primary-foreground">
+      <section aria-label="پیش‌نمایش دعوت" className="relative overflow-hidden rounded-2xl bg-primary text-primary-foreground">
         <div className="bg-[radial-gradient(rgb(11_15_2/0.13)_1px,transparent_1px)] bg-[length:12px_12px] px-5 pt-[18px] pb-4">
           <div className="flex justify-between text-[11px] font-bold tracking-[0.1em]">
-            <span>LEAGUE INVITE</span>
-            <span className="font-mono tracking-normal">#{league.code}</span>
+            <span>دعوت به لیگ</span>
+            <span dir="ltr" className="font-mono tracking-normal">#{league.code}</span>
           </div>
-          <p className="mt-2.5 truncate font-display text-[44px] leading-none font-bold uppercase italic">{name || "Your league"}</p>
-          <p className="mt-1.5 truncate text-sm font-semibold">Liverpool v Man City · 21:00 · cap {fmt(cap)}</p>
+          <p className="mt-2.5 truncate font-display text-[44px] leading-none font-bold uppercase italic">{name || "لیگ تو"}</p>
+          <p className="mt-1.5 truncate text-sm font-semibold">لیورپول - منچسترسیتی • 21:00 • سقف {fmt(cap)}</p>
         </div>
         <div className="mx-[18px] border-t-2 border-dashed border-primary-foreground/30" />
         <span aria-hidden="true" className="absolute top-[129px] -left-[11px] size-[22px] rounded-full bg-background" />
         <span aria-hidden="true" className="absolute top-[129px] -right-[11px] size-[22px] rounded-full bg-background" />
         <div className="flex items-center justify-between px-5 pt-3.5 pb-4">
           <div>
-            <p className="text-[11px] font-semibold opacity-70">ENTRY</p>
+            <p className="text-[11px] font-semibold opacity-70">ورودی</p>
             <p className="font-display text-2xl font-bold">{fmt(entry)}</p>
           </div>
           <div>
-            <p className="text-[11px] font-semibold opacity-70">PER CALL</p>
-            <p className="font-display text-2xl font-bold">{fixedStake ? fmt(perCall) : "Any"}</p>
+            <p className="text-[11px] font-semibold opacity-70">هر پیش‌بینی</p>
+            <p className="font-display text-2xl font-bold">{fixedStake ? fmt(perCall) : "آزاد"}</p>
           </div>
           <div className="flex flex-col items-end gap-1">
             <div className="flex -space-x-1.5" aria-hidden="true">
@@ -84,25 +85,25 @@ export function CreateLeagueForm({ balance }: { balance: number }) {
                 <span key={i} className="size-6 rounded-full border-[1.5px] border-dashed border-primary-foreground/45" />
               ))}
             </div>
-            <p className="text-[11px] font-semibold opacity-70">0 of {SLOTS} joined</p>
+            <p className="text-[11px] font-semibold opacity-70">{fmt(0)} از {fmt(SLOTS)} پیوسته‌اند</p>
           </div>
         </div>
       </section>
 
       <div className="flex flex-col gap-2">
-        <Label htmlFor="league-name">League name</Label>
+        <Label htmlFor="league-name">نام لیگ</Label>
         <div className="relative">
-          <Input id="league-name" value={name} maxLength={20} onChange={(e) => setName(e.target.value)} className="pr-14" />
-          <span className="pointer-events-none absolute top-1/2 right-3.5 -translate-y-1/2 font-mono text-[11px] text-subtle">
-            {name.length}/20
+          <Input id="league-name" value={name} maxLength={20} onChange={(e) => setName(e.target.value)} className="pe-14" />
+          <span className="pointer-events-none absolute end-3.5 top-1/2 -translate-y-1/2 font-mono text-[11px] text-subtle">
+            {fmt(name.length)}/{fmt(20)}
           </span>
         </div>
       </div>
 
       <div className="flex flex-col gap-3">
         <div className="flex items-baseline justify-between">
-          <Label id="stake-label">Entry per match</Label>
-          <span className="text-xs text-muted-foreground">Each player, into the pool</span>
+          <Label id="stake-label">ورودی هر بازی</Label>
+          <span className="text-xs text-muted-foreground">هر بازیکن، به صندوق</span>
         </div>
         <Slider
           aria-labelledby="stake-label"
@@ -121,13 +122,13 @@ export function CreateLeagueForm({ balance }: { balance: number }) {
           ))}
         </div>
         <p className="text-xs text-muted-foreground" aria-live="polite">
-          {SLOTS + 1} of you: pool <span className="font-display text-sm font-bold text-live">{fmt(split.pool)}</span>, {fmt(split.burned)} burned,
-          winner takes <span className="font-display text-sm font-bold text-live">{fmt(split.payouts[0])}</span>. Points decide it.
+          با {fmt(SLOTS + 1)} نفر: صندوق <span className="font-display text-sm font-bold text-live">{fmt(split.pool)}</span>، {fmt(split.burned)} می‌سوزد،
+          برنده <span className="font-display text-sm font-bold text-live">{fmt(split.payouts[0])}</span> می‌برد. امتیاز تعیین می‌کند.
         </p>
       </div>
 
       <div className="flex flex-col gap-2">
-        <span className="text-[13px] font-medium text-muted-foreground">What do you predict?</span>
+        <span className="text-[13px] font-medium text-muted-foreground">چه چیزهایی پیش‌بینی می‌کنید؟</span>
         <Card className="overflow-hidden rounded-lg">
           {MODES.map((m) => (
             <CardRow key={m.id} className="py-3.5">
@@ -146,13 +147,13 @@ export function CreateLeagueForm({ balance }: { balance: number }) {
       </div>
 
       <div className="flex flex-col gap-2">
-        <span className="text-[13px] font-medium text-muted-foreground">Prediction stakes</span>
+        <span className="text-[13px] font-medium text-muted-foreground">مبلغ پیش‌بینی‌ها</span>
         <Card className="overflow-hidden rounded-lg">
           <CardRow className="py-3.5">
             <label htmlFor="fixed-stake" className="flex-1 cursor-pointer">
-              <span className="block text-[15px] font-semibold">Same stake for everyone</span>
+              <span className="block text-[15px] font-semibold">مبلغ یکسان برای همه</span>
               <span className="mt-0.5 block text-xs text-muted-foreground">
-                {fixedStake ? "Every prediction costs the amount below" : "Each player picks their own stake"}
+                {fixedStake ? "هر پیش‌بینی همین مبلغ پایین را دارد" : "هر بازیکن مبلغ خودش را انتخاب می‌کند"}
               </span>
             </label>
             <Switch id="fixed-stake" checked={fixedStake} onCheckedChange={setFixedStake} />
@@ -160,7 +161,7 @@ export function CreateLeagueForm({ balance }: { balance: number }) {
           {fixedStake && (
             <CardRow className="animate-in-up gap-1.5 py-3">
               <span id="per-call-label" className="sr-only">
-                Stake per prediction
+                مبلغ هر پیش‌بینی
               </span>
               <div role="radiogroup" aria-labelledby="per-call-label" className="flex flex-1 gap-1.5">
                 {STAKE_STEPS.map((s) => (
@@ -184,7 +185,7 @@ export function CreateLeagueForm({ balance }: { balance: number }) {
           <div className="flex flex-col gap-3 border-t border-line px-4 py-3.5">
             <div className="flex items-baseline justify-between">
               <span id="cap-label" className="text-[15px] font-semibold">
-                Most one player can stake
+                بیشترین شرط یک بازیکن
               </span>
               <span className="font-display text-base font-bold text-live">{fmt(cap)}</span>
             </div>
@@ -197,7 +198,7 @@ export function CreateLeagueForm({ balance }: { balance: number }) {
               onValueChange={([v]) => setCapIndex(v)}
               className="px-3"
             />
-            <p className="text-xs text-muted-foreground">Across all their predictions on the match.</p>
+            <p className="text-xs text-muted-foreground">روی همهٔ پیش‌بینی‌هایش در این بازی.</p>
           </div>
         </Card>
       </div>
@@ -205,7 +206,7 @@ export function CreateLeagueForm({ balance }: { balance: number }) {
       <p className="flex items-center gap-2.5 text-[13px] text-muted-foreground">
         <Coin className="size-[18px] text-[9px]" />
         <span>
-          <span className="font-semibold text-live">+1,500</span> for each friend who finishes their first match
+          <span className="font-semibold text-live">{formatSigned(1500)}</span> برای هر دوستی که اولین بازی‌اش را تمام کند
         </span>
       </p>
 
@@ -215,22 +216,22 @@ export function CreateLeagueForm({ balance }: { balance: number }) {
         <div className="flex gap-2">
           <Button variant="secondary" size="lg" onClick={copy} aria-live="polite">
             {copied ? <Check /> : <Link2 />}
-            {copied ? "Copied" : "Copy"}
+            {copied ? "کپی شد" : "کپی"}
           </Button>
           {short > 0 ? (
             <Button size="lg" className="min-w-0 flex-1" disabled>
-              Need {fmt(short)} more coins
+              {fmt(short)} سکهٔ دیگر لازم داری
             </Button>
           ) : (
             <Button asChild size="lg" className="min-w-0 flex-1 justify-between ps-5 pe-4">
               <Link href="/play">
                 <span>
-                  Create<span className="max-[359px]:hidden"> and share</span>
+                  بساز<span className="max-[359px]:hidden"> و بفرست</span>
                 </span>
                 <span className="flex items-center gap-1 font-display text-base font-bold">
                   {fmt(cost)}
                   <Coin className="size-4 text-[8px]" />
-                  <span className="sr-only">coins</span>
+                  <span className="sr-only">سکه</span>
                 </span>
               </Link>
             </Button>
@@ -239,14 +240,14 @@ export function CreateLeagueForm({ balance }: { balance: number }) {
         <p className="text-center text-xs text-muted-foreground">
           {short > 0 ? (
             <>
-              Free table rewards and missions top you up.{" "}
+              جایزه‌های جدول رایگان و مأموریت‌ها سکه‌ات را پر می‌کنند.{" "}
               <Link href="/wallet" className="font-semibold text-foreground underline underline-offset-3">
-                Ways to earn
+                راه‌های گرفتن سکه
               </Link>
             </>
           ) : (
             <>
-              {fmt(COSTS.createLeague)} to create + your {fmt(entry)} entry · you have {fmt(balance)}
+              {fmt(COSTS.createLeague)} برای ساختن + {fmt(entry)} ورودی خودت • موجودی {fmt(balance)}
             </>
           )}
         </p>

@@ -7,7 +7,7 @@ const t = (id: string) => QUEST_TEMPLATES.find((q) => q.id === id)!;
 describe("quests (mock server)", () => {
   it("completes a quest once and pays its reward once", () => {
     const a = advanceQuests(seedQuests(), [t("d-easy")], [{ type: "prediction", count: 1 }]);
-    expect(a.changes).toEqual([{ questId: "d-easy", title: "Make a prediction", progress: 1, target: 1, completedNow: true, reward: { xp: 30, coins: 30 } }]);
+    expect(a.changes).toEqual([{ questId: "d-easy", title: "یک پیش‌بینی بکن", progress: 1, target: 1, completedNow: true, reward: { xp: 30, coins: 30 } }]);
     expect(a.bonus).toEqual({ xp: 30, coins: 30 });
     const b = advanceQuests(a.state, [t("d-easy")], [{ type: "prediction", count: 1 }]);
     expect(b.changes).toEqual([]);

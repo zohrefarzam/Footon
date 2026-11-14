@@ -1,8 +1,9 @@
 import { cn } from "@/lib/utils";
+import { formatNumber } from "@/lib/format";
 
 export type Outcome = "W" | "L" | "V";
 
-const label: Record<Outcome, string> = { W: "win", L: "loss", V: "void" };
+const label: Record<Outcome, string> = { W: "برد", L: "باخت", V: "باطل" };
 
 /**
  * Recent form as a tiny bar chart. Height carries the meaning as well as colour,
@@ -21,7 +22,7 @@ export function FormBars({
   return (
     <div
       role="img"
-      aria-label={`Last ${results.length} predictions: ${results.map((r) => label[r]).join(", ")}`}
+      aria-label={`${formatNumber(results.length)} پیش‌بینی آخر: ${results.map((r) => label[r]).join("، ")}`}
       className={cn("flex h-10 items-end", fill ? "gap-1.5" : "gap-[5px]", className)}
     >
       {results.map((r, i) => (

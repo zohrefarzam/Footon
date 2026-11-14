@@ -14,7 +14,7 @@ export default function ShopPage() {
     <AppShell>
       <header className="flex items-center gap-3">
         <BackButton href="/wallet" />
-        <h1 className="text-[26px] font-bold tracking-[-0.03em]">Shop</h1>
+        <h1 className="text-[26px] font-bold tracking-[-0.03em]">{copy.shopTitle}</h1>
       </header>
       <p className="-mt-2 text-sm text-muted-foreground">{copy.shopIntro}</p>
 

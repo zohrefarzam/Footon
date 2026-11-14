@@ -11,6 +11,7 @@ import { LeagueBadge } from "./league-badge";
 import { LiveMinute } from "./live";
 import { PitchMarkings } from "./pitch-markings";
 import { TeamCrest } from "./team-crest";
+import { formatNumber, matchup } from "@/lib/format";
 
 /**
  * Home's match centre: the one fixture that matters most right now (your live
@@ -28,7 +29,7 @@ export function MatchHero({
   cta,
 }: {
   match: Match;
-  /** Top-left label, e.g. "Matchday · Tuesday 3 November". */
+  /** Top-start label, e.g. "روز مسابقه • سه‌شنبه ۱۳ آبان". */
   eyebrow: string;
   /** Your league on this match and where you stand in it. */
   league?: { name: string; place?: string };
@@ -46,12 +47,12 @@ export function MatchHero({
       aria-labelledby={`hero-${m.id}`}
       className="floodlight relative isolate overflow-hidden rounded-2xl border border-line-strong bg-surface"
     >
-      {/* each side's colours, pooled behind its crest */}
+      {/* each side's colours, pooled behind its crest (home is on the right in RTL) */}
       <div
         aria-hidden="true"
         className="absolute inset-0 -z-10 opacity-90"
         style={{
-          backgroundImage: `radial-gradient(50% 45% at 14% 40%, ${homeShirt}1c, transparent 70%), radial-gradient(50% 45% at 86% 40%, ${awayShirt}1c, transparent 70%)`,
+          backgroundImage: `radial-gradient(50% 45% at 86% 40%, ${homeShirt}1c, transparent 70%), radial-gradient(50% 45% at 14% 40%, ${awayShirt}1c, transparent 70%)`,
         }}
       />
       <PitchMarkings corners className="-z-10" />
@@ -71,7 +72,7 @@ export function MatchHero({
         </header>
 
         <h2 id={`hero-${m.id}`} className="sr-only">
-          {m.home.name} v {m.away.name}, {m.competition}
+          {matchup(m.home.name, m.away.name)}، {m.competition}
         </h2>
 
         <div className="grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-2">
@@ -82,7 +83,7 @@ export function MatchHero({
                 <span className="max-[359px]:hidden">{t.name}</span>
                 <span className="font-display tracking-wide min-[360px]:hidden">{t.code}</span>
               </span>
-              <span className="text-[11px] font-semibold tracking-[0.08em] text-muted-foreground uppercase">{i === 0 ? "Home" : "Away"}</span>
+              <span className="text-[11px] font-semibold tracking-[0.08em] text-muted-foreground uppercase">{i === 0 ? "میزبان" : "میهمان"}</span>
             </div>
           ))}
 
@@ -90,12 +91,12 @@ export function MatchHero({
             {live || m.status === "finished" ? (
               /* stadium scoreboard plate */
               <p
-                className="rounded-md border border-line-strong bg-background/80 px-3.5 py-1.5 font-display text-[52px] leading-none font-bold tabular-nums"
-                aria-label={`${m.home.name} ${h}, ${m.away.name} ${a}`}
+                className="flex items-center rounded-md border border-line-strong bg-background/80 px-3.5 py-1.5 font-display text-[52px] leading-none font-bold tabular-nums"
+                aria-label={`${m.home.name} ${formatNumber(h)}، ${m.away.name} ${formatNumber(a)}`}
               >
-                {h}
+                {formatNumber(h)}
                 <span className="mx-2 text-dim">:</span>
-                {a}
+                {formatNumber(a)}
               </p>
             ) : (
               <>

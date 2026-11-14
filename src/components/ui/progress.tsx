@@ -20,8 +20,11 @@ function Progress({
     >
       <ProgressPrimitive.Indicator
         data-slot="progress-indicator"
-        className={cn("h-full w-full flex-1 rounded-full bg-primary transition-transform duration-500 ease-spring-soft", indicatorClassName)}
-        style={{ transform: `translateX(-${100 - (value ?? 0)}%)` }}
+        className={cn(
+          "h-full w-full flex-1 origin-left rounded-full bg-primary transition-transform duration-500 ease-spring-soft rtl:origin-right",
+          indicatorClassName,
+        )}
+        style={{ transform: `scaleX(${Math.min(100, Math.max(0, value ?? 0)) / 100})` }}
       />
     </ProgressPrimitive.Root>
   );

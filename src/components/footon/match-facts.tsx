@@ -5,12 +5,13 @@ import { Card } from "@/components/ui/card";
 import type { MatchEvent } from "@/lib/mock-data";
 import { cn } from "@/lib/utils";
 import { Football } from "./football";
+import { formatMinute, formatNumber, formatScore } from "@/lib/format";
 
 const kindLabel: Record<MatchEvent["kind"], string> = {
-  goal: "Goal",
-  yellow: "Yellow card",
-  red: "Red card",
-  sub: "Substitution",
+  goal: "گل",
+  yellow: "کارت زرد",
+  red: "کارت قرمز",
+  sub: "تعویض",
   var: "VAR",
 };
 
@@ -69,8 +70,8 @@ export function MatchFacts({
 
   return (
     <Card className="overflow-hidden py-1.5">
-      <ol aria-label="Match timeline">
-        {finished && marker("Full time")}
+      <ol aria-label="رویدادهای بازی">
+        {finished && marker("پایان بازی")}
         {withScore.map((e, i) => {
           const isHome = e.side === "home";
           const body = (
@@ -79,26 +80,26 @@ export function MatchFacts({
               <span className="min-w-0">
                 <span className="block truncate text-sm font-semibold">{e.player}</span>
                 {e.kind === "sub" && e.detail ? (
-                  <span className="block truncate text-xs text-muted-foreground">for {e.detail}</span>
+                  <span className="block truncate text-xs text-muted-foreground">به جای {e.detail}</span>
                 ) : e.kind === "var" && e.detail ? (
                   <span className="block truncate text-xs text-muted-foreground">{e.detail}</span>
                 ) : null}
               </span>
               {e.score && (
-                <span className="shrink-0 font-display text-[15px] font-bold tabular-nums">
-                  {e.score[0]}
+                <span className="flex shrink-0 items-center font-display text-[15px] font-bold tabular-nums">
+                  {formatNumber(e.score[0])}
                   <span className="mx-0.5 text-muted-foreground">–</span>
-                  {e.score[1]}
+                  {formatNumber(e.score[1])}
                 </span>
               )}
             </span>
           );
           return (
             <Fragment key={`${e.minute}-${e.player}`}>
-              {showHT && i === firstHalfAt && marker("Half time")}
+              {showHT && i === firstHalfAt && marker("بین دو نیمه")}
               <li
-                aria-label={`${e.minute}', ${kindLabel[e.kind]}, ${e.player}${e.kind === "sub" && e.detail ? ` for ${e.detail}` : ""}, ${isHome ? home : away}${
-                  e.score ? `, ${e.score[0]}–${e.score[1]}` : ""
+                aria-label={`دقیقهٔ ${formatNumber(e.minute)}، ${kindLabel[e.kind]}، ${e.player}${e.kind === "sub" && e.detail ? ` به جای ${e.detail}` : ""}، ${isHome ? home : away}${
+                  e.score ? `، ${formatScore(e.score[0], e.score[1])}` : ""
                 }`}
                 className="grid grid-cols-[minmax(0,1fr)_44px_minmax(0,1fr)] items-center gap-2 px-3 py-2.5"
               >
@@ -109,7 +110,7 @@ export function MatchFacts({
                   aria-hidden="true"
                   className="mx-auto flex h-7 min-w-10 items-center justify-center rounded-full bg-surface-2 px-2 font-display text-sm font-bold"
                 >
-                  {e.minute}&apos;
+                  {formatMinute(e.minute)}
                 </span>
                 <span aria-hidden="true" className="min-w-0">
                   {!isHome && body}
@@ -118,13 +119,13 @@ export function MatchFacts({
             </Fragment>
           );
         })}
-        {showHT && firstHalfAt === -1 && marker("Half time")}
+        {showHT && firstHalfAt === -1 && marker("بین دو نیمه")}
         {withScore.length === 0 && (
           <li className="px-4 py-5 text-center text-sm text-muted-foreground">
-            {finished ? "No goals, cards or subs recorded." : "Quiet so far. Goals, cards and subs land here."}
+            {finished ? "گل، کارت یا تعویضی ثبت نشد." : "فعلاً آرام است. گل‌ها، کارت‌ها و تعویض‌ها اینجا می‌آیند."}
           </li>
         )}
-        {marker("Kick-off")}
+        {marker("شروع بازی")}
       </ol>
     </Card>
   );

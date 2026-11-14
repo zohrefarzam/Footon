@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Coin } from "./coin";
 import type { InviteWithMatch } from "./invite-strip";
 import { TeamCrest } from "./team-crest";
+import { formatNumber, matchup } from "@/lib/format";
 
 type State = "pending" | "joined" | "declined";
 
@@ -40,13 +41,13 @@ export function InviteRow({ invite }: { invite: InviteWithMatch }) {
               </Avatar>
               <div className="min-w-0 flex-1">
                 <p className="truncate text-[15px] font-semibold">{invite.league}</p>
-                <p className="truncate text-xs text-muted-foreground">{invite.from} invited you</p>
+                <p className="truncate text-xs text-muted-foreground">{invite.from} دعوتت کرد</p>
               </div>
               <Button
                 variant="ghost"
                 size="icon-sm"
                 className="size-9"
-                aria-label={`Decline ${invite.from}'s invite`}
+                aria-label={`رد دعوت ${invite.from}`}
                 onClick={() => setState("declined")}
               >
                 <X />
@@ -55,10 +56,10 @@ export function InviteRow({ invite }: { invite: InviteWithMatch }) {
                 variant="secondary"
                 size="sm"
                 className="h-9 rounded-sm px-3.5"
-                aria-label={`Join ${invite.league}`}
+                aria-label={`پیوستن به ${invite.league}`}
                 onClick={() => setState("joined")}
               >
-                Join
+                بپیوند
               </Button>
             </div>
 
@@ -66,10 +67,10 @@ export function InviteRow({ invite }: { invite: InviteWithMatch }) {
               <TeamCrest code={m.home.code} colors={m.home.colors} size="sm" />
               <TeamCrest code={m.away.code} colors={m.away.colors} size="sm" className="-ms-3.5" />
               <span className="min-w-0 flex-1 truncate font-semibold">
-                {m.home.name} v {m.away.name}
+                {matchup(m.home.name, m.away.name)}
               </span>
               <span className="shrink-0 font-display text-sm font-bold text-muted-foreground">
-                {m.day ?? "Today"} <span className="text-foreground">{m.kickoff}</span>
+                {m.day ?? "امروز"} <span className="text-foreground">{m.kickoff}</span>
               </span>
             </div>
 
@@ -81,10 +82,10 @@ export function InviteRow({ invite }: { invite: InviteWithMatch }) {
                   </Avatar>
                 ))}
               </AvatarGroup>
-              <span className="text-xs whitespace-nowrap text-muted-foreground">{invite.members.length} in</span>
+              <span className="text-xs whitespace-nowrap text-muted-foreground">{formatNumber(invite.members.length)} نفر</span>
               <span className="ms-1 flex items-center gap-1 text-xs whitespace-nowrap text-muted-foreground">
                 <Coin className="size-[18px]" />
-                <span className="font-display text-sm font-bold text-foreground">{invite.entry.toLocaleString("en-US")}</span> entry
+                ورودی <span className="font-display text-sm font-bold text-foreground">{formatNumber(invite.entry)}</span>
               </span>
             </div>
           </motion.div>
@@ -107,12 +108,12 @@ export function InviteRow({ invite }: { invite: InviteWithMatch }) {
               </svg>
             </span>
             <div className="min-w-0 flex-1">
-              <p className="truncate text-[15px] font-semibold">You&apos;re in {invite.league}</p>
-              <p className="text-xs text-muted-foreground">Set your predictions before {m.kickoff}</p>
+              <p className="truncate text-[15px] font-semibold">عضو {invite.league} شدی</p>
+              <p className="text-xs text-muted-foreground">پیش‌بینی‌هایت را قبل از {m.kickoff} ثبت کن</p>
             </div>
             <Button asChild variant="soft" size="sm" className="h-9 rounded-sm px-3">
               <Link href={`/challenges/${invite.id}`}>
-                Open
+                باز کن
                 <ChevronRight className="rtl:rotate-180" />
               </Link>
             </Button>
@@ -121,9 +122,9 @@ export function InviteRow({ invite }: { invite: InviteWithMatch }) {
 
         {state === "declined" && (
           <motion.div key="declined" {...fade} className="flex items-center gap-2.5">
-            <p className="flex-1 text-[13px] text-muted-foreground">Declined {invite.from}&apos;s invite</p>
+            <p className="flex-1 text-[13px] text-muted-foreground">دعوت {invite.from} را رد کردی</p>
             <Button variant="ghost" size="sm" className="h-9" onClick={() => setState("pending")}>
-              Undo
+              برگردان
             </Button>
           </motion.div>
         )}

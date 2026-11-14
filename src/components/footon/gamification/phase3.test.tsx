@@ -5,6 +5,7 @@ import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { celebrations } from "@/lib/gamification/celebrations/store";
 import { defaultFlags, mockConfig } from "@/lib/gamification/config";
 import { formatTimeLeft } from "@/lib/gamification/format";
+import { copy } from "@/lib/gamification/strings";
 import { applyReward, gamificationKeys } from "@/lib/gamification/queries";
 import type { Quest, QuestBoard, UserProgress } from "@/lib/gamification/schemas";
 import { result } from "@/lib/gamification/test-fixtures";
@@ -74,22 +75,22 @@ describe("QuestList", () => {
   it("lists today's quests in one card with progress, time left and done count", () => {
     setup(<QuestList kinds={["daily"]} title="Today's quests" />);
     const section = screen.getByRole("region", { name: /Today's quests/ });
-    expect(within(section).getByText("1 of 3 done")).toBeInTheDocument();
-    expect(within(section).getByLabelText("Answer 2 live questions, 1 of 2")).toBeInTheDocument();
-    expect(within(section).getByLabelText("Get 3 right in a row, done")).toBeInTheDocument();
-    expect(within(section).getAllByText(/Resets in 6h/)).toHaveLength(2);
+    expect(within(section).getByText(copy.doneOf(1, 3))).toBeInTheDocument();
+    expect(within(section).getByLabelText(copy.questAria("Answer 2 live questions", 1, 2, false))).toBeInTheDocument();
+    expect(within(section).getByLabelText(copy.questAria("Get 3 right in a row", 3, 3, true))).toBeInTheDocument();
+    expect(within(section).getAllByText(new RegExp(copy.resetsIn(formatTimeLeft(6 * 3_600_000))))).toHaveLength(2);
     expect(within(section).queryByText("Predict on 3 match days")).toBeNull();
   });
 
   it("shows weekly quests locked below their level, open from it", () => {
     setup(<QuestList kinds={["weekly"]} title="This week" feature="weeklyQuests" />, progress(5, 900));
-    expect(screen.getByRole("group")).toHaveAccessibleName(/Weekly quests, locked\. Level 6 required/);
+    expect(screen.getByRole("group")).toHaveAccessibleName(new RegExp(`${copy.weeklyQuests}، ${copy.locked}. ${copy.levelRequired(6)}`));
     expect(screen.queryByText("Predict on 3 match days")).toBeNull();
   });
 
   it("shows weekly quests once unlocked", () => {
     setup(<QuestList kinds={["weekly"]} title="This week" feature="weeklyQuests" />);
-    expect(screen.getByLabelText("Predict on 3 match days, 1 of 3")).toBeInTheDocument();
+    expect(screen.getByLabelText(copy.questAria("Predict on 3 match days", 1, 3, false))).toBeInTheDocument();
   });
 
   it("moves with the server's result and plays the completion", async () => {
@@ -101,8 +102,8 @@ describe("QuestList", () => {
         questProgress: [{ questId: "d-social", title: "Answer 2 live questions", progress: 2, target: 2, completedNow: true, reward: { xp: 40, coins: 40 } }],
       }),
     );
-    await waitFor(() => expect(screen.getByLabelText("Answer 2 live questions, done")).toBeInTheDocument());
-    expect(screen.getByText("2 of 3 done")).toBeInTheDocument();
+    await waitFor(() => expect(screen.getByLabelText(copy.questAria("Answer 2 live questions", 2, 2, true))).toBeInTheDocument());
+    expect(screen.getByText(copy.doneOf(2, 3))).toBeInTheDocument();
     // the completion is queued after the XP moment
     const kinds = [celebrations.getState().current, ...celebrations.getState().queue].map((c) => c?.kind);
     expect(kinds).toEqual(["xp", "quest"]);
@@ -112,14 +113,14 @@ describe("QuestList", () => {
     const qc = setup(<QuestList kinds={["daily"]} title="Today's quests" />);
     qc.setQueryData<QuestBoard>(gamificationKeys.quests, { ...board, quests: board.quests.filter((q) => q.id !== "d-social") });
     await waitFor(() => expect(screen.queryByText("Answer 2 live questions")).toBeNull());
-    expect(screen.getByText("1 of 2 done")).toBeInTheDocument();
-    expect(screen.queryByText(/expired|missed|lost/i)).toBeNull();
+    expect(screen.getByText(copy.doneOf(1, 2))).toBeInTheDocument();
+    expect(screen.queryByText(/expired|missed|lost|منقضی|از دست/i)).toBeNull();
   });
 });
 
 describe("formatTimeLeft", () => {
   it("is coarse and never negative", () => {
-    expect([30_000, 45 * 60_000, 6 * 3_600_000, 50 * 3_600_000, -5].map(formatTimeLeft)).toEqual(["1m", "45m", "6h", "2d", "1m"]);
+    expect([30_000, 45 * 60_000, 6 * 3_600_000, 50 * 3_600_000, -5].map(formatTimeLeft)).toEqual(["۱ دقیقه", "۴۵ دقیقه", "۶ ساعت", "۲ روز", "۱ دقیقه"]);
   });
 });
 
@@ -128,12 +129,12 @@ describe("QuestsTile (Home)", () => {
     setup(<QuestsTile />);
     const tile = screen.getByRole("link");
     expect(tile).toHaveAttribute("href", "/quests");
-    expect(tile).toHaveAccessibleName("Quests, 1 of 3 done. Next: Make a prediction, 0 of 1");
+    expect(tile).toHaveAccessibleName(`${copy.questsTitle}، ${copy.doneOf(1, 3)}. ${copy.next}: ${copy.questAria("Make a prediction", 0, 1, false)}`);
   });
 
   it("reads all done once every daily is finished", () => {
     setup(<QuestsTile />, undefined, { ...board, quests: board.quests.map((q) => ({ ...q, completed: q.kind === "daily" ? true : q.completed })) });
-    expect(screen.getByRole("link")).toHaveAccessibleName("Quests, All done today");
+    expect(screen.getByRole("link")).toHaveAccessibleName(`${copy.questsTitle}، ${copy.allDoneToday}`);
   });
 
   it("holds its space until the board loads", () => {

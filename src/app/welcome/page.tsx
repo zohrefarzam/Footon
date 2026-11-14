@@ -4,7 +4,7 @@ import { onboarding } from "@/lib/mock-data";
 import { OnboardingFlow } from "./onboarding-flow";
 
 export const metadata: Metadata = {
-  title: "Welcome to Footon",
+  title: "به فوتون خوش آمدی",
 };
 
 /** First run: brand splash, then three steps (try a question, pick clubs, claim coins). */

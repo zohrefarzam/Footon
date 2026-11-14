@@ -11,6 +11,7 @@ import { Dialog, DialogClose, DialogContent, DialogDescription, DialogTitle, Dia
 import type { Team } from "@/lib/mock-data";
 import { cn } from "@/lib/utils";
 import { TeamCrest } from "./team-crest";
+import { formatNumber } from "@/lib/format";
 
 /**
  * Your clubs on Profile: picked in onboarding, changed here any time. Each club
@@ -29,7 +30,7 @@ export function FavouriteClubs({ clubs, initial }: { clubs: Team[]; initial: str
   return (
     <section aria-labelledby="clubs-title" className="flex flex-col gap-2.5">
       <h2 id="clubs-title" className="text-[13px] font-medium text-muted-foreground">
-        Your clubs
+        باشگاه‌های تو
       </h2>
       <Card className="gap-3 p-3">
         <ul className="flex flex-wrap gap-2" aria-live="polite">
@@ -46,7 +47,7 @@ export function FavouriteClubs({ clubs, initial }: { clubs: Team[]; initial: str
               >
                 <TeamCrest code={c.code} colors={c.colors} size="xs" />
                 <span className="text-sm font-semibold">{c.name}</span>
-                <Button variant="ghost" size="icon-sm" className="size-8 rounded-full" aria-label={`Remove ${c.name}`} onClick={() => toggle(c.code)}>
+                <Button variant="ghost" size="icon-sm" className="size-8 rounded-full" aria-label={`حذف ${c.name}`} onClick={() => toggle(c.code)}>
                   <X />
                 </Button>
               </motion.li>
@@ -57,15 +58,15 @@ export function FavouriteClubs({ clubs, initial }: { clubs: Team[]; initial: str
               <DialogTrigger asChild>
                 <Button variant="outline" className="h-11 rounded-full px-4">
                   <Plus strokeWidth={2.4} aria-hidden="true" />
-                  Add club
+                  افزودن باشگاه
                 </Button>
               </DialogTrigger>
               <DialogContent>
-                <DialogTitle>Your clubs</DialogTitle>
-                <DialogDescription>Follow as many as you like. Their matches show up first.</DialogDescription>
+                <DialogTitle>باشگاه‌های تو</DialogTitle>
+                <DialogDescription>هر چندتا که دوست داری دنبال کن. بازی‌هایشان اول نشان داده می‌شوند.</DialogDescription>
                 <div className="relative mt-2">
                   <label htmlFor="club-search" className="sr-only">
-                    Search clubs
+                    جست‌وجوی باشگاه
                   </label>
                   <Search className="pointer-events-none absolute start-3.5 top-1/2 size-[18px] -translate-y-1/2 text-muted-foreground" aria-hidden="true" />
                   <Input
@@ -73,7 +74,7 @@ export function FavouriteClubs({ clubs, initial }: { clubs: Team[]; initial: str
                     type="search"
                     inputMode="search"
                     autoComplete="off"
-                    placeholder="Search clubs"
+                    placeholder="جست‌وجوی باشگاه"
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}
                     className="ps-10 pe-11 [&::-webkit-search-cancel-button]:hidden"
@@ -83,7 +84,7 @@ export function FavouriteClubs({ clubs, initial }: { clubs: Team[]; initial: str
                       variant="ghost"
                       size="icon-sm"
                       className="absolute end-1.5 top-1/2 size-9 -translate-y-1/2 rounded-full"
-                      aria-label="Clear search"
+                      aria-label="پاک کردن جست‌وجو"
                       onClick={() => setQuery("")}
                     >
                       <X />
@@ -91,11 +92,11 @@ export function FavouriteClubs({ clubs, initial }: { clubs: Team[]; initial: str
                   )}
                 </div>
                 <p className="sr-only" aria-live="polite">
-                  {q ? `${results.length} ${results.length === 1 ? "club" : "clubs"} found` : ""}
+                  {q ? `${formatNumber(results.length)} باشگاه پیدا شد` : ""}
                 </p>
                 {results.length === 0 && (
                   <p className="bg-dots rounded-xl border border-dashed border-line-strong px-6 py-8 text-center text-sm text-muted-foreground">
-                    No club matches &ldquo;{query.trim()}&rdquo;.
+                    باشگاهی با «{query.trim()}» پیدا نشد.
                   </p>
                 )}
                 <ul className="-mx-1 grid max-h-[min(52vh,420px)] grid-cols-4 gap-2 overflow-y-auto px-1 pt-2 pb-1 max-[359px]:grid-cols-3">
@@ -129,14 +130,14 @@ export function FavouriteClubs({ clubs, initial }: { clubs: Team[]; initial: str
                 </ul>
                 <DialogClose asChild>
                   <Button size="lg" className="mt-3 w-full">
-                    Done
+                    تمام
                   </Button>
                 </DialogClose>
               </DialogContent>
             </Dialog>
           </li>
         </ul>
-        {mine.length === 0 && <p className="px-1 text-xs text-muted-foreground">No clubs yet. Add one to see their matches first.</p>}
+        {mine.length === 0 && <p className="px-1 text-xs text-muted-foreground">هنوز باشگاهی نداری. یکی اضافه کن تا بازی‌هایش را اول ببینی.</p>}
       </Card>
     </section>
   );

@@ -19,9 +19,10 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Card, CardRow } from "@/components/ui/card";
 import { challengesWithMatch } from "@/lib/challenges";
 import { splitPool } from "@/lib/economy";
-import { challenges, clubIds, people, predictionSlips, prematchChat, wallet } from "@/lib/mock-data";
+import { challenges, clubIds, people, predictionSlips, prematchChat, wallet, YOU_INITIAL } from "@/lib/mock-data";
 import { kickoffISO } from "@/lib/dates";
 import { cn } from "@/lib/utils";
+import { formatNumber } from "@/lib/format";
 
 export function generateStaticParams() {
   return challenges.map((c) => ({ id: c.id }));
@@ -29,7 +30,7 @@ export function generateStaticParams() {
 
 /**
  * One challenge, in the match-page frame (scoreboard → sticky section tabs):
- *   Predict (accept the invite here, then your predictions) · Chat · League · Match
+ *   Predict (accept the invite here, then your predictions) • Chat • League • Match
  * Your league's live match plays at /play. Expired invites read back only.
  */
 export default async function ChallengePage({ params }: PageProps<"/challenges/[id]">) {
@@ -55,9 +56,9 @@ export default async function ChallengePage({ params }: PageProps<"/challenges/[
     c.status === "expired" ? (
       <div className="bg-dots flex flex-col items-center gap-2 rounded-2xl border border-dashed border-line-strong px-6 py-10 text-center">
         <Clock className="size-5 text-muted-foreground" aria-hidden="true" />
-        <p className="text-[15px] font-semibold">This invite expired at kickoff</p>
+        <p className="text-[15px] font-semibold">این دعوت با شروع بازی منقضی شد</p>
         <p className="max-w-[30ch] text-sm text-muted-foreground">
-          {c.from?.name ?? "Your friend"}&apos;s challenge closed before you answered. Nothing was charged.
+          چالش {c.from?.name ?? "دوستت"} قبل از جواب تو بسته شد. چیزی کم نشد.
         </p>
       </div>
     ) : c.status === "invited" && c.from ? (
@@ -77,7 +78,7 @@ export default async function ChallengePage({ params }: PageProps<"/challenges/[
       builder
     );
 
-  const members = c.members.map((x) => ({ name: people[x] ?? x, initial: x, you: x === "Y" }));
+  const members = c.members.map((x) => ({ name: people[x] ?? x, initial: x, you: x === YOU_INITIAL }));
   const league = (
     <Card className="overflow-hidden">
       <div className="flex items-center gap-3 px-4 pt-4">
@@ -85,28 +86,28 @@ export default async function ChallengePage({ params }: PageProps<"/challenges/[
         <div className="min-w-0 flex-1">
           <p className="truncate text-[15px] font-semibold">{c.name}</p>
           <p className="mt-0.5 text-xs text-muted-foreground">
-            {members.length} players · {c.mine ? "made by you" : c.from ? `made by ${c.from.name}` : ""}
+            {formatNumber(members.length)} بازیکن • {c.mine ? "ساختهٔ تو" : c.from ? `ساختهٔ ${c.from.name}` : ""}
           </p>
         </div>
         <span className="text-end text-xs text-muted-foreground">
-          Pool
+          صندوق
           <CoinAmount value={splitPool(c.entry, c.members.length).pool} className="block text-base" />
         </span>
       </div>
       {c.table?.length ? (
-        <Standings rows={c.table} caption={`${c.name} standings`} className="mt-1" />
+        <Standings rows={c.table} caption={`جدول ${c.name}`} className="mt-1" />
       ) : (
         <>
-          <p className="px-4 pt-3 pb-1 text-[11px] font-semibold tracking-[0.08em] text-muted-foreground uppercase">Table starts at kickoff</p>
+          <p className="px-4 pt-3 pb-1 text-[11px] font-semibold tracking-[0.08em] text-muted-foreground uppercase">جدول با شروع بازی شروع می‌شود</p>
           {members.map((p) => (
             <CardRow key={p.initial} className="py-3">
               <Avatar className="size-8">
                 <AvatarFallback className={cn(p.you && "bg-primary text-primary-foreground")}>{p.initial}</AvatarFallback>
               </Avatar>
               <span className={cn("flex-1 text-[15px] font-semibold", p.you && "text-primary")}>{p.name}</span>
-              {c.from?.initial === p.initial && <span className="text-xs text-muted-foreground">created it</span>}
-              {c.mine && p.you && <span className="text-xs text-muted-foreground">created it</span>}
-              <span className="font-display text-lg font-bold text-muted-foreground">0</span>
+              {c.from?.initial === p.initial && <span className="text-xs text-muted-foreground">سازنده</span>}
+              {c.mine && p.you && <span className="text-xs text-muted-foreground">سازنده</span>}
+              <span className="font-display text-lg font-bold text-muted-foreground">{formatNumber(0)}</span>
             </CardRow>
           ))}
         </>
@@ -114,14 +115,14 @@ export default async function ChallengePage({ params }: PageProps<"/challenges/[
       {/* friends' clubs: open to look at, from the league */}
       {members.some((p) => clubIds[p.initial]) && (
         <div className="flex flex-wrap items-center gap-2 border-t border-line px-4 py-2.5">
-          <span className="text-xs text-muted-foreground">Clubs</span>
+          <span className="text-xs text-muted-foreground">باشگاه‌ها</span>
           {members
             .filter((p) => clubIds[p.initial])
             .map((p) => (
               <Link
                 key={p.initial}
                 href={`/club/${clubIds[p.initial]}`}
-                aria-label={`${p.name}'s club`}
+                aria-label={`باشگاه ${p.name}`}
                 className="flex h-11 items-center gap-0.5 rounded-md px-1 text-xs font-semibold text-muted-foreground outline-none hover:text-foreground focus-visible:ring-[3px] focus-visible:ring-ring/60"
               >
                 {p.name}
@@ -131,7 +132,7 @@ export default async function ChallengePage({ params }: PageProps<"/challenges/[
         </div>
       )}
       <p className="border-t border-line px-4 py-3 text-xs text-muted-foreground">
-        {c.entry.toLocaleString("en-US")} entry each · {pool}. Points decide it; stakes never change your rank.
+        ورودی نفری {formatNumber(c.entry)} • {pool}. امتیاز تعیین می‌کند؛ مبلغ شرط هیچ‌وقت رتبه‌ات را عوض نمی‌کند.
       </p>
     </Card>
   );
@@ -146,7 +147,7 @@ export default async function ChallengePage({ params }: PageProps<"/challenges/[
         </>
       ) : (
         <p className="rounded-xl border border-dashed border-line-strong px-4 py-6 text-center text-sm text-muted-foreground">
-          Team news and match info land here closer to kickoff.
+          اخبار تیم‌ها و اطلاعات بازی نزدیک شروع اینجا می‌آید.
         </p>
       )
     ) : (
@@ -155,19 +156,19 @@ export default async function ChallengePage({ params }: PageProps<"/challenges/[
 
   const inLeague = c.status === "joined" || c.status === "finished";
   const sections: MatchSection[] = [
-    { value: "predict", label: "Predict", content: predict },
+    { value: "predict", label: "پیش‌بینی", content: predict },
     ...(inLeague
-      ? [{ value: "chat", label: "Chat", content: <LeagueChat chat={prematchChat} members={members} closes={m.status === "upcoming" ? "kickoff" : "90'"} /> }]
+      ? [{ value: "chat", label: "چت", content: <LeagueChat chat={prematchChat} members={members} closes={m.status === "upcoming" ? "شروع بازی" : "دقیقهٔ ۹۰"} /> }]
       : []),
-    { value: "league", label: "League", content: league },
-    { value: "match", label: "Match", content: matchInfo },
+    { value: "league", label: "لیگ", content: league },
+    { value: "match", label: "بازی", content: matchInfo },
   ];
 
   return (
     <AppShell dock={false} className="gap-0 pt-0">
       <MatchCentre
         back={<BackButton href="/challenges" />}
-        title={`${c.name} · ${m.competition}`}
+        title={`${c.name} • ${m.competition}`}
         compactScore={<CompactScore match={m} />}
         scoreboard={<MatchScoreboard match={m} />}
         sections={sections}

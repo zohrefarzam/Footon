@@ -13,6 +13,7 @@ import { TeamCrest } from "@/components/footon/team-crest";
 import { Button } from "@/components/ui/button";
 import type { Team } from "@/lib/mock-data";
 import { cn } from "@/lib/utils";
+import { formatMinute, formatNumber, formatPercent, formatSigned } from "@/lib/format";
 
 type Sample = {
   match: string;
@@ -61,29 +62,30 @@ export function OnboardingFlow({ data }: { data: OnboardingData }) {
     setTimeout(() => router.replace("/"), reduce ? 300 : 1500);
   };
 
+  // right to left: the next step comes in from the left (the reading direction), the last one leaves to the right
   const slide = {
-    enter: (d: number) => (reduce ? { opacity: 0 } : { opacity: 0, x: 28 * d, filter: "blur(6px)" }),
+    enter: (d: number) => (reduce ? { opacity: 0 } : { opacity: 0, x: -28 * d, filter: "blur(6px)" }),
     center: { opacity: 1, x: 0, filter: "blur(0px)" },
-    exit: (d: number) => (reduce ? { opacity: 0 } : { opacity: 0, x: -28 * d, filter: "blur(6px)" }),
+    exit: (d: number) => (reduce ? { opacity: 0 } : { opacity: 0, x: 28 * d, filter: "blur(6px)" }),
   };
 
   return (
     <>
       <div className="mx-auto flex min-h-dvh w-full max-w-[430px] flex-col px-5 pt-3 pb-[calc(16px+env(safe-area-inset-bottom))]">
-        {/* top bar: back · progress · wallet */}
+        {/* top bar: back • progress • wallet */}
         <header className="grid h-11 grid-cols-[1fr_auto_1fr] items-center gap-3">
           <div className="flex">
             <AnimatePresence initial={false}>
               {step > 0 && !claimed && (
                 <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.8 }}>
-                  <Button variant="ghost" size="icon-sm" aria-label="Previous step" onClick={() => go(step - 1)}>
-                    <ChevronLeft />
+                  <Button variant="ghost" size="icon-sm" aria-label="مرحلهٔ قبل" onClick={() => go(step - 1)}>
+                    <ChevronLeft className="rtl:rotate-180" />
                   </Button>
                 </motion.div>
               )}
             </AnimatePresence>
           </div>
-          <ol className="flex items-center gap-1.5" aria-label={`Step ${step + 1} of ${STEPS}`}>
+          <ol className="flex items-center gap-1.5" aria-label={`مرحلهٔ ${formatNumber(step + 1)} از ${formatNumber(STEPS)}`}>
             {Array.from({ length: STEPS }, (_, i) => (
               <motion.li
                 key={i}
@@ -132,24 +134,24 @@ export function OnboardingFlow({ data }: { data: OnboardingData }) {
         <footer className="mt-6 flex flex-col items-center gap-4">
           {step === 0 &&
             (answer ? (
-              <ArrowCta onClick={() => go(1)}>Continue</ArrowCta>
+              <ArrowCta onClick={() => go(1)}>ادامه</ArrowCta>
             ) : (
               <Button variant="secondary" size="lg" className="w-full" onClick={() => go(1)}>
-                Continue
+                ادامه
               </Button>
             ))}
           {step === 1 && (
             <ArrowCta onClick={() => go(2)}>
-              {clubs.length ? `Follow ${clubs.length} ${clubs.length === 1 ? "club" : "clubs"}` : "Continue"}
+              {clubs.length ? `دنبال کردن ${formatNumber(clubs.length)} باشگاه` : "ادامه"}
             </ArrowCta>
           )}
           {step === 2 && (
             <ArrowCta onClick={claim} disabled={claimed} done={claimed}>
-              {claimed ? "Coins claimed" : `Claim ${data.startingCoins.toLocaleString("en-US")} coins`}
+              {claimed ? "سکه‌ها گرفته شد" : `گرفتن ${formatNumber(data.startingCoins)} سکه`}
             </ArrowCta>
           )}
           <p className="text-[13px] text-muted-foreground">
-            Been here before?{" "}
+            قبلاً اینجا بوده‌ای؟{" "}
             <Link
               href="/"
               prefetch={false}
@@ -157,7 +159,7 @@ export function OnboardingFlow({ data }: { data: OnboardingData }) {
               onClick={markOnboarded}
               className="rounded-sm font-semibold text-foreground underline decoration-ring underline-offset-4 outline-none hover:decoration-foreground focus-visible:ring-[3px] focus-visible:ring-ring/60"
             >
-              Skip to Home
+              برو به خانه
             </Link>
           </p>
         </footer>
@@ -166,7 +168,7 @@ export function OnboardingFlow({ data }: { data: OnboardingData }) {
   );
 }
 
-/** Screen CTA: lime, label left, dark inset square with an arrow on the right. */
+/** Screen CTA: lime, label at the start, dark inset square with an arrow at the end. */
 function ArrowCta({
   children,
   onClick,
@@ -188,7 +190,7 @@ function ArrowCta({
       <Button size="lg" onClick={onClick} disabled={disabled} className="w-full justify-between ps-5 pe-2 font-bold disabled:opacity-100">
         <span aria-live="polite">{children}</span>
         <span className="flex size-10 items-center justify-center rounded-[10px] bg-primary-foreground text-primary">
-          {done ? <Check className="size-[18px]" strokeWidth={2.6} /> : <ArrowRight className="size-[18px]" strokeWidth={2.4} />}
+          {done ? <Check className="size-[18px]" strokeWidth={2.6} /> : <ArrowRight className="size-[18px] rtl:rotate-180" strokeWidth={2.4} />}
         </span>
       </Button>
     </motion.div>
@@ -231,24 +233,24 @@ function TryStep({ sample, answer, onAnswer }: { sample: Sample; answer: "yes" |
           <motion.div
             aria-hidden="true"
             initial={reduce ? false : { opacity: 0, rotate: 0, y: 30 }}
-            animate={{ opacity: 1, rotate: -7, y: 6, x: -14 }}
+            animate={{ opacity: 1, rotate: 7, y: 6, x: 14 }}
             transition={{ ...spring, delay: 0.05 }}
             className="absolute inset-0 rounded-2xl border border-line bg-surface p-4"
           >
-            <p className="text-[11px] font-semibold tracking-[0.08em] text-subtle">QUESTION 7</p>
-            <p className="mt-2 text-[22px] font-bold tracking-[-0.03em] text-[#2c4d3f]">Goal before 80&apos;?</p>
+            <p className="text-[11px] font-semibold tracking-[0.08em] text-subtle">سؤال {formatNumber(7)}</p>
+            <p className="mt-2 text-[22px] font-bold tracking-[-0.03em] text-[#2c4d3f]">گل قبل از دقیقهٔ ۸۰؟</p>
           </motion.div>
           <motion.div
             aria-hidden="true"
             initial={reduce ? false : { opacity: 0, rotate: 0, y: 30 }}
-            animate={{ opacity: 1, rotate: 5, y: 2, x: 12 }}
+            animate={{ opacity: 1, rotate: -5, y: 2, x: -12 }}
             transition={{ ...spring, delay: 0.12 }}
             className="absolute inset-0 rounded-2xl border border-surface-3 bg-surface-hover"
           />
 
           <motion.section
-            aria-label="Sample question"
-            initial={reduce ? false : { opacity: 0, y: 40, rotate: -3 }}
+            aria-label="سؤال نمونه"
+            initial={reduce ? false : { opacity: 0, y: 40, rotate: 3 }}
             animate={{ opacity: 1, y: 0, rotate: 0 }}
             transition={{ ...spring, delay: 0.2 }}
             className="relative flex min-h-[220px] flex-col rounded-2xl border border-line-raised bg-surface-2 p-4 shadow-[0_24px_48px_-20px_rgb(0_0_0/0.9)]"
@@ -256,10 +258,10 @@ function TryStep({ sample, answer, onAnswer }: { sample: Sample; answer: "yes" |
             <div className="flex items-center justify-between gap-3">
               <span className="flex items-center gap-1.5 text-[11px] font-semibold tracking-[0.08em] text-live">
                 <span className="size-1.5 rounded-full bg-live animate-live-pulse" aria-hidden="true" />
-                TRY ONE
+                امتحان کن
               </span>
               <span className="font-display text-[15px] font-bold tracking-wide text-muted-foreground uppercase">
-                {sample.match} · <span className="text-live">{sample.minute}&apos;</span>
+                {sample.match} • <span className="text-live">{formatMinute(sample.minute)}</span>
               </span>
             </div>
             <h2 className="mt-3 text-[26px] leading-[1.15] font-bold tracking-[-0.03em] text-balance">{sample.text}</h2>
@@ -269,10 +271,10 @@ function TryStep({ sample, answer, onAnswer }: { sample: Sample; answer: "yes" |
                 {!answer ? (
                   <motion.div key="ask" exit={{ opacity: 0, y: 6, filter: "blur(4px)" }} className="grid grid-cols-2 gap-2">
                     <Button size="lg" className="h-12 text-base font-bold" onClick={() => onAnswer("yes")}>
-                      Yes
+                      بله
                     </Button>
                     <Button size="lg" variant="secondary" className="h-12 text-base font-bold" onClick={() => onAnswer("no")}>
-                      No
+                      نه
                     </Button>
                   </motion.div>
                 ) : !resolved ? (
@@ -285,8 +287,8 @@ function TryStep({ sample, answer, onAnswer }: { sample: Sample; answer: "yes" |
                     aria-live="polite"
                   >
                     <div className="flex justify-between text-[13px] font-semibold">
-                      <span>Yes {sample.yesShare}%</span>
-                      <span className="text-muted-foreground">{100 - sample.yesShare}% No</span>
+                      <span>بله {formatPercent(sample.yesShare)}</span>
+                      <span className="text-muted-foreground">{formatPercent(100 - sample.yesShare)} نه</span>
                     </div>
                     <div className="flex h-2 gap-[3px]">
                       {(["yes", "no"] as const).map((side) => (
@@ -299,7 +301,7 @@ function TryStep({ sample, answer, onAnswer }: { sample: Sample; answer: "yes" |
                         />
                       ))}
                     </div>
-                    <p className="text-shimmer text-[13px] font-medium">Waiting for 75&apos;…</p>
+                    <p className="text-shimmer text-[13px] font-medium">در انتظار دقیقهٔ ۷۵…</p>
                   </motion.div>
                 ) : (
                   <motion.div
@@ -338,14 +340,14 @@ function TryStep({ sample, answer, onAnswer }: { sample: Sample; answer: "yes" |
                     </span>
                     <div className="min-w-0 flex-1">
                       <p className={cn("text-[15px] font-semibold", right ? "text-primary" : "text-loss")}>
-                        {right ? "You called it." : "Not this time."}
+                        {right ? "درست گفتی." : "این بار نه."}
                       </p>
                       <p className="text-xs text-muted-foreground">{sample.resolvedLabel}</p>
                     </div>
                     {right && (
                       <span className="font-display text-[22px] font-bold text-primary">
-                        +{sample.reward}
-                        <span className="ms-0.5 text-sm">pts</span>
+                        {formatSigned(sample.reward)}
+                        <span className="ms-0.5 text-sm">امتیاز</span>
                       </span>
                     )}
                   </motion.div>
@@ -356,13 +358,13 @@ function TryStep({ sample, answer, onAnswer }: { sample: Sample; answer: "yes" |
         </div>
       </div>
 
-      <Headline title="Call the next moment." sub="Beat your friends to it." />
+      <Headline title="لحظهٔ بعدی را پیش‌بینی کن." sub="زودتر از دوستانت." />
       <p className="mt-3 text-[15px] text-muted-foreground">
         {resolved
           ? right
-            ? `In a real match that's +${sample.reward} points. Points rank you; coins get you in.`
-            : "You'll get the next one. There's always a next one."
-          : "Free to play. No sign-up needed to start."}
+            ? `در یک بازی واقعی این ${formatSigned(sample.reward)} امتیاز است. امتیاز رتبه‌ات را می‌سازد؛ سکه راهت می‌دهد.`
+            : "بعدی را می‌گیری. همیشه یک بعدی هست."
+          : "رایگان. برای شروع ثبت‌نام لازم نیست."}
       </p>
     </div>
   );
@@ -374,10 +376,10 @@ function ClubsStep({ clubs, selected, onToggle }: { clubs: Team[]; selected: str
   const reduce = useReducedMotion();
   return (
     <div className="flex flex-1 flex-col pt-6">
-      <Headline title="Who do you shout for?" sub="Their matches go first." />
-      <p className="mt-3 text-[15px] text-muted-foreground">Pick as many as you like. Change it any time.</p>
+      <Headline title="طرفدار کدام تیمی؟" sub="بازی‌هایشان اول می‌آید." />
+      <p className="mt-3 text-[15px] text-muted-foreground">هر چندتا که دوست داری انتخاب کن. هر وقت خواستی عوضش کن.</p>
 
-      <ul className="mt-6 grid grid-cols-4 gap-2" aria-label="Clubs">
+      <ul className="mt-6 grid grid-cols-4 gap-2" aria-label="باشگاه‌ها">
         {clubs.map((club, i) => {
           const on = selected.includes(club.code);
           return (
@@ -451,28 +453,28 @@ function ClaimStep({ coins, steps, claimed }: { coins: number; steps: { title: s
             transition={claimed ? { duration: 0.9, ease: [0.2, 0.8, 0.2, 1] } : { type: "spring", stiffness: 260, damping: 20, delay: 0.3 }}
             className="absolute inset-x-0 bottom-0 flex aspect-square items-center justify-center rounded-full bg-live font-display text-[64px] font-bold text-live-foreground shadow-[inset_0_-6px_0_rgb(0_0_0/0.22),inset_0_0_0_8px_rgb(255_255_255/0.14),0_20px_40px_-16px_rgb(0_0_0/0.9)]"
           >
-            F
+            ف
           </motion.span>
         </div>
         <p className="relative mt-7 font-display text-[64px] leading-none font-bold text-live">
           <NumberTicker value={coins} duration={1.4} />
         </p>
-        <p className="relative mt-1 text-[13px] font-medium text-muted-foreground">first mission: you picked your clubs</p>
+        <p className="relative mt-1 text-[13px] font-medium text-muted-foreground">اولین مأموریت: باشگاه‌هایت را انتخاب کردی</p>
       </div>
 
-      <Headline title="Your first coins." sub="Earn more all week." />
+      <Headline title="اولین سکه‌هایت." sub="تمام هفته بیشتر بگیر." />
 
       <ol className="mt-5 grid grid-cols-3 gap-3 border-t border-line pt-4">
         {steps.map((s, i) => (
           <li key={s.title}>
             <span className={cn("font-display text-base font-bold", i === 0 ? "text-primary" : "text-muted-foreground")}>
-              {String(i + 1).padStart(2, "0")}
+              {formatNumber(i + 1).padStart(2, "۰")}
             </span>
             <p className="mt-0.5 text-sm font-semibold">{s.title}</p>
             <p className="mt-0.5 flex items-center gap-1 font-display text-[15px] font-bold text-live">
-              +{s.coins.toLocaleString("en-US")}
+              {formatSigned(s.coins)}
               <Coin className="size-3.5 text-[7px]" />
-              <span className="sr-only">coins</span>
+              <span className="sr-only">سکه</span>
             </p>
           </li>
         ))}

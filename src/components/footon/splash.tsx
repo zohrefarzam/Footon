@@ -76,13 +76,14 @@ export function Splash({ onDone }: { onDone: () => void }) {
     <motion.div
       ref={scope}
       role="status"
-      aria-label="Footon is loading"
+      aria-label="فوتون در حال باز شدن است"
       exit={{ opacity: 0, scale: 1.04, filter: "blur(8px)" }}
       transition={{ duration: 0.35, ease: [0.2, 0.8, 0.2, 1] }}
       className="bg-dots fixed inset-0 z-50 flex flex-col items-center justify-center overflow-hidden bg-background"
     >
       <div aria-hidden="true" className="flex flex-col items-center">
-        <div className="flex items-end font-display text-[84px] leading-[0.8] font-bold italic uppercase">
+        {/* the wordmark is Latin and reads left to right; the ball rolls in from the right into the first O */}
+        <div lang="en" dir="ltr" className="flex items-end font-display text-[84px] leading-[0.8] font-bold italic uppercase">
           <span data-letter="f" style={hidden}>
             F
           </span>
@@ -118,7 +119,7 @@ export function Splash({ onDone }: { onDone: () => void }) {
         </div>
 
         <p data-tagline className="mt-6 text-[15px] font-medium text-muted-foreground" style={hidden}>
-          Call the next moment.
+          لحظهٔ بعدی را پیش‌بینی کن.
         </p>
       </div>
     </motion.div>

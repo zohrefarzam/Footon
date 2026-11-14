@@ -37,7 +37,7 @@ function DialogContent({
   className,
   children,
   variant = "sheet",
-  closeLabel = "Close",
+  closeLabel = "بستن",
   ...props
 }: React.ComponentProps<typeof DialogPrimitive.Content> & { variant?: "sheet" | "center" | "full"; closeLabel?: string }) {
   return (

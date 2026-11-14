@@ -11,15 +11,15 @@ export default function NewChallengePage() {
   return (
     <AppShell dock={false} className="pt-3.5">
       <header className="flex h-11 items-center gap-3">
-        <Button asChild variant="secondary" size="icon" aria-label="Close" className="size-10">
+        <Button asChild variant="secondary" size="icon" aria-label="بستن" className="size-10">
           <Link href="/challenges">
             <X className="size-4" />
           </Link>
         </Button>
-        <h1 className="flex-1 text-center text-lg font-semibold">New challenge</h1>
+        <h1 className="flex-1 text-center text-lg font-semibold">چالش تازه</h1>
         <span className="w-10" />
       </header>
-      <LockedFeatureGate feature="createLeague" title="Create a league" className="mt-4">
+      <LockedFeatureGate feature="createLeague" title="ساختن لیگ" className="mt-4">
         <CreateLeagueForm balance={wallet.coins} />
       </LockedFeatureGate>
     </AppShell>

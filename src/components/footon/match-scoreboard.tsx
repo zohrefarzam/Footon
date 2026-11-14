@@ -6,6 +6,7 @@ import { Countdown } from "./countdown";
 import { LiveMinute } from "./live";
 import { PitchMarkings } from "./pitch-markings";
 import { TeamCrest } from "./team-crest";
+import { formatMinute, formatNumber } from "@/lib/format";
 
 /**
  * The big scoreboard at the top of every match page, on the dotted canvas:
@@ -26,13 +27,13 @@ export function MatchScoreboard({ match: m }: { match: Match }) {
   const [awayShirt] = m.away.colors ?? ["#2e4b3f"];
 
   return (
-    <section aria-label="Score" className="floodlight relative isolate -mx-5 flex flex-col gap-4 overflow-hidden border-b border-line px-5 pt-3 pb-5">
+    <section aria-label="نتیجه" className="floodlight relative isolate -mx-5 flex flex-col gap-4 overflow-hidden border-b border-line px-5 pt-3 pb-5">
       {/* the pitch under the board, and each side's colours pooled behind its crest (data, like the crests) */}
       <div
         aria-hidden="true"
         className="absolute inset-0 -z-10"
         style={{
-          backgroundImage: `radial-gradient(40% 60% at 16% 34%, ${homeShirt}1c, transparent 70%), radial-gradient(40% 60% at 84% 34%, ${awayShirt}1c, transparent 70%)`,
+          backgroundImage: `radial-gradient(40% 60% at 84% 34%, ${homeShirt}1c, transparent 70%), radial-gradient(40% 60% at 16% 34%, ${awayShirt}1c, transparent 70%)`,
         }}
       />
       <PitchMarkings className="-z-10" />
@@ -47,16 +48,16 @@ export function MatchScoreboard({ match: m }: { match: Match }) {
                 {reds
                   .filter((e) => e.side === side)
                   .map((e) => (
-                    <span key={e.minute} role="img" aria-label="red card" className="h-3 w-2 rounded-[2px] bg-booking-red" />
+                    <span key={e.minute} role="img" aria-label="کارت قرمز" className="h-3 w-2 rounded-[2px] bg-booking-red" />
                   ))}
               </span>
               {goals.some((e) => e.side === side) && (
-                <ul className="text-xs text-muted-foreground" aria-label={`${t.name} scorers`}>
+                <ul className="text-xs text-muted-foreground" aria-label={`گلزنان ${t.name}`}>
                   {goals
                     .filter((e) => e.side === side)
                     .map((e) => (
                       <li key={e.minute}>
-                        {e.player} <span className="font-display">{e.minute}&apos;</span>
+                        {e.player} <span className="font-display">{formatMinute(e.minute)}</span>
                       </li>
                     ))}
                 </ul>
@@ -74,19 +75,19 @@ export function MatchScoreboard({ match: m }: { match: Match }) {
               ) : (
                 <span className="text-[13px] font-medium text-muted-foreground">{dayLabel(m.dayOffset)}</span>
               )}
-              {m.boost && <BoostBadge label="Wins pay" className="mt-1" />}
+              {m.boost && <BoostBadge label="بردها" className="mt-1" />}
             </>
           ) : (
             <>
-              <p aria-live={live ? "polite" : undefined} aria-label={`${m.home.name} ${h}, ${m.away.name} ${a}`} className="font-display text-[64px] leading-none font-bold">
-                {h}
+              <p aria-live={live ? "polite" : undefined} aria-label={`${m.home.name} ${formatNumber(h)}، ${m.away.name} ${formatNumber(a)}`} className="flex items-center font-display text-[64px] leading-none font-bold">
+                {formatNumber(h)}
                 <span className="mx-2.5 text-dim">:</span>
-                {a}
+                {formatNumber(a)}
               </p>
               {live ? (
                 <LiveMinute minute={minute} className="text-sm" />
               ) : (
-                <span className="font-display text-sm font-bold text-muted-foreground">FULL TIME</span>
+                <span className="font-display text-sm font-bold text-muted-foreground">پایان بازی</span>
               )}
             </>
           )}
@@ -98,7 +99,7 @@ export function MatchScoreboard({ match: m }: { match: Match }) {
         <div
           className="relative mx-1 h-1 rounded-full bg-line"
           role="img"
-          aria-label={`Minute ${minute} of 90${goals.length ? `. Goals at ${goals.map((e) => `${e.minute}'`).join(", ")}` : ""}`}
+          aria-label={`دقیقهٔ ${formatNumber(minute)} از ۹۰${goals.length ? `. گل‌ها در دقیقهٔ ${goals.map((e) => formatNumber(e.minute)).join("، ")}` : ""}`}
         >
           <div className="absolute inset-y-0 start-0 rounded-full bg-dim" style={{ width: `${(minute / 90) * 100}%` }} />
           <span className="absolute -top-[3px] start-1/2 h-2.5 w-px bg-dim-strong" />
@@ -129,14 +130,16 @@ export function CompactScore({ match: m }: { match: Match }) {
         m.kickoff
       ) : (
         <>
-          {h}
-          <span className="text-dim">:</span>
-          {a}
+          <span className="flex items-center gap-2">
+            {formatNumber(h)}
+            <span className="text-dim">:</span>
+            {formatNumber(a)}
+          </span>
         </>
       )}
       <span className="text-muted-foreground">{m.away.code}</span>
       {m.status === "live" && <LiveMinute minute={m.minute ?? 0} className="ms-auto" />}
-      {m.status === "finished" && <span className="ms-auto text-sm text-muted-foreground">FT</span>}
+      {m.status === "finished" && <span className="ms-auto text-sm text-muted-foreground">پایان</span>}
     </span>
   );
 }

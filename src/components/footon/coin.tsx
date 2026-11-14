@@ -1,7 +1,8 @@
 import { cn } from "@/lib/utils";
 import { NumberTicker } from "./number-ticker";
+import { formatNumber } from "@/lib/format";
 
-/** The Footon coin. Amber, always — coins are never lime. */
+/** The Footon coin ("ف"). Amber, always — coins are never lime. */
 export function Coin({ className }: { className?: string }) {
   return (
     <span
@@ -11,7 +12,7 @@ export function Coin({ className }: { className?: string }) {
         className,
       )}
     >
-      F
+      ف
     </span>
   );
 }
@@ -29,15 +30,15 @@ export function CoinBadge({
   return (
     <span
       className={cn(
-        "inline-flex h-[34px] items-center gap-1.5 rounded-full border border-line-strong bg-surface-2 pr-3 pl-1.5",
+        "inline-flex h-[34px] items-center gap-1.5 rounded-full border border-line-strong bg-surface-2 pe-3 ps-1.5",
         className,
       )}
     >
       <Coin />
       <span className="font-display text-lg font-bold tabular-nums">
-        {animate ? <NumberTicker value={value} /> : value.toLocaleString("en-US")}
+        {animate ? <NumberTicker value={value} /> : formatNumber(value)}
       </span>
-      <span className="sr-only">coins</span>
+      <span className="sr-only">سکه</span>
     </span>
   );
 }
@@ -58,12 +59,12 @@ export function CoinAmount({
   className?: string;
 }) {
   const spend = signed && value < 0;
-  const text = `${signed ? (value < 0 ? "−" : "+") : ""}${Math.abs(value).toLocaleString("en-US")}`;
+  const text = `${signed ? (value < 0 ? "−" : "+") : ""}${formatNumber(Math.abs(value))}`;
   return (
     <span className={cn("inline-flex shrink-0 items-center gap-1 font-display text-lg font-bold tabular-nums", spend ? "text-muted-foreground" : "text-live", className)}>
       {text}
       <Coin className="size-4 text-[8px]" />
-      <span className="sr-only">{spend ? "coins spent" : "coins"}</span>
+      <span className="sr-only">{spend ? "سکه خرج شد" : "سکه"}</span>
     </span>
   );
 }

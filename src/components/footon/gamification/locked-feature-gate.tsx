@@ -49,7 +49,7 @@ export function LockedFeatureGate({
 
   const need = requiredLevel(feature, lv.config);
   const label = copy.levelRequired(need);
-  const aria = `${title}, ${copy.locked}. ${label}`;
+  const aria = `${title}، ${copy.locked}. ${label}`;
 
   if (variant === "button") {
     return (

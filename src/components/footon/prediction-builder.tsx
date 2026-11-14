@@ -25,6 +25,7 @@ import { BoostBadge } from "./boost-badge";
 import { Coin, CoinAmount } from "./coin";
 import { Football } from "./football";
 import { ScorePicker } from "./score-picker";
+import { formatNumber, toLatinDigits } from "@/lib/format";
 
 export function TypeIcon({ type, className }: { type: PredictionType; className?: string }) {
   const c = cn("size-4 shrink-0", className);
@@ -133,7 +134,7 @@ export function PredictionBuilder({ match: m, teams, initial = [], rules, balanc
     <section aria-labelledby={`pred-${m.id}`} className="flex flex-col gap-2.5">
       <div className="flex items-baseline justify-between gap-3">
         <h2 id={`pred-${m.id}`} className="text-[13px] font-medium text-muted-foreground">
-          Your predictions
+          پیش‌بینی‌های تو
         </h2>
         <span className="flex items-center gap-2 text-xs text-muted-foreground">
           {m.boost && <BoostBadge />}
@@ -141,19 +142,19 @@ export function PredictionBuilder({ match: m, teams, initial = [], rules, balanc
           {!open ? (
             <span className="flex h-6 items-center gap-1 rounded-full bg-surface-3 px-2.5 font-semibold text-foreground">
               <Lock className="size-3" strokeWidth={2.6} aria-hidden="true" />
-              Locked at kickoff
+              با شروع بازی قفل شد
             </span>
           ) : locked ? (
             <span className="flex h-6 items-center gap-1 rounded-full border border-primary-line bg-primary-soft px-2.5 font-semibold text-primary">
               <Check className="size-3" strokeWidth={3} aria-hidden="true" />
-              Locked in
+              ثبت شد
             </span>
           ) : items.length > 0 ? (
-            <span className="flex h-6 items-center rounded-full border border-dashed border-line-strong px-2.5 font-semibold">Draft</span>
+            <span className="flex h-6 items-center rounded-full border border-dashed border-line-strong px-2.5 font-semibold">پیش‌نویس</span>
           ) : null}
           {open && (
             <span>
-              until <span className="font-display text-sm font-bold text-foreground">{m.kickoff}</span>
+              تا <span className="font-display text-sm font-bold text-foreground">{m.kickoff}</span>
             </span>
           )}
         </span>
@@ -164,16 +165,16 @@ export function PredictionBuilder({ match: m, teams, initial = [], rules, balanc
           {rules.league}:{" "}
           {fixed ? (
             <>
-              <span className="font-display text-sm font-bold text-live">{formatCoins(fixed)}</span> per prediction
-              {rules.setBy ? `, set by ${rules.setBy}` : ""}
+              <span className="font-display text-sm font-bold text-live">{formatCoins(fixed)}</span> برای هر پیش‌بینی
+              {rules.setBy ? `، تعیین‌شده توسط ${rules.setBy}` : ""}
             </>
           ) : (
-            "you pick each stake"
+            "مبلغ هر پیش‌بینی با خودت"
           )}
           {rules.cap ? (
             <>
               {" "}
-              · cap <span className="font-display text-sm font-bold text-foreground">{formatCoins(rules.cap)}</span>
+              • سقف <span className="font-display text-sm font-bold text-foreground">{formatCoins(rules.cap)}</span>
             </>
           ) : null}
         </p>
@@ -182,7 +183,7 @@ export function PredictionBuilder({ match: m, teams, initial = [], rules, balanc
       {editing && <ScorePicker home={sides.home} away={sides.away} value={scoreItem ? parseScore(scoreItem.pick) : undefined} onChange={setScore} />}
 
       {editing && (
-        <ul className="grid grid-cols-3 gap-2" aria-label="Add a prediction">
+        <ul className="grid grid-cols-3 gap-2" aria-label="افزودن پیش‌بینی">
           {PREDICTION_TYPES.filter((t) => t !== "score").map((t) => {
             const on = items.some((p) => p.type === t);
             return (
@@ -221,7 +222,7 @@ export function PredictionBuilder({ match: m, teams, initial = [], rules, balanc
                       <div className="flex items-center gap-2.5">
                         <TypeIcon type={p.type} className="text-muted-foreground" />
                         <span className="flex-1 text-[15px] font-semibold">{label}</span>
-                        <Button variant="ghost" size="icon-sm" className="-me-2 size-9" aria-label={`Remove ${label}`} onClick={() => toggleType(p.type)}>
+                        <Button variant="ghost" size="icon-sm" className="-me-2 size-9" aria-label={`حذف ${label}`} onClick={() => toggleType(p.type)}>
                           <X />
                         </Button>
                       </div>
@@ -229,10 +230,10 @@ export function PredictionBuilder({ match: m, teams, initial = [], rules, balanc
                       {p.type === "score" ? (
                         <p className="flex items-center justify-between gap-3 rounded-sm border border-primary-line bg-primary-soft px-3 py-2 text-[13px] font-semibold text-primary">
                           <span className="truncate">{predictionSummary(p, m.home, m.away)}</span>
-                          <span className="shrink-0 text-xs font-medium text-muted-foreground">Change it above</span>
+                          <span className="shrink-0 text-xs font-medium text-muted-foreground">بالا عوضش کن</span>
                         </p>
                       ) : (
-                      <div role="radiogroup" aria-label={`${label}: your pick`} className="flex gap-1.5">
+                      <div role="radiogroup" aria-label={`${label}: انتخاب تو`} className="flex gap-1.5">
                         {predictionOptions(p.type, m.home, m.away).map((o) => {
                           const on = p.pick === o.value;
                           return (
@@ -257,13 +258,13 @@ export function PredictionBuilder({ match: m, teams, initial = [], rules, balanc
                       <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
                         {fixed ? (
                           <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                            Stake <CoinAmount value={fixed} className="text-[15px]" />
-                            {rules?.setBy && <span>set by {rules.setBy}</span>}
+                            مبلغ <CoinAmount value={fixed} className="text-[15px]" />
+                            {rules?.setBy && <span>تعیین‌شده توسط {rules.setBy}</span>}
                           </span>
                         ) : (
                           <>
                             <label htmlFor={`stake-${p.id}`} className="text-xs text-muted-foreground">
-                              Stake
+                              مبلغ
                             </label>
                             <div className="relative">
                               <input
@@ -271,7 +272,7 @@ export function PredictionBuilder({ match: m, teams, initial = [], rules, balanc
                                 inputMode="numeric"
                                 autoComplete="off"
                                 value={p.stake ? String(p.stake) : ""}
-                                onChange={(e) => update(p.id, { stake: Number(e.target.value.replace(/\D/g, "").slice(0, 5)) || 0 })}
+                                onChange={(e) => update(p.id, { stake: Number(toLatinDigits(e.target.value).replace(/\D/g, "").slice(0, 5)) || 0 })}
                                 onBlur={() => p.stake < min && update(p.id, { stake: min })}
                                 aria-describedby={`stake-min-${p.id}`}
                                 className="h-9 w-[92px] rounded-sm border border-line-strong bg-surface-2 ps-2.5 pe-8 font-display text-base font-bold tabular-nums outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/60"
@@ -295,12 +296,12 @@ export function PredictionBuilder({ match: m, teams, initial = [], rules, balanc
                               ))}
                             </div>
                             <span id={`stake-min-${p.id}`} className={cn("sr-only", p.stake < min && "not-sr-only text-xs text-loss")}>
-                              At least {formatCoins(min)}
+                              دست‌کم {formatCoins(min)}
                             </span>
                           </>
                         )}
                         <span className="ms-auto flex items-center gap-1.5 text-xs text-muted-foreground">
-                          Wins <CoinAmount value={payout(p.stake, m.boost)} className="text-[15px]" />
+                          برد <CoinAmount value={payout(p.stake, m.boost)} className="text-[15px]" />
                         </span>
                       </div>
                     </>
@@ -311,24 +312,24 @@ export function PredictionBuilder({ match: m, teams, initial = [], rules, balanc
                         <p className={cn("truncate text-[15px] font-semibold", p.result === "wrong" && "text-muted-foreground")}>
                           {predictionSummary(p, m.home, m.away)}
                         </p>
-                        <p className="mt-0.5 text-xs text-muted-foreground">{formatCoins(p.stake)} staked</p>
+                        <p className="mt-0.5 text-xs text-muted-foreground">{formatCoins(p.stake)} سکه شرط</p>
                       </div>
                       {p.result === "right" ? (
                         <span className="flex flex-col items-end gap-0.5">
                           <span className="flex items-center gap-1 text-xs font-semibold text-primary">
                             <Check className="size-3.5" strokeWidth={3} aria-hidden="true" />
-                            Right
+                            درست
                           </span>
                           <CoinAmount value={payout(p.stake, m.boost)} signed className="text-[15px]" />
                         </span>
                       ) : p.result === "wrong" ? (
                         <span className="flex items-center gap-1 text-xs font-semibold text-loss">
                           <X className="size-3.5" strokeWidth={3} aria-hidden="true" />
-                          Wrong
+                          غلط
                         </span>
                       ) : (
                         <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                          wins <CoinAmount value={payout(p.stake, m.boost)} className="text-[15px]" />
+                          برد <CoinAmount value={payout(p.stake, m.boost)} className="text-[15px]" />
                         </span>
                       )}
                     </div>
@@ -340,7 +341,7 @@ export function PredictionBuilder({ match: m, teams, initial = [], rules, balanc
         </Card>
       ) : (
         <p className="rounded-xl border border-dashed border-line-strong px-4 py-5 text-center text-sm text-muted-foreground">
-          {open ? "Tap a type above to add your first prediction." : "No predictions on this match."}
+          {open ? "یکی از نوع‌های بالا را بزن تا اولین پیش‌بینی‌ات اضافه شود." : "روی این بازی پیش‌بینی‌ای نداری."}
         </p>
       )}
 
@@ -349,11 +350,11 @@ export function PredictionBuilder({ match: m, teams, initial = [], rules, balanc
         {open && items.length > 0 && (
           <p className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1 text-xs text-muted-foreground">
             <span>
-              Staked <span className="font-display text-sm font-bold text-foreground">{formatCoins(total)}</span>
-              {rules?.cap ? ` of ${formatCoins(rules.cap)} cap` : ""} · you have {formatCoins(balance)}
+              شرط <span className="font-display text-sm font-bold text-foreground">{formatCoins(total)}</span>
+              {rules?.cap ? ` از سقف ${formatCoins(rules.cap)}` : ""} • موجودی {formatCoins(balance)}
             </span>
             <span>
-              All right: <CoinAmount value={wins} className="text-sm" /> + {items.length * POINTS_PER_RIGHT_CALL} pts
+              همه درست: <CoinAmount value={wins} className="text-sm" /> + {formatNumber(items.length * POINTS_PER_RIGHT_CALL)} امتیاز
             </span>
           </p>
         )}
@@ -362,33 +363,33 @@ export function PredictionBuilder({ match: m, teams, initial = [], rules, balanc
           <>
             {overCap > 0 ? (
               <Button size="lg" disabled>
-                {formatCoins(overCap)} over the cap
+                {formatCoins(overCap)} بیشتر از سقف
               </Button>
             ) : short > 0 ? (
               <Button size="lg" disabled>
-                Need {formatCoins(short)} more coins
+                {formatCoins(short)} سکهٔ دیگر لازم داری
               </Button>
             ) : unpicked > 0 ? (
               <Button size="lg" disabled>
-                Pick an answer for {unpicked === 1 ? "1 more" : `${unpicked} more`}
+                برای {formatNumber(unpicked)} مورد دیگر جواب انتخاب کن
               </Button>
             ) : (
               <Button size="lg" disabled={lowStake} onClick={lockIn} className="justify-between ps-5 pe-4">
                 <span>
-                  Lock in {items.length} {items.length === 1 ? "prediction" : "predictions"}
+                  ثبت {formatNumber(items.length)} پیش‌بینی
                 </span>
                 <span className="flex items-center gap-1 font-display text-base font-bold">
                   {formatCoins(total)}
                   <Coin className="size-4 text-[8px]" />
-                  <span className="sr-only">coins</span>
+                  <span className="sr-only">سکه</span>
                 </span>
               </Button>
             )}
             {short > 0 && (
               <p className="text-center text-xs text-muted-foreground">
-                Free table rewards and missions top you up.{" "}
+                جایزه‌های جدول رایگان و مأموریت‌ها سکه‌ات را پر می‌کنند.{" "}
                 <Link href="/wallet" className="font-semibold text-foreground underline underline-offset-3">
-                  Ways to earn
+                  راه‌های گرفتن سکه
                 </Link>
               </p>
             )}
@@ -403,9 +404,9 @@ export function PredictionBuilder({ match: m, teams, initial = [], rules, balanc
             </svg>
             <p className="text-sm">
               <span className="font-semibold text-primary">
-                {items.length} {items.length === 1 ? "prediction" : "predictions"} locked in.
+                {formatNumber(items.length)} پیش‌بینی ثبت شد.
               </span>{" "}
-              <span className="text-muted-foreground">You can change them until {m.kickoff}.</span>
+              <span className="text-muted-foreground">تا {m.kickoff} می‌توانی عوضشان کنی.</span>
             </p>
           </div>
         )}
@@ -414,7 +415,7 @@ export function PredictionBuilder({ match: m, teams, initial = [], rules, balanc
         {open && locked && (
           <Button variant="secondary" size="lg" onClick={edit}>
             <Pencil aria-hidden="true" />
-            Edit predictions
+            ویرایش پیش‌بینی‌ها
           </Button>
         )}
       </div>
@@ -426,12 +427,12 @@ export function PredictionBuilder({ match: m, teams, initial = [], rules, balanc
 function SyncStatus({ entry, onRetry }: { entry: OutboxEntry | undefined; onRetry: () => void }) {
   return (
     <div aria-live="polite" className="empty:hidden">
-      {entry?.status === "sending" && <p className="text-shimmer text-center text-xs">Saved · syncing</p>}
+      {entry?.status === "sending" && <p className="text-shimmer text-center text-xs">ذخیره شد • در حال همگام‌سازی</p>}
       {entry?.status === "failed" && (
         <p className="flex items-center justify-center gap-2 text-xs text-muted-foreground">
-          Saved on this phone, not sent yet.
+          روی همین گوشی ذخیره شد، هنوز فرستاده نشده.
           <Button variant="secondary" size="sm" className="h-8 rounded-sm px-3" onClick={onRetry}>
-            Retry
+            دوباره
           </Button>
         </p>
       )}

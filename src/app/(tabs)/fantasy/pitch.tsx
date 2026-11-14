@@ -12,6 +12,7 @@ const SPOTS = [
   ["GK", 50, 86],
 ] as const;
 const CAPTAIN = 1;
+const POS: Record<string, string> = { GK: "گلر", LB: "دفاع چپ", CB: "دفاع", RB: "دفاع راست", CM: "هافبک", LW: "وینگر چپ", ST: "مهاجم", RW: "وینگر راست" };
 
 export function Pitch() {
   const [sel, setSel] = useState(CAPTAIN);
@@ -19,7 +20,7 @@ export function Pitch() {
   return (
     <>
       <section
-        aria-label="Lineup, 4-3-3"
+        aria-label="ترکیب، ۴-۳-۳"
         className="relative h-[400px] overflow-hidden rounded-2xl border border-[#1c2a1f] bg-[repeating-linear-gradient(180deg,var(--pitch)_0_50px,var(--pitch-2)_50px_100px)]"
       >
         <div aria-hidden="true" className="absolute inset-3.5 rounded-md border-[1.5px] border-pitch-line" />
@@ -27,7 +28,7 @@ export function Pitch() {
         <div aria-hidden="true" className="absolute top-1/2 left-1/2 size-[84px] -translate-1/2 rounded-full border-[1.5px] border-pitch-line" />
         <div aria-hidden="true" className="absolute top-3.5 left-1/2 h-14 w-40 -translate-x-1/2 border-[1.5px] border-t-0 border-pitch-line" />
         <div aria-hidden="true" className="absolute bottom-3.5 left-1/2 h-14 w-40 -translate-x-1/2 border-[1.5px] border-b-0 border-pitch-line" />
-        <span className="absolute top-[22px] left-[22px] font-display text-[13px] font-bold text-white/35">4-3-3</span>
+        <span dir="ltr" className="absolute top-[22px] left-[22px] font-display text-[13px] font-bold text-white/35">4-3-3</span>
 
         {SPOTS.map(([pos, x, y], i) => {
           const on = i === sel;
@@ -36,7 +37,7 @@ export function Pitch() {
               key={i}
               onClick={() => setSel(i)}
               aria-pressed={on}
-              aria-label={`${pos}${i === CAPTAIN ? ", captain" : ""}`}
+              aria-label={`${POS[pos]}${i === CAPTAIN ? "، کاپیتان" : ""}`}
               className="absolute flex -translate-1/2 flex-col items-center gap-0.5 transition-transform duration-200 ease-spring hover:-translate-y-[calc(50%+3px)]"
               style={{ left: `${x}%`, top: `${y}%` }}
             >
@@ -51,25 +52,25 @@ export function Pitch() {
                   />
                 </svg>
                 {i === CAPTAIN && (
-                  <span className="absolute -top-1 -right-1.5 flex size-[18px] items-center justify-center rounded-full border-2 border-pitch bg-live text-[10px] font-extrabold text-live-foreground">
-                    C
+                  <span className="absolute -end-1.5 -top-1 flex size-[18px] items-center justify-center rounded-full border-2 border-pitch bg-live text-[10px] font-extrabold text-live-foreground">
+                    ک
                   </span>
                 )}
               </span>
               <span
                 className={cn(
-                  "rounded-[6px] px-1.5 py-px font-display text-xs font-bold tracking-wide",
+                  "rounded-[6px] px-1.5 py-px font-display text-xs font-bold whitespace-nowrap",
                   on ? "bg-primary text-primary-foreground" : "bg-black/45 text-[#e1ebe5]",
                 )}
               >
-                {pos}
+                {POS[pos]}
               </span>
             </button>
           );
         })}
       </section>
       <p className="sr-only" aria-live="polite">
-        {SPOTS[sel][0]} selected
+        {POS[SPOTS[sel][0]]} انتخاب شد
       </p>
     </>
   );

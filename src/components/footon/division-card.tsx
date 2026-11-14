@@ -4,6 +4,7 @@ import { ChevronRight } from "lucide-react";
 import type { Standing } from "@/lib/mock-data";
 import { cn, ordinal } from "@/lib/utils";
 import { LeagueBadge } from "./league-badge";
+import { formatNumber } from "@/lib/format";
 
 export type Division = {
   name: string;
@@ -25,7 +26,7 @@ export function RankStrip({ rank, size, promote, relegate, tone = "dark", classN
   return (
     <div
       role="img"
-      aria-label={`Place ${rank} of ${size}. Top ${promote} go up, bottom ${relegate} go down.`}
+      aria-label={`رتبهٔ ${formatNumber(rank)} از ${formatNumber(size)}. ${formatNumber(promote)} نفر اول صعود و ${formatNumber(relegate)} نفر آخر سقوط می‌کنند.`}
       className={cn("grid h-5 items-end gap-[3px]", className)}
       style={{ gridTemplateColumns: `repeat(${size}, minmax(0, 1fr))` }}
     >
@@ -89,25 +90,25 @@ export function DivisionCard({ division: d, className }: { division: Division; c
       <span className="flex items-center gap-3">
         <LeagueBadge name={d.name} tone="silver" />
         <span className="min-w-0 flex-1">
-          <span className="block text-[15px] font-semibold">{d.name} division</span>
+          <span className="block text-[15px] font-semibold">دستهٔ {d.name}</span>
           <span className="mt-0.5 block text-xs text-muted-foreground">
-            Week {d.week} · ends in {d.endsIn}
+            هفتهٔ {formatNumber(d.week)} • {d.endsIn} تا پایان
           </span>
         </span>
-        <ChevronRight className="size-4 text-muted-foreground transition-transform duration-200 ease-spring group-hover:translate-x-0.5 rtl:rotate-180" aria-hidden="true" />
+        <ChevronRight className="size-4 text-muted-foreground transition-transform duration-200 ease-spring group-hover:translate-x-0.5 rtl:group-hover:-translate-x-0.5 rtl:rotate-180" aria-hidden="true" />
       </span>
       <span className="flex items-end justify-between gap-3">
         <span className="font-display text-[44px] leading-[0.9] font-bold text-primary">
           {ordinal(you.rank)}
-          <span className="ms-1.5 text-xl text-muted-foreground">of {d.size}</span>
+          <span className="ms-1.5 text-xl text-muted-foreground">از {formatNumber(d.size)}</span>
         </span>
         <span className="pb-1 text-end text-[13px] font-semibold">
           {need ? (
             <>
-              <span className="font-display text-base font-bold">{need.toLocaleString("en-US")}</span> pts to promotion
+              <span className="font-display text-base font-bold">{formatNumber(need)}</span> امتیاز تا صعود
             </>
           ) : (
-            "In the promotion zone"
+            "در منطقهٔ صعود"
           )}
         </span>
       </span>

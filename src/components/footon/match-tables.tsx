@@ -6,17 +6,17 @@ import { Card } from "@/components/ui/card";
 import { LockedFeatureGate } from "./gamification/locked-feature-gate";
 import { ENTRY_TIERS, FREE_TABLE_REWARDS, splitPool } from "@/lib/economy";
 import { CoinAmount } from "./coin";
+import { formatNumber } from "@/lib/format";
 
 export type CoinTable = { league: string; entry: number; players: number; href: string };
 
 const rowLink =
   "flex items-center gap-3 border-t border-line px-4 py-3.5 outline-none transition-colors hover:bg-surface-hover focus-visible:ring-[3px] focus-visible:ring-inset focus-visible:ring-ring/60";
 
-/** "Winner takes 5,700" or "5,700 / 2,443" from 5 players up. */
+/** "برنده ۵٬۷۰۰ می‌برد", or "اول ۲٬۳۲۷ • دوم ۹۹۸" from 5 players up. */
 export function poolLine(entry: number, players: number) {
   const { payouts } = splitPool(entry, players);
-  const fmt = (n: number) => n.toLocaleString("en-US");
-  return payouts.length === 1 ? `winner takes ${fmt(payouts[0])}` : `1st ${fmt(payouts[0])} · 2nd ${fmt(payouts[1])}`;
+  return payouts.length === 1 ? `برنده ${formatNumber(payouts[0])} می‌برد` : `اول ${formatNumber(payouts[0])} • دوم ${formatNumber(payouts[1])}`;
 }
 
 /**
@@ -31,17 +31,17 @@ export function MatchTables({ joinedFree, coin }: { joinedFree: boolean; coin?: 
   return (
     <section aria-labelledby="tables-title" className="flex flex-col gap-2.5">
       <h2 id="tables-title" className="text-[13px] font-medium text-muted-foreground">
-        Two tables, same calls
+        دو جدول، همان پیش‌بینی‌ها
       </h2>
       <Card className="overflow-hidden">
         <div className="flex items-center gap-3 px-4 py-3.5">
           <div className="min-w-0 flex-1">
-            <p className="text-[15px] font-semibold">Free table</p>
+            <p className="text-[15px] font-semibold">جدول رایگان</p>
             <p className="mt-0.5 text-xs text-muted-foreground">
-              Always open · top 3 get {FREE_TABLE_REWARDS.map((n) => n.toLocaleString("en-US")).join(" / ")}
+              همیشه باز • سه نفر اول {FREE_TABLE_REWARDS.map((n) => formatNumber(n)).join(" / ")} سکه می‌گیرند
             </p>
           </div>
-          {joinedFree ? <Badge variant="soft">You&apos;re in</Badge> : <Badge variant="outline">Free</Badge>}
+          {joinedFree ? <Badge variant="soft">عضوی</Badge> : <Badge variant="outline">رایگان</Badge>}
         </div>
 
         {coin ? (
@@ -49,21 +49,21 @@ export function MatchTables({ joinedFree, coin }: { joinedFree: boolean; coin?: 
             <div className="min-w-0 flex-1">
               <p className="truncate text-[15px] font-semibold">{coin.league}</p>
               <p className="mt-0.5 truncate text-xs text-muted-foreground">
-                {coin.entry.toLocaleString("en-US")} entry · {coin.players} in · {poolLine(coin.entry, coin.players)}
+                ورودی {formatNumber(coin.entry)} • {formatNumber(coin.players)} نفر • {poolLine(coin.entry, coin.players)}
               </p>
             </div>
             <span className="flex flex-col items-end">
               <CoinAmount value={splitPool(coin.entry, coin.players).pool} className="text-base" />
-              <span className="text-[11px] text-muted-foreground">pool</span>
+              <span className="text-[11px] text-muted-foreground">صندوق</span>
             </span>
           </Link>
         ) : (
-          <LockedFeatureGate feature="createLeague" variant="row" title="Friends' pool" className="border-t border-line">
+          <LockedFeatureGate feature="createLeague" variant="row" title="صندوق دوستان" className="border-t border-line">
             <Link href="/challenges/new" className={rowLink}>
               <div className="min-w-0 flex-1">
-                <p className="text-[15px] font-semibold">Friends&apos; pool</p>
+                <p className="text-[15px] font-semibold">صندوق دوستان</p>
                 <p className="mt-0.5 text-xs text-muted-foreground">
-                  Start a league · entry from {ENTRY_TIERS[0].toLocaleString("en-US")}
+                  یک لیگ بساز • ورودی از {formatNumber(ENTRY_TIERS[0])}
                 </p>
               </div>
               <ChevronRight className="size-4 text-muted-foreground rtl:rotate-180" aria-hidden="true" />
@@ -71,7 +71,7 @@ export function MatchTables({ joinedFree, coin }: { joinedFree: boolean; coin?: 
           </LockedFeatureGate>
         )}
 
-        <p className="border-t border-line px-4 py-2.5 text-xs text-muted-foreground">Points rank you on both. Coins in never change your rank.</p>
+        <p className="border-t border-line px-4 py-2.5 text-xs text-muted-foreground">رتبه در هر دو با امتیاز است. سکه‌ای که می‌گذاری هیچ‌وقت رتبه‌ات را عوض نمی‌کند.</p>
       </Card>
     </section>
   );

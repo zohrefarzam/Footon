@@ -23,18 +23,18 @@ export default function HomePage() {
 
   return (
     <AppShell>
-      <h1 className="sr-only">Home</h1>
+      <h1 className="sr-only">خانه</h1>
 
       <PromoCarousel promos={promos} />
 
       {big.length > 0 ? (
         <section aria-labelledby="home-big" className="flex flex-col gap-2.5">
-          <SectionHeading id="home-big" title="Big fixtures" meta={
+          <SectionHeading id="home-big" title="بازی‌های بزرگ" meta={
               <>
-                <BoostBadge label="Wins pay" className="max-[359px]:hidden" />
+                <BoostBadge label="بردها" className="max-[359px]:hidden" />
                 <BoostBadge className="min-[360px]:hidden" />
               </>
-            } action={{ label: "All matches", href: "/live" }} />
+            } action={{ label: "همهٔ بازی‌ها", href: "/live" }} />
           <Card className="overflow-hidden">
             {big.map((m) => (
               <MatchRow key={m.id} match={m} href={m.status === "live" && m.league ? "/play" : `/match/${m.id}`} />
@@ -42,7 +42,7 @@ export default function HomePage() {
           </Card>
         </section>
       ) : (
-        <EmptyState title="Nothing big on yet" body="Every fixture is on the Live tab. Pick one and make a call." action={{ label: "Browse matches", href: "/live" }} />
+        <EmptyState title="فعلاً بازی بزرگی نیست" body="همهٔ بازی‌ها در بخش زنده هست. یکی را انتخاب کن و پیش‌بینی کن." action={{ label: "دیدن بازی‌ها", href: "/live" }} />
       )}
 
       {/* compact tiles: invites and fantasy stay tile-sized */}

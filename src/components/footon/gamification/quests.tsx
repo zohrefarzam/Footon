@@ -64,7 +64,7 @@ export function QuestCard({ quest: q, serverNow }: { quest: Quest; serverNow: st
       <div aria-hidden="true" className="min-w-0 flex-1">
         <p className={cn("text-[15px] leading-snug font-semibold", q.completed && "text-muted-foreground")}>{q.title}</p>
         <p className="mt-0.5 text-xs text-muted-foreground">
-          {label} · {q.completed ? copy.questDone : timeLeft(q, serverNow)}
+          {label} • {q.completed ? copy.questDone : timeLeft(q, serverNow)}
         </p>
         {!q.completed && (
           <div className="mt-2 flex items-center gap-2.5">
@@ -147,8 +147,8 @@ export function QuestsTile({ className }: { className?: string }) {
   const done = daily.filter((q) => q.completed).length;
   const next = daily.find((q) => !q.completed);
   const label = next
-    ? `${copy.questsTitle}, ${copy.doneOf(done, daily.length)}. ${copy.next}: ${copy.questAria(next.title, next.progress, next.target, false)}`
-    : `${copy.questsTitle}, ${copy.allDoneToday}`;
+    ? `${copy.questsTitle}، ${copy.doneOf(done, daily.length)}. ${copy.next}: ${copy.questAria(next.title, next.progress, next.target, false)}`
+    : `${copy.questsTitle}، ${copy.allDoneToday}`;
 
   return (
     <Link
@@ -184,7 +184,7 @@ export function QuestsTile({ className }: { className?: string }) {
         )}
       </span>
       <ChevronRight
-        className="size-4 shrink-0 text-muted-foreground transition-transform duration-200 ease-spring group-hover:translate-x-0.5 rtl:rotate-180"
+        className="size-4 shrink-0 text-muted-foreground transition-transform duration-200 ease-spring group-hover:translate-x-0.5 rtl:group-hover:-translate-x-0.5 rtl:rotate-180"
         aria-hidden="true"
       />
     </Link>

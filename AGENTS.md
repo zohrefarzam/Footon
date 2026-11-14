@@ -25,7 +25,8 @@ The visual reference is the Footon design canvas (7 artboards: Onboarding, Home,
 | Variants | `class-variance-authority` + `cn()` from `@/lib/utils` |
 | Motion | `motion` (`motion/react`) for springs, layout and presence; CSS for simple loops |
 | Icons | `lucide-react` (stroke 2–2.4 in buttons). One exception: the dock uses Footon's own set in `components/footon/nav-icons.tsx` (outline 1.8 inactive, filled active) |
-| Fonts | Geist + Geist Mono (`geist` package), Barlow Condensed (local woff2 in `src/fonts`) |
+| Language | **Persian only, right to left**: `<html lang="fa" dir="rtl">`, Radix `Direction.Provider dir="rtl"` in `app/providers.tsx`. See "Persian and RTL" |
+| Fonts | Vazirmatn FaNum (local woff2 in `src/fonts`, built by `scripts/build-fanum-font.py`: Persian script, every digit drawn as ۰–۹), Geist + Geist Mono (`geist` package) for Latin, Barlow Condensed (local woff2) for Latin display text |
 | Server state | TanStack Query (gamification data, in the browser; `app/providers.tsx`) |
 | Client state | Zustand, only for UI queues (celebrations, the prediction outbox) |
 | Validation | Zod: every gamification response is parsed before the UI sees it |
@@ -66,8 +67,9 @@ src/
                           ItemSwatch, Shirt, Boots), club-page (ClubPage, MyClubLink), share-card
                           (ShareCardRenderer, drawClubCard), coin-balance
   lib/
-    utils.ts              cn(), ordinal()
-    dates.ts              day labels relative to the mock today ("Yesterday", "Thu 5 Nov")
+    utils.ts              cn(), ordinal() (re-exported from format.ts)
+    format.ts             ALL number formatting, in Persian: formatNumber, formatSigned, formatPercent, formatTimes, formatMinute, formatBoost, formatScore, matchup, ordinal, ltr, faDigits, toLatinDigits
+    dates.ts              day labels in the Persian calendar ("دیروز", "پنجشنبه ۱۴ آبان"), matchWhen()
     mock-data.ts          typed mock data mirroring the canvas — replace with API, keep types
     economy.ts            coin rules: entry tiers, pool split + burn, costs, caps, prediction stakes + payout. Never hard-code these in UI
     predictions.ts        prediction types (Correct score, Win/draw, Goals, Corners, Yellow cards, Red card, Penalty), their options, scorePick()/parseScore()
@@ -79,8 +81,8 @@ src/
       level.ts            level-curve maths for drawing bars only; tierFor()
       unlocks.ts          requiredLevel / isUnlocked; the core loop is never locked
       day.ts              matchDayKey(): a match belongs to its start date in the user's timezone
-      format.ts           formatNumber, formatSigned, formatPercent, formatTimes
-      strings.ts          gamification copy (one file, ready for a later translation pass)
+      format.ts           re-exports `@/lib/format`
+      strings.ts          gamification copy (Persian)
       queries.ts          query hooks (useProgress, useConfig, useFlags, useLevel) + applyReward()
       outbox.ts           prediction actions on their way to the server (retry, idempotency keys)
       share.ts            share to a Telegram group (Mini App → Web Share → link)
@@ -103,7 +105,7 @@ Rules:
 3. **One lime thing per view.** The lime primary is the single main action on screen (plus wins and "you"). Two lime CTAs side by side is a bug. The one exception is a Yes/No answer pair: Yes is lime, No is `secondary`.
 4. **No white buttons.** Primary = lime; everything else is dark (`secondary`, `outline`, `ghost`, `soft`).
 5. **Lists over boxes.** Group related rows inside *one* `Card` with hairline dividers (`CardRow`, `MatchRow`). Don't stack many small bordered cards.
-6. **Broadcast numbers.** Scores, minutes, coins, points, ranks and big stats use the display font (Barlow Condensed). It is what makes Footon feel like football and not a dashboard.
+6. **Broadcast numbers.** Scores, minutes, coins, points, ranks and big stats use the display font (`font-display`: Persian digits from Vazirmatn, Latin from Barlow Condensed). It is what makes Footon feel like football and not a dashboard.
 7. **Learn by doing.** Teach with a real interaction (onboarding asks a sample question), not with explanatory paragraphs or numbered lists.
 8. **Motion confirms, never decorates.** Every animation answers "what just changed?" Springs for things you touch; ease-out for things that appear.
 9. **Not AI-generic.** No gradient washes, glowing blobs, emoji, left-border accent cards, "✨" sparkle icons or glassmorphism everywhere. Glass is allowed on exactly two surfaces: the dock and bottom sheets.
@@ -154,7 +156,7 @@ Accessibility for colour:
 
 | Role | Font / class | Size / weight | Example |
 | --- | --- | --- | --- |
-| Display numbers | `font-display` (Barlow Condensed) | 88 / 64 / 56 / 28 / 22 / 16, 700 | `+450`, `1 : 1`, `LIVE 67'`, `2,450`, `2nd` |
+| Display numbers | `font-display` (Vazirmatn digits, Barlow for Latin) | 88 / 64 / 56 / 28 / 22 / 16, 700 | `+۴۵۰`, `۱ : ۱`, `زنده ۶۷'`, `۲٬۴۵۰`, `دوم` |
 | Display title (rare) | `font-display italic uppercase` | 44, 700 | League name on the invite ticket |
 | Screen title | Geist | 26–32, 700, `tracking-[-0.03em]` | "Your matches" |
 | Question | Geist | 26, 700, `-0.03em`, `text-balance` | "Next corner before 75'?" |
@@ -275,7 +277,7 @@ Rules:
 | `InviteTile` | Compact Home tile: "Invites" + count over the senders' avatars ("Sara +2"). Links to `/invites`, where Join / Decline happen. |
 | `ProgressRing` | Circular progress for compact spots. |
 | `TeamCrest` | 3-letter code placeholder until real crests are licensed. |
-| `LiveDot` / `LiveMinute` | Pulsing amber dot / "● LIVE 67'". |
+| `LiveDot` / `LiveMinute` | Pulsing amber dot / "● زنده ۶۷'". |
 | `EmptyState` | Dotted canvas, title, one line, one secondary action. |
 | `Football` | The ball mark. `FootballPattern` (spins) + `FootballShade` (static light) for animation. Neutral, never lime. |
 | `Splash` | Launch brand moment: ball drops, bounces, rolls into the wordmark as the first O (~2.6s). Reduced motion: static wordmark. |
@@ -309,7 +311,7 @@ From the gamification brief. Code in `lib/gamification` and `components/footon/g
 - **Celebration queue** (`CelebrationHost`, in the root via `app/providers.tsx`): +XP → streak tick → Level Up (one screen per level, ascending, each carrying its level badge) → badge toasts → quest completions. One at a time; nothing dropped; a result id plays once; pauses while the splash is up or the tab is hidden. Everything but Level Up plays and moves on (tap to skip); every moment is announced in one polite live region. Level Up traps focus and returns it.
 - **The prediction never waits on gamification.** Lock-ins and live answers go through `outbox`: the slip reads as saved at once, the server call follows with an idempotency key, failures stay retryable (also after a reload, and on reconnect), and no reward shows until the server answers.
 - **Locked is visible.** Wrap gated UI in `LockedFeatureGate` (`card` / `row` / `button`): a dashed stand-in with a lock and "Level X required". Never hide a locked feature. The core loop (predict, live, profile, join league, weekly board) is never locked, whatever the config says. Levels are never for sale.
-- **English for now.** Copy lives in `strings.ts` and numbers go through `format.ts`, so a later translation (Persian, RTL) swaps one file. Keep to logical utilities (`ps-`, `ms-`, `start-`, `origin-left rtl:origin-right`) so the layout flips when it comes.
+- **Persian.** Gamification copy lives in `strings.ts`; numbers go through `@/lib/format`. See "Persian and RTL".
 - **Colour roles.** XP and level are neutral (a rank, not a win). Tiers differ by name + icon shape (`TIER_ICON`), never by colour. Streak and combo are amber (they're boosts). Coins stay amber. The Level Up screen's one lime thing is Continue; Share is secondary.
 - **Numbers come from config** (`useConfig()`): curve, tiers, unlocks, caps, streak milestones, combo steps, quest counts. A/B flags (`useFlags()`): daily quest count, Level Up share style, curve variant, first kit price, premium coins (off).
 - **Analytics.** The client tracks only what the user saw or tapped (`level_up_viewed`, `badge_toast_viewed`, `card_shared`…). Server events (xp_earned, level_up, badge_earned, streak_*, quest_*, item_purchased) are never sent from the client.
@@ -359,6 +361,21 @@ From the Footon economy doc. Numbers live in `lib/economy.ts`; mock state in `mo
 - **Wallet (`/wallet`):** balance + Points/Coins/Prizes strip, first-week missions, this week's mission and caps (amber bars: allowances), ways to earn, activity, the rules line.
 - **Shop (`/shop`):** cosmetics for My Club (kits, stadiums, boots, frames) and the Streak Freeze, bought with free coins (premium coins only while the `premiumCoins` flag is on, and always after free ones). Nothing in it touches a prediction, a point or a prize. See "Gamification" for the flow.
 
+## Persian and RTL
+
+The app is Persian only and laid out right to left. Home sits on the right of every fixture, the dock starts with خانه on the right, carousels peek from the left.
+
+- **Digits.** Every digit renders Persian (۰–۹): format numbers with `formatNumber` & co. (Persian digits, `٬` thousands separator, `٪`, `٫`). The FaNum font draws any stray Latin digit as Persian too, but formatted numbers also read right to screen readers. Mono (codes, invite links) keeps Latin digits.
+- **Mixed runs.** Signs, minutes and boosts flip inside Persian text unless isolated: use `formatSigned` (`+۲۰`), `formatMinute` (`۶۷'`), `formatBoost` (`۲x`), `formatTimes` (`×۲`), or `ltr()` for anything else. Two sides of a fixture use `matchup(home, away)` so home stays first (right), even for Latin codes.
+- **Scores.** Put the two numbers in separate flex items (`flex items-center`), never one text run: `۱:۱` with a colon becomes one left-to-right number and puts home on the left.
+- **Separators.** Inline metadata uses `•`, never `·`: the Persian zero `۰` is a dot, so `۱٬۵۰۰ · ۴` reads as one number.
+- **No tracking, uppercase or italic on Persian.** Persian is a joined script with no capitals: `globals.css` resets `letter-spacing` and `font-style` on every `:lang(fa)` element. Latin bits that need them (the FOOTON wordmark) carry `lang="en" dir="ltr"`.
+- **Direction-aware code.** Direction icons get `rtl:rotate-180` (chevrons, arrows) or `rtl:-scale-x-100` (diagonal arrows, send); checks and symmetric icons don't flip. `scaleX` bars use `origin-left rtl:origin-right`; hover nudges add `rtl:group-hover:-translate-x-0.5`; switch thumbs add `rtl:data-[state=checked]:-translate-x-[18px]`. Motion slides use negative x for "forward". `scrollLeft` is negative in RTL: use `scrollIntoView`. Canvas text sets `ctx.direction = "rtl"`.
+- **Pitches are physical.** Line-ups and the fantasy pitch place players with `left`, not the reading direction: a right back stays on his right.
+- **Dates** use the Persian calendar (`fa-IR`): «سه‌شنبه ۱۳ آبان».
+- **Inputs** that take numbers run `toLatinDigits()` first, so a Persian keyboard works.
+- Club codes on crests (`LIV`), TV channel names, `XP` and `VAR` stay Latin.
+
 ## Adapting shadcn components
 
 When you add a new shadcn component:
@@ -371,8 +388,9 @@ When you add a new shadcn component:
 ## Copy and content
 
 - Short, spoken, a little cheeky: "Call the next moment.", "You will miss that one.", "Rematch with same friends".
-- Questions end with the minute: "Yellow card before 80'?". Use the typographic prime-style apostrophe in JSX as `&apos;`.
-- Numbers: thousands separators (`10,000`), no decimals for coins, ordinals for ranks (`2nd`).
+- All copy is Persian, informal (تو, not شما), short and spoken: «لحظهٔ بعدی را پیش‌بینی کن.», «این یکی رو از دست میدی.». Use the zero-width non-joiner where Persian needs it (پیش‌بینی, می‌برد).
+- Questions end with the minute and the Persian question mark: «کارت زرد قبل از دقیقهٔ ۸۰؟».
+- Numbers: Persian digits and separators via `formatNumber` (`۱۰٬۰۰۰`), no decimals for coins, Persian ordinals for ranks (`ordinal(2)` → `دوم`).
 - Never invent stats in UI. Unknown values come from data or show an explicit placeholder.
 - No emoji in UI. Icons are lucide.
 
@@ -384,7 +402,7 @@ When you add a new shadcn component:
 - Live-updating text uses `aria-live="polite"`.
 - Focus visible: `focus-visible:ring-[3px] ring-ring/60`.
 - Works at 320px wide; no horizontal scroll. Mobile only: no tablet/desktop breakpoints.
-- Future RTL (Persian) support: prefer logical utilities (`ps-*`, `pe-*`, `ms-*`, `start-*`) in new code, and avoid hard-coded left/right where direction matters.
+- RTL: logical utilities only (`ps-*`, `pe-*`, `ms-*`, `start-*`, `end-*`, `text-start`, `rounded-ee-*`); never `ml-`/`pr-`/`left-`/`text-right` where direction matters (centring with `left-1/2` and physical pitches are fine).
 
 ## Don'ts
 

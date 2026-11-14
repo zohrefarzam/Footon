@@ -101,7 +101,7 @@ export default function StyleguidePage() {
       <Section title="Type">
         <div className="flex flex-col gap-3">
           <p className="font-display text-[88px] leading-none font-bold">+450</p>
-          <p className="font-display text-2xl font-bold">LIV 1–1 MCI · 67&apos; — Barlow Condensed, scores and coins</p>
+          <p className="font-display text-2xl font-bold">LIV 1–1 MCI • 67&apos; — Barlow Condensed, scores and coins</p>
           <p className="text-[32px] leading-tight font-bold tracking-[-0.035em]">Call the next moment. — Geist 700</p>
           <p className="text-[15px] font-semibold">Body strong 15/600 — Geist</p>
           <p className="text-[13px] text-muted-foreground">Secondary 13/400 — muted-foreground</p>
@@ -124,7 +124,7 @@ export default function StyleguidePage() {
         <div className="max-w-md">
           <MatchHero
             match={matches.find((m) => m.id === "ars-che")!}
-            eyebrow="Matchday · Tuesday 3 November"
+            eyebrow="Matchday • Tuesday 3 November"
             cta={{ label: "Make your predictions", href: "/match/ars-che" }}
           />
         </div>

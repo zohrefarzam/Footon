@@ -6,6 +6,7 @@ import { beforeAll, describe, expect, it, vi } from "vitest";
 import { defaultFlags, mockConfig } from "@/lib/gamification/config";
 import { gamificationKeys } from "@/lib/gamification/queries";
 import type { UserProgress } from "@/lib/gamification/schemas";
+import { copy, featureName } from "@/lib/gamification/strings";
 import { FantasyUnlock } from "@/components/footon/fantasy-unlock";
 import { LevelUpScreen } from "./level-up-screen";
 import { LockedFeatureGate } from "./locked-feature-gate";
@@ -49,7 +50,7 @@ describe("LockedFeatureGate", () => {
     expect(screen.queryByText("Open fantasy")).toBeNull();
     const locked = screen.getByRole("group");
     expect(locked).toHaveAttribute("data-locked", "fantasy");
-    expect(locked).toHaveAccessibleName(/Level 8 required/);
+    expect(locked).toHaveAccessibleName(new RegExp(copy.levelRequired(8)));
   });
 
   it("renders the feature at and above its level", () => {
@@ -59,7 +60,7 @@ describe("LockedFeatureGate", () => {
 
   it("shows the XP still to go on the card", () => {
     withData(gated("card"), progress(7, 1640));
-    expect(screen.getByRole("group")).toHaveAccessibleName(/110 XP to go/);
+    expect(screen.getByRole("group")).toHaveAccessibleName(new RegExp(copy.xpToGo(110)));
   });
 
   it("never locks the core loop, whatever the config says", () => {
@@ -90,14 +91,14 @@ describe("FantasyUnlock", () => {
     expect(screen.queryByRole("link")).toBeNull();
     const tile = screen.getByRole("group");
     expect(tile).toHaveAttribute("aria-disabled", "true");
-    expect(tile).toHaveAccessibleName(/Level 8 required/);
+    expect(tile).toHaveAccessibleName(new RegExp(copy.levelRequired(8)));
     await userEvent.click(tile); // nothing to follow
     expect(screen.queryByRole("link")).toBeNull();
   });
 
   it("links to /fantasy once unlocked", () => {
     withData(<FantasyUnlock />, progress(8, 1750));
-    expect(screen.getByRole("link", { name: "Fantasy is open" })).toHaveAttribute("href", "/fantasy");
+    expect(screen.getByRole("link", { name: "فانتزی باز است" })).toHaveAttribute("href", "/fantasy");
   });
 });
 
@@ -113,9 +114,9 @@ describe("LevelUpScreen", () => {
     withData(<LevelUpScreen level={8} tier="reserve" tierName="Reserve" tierChanged={false} unlocks={["fantasy"]} badge={null} shareStyle="button" onDone={onDone} />, null);
 
     const dialog = screen.getByRole("dialog");
-    expect(dialog).toHaveAccessibleName("You reached level 8");
-    expect(screen.getByText("Fantasy")).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Continue" })).toHaveFocus();
+    expect(dialog).toHaveAccessibleName(copy.levelUpTitle(8));
+    expect(screen.getByText(featureName.fantasy)).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: copy.continue })).toHaveFocus();
 
     await user.tab();
     expect(dialog).toContainElement(document.activeElement as HTMLElement); // trapped

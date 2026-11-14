@@ -9,6 +9,7 @@
  * tests. They don't exist on the real API: there, live results are pushed by
  * the server and land through the same `applyReward()`.
  */
+import { formatNumber } from "@/lib/format";
 import { mockConfig, defaultFlags } from "../config";
 import { matchDayKey } from "../day";
 import { curveFor, tierFor } from "../level";
@@ -45,15 +46,15 @@ const LEVEL_BADGE_RARITY: Record<number, number> = { 5: 38, 10: 14, 15: 6, 20: 2
 
 /** Every non-level badge the mock server knows. Earned state lives in `MockState.earned`. */
 const CATALOG: Omit<Badge, "earnedAt">[] = [
-  { id: "first-win", family: "achievement", name: "First win", description: "Your first right call", icon: "trophy", tier: "gold", rarityPct: 71 },
-  { id: "prophet", family: "achievement", name: "Prophet", description: "Called a 0–0 before kickoff", icon: "eye", tier: "standard", rarityPct: 9.5 },
-  { id: "hat-trick", family: "achievement", name: "Hat-trick", description: "3 right in a row in one match", icon: "flame", tier: "standard", rarityPct: 22 },
-  { id: "perfect-five", family: "achievement", name: "Perfect five", description: "5 right in a row in one match", icon: "flame", tier: "gold", rarityPct: 4.2 },
-  { id: "streak-7", family: "achievement", name: "Week in", description: "7 match days in a row", icon: "calendar", tier: "standard", rarityPct: 12 },
-  { id: "streak-30", family: "achievement", name: "Season ticket", description: "30 match days in a row", icon: "calendar", tier: "gold", rarityPct: 0.9 },
-  { id: "league-founder", family: "social", name: "Founder", description: "Started a league", icon: "users", tier: "standard", rarityPct: 18 },
-  { id: "first-invite", family: "social", name: "Plus one", description: "A friend joined from your invite", icon: "handshake", tier: "standard", rarityPct: 27 },
-  { id: "autumn-2026", family: "seasonal", name: "Autumn 2026", description: "Played a match day this autumn", icon: "leaf", tier: "standard", rarityPct: 41 },
+  { id: "first-win", family: "achievement", name: "اولین برد", description: "اولین پیش‌بینی درستت", icon: "trophy", tier: "gold", rarityPct: 71 },
+  { id: "prophet", family: "achievement", name: "پیشگو", description: "قبل از شروع، ۰–۰ را درست گفتی", icon: "eye", tier: "standard", rarityPct: 9.5 },
+  { id: "hat-trick", family: "achievement", name: "هت‌تریک", description: "۳ درست پشت سر هم در یک بازی", icon: "flame", tier: "standard", rarityPct: 22 },
+  { id: "perfect-five", family: "achievement", name: "پنج بی‌نقص", description: "۵ درست پشت سر هم در یک بازی", icon: "flame", tier: "gold", rarityPct: 4.2 },
+  { id: "streak-7", family: "achievement", name: "یک هفتهٔ کامل", description: "۷ روز مسابقه پشت سر هم", icon: "calendar", tier: "standard", rarityPct: 12 },
+  { id: "streak-30", family: "achievement", name: "بلیت فصل", description: "۳۰ روز مسابقه پشت سر هم", icon: "calendar", tier: "gold", rarityPct: 0.9 },
+  { id: "league-founder", family: "social", name: "بنیان‌گذار", description: "یک لیگ ساختی", icon: "users", tier: "standard", rarityPct: 18 },
+  { id: "first-invite", family: "social", name: "یکی بیشتر", description: "دوستی با دعوت تو آمد", icon: "handshake", tier: "standard", rarityPct: 27 },
+  { id: "autumn-2026", family: "seasonal", name: "پاییز ۱۴۰۵", description: "این پاییز یک روز مسابقه بازی کردی", icon: "leaf", tier: "standard", rarityPct: 41 },
 ];
 
 export type MockState = {
@@ -109,7 +110,7 @@ function levelBadge(level: number, config: GamificationConfig): Omit<Badge, "ear
     id: `level-${level}`,
     family: "level",
     name: tier.name,
-    description: `Reached level ${level}`,
+    description: `رسیدن به سطح ${formatNumber(level)}`,
     icon: tier.id,
     // the top two tiers are trophy moments
     tier: level >= 25 ? "gold" : "standard",
@@ -209,7 +210,7 @@ export function createMockApi(opts: MockOptions = {}): MockGamificationApi {
       const st = streakStatusOn(s.streak, matchDayKey(now(), tzNow()), matchDays(tzNow()));
       return {
         userId: "me",
-        name: "Your club",
+        name: "باشگاه تو",
         kit: clubItem(s.equipped.kit),
         stadium: clubItem(s.equipped.stadium),
         boots: clubItem(s.equipped.boots),

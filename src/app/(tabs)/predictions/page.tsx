@@ -12,13 +12,14 @@ import { formatCoins, payout, POINTS_PER_RIGHT_CALL } from "@/lib/economy";
 import { matches, predictionSlips, type Match } from "@/lib/mock-data";
 import { predictionSummary } from "@/lib/predictions";
 import { cn } from "@/lib/utils";
+import { formatNumber, formatScore, formatSigned, matchup } from "@/lib/format";
 
 function Coins({ value, className }: { value: number; className?: string }) {
   return (
     <span className={cn("inline-flex items-center gap-1 font-display font-bold text-live", className)}>
       {formatCoins(value)}
       <Coin className="size-3.5 text-[7px]" />
-      <span className="sr-only">coins</span>
+      <span className="sr-only">سکه</span>
     </span>
   );
 }
@@ -27,13 +28,13 @@ function Coins({ value, className }: { value: number; className?: string }) {
 function Slip({ m, settled = false }: { m: Match; settled?: boolean }) {
   const slip = predictionSlips[m.id];
   const boosted = !!m.boost;
-  const when = settled ? (m.day ?? "FT") : `${m.day ?? "Today"} ${m.kickoff}`;
+  const when = settled ? (m.day ?? "پایان") : `${m.day ?? "امروز"} ${m.kickoff}`;
 
   return (
     <li className="[&+&]:border-t [&+&]:border-line">
       <Link
         href={`/match/${m.id}`}
-        aria-label={`${m.home.name} v ${m.away.name}, ${settled ? "settled" : `edit until ${when}`}${boosted ? ", wins pay 2x" : ""}`}
+        aria-label={`${matchup(m.home.name, m.away.name)}، ${settled ? "تسویه شد" : `ویرایش تا ${when}`}${boosted ? "، بردها ۲ برابر" : ""}`}
         className="flex items-center gap-3 px-4 pt-3.5 pb-2.5 outline-none transition-colors hover:bg-surface-hover focus-visible:ring-[3px] focus-visible:ring-inset focus-visible:ring-ring/60"
       >
         <span className="flex shrink-0" aria-hidden="true">
@@ -43,21 +44,21 @@ function Slip({ m, settled = false }: { m: Match; settled?: boolean }) {
         <span className="min-w-0 flex-1">
           <span className="flex items-center gap-2 text-[15px] font-semibold">
             <span className="truncate max-[359px]:hidden">
-              {m.home.name} v {m.away.name}
+              {matchup(m.home.name, m.away.name)}
             </span>
             <span className="font-display tracking-wide min-[360px]:hidden">
-              {m.home.code} v {m.away.code}
+              {matchup(m.home.code, m.away.code)}
             </span>
             {boosted && !settled && <BoostBadge />}
           </span>
           <span className="mt-0.5 block text-xs text-muted-foreground">
             {settled ? (
               <>
-                Full time{m.score && <span className="font-display text-[13px] font-bold text-foreground"> {m.score.join(" : ")}</span>} · {when}
+                پایان بازی{m.score && <span className="font-display text-[13px] font-bold text-foreground"> {formatScore(m.score[0], m.score[1])}</span>} • {when}
               </>
             ) : (
               <>
-                Edit until <span className="font-display text-[13px] font-bold text-foreground">{when}</span>
+                ویرایش تا <span className="font-display text-[13px] font-bold text-foreground">{when}</span>
               </>
             )}
           </span>
@@ -67,7 +68,7 @@ function Slip({ m, settled = false }: { m: Match; settled?: boolean }) {
         ) : (
           <span className="flex h-8 shrink-0 items-center gap-1.5 rounded-full bg-surface-3 px-3 text-xs font-semibold">
             <Pencil className="size-3.5" aria-hidden="true" />
-            Edit
+            ویرایش
           </span>
         )}
       </Link>
@@ -91,21 +92,21 @@ function Slip({ m, settled = false }: { m: Match; settled?: boolean }) {
               {settled ? (
                 right ? (
                   <span className="flex shrink-0 items-center gap-2 text-xs">
-                    <span className="font-display text-[15px] font-bold text-primary">+{POINTS_PER_RIGHT_CALL} pts</span>
+                    <span className="font-display text-[15px] font-bold text-primary">{formatSigned(POINTS_PER_RIGHT_CALL)} امتیاز</span>
                     <Coins value={payout(p.stake, boosted)} className="text-[15px]" />
-                    <Check className="size-4 text-primary" strokeWidth={2.6} aria-label="Right" />
+                    <Check className="size-4 text-primary" strokeWidth={2.6} aria-label="درست" />
                   </span>
                 ) : (
                   <span className="flex shrink-0 items-center gap-1.5 text-xs text-muted-foreground">
-                    <span className="font-display text-[15px] font-bold">−{formatCoins(p.stake)}</span>
-                    <X className="size-4 text-loss" strokeWidth={2.6} aria-label="Wrong" />
+                    <span className="font-display text-[15px] font-bold">{formatSigned(-p.stake)}</span>
+                    <X className="size-4 text-loss" strokeWidth={2.6} aria-label="غلط" />
                   </span>
                 )
               ) : (
                 <span className="flex shrink-0 items-center gap-1.5 text-xs text-muted-foreground">
                   <span className="font-display text-[15px] font-bold text-foreground">{formatCoins(p.stake)}</span>
-                  <span aria-hidden="true">→</span>
-                  <span className="sr-only">wins</span>
+                  <span aria-hidden="true">←</span>
+                  <span className="sr-only">برد</span>
                   <Coins value={payout(p.stake, boosted)} className="text-[15px]" />
                 </span>
               )}
@@ -135,30 +136,30 @@ export default function PredictionsPage() {
   return (
     <AppShell>
       <header className="flex items-baseline justify-between gap-3">
-        <h1 className="text-[26px] font-bold tracking-[-0.03em]">Predictions</h1>
+        <h1 className="text-[26px] font-bold tracking-[-0.03em]">پیش‌بینی‌ها</h1>
         {open.length > 0 && (
           <span className="text-[13px] text-muted-foreground">
-            <span className="font-display text-base font-bold text-foreground">{open.length}</span> {open.length === 1 ? "match" : "matches"} open
+            <span className="font-display text-base font-bold text-foreground">{formatNumber(open.length)}</span> بازی باز
           </span>
         )}
       </header>
 
       {withSlip.length === 0 ? (
-        <EmptyState title="No predictions yet" body="Pick a match and call the goals, corners or cards before kickoff." action={{ label: "Browse matches", href: "/live" }} />
+        <EmptyState title="هنوز پیش‌بینی‌ای نداری" body="یک بازی انتخاب کن و قبل از شروع، گل‌ها، کرنرها یا کارت‌ها را پیش‌بینی کن." action={{ label: "دیدن بازی‌ها", href: "/live" }} />
       ) : (
         <>
           {open.length > 0 && (
             <Card className="grid grid-cols-3 divide-x divide-line py-3.5 text-center rtl:divide-x-reverse">
               <div className="flex flex-col gap-1 px-2">
-                <span className="text-[11px] font-semibold tracking-[0.08em] text-muted-foreground uppercase">Open</span>
-                <span className="font-display text-[28px] leading-none font-bold">{openPicks.length}</span>
+                <span className="text-[11px] font-semibold tracking-[0.08em] text-muted-foreground uppercase">باز</span>
+                <span className="font-display text-[28px] leading-none font-bold">{formatNumber(openPicks.length)}</span>
               </div>
               <div className="flex flex-col items-center gap-1 px-2">
-                <span className="text-[11px] font-semibold tracking-[0.08em] text-muted-foreground uppercase">Staked</span>
+                <span className="text-[11px] font-semibold tracking-[0.08em] text-muted-foreground uppercase">شرط</span>
                 <span className="font-display text-[28px] leading-none font-bold">{formatCoins(staked)}</span>
               </div>
               <div className="flex flex-col items-center gap-1 px-2">
-                <span className="text-[11px] font-semibold tracking-[0.08em] text-muted-foreground uppercase">Could win</span>
+                <span className="text-[11px] font-semibold tracking-[0.08em] text-muted-foreground uppercase">برد احتمالی</span>
                 <Coins value={couldWin} className="text-[28px] leading-none" />
               </div>
             </Card>
@@ -167,7 +168,7 @@ export default function PredictionsPage() {
           {open.length > 0 && (
             <section aria-labelledby="pred-open" className="flex flex-col gap-2.5">
               <h2 id="pred-open" className="text-[13px] font-medium text-muted-foreground">
-                Open · editable until kickoff
+                باز • تا شروع بازی قابل ویرایش
               </h2>
               <Card className="overflow-hidden">
                 <ul>
@@ -182,7 +183,7 @@ export default function PredictionsPage() {
           {settled.length > 0 && (
             <section aria-labelledby="pred-settled" className="flex flex-col gap-2.5">
               <h2 id="pred-settled" className="text-[13px] font-medium text-muted-foreground">
-                Settled
+                تسویه‌شده
               </h2>
               <Card className="overflow-hidden">
                 <ul>
@@ -198,7 +199,7 @@ export default function PredictionsPage() {
             href="/live"
             className="-mt-1 flex h-11 items-center justify-center gap-0.5 self-center rounded-md px-3 text-sm font-semibold text-muted-foreground outline-none hover:text-foreground focus-visible:ring-[3px] focus-visible:ring-ring/60"
           >
-            Predict another match
+            یک بازی دیگر را پیش‌بینی کن
             <ChevronRight className="size-4 rtl:rotate-180" aria-hidden="true" />
           </Link>
         </>

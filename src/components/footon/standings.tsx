@@ -3,11 +3,12 @@ import { ChevronDown, ChevronUp } from "lucide-react";
 import type { Standing } from "@/lib/mock-data";
 import { cn } from "@/lib/utils";
 import { KitAvatar } from "./kit-avatar";
+import { formatNumber } from "@/lib/format";
 
 const MEDALS: Record<number, { className: string; label: string }> = {
-  1: { className: "bg-gold text-gold-foreground", label: "gold" },
-  2: { className: "bg-silver text-background", label: "silver" },
-  3: { className: "bg-bronze text-background", label: "bronze" },
+  1: { className: "bg-gold text-gold-foreground", label: "طلا" },
+  2: { className: "bg-silver text-background", label: "نقره" },
+  3: { className: "bg-bronze text-background", label: "برنز" },
 };
 
 /** Position: a medal disc for the top three, a plain display number below. */
@@ -21,21 +22,21 @@ export function RankCell({ rank, className }: { rank: number; className?: string
         className,
       )}
     >
-      {rank}
+      {formatNumber(rank)}
     </span>
   );
 }
 
 /** Places moved since the last update: chevron up / down (shape and colour), or nothing. */
 export function RankMove({ delta = 0 }: { delta?: number }) {
-  if (!delta) return <span className="sr-only">no change</span>;
+  if (!delta) return <span className="sr-only">بدون تغییر</span>;
   const up = delta > 0;
   const Icon = up ? ChevronUp : ChevronDown;
   return (
     <span className={cn("inline-flex items-center font-display text-[11px] leading-none font-bold", up ? "text-primary" : "text-loss")}>
       <Icon className="size-3.5" strokeWidth={3} aria-hidden="true" />
-      <span aria-hidden="true">{Math.abs(delta)}</span>
-      <span className="sr-only">{up ? `up ${delta}` : `down ${-delta}`}</span>
+      <span aria-hidden="true">{formatNumber(Math.abs(delta))}</span>
+      <span className="sr-only">{up ? `${formatNumber(delta)} پله بالا` : `${formatNumber(-delta)} پله پایین`}</span>
     </span>
   );
 }
@@ -82,7 +83,7 @@ export function Standings({
   const body: React.ReactNode[] = [];
   ranked.forEach((r, i) => {
     const prev = ranked[i - 1];
-    if (dropFrom && r.rank >= dropFrom && (!prev || prev.rank < dropFrom)) body.push(zoneRow(`drop-${r.rank}`, "Drop zone", "down"));
+    if (dropFrom && r.rank >= dropFrom && (!prev || prev.rank < dropFrom)) body.push(zoneRow(`drop-${r.rank}`, "منطقهٔ سقوط", "down"));
     else if (prev && r.rank - prev.rank > 1)
       body.push(
         <tr key={`gap-${r.rank}`} aria-hidden="true">
@@ -110,15 +111,15 @@ export function Standings({
         </td>
         {showCalls && (
           <td className="px-2 text-end whitespace-nowrap">
-            <span className="font-display text-[15px] font-bold tabular-nums">{r.right ?? "–"}</span>
-            {r.calls !== undefined && <span className="font-display text-xs text-muted-foreground">/{r.calls}</span>}
+            <span className="font-display text-[15px] font-bold tabular-nums">{r.right !== undefined ? formatNumber(r.right) : "–"}</span>
+            {r.calls !== undefined && <span className="font-display text-xs text-muted-foreground">/{formatNumber(r.calls)}</span>}
           </td>
         )}
-        <td className={cn("pe-4 text-end font-display text-lg font-bold tabular-nums", r.you && "text-primary")}>{r.points.toLocaleString("en-US")}</td>
+        <td className={cn("pe-4 text-end font-display text-lg font-bold tabular-nums", r.you && "text-primary")}>{formatNumber(r.points)}</td>
       </tr>,
     );
 
-    if (zones?.promote && r.rank === zones.promote && ranked[i + 1]) body.push(zoneRow(`up-${r.rank}`, "Promotion", "up"));
+    if (zones?.promote && r.rank === zones.promote && ranked[i + 1]) body.push(zoneRow(`up-${r.rank}`, "صعود", "up"));
   });
 
   return (
@@ -130,17 +131,17 @@ export function Standings({
             <span className="inline-block w-7 text-center">#</span>
           </th>
           <th scope="col" className="ps-1 pt-3 pb-1.5 text-start font-semibold">
-            Player
+            بازیکن
           </th>
           {showCalls && (
             <th scope="col" className="px-2 pt-3 pb-1.5 text-end font-semibold">
-              <abbr title="Calls right of calls made" className="no-underline">
-                Right
+              <abbr title="پیش‌بینی درست از کل پیش‌بینی‌ها" className="no-underline">
+                درست
               </abbr>
             </th>
           )}
           <th scope="col" className="pe-4 pt-3 pb-1.5 text-end font-semibold">
-            Pts
+            امتیاز
           </th>
         </tr>
       </thead>

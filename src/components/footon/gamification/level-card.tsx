@@ -49,7 +49,7 @@ export function LevelCard() {
             copy.maxLevel
           ) : (
             <>
-              <span className="font-display text-base font-bold">{formatNumber(bar.span - bar.into)}</span> XP to {copy.levelN(progress.level + 1)}
+              <span className="font-display text-base font-bold">{formatNumber(bar.span - bar.into)}</span> XP تا {copy.levelN(progress.level + 1)}
             </>
           )}
         </p>

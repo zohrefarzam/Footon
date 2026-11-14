@@ -104,7 +104,7 @@ export function ItemPreview({ item, open, onOpenChange }: { item: ShopItem | nul
                 <span className="flex items-center gap-1 font-display text-base font-bold">
                   {formatNumber(item.price.free)}
                   <Coin className="size-4 text-[8px]" />
-                  <span className="sr-only">coins</span>
+                  <span className="sr-only">سکه</span>
                 </span>
               </Button>
             )}

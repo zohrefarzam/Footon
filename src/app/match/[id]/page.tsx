@@ -21,6 +21,7 @@ import { Card } from "@/components/ui/card";
 import { challenges, HOT_STREAK, matches, predictionSlips, wallet, type Match } from "@/lib/mock-data";
 import { kickoffISO } from "@/lib/dates";
 import { cn, ordinal } from "@/lib/utils";
+import { formatNumber } from "@/lib/format";
 
 export function generateStaticParams() {
   return matches.map((m) => ({ id: m.id }));
@@ -32,7 +33,7 @@ function YourResult({ match: m, league }: { match: Match; league?: { name: strin
   if (!you)
     return (
       <p className="rounded-xl border border-dashed border-line-strong px-4 py-6 text-center text-sm text-muted-foreground">
-        You didn&apos;t play this one. Calls open before every kickoff.
+        این بازی را پیش‌بینی نکردی. پیش‌بینی‌ها قبل از شروع هر بازی باز است.
       </p>
     );
   const won = league?.rank === 1;
@@ -41,10 +42,10 @@ function YourResult({ match: m, league }: { match: Match; league?: { name: strin
       <PitchMarkings variant="box" corners className="-z-10" />
       <div className="flex items-start justify-between gap-3">
         <div>
-          <p className="text-[11px] font-semibold tracking-[0.08em] text-muted-foreground uppercase">You scored</p>
+          <p className="text-[11px] font-semibold tracking-[0.08em] text-muted-foreground uppercase">امتیاز تو</p>
           <p className="font-display text-[56px] leading-[0.95] font-bold text-primary">
             <NumberTicker value={you.points} prefix="+" />
-            <span className="ms-1.5 text-2xl text-muted-foreground">pts</span>
+            <span className="ms-1.5 text-2xl text-muted-foreground">امتیاز</span>
           </p>
         </div>
         {you.streak >= HOT_STREAK && <StreakFlame count={you.streak} size="md" />}
@@ -63,23 +64,23 @@ function YourResult({ match: m, league }: { match: Match; league?: { name: strin
             <Trophy className="size-[18px]" strokeWidth={2.2} />
           </span>
           <span className="min-w-0 flex-1 text-sm">
-            <span className={cn("font-semibold", won && "text-gold")}>{won ? `You won ${league.name}` : `${ordinal(league.rank)} in ${league.name}`}</span>
+            <span className={cn("font-semibold", won && "text-gold")}>{won ? `${league.name} را بردی` : `${ordinal(league.rank)} در ${league.name}`}</span>
             <span className="block text-xs text-muted-foreground">
-              {ordinal(league.rank)} of {league.players} · final table
+              {ordinal(league.rank)} از {formatNumber(league.players)} • جدول نهایی
             </span>
           </span>
         </p>
       )}
-      <div className="flex gap-1.5" role="img" aria-label={`${you.right} of ${you.calls} calls right`}>
+      <div className="flex gap-1.5" role="img" aria-label={`${formatNumber(you.right)} از ${formatNumber(you.calls)} پیش‌بینی درست`}>
         {Array.from({ length: you.calls }, (_, i) => (
           <span key={i} className={cn("h-2 flex-1 rounded-full", i < you.right ? "bg-win" : "h-1 self-center bg-loss")} />
         ))}
       </div>
       <p className="text-sm text-muted-foreground">
         <span className="font-semibold text-foreground">
-          {you.right} of {you.calls}
+          {formatNumber(you.right)} از {formatNumber(you.calls)}
         </span>{" "}
-        calls right{you.streak >= HOT_STREAK ? `, ${you.streak} in a row to finish.` : "."}
+        پیش‌بینی درست{you.streak >= HOT_STREAK ? `، با ${formatNumber(you.streak)} درست پشت سر هم در پایان.` : "."}
       </p>
     </Card>
   );
@@ -93,7 +94,7 @@ function YourCoins({ match: m }: { match: Match }) {
   return (
     <section aria-labelledby="coins-title" className="flex flex-col gap-2.5">
       <h2 id="coins-title" className="flex items-baseline justify-between text-[13px] font-medium text-muted-foreground">
-        Coins from this match
+        سکه‌های این بازی
         <CoinAmount value={total} signed className="text-[15px]" />
       </h2>
       <Card className="overflow-hidden">
@@ -114,8 +115,8 @@ function YourCoins({ match: m }: { match: Match }) {
 /**
  * Any match, in the FotMob match-page frame (scoreboard → sticky section tabs):
  *   live     → LiveMatch (your league's live match lives at /play)
- *   upcoming → Predict (your predictions, the two tables, who wins) · Preview (info, form, news) · Table · H2H
- *   finished → Result · Facts · Stats · Table · H2H
+ *   upcoming → Predict (your predictions, the two tables, who wins) • Preview (info, form, news) • Table • H2H
+ *   finished → Result • Facts • Stats • Table • H2H
  */
 export default async function MatchPage({ params }: PageProps<"/match/[id]">) {
   const { id } = await params;
@@ -163,7 +164,7 @@ export default async function MatchPage({ params }: PageProps<"/match/[id]">) {
     </>
   ) : (
     <p className="rounded-xl border border-dashed border-line-strong px-4 py-6 text-center text-sm text-muted-foreground">
-      Team news and match info land here closer to kickoff.
+      اخبار تیم‌ها و اطلاعات بازی نزدیک شروع اینجا می‌آید.
     </p>
   );
 
@@ -172,7 +173,7 @@ export default async function MatchPage({ params }: PageProps<"/match/[id]">) {
       ? [
           {
             value: "result",
-            label: "Result",
+            label: "نتیجه",
             content: (
               <>
                 <YourResult match={m} league={settled && { name: settled.name, rank: settled.rank, players: settled.members.length }} />
@@ -183,26 +184,26 @@ export default async function MatchPage({ params }: PageProps<"/match/[id]">) {
           },
           {
             value: "facts",
-            label: "Facts",
+            label: "رویدادها",
             content: <MatchFacts events={m.events ?? []} minute={90} home={m.home.name} away={m.away.name} finished />,
           },
-          ...(m.stats?.length ? [{ value: "stats", label: "Stats", content: <MatchStats stats={m.stats} home={m.home.name} away={m.away.name} /> }] : []),
+          ...(m.stats?.length ? [{ value: "stats", label: "آمار", content: <MatchStats stats={m.stats} home={m.home.name} away={m.away.name} /> }] : []),
         ]
       : [
-          { value: "predict", label: "Predict", content: predict },
-          { value: "preview", label: "Preview", content: preview },
+          { value: "predict", label: "پیش‌بینی", content: predict },
+          { value: "preview", label: "پیش از بازی", content: preview },
         ]),
     ...(m.table
-      ? [{ value: "table", label: "Table", content: <MatchTable rows={m.table} playing={[m.home.code, m.away.code]} competition={m.competition} /> }]
+      ? [{ value: "table", label: "جدول", content: <MatchTable rows={m.table} playing={[m.home.code, m.away.code]} competition={m.competition} /> }]
       : []),
-    ...(m.h2h ? [{ value: "h2h", label: "H2H", content: <HeadToHead h2h={m.h2h} home={m.home.name} away={m.away.name} /> }] : []),
+    ...(m.h2h ? [{ value: "h2h", label: "رودررو", content: <HeadToHead h2h={m.h2h} home={m.home.name} away={m.away.name} /> }] : []),
   ];
 
   return (
     <AppShell dock={false} className="gap-0 pt-0">
       <MatchCentre
         back={<BackButton />}
-        title={m.league ? `${m.league} · ${m.competition}` : m.competition}
+        title={m.league ? `${m.league} • ${m.competition}` : m.competition}
         compactScore={<CompactScore match={m} />}
         scoreboard={<MatchScoreboard match={m} />}
         sections={sections}

@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 
 /**
  * Radix Tabs, restyled as a scrollable underline bar for sections of one
- * screen (the match page: Predict · Chat · Facts · Stats · Lineups · Table · H2H).
+ * screen (the match page: Predict • Chat • Facts • Stats • Lineups • Table • H2H).
  * For 2–4 *filters* over one list, use `SegmentedTabs` instead.
  * Active tab = white label + lime underline; inactive = muted.
  */

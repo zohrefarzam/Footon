@@ -16,9 +16,26 @@ const barlow = localFont({
   ],
 });
 
+/**
+ * Persian text, and every digit drawn as a Persian digit (۰–۹): a "FaNum" build
+ * of Vazirmatn (scripts/build-fanum-font.py). It holds no Latin letters, so
+ * Latin falls through to Geist (UI) and Barlow Condensed (display).
+ */
+const vazirmatn = localFont({
+  variable: "--font-vazirmatn",
+  display: "swap",
+  src: [
+    { path: "../fonts/vazirmatn-fd-400.woff2", weight: "400", style: "normal" },
+    { path: "../fonts/vazirmatn-fd-500.woff2", weight: "500", style: "normal" },
+    { path: "../fonts/vazirmatn-fd-600.woff2", weight: "600", style: "normal" },
+    { path: "../fonts/vazirmatn-fd-700.woff2", weight: "700", style: "normal" },
+    { path: "../fonts/vazirmatn-fd-800.woff2", weight: "800", style: "normal" },
+  ],
+});
+
 export const metadata: Metadata = {
-  title: "Footon — Predict the match live with friends",
-  description: "Free-to-play live football predictions with your friends.",
+  title: "فوتون — بازی را زنده با دوستانت پیش‌بینی کن",
+  description: "پیش‌بینی زندهٔ فوتبال با دوستان، رایگان.",
 };
 
 export const viewport: Viewport = {
@@ -29,7 +46,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en" className={`dark ${GeistSans.variable} ${GeistMono.variable} ${barlow.variable} h-full`}>
+    <html lang="fa" dir="rtl" className={`dark ${vazirmatn.variable} ${GeistSans.variable} ${GeistMono.variable} ${barlow.variable} h-full`}>
       <body className="min-h-full">
         <SplashGate>
           <Providers>{children}</Providers>

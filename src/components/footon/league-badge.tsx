@@ -25,7 +25,8 @@ const initials = (name: string) =>
     .filter(Boolean)
     .slice(0, 2)
     .map((w) => w[0]!.toUpperCase())
-    .join("");
+    // a zero-width non-joiner keeps two Persian initials from joining into a word
+    .join("\u200c");
 
 const sizes = { sm: "size-8 text-[11px]", md: "size-10 text-[13px]", lg: "size-14 text-lg" };
 
@@ -58,7 +59,7 @@ export function LeagueBadge({
         className="relative mt-[6%] font-display leading-none font-bold tracking-wide text-white"
         style={{ textShadow: "0 1px 2px rgb(0 0 0 / 0.5)" }}
       >
-        {tone === "silver" ? "S" : initials(name)}
+        {tone === "silver" ? "ن" : initials(name)}
       </span>
     </span>
   );

@@ -10,6 +10,7 @@ import { Card, CardRow } from "@/components/ui/card";
 import { formatCoins } from "@/lib/economy";
 import type { ChallengeRules } from "@/lib/mock-data";
 import { Coin, CoinAmount } from "./coin";
+import { formatNumber } from "@/lib/format";
 
 type Props = {
   league: string;
@@ -51,27 +52,27 @@ export function ChallengeGate({ league, from, entry, players, rules, kickoff, po
               </Avatar>
               <div className="min-w-0 flex-1">
                 <p className="truncate text-[15px] font-semibold">
-                  {from.name} <span className="font-normal text-muted-foreground">invited you to</span> {league}
+                  {from.name} <span className="font-normal text-muted-foreground">دعوتت کرده به</span> {league}
                 </p>
                 <p className="text-xs text-muted-foreground">
-                  {players} in · answer before kickoff{kickoff ? `, ${kickoff}` : ""}
+                  {formatNumber(players)} نفر • قبل از شروع بازی جواب بده{kickoff ? `، ${kickoff}` : ""}
                 </p>
               </div>
             </div>
             <dl>
               {[
-                { k: "Entry", v: <CoinAmount value={entry} className="text-base" /> },
+                { k: "ورودی", v: <CoinAmount value={entry} className="text-base" /> },
                 {
-                  k: "Each prediction",
+                  k: "هر پیش‌بینی",
                   v:
                     rules.stake === "free" ? (
-                      <span className="text-sm font-semibold">You pick the stake</span>
+                      <span className="text-sm font-semibold">مبلغ با خودت</span>
                     ) : (
                       <CoinAmount value={rules.stake.fixed} className="text-base" />
                     ),
                 },
-                ...(rules.cap ? [{ k: "Most you can stake", v: <CoinAmount value={rules.cap} className="text-base" /> }] : []),
-                { k: "Pool", v: <span className="text-sm font-semibold first-letter:uppercase">{pool}</span> },
+                ...(rules.cap ? [{ k: "بیشترین شرط تو", v: <CoinAmount value={rules.cap} className="text-base" /> }] : []),
+                { k: "صندوق", v: <span className="text-sm font-semibold">{pool}</span> },
               ].map((r) => (
                 <CardRow key={r.k} className="py-3">
                   <dt className="flex-1 text-sm text-muted-foreground">{r.k}</dt>
@@ -83,19 +84,19 @@ export function ChallengeGate({ league, from, entry, players, rules, kickoff, po
 
           <div className="flex gap-2">
             <Button variant="secondary" size="lg" onClick={() => setState("declined")}>
-              Decline
+              رد کردن
             </Button>
             {short > 0 ? (
               <Button size="lg" className="min-w-0 flex-1" disabled>
-                Need {formatCoins(short)} more coins
+                {formatCoins(short)} سکهٔ دیگر لازم داری
               </Button>
             ) : (
               <Button size="lg" className="min-w-0 flex-1 justify-between ps-5 pe-4" onClick={() => setState("accepted")}>
-                Accept
+                قبول
                 <span className="flex items-center gap-1 font-display text-base font-bold">
                   {formatCoins(entry)}
                   <Coin className="size-4 text-[8px]" />
-                  <span className="sr-only">coins entry</span>
+                  <span className="sr-only">سکه ورودی</span>
                 </span>
               </Button>
             )}
@@ -103,7 +104,7 @@ export function ChallengeGate({ league, from, entry, players, rules, kickoff, po
           {short > 0 && (
             <p className="text-center text-xs text-muted-foreground">
               <Link href="/wallet" className="font-semibold text-foreground underline underline-offset-3">
-                Ways to earn
+                راه‌های گرفتن سکه
               </Link>
             </p>
           )}
@@ -126,7 +127,7 @@ export function ChallengeGate({ league, from, entry, players, rules, kickoff, po
               />
             </svg>
             <span>
-              <span className="font-semibold">You&apos;re in {league}.</span> Now set your predictions.
+              <span className="font-semibold">عضو {league} شدی.</span> حالا پیش‌بینی‌هایت را ثبت کن.
             </span>
           </p>
           {children}
@@ -135,12 +136,12 @@ export function ChallengeGate({ league, from, entry, players, rules, kickoff, po
 
       {state === "declined" && (
         <motion.div key="declined" {...fade} aria-live="polite" className="flex items-center gap-2.5 rounded-xl border border-line bg-surface px-4 py-3">
-          <p className="flex-1 text-sm text-muted-foreground">Declined {from.name}&apos;s invite</p>
+          <p className="flex-1 text-sm text-muted-foreground">دعوت {from.name} را رد کردی</p>
           <Button variant="ghost" size="sm" className="h-9" onClick={() => setState("pending")}>
-            Undo
+            برگردان
           </Button>
           <Button asChild variant="secondary" size="sm" className="h-9">
-            <Link href="/challenges">Challenges</Link>
+            <Link href="/challenges">چالش‌ها</Link>
           </Button>
         </motion.div>
       )}

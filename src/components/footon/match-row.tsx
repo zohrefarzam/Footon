@@ -6,10 +6,12 @@ import { HOT_STREAK, type Match } from "@/lib/mock-data";
 import { LiveDot } from "./live";
 import { StreakFlame } from "./streak";
 import { TeamCrest } from "./team-crest";
+import { formatBoost, formatMinute, formatNumber, formatSigned } from "@/lib/format";
+import { matchWhen } from "@/lib/dates";
 
 /**
  * One-line fixture row, scoreboard style, inside a divided list Card (~60px):
- *   home name + shield · score or kickoff · shield + away name · marker
+ *   home name + shield • score or kickoff • shield + away name • marker
  * Under the score: amber live minute, the day for fixtures (with an amber "2x"
  * on big matches), FT for results. The
  * centre box is amber-soft while live. The end column is yours: points in lime and
@@ -25,10 +27,10 @@ export function MatchRow({ match, href, className }: { match: Match; href?: stri
   const [h, a] = match.score ?? [0, 0];
   const lost = (i: 0 | 1) => done && h !== a && (i === 0 ? h < a : a < h);
 
-  const status = live ? `Live, ${match.minute} minutes` : done ? "Full time" : `${match.day ?? "Today"} ${match.kickoff}`;
-  const label = `${match.home.name} ${live || done ? `${h}, ${match.away.name} ${a}` : `v ${match.away.name}`}, ${status}${
-    match.league ? `, in your league ${match.league}` : ""
-  }${match.boost ? `, big match, wins pay ${match.boost}x` : ""}${you ? (upcoming ? `, you made ${you.calls} calls` : `, you scored ${you.points} points${hot ? `, ${you.streak} in a row` : ""}`) : ""}`;
+  const status = live ? `زنده، دقیقهٔ ${formatNumber(match.minute ?? 0)}` : done ? "پایان بازی" : matchWhen(match);
+  const label = `${match.home.name} ${live || done ? `${formatNumber(h)}، ${match.away.name} ${formatNumber(a)}` : `- ${match.away.name}`}، ${status}${
+    match.league ? `، در لیگ تو ${match.league}` : ""
+  }${match.boost ? `، بازی بزرگ، بردها ${formatNumber(match.boost)} برابر` : ""}${you ? (upcoming ? `، ${formatNumber(you.calls)} پیش‌بینی کرده‌ای` : `، ${formatNumber(you.points)} امتیاز گرفتی${hot ? `، ${formatNumber(you.streak)} پشت سر هم` : ""}`) : ""}`;
 
   const team = (i: 0 | 1) => {
     const t = i === 0 ? match.home : match.away;
@@ -54,12 +56,12 @@ export function MatchRow({ match, href, className }: { match: Match; href?: stri
           live ? "bg-live-soft" : done ? "bg-surface-2" : "",
         )}
       >
-        <span className={cn("font-display text-[19px] leading-none font-bold tabular-nums", !live && !done && "text-[17px]")}>
+        <span className={cn("flex items-center font-display text-[19px] leading-none font-bold tabular-nums", !live && !done && "text-[17px]")}>
           {live || done ? (
             <>
-              {h}
+              {formatNumber(h)}
               <span className="mx-1 text-muted-foreground">–</span>
-              {a}
+              {formatNumber(a)}
             </>
           ) : (
             match.kickoff
@@ -69,14 +71,14 @@ export function MatchRow({ match, href, className }: { match: Match; href?: stri
           {live ? (
             <>
               <LiveDot className="size-[5px]" />
-              <span className="font-display text-xs text-live">{match.minute}&apos;</span>
+              <span className="font-display text-xs text-live">{formatMinute(match.minute ?? 0)}</span>
             </>
           ) : done ? (
-            <span className="text-muted-foreground">FT</span>
+            <span className="text-muted-foreground">پایان</span>
           ) : (
             <>
-              {match.boost && <span className="font-display text-xs text-live">{match.boost}x</span>}
-              <span className="font-medium text-muted-foreground">{match.day ?? "Today"}</span>
+              {match.boost && <span className="font-display text-xs text-live">{formatBoost(match.boost)}</span>}
+              <span className="font-medium text-muted-foreground">{match.day ?? "امروز"}</span>
             </>
           )}
         </span>
@@ -89,13 +91,13 @@ export function MatchRow({ match, href, className }: { match: Match; href?: stri
         {you ? (
           upcoming ? (
             <>
-              <span className="font-display text-[15px] leading-none font-bold text-primary">{you.calls}</span>
-              <span className="text-[11px] leading-none text-muted-foreground">calls</span>
+              <span className="font-display text-[15px] leading-none font-bold text-primary">{formatNumber(you.calls)}</span>
+              <span className="text-[11px] leading-none text-muted-foreground">پیش‌بینی</span>
             </>
           ) : (
             <>
-              <span className="font-display text-[15px] leading-none font-bold text-primary tabular-nums">+{you.points}</span>
-              {hot ? <StreakFlame count={you.streak} /> : <span className="text-[11px] leading-none text-muted-foreground">pts</span>}
+              <span className="font-display text-[15px] leading-none font-bold text-primary tabular-nums">{formatSigned(you.points)}</span>
+              {hot ? <StreakFlame count={you.streak} /> : <span className="text-[11px] leading-none text-muted-foreground">امتیاز</span>}
             </>
           )
         ) : href ? (

@@ -8,6 +8,8 @@ import { Check, ChevronRight, X } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarGroup } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import type { Invite, Match } from "@/lib/mock-data";
+import { formatNumber } from "@/lib/format";
+import { matchWhen } from "@/lib/dates";
 
 export type InviteWithMatch = Invite & { match: Match };
 
@@ -35,21 +37,21 @@ export function InviteStrip({ invites }: { invites: InviteWithMatch[] }) {
           className="flex flex-col gap-2.5"
         >
           <h2 id="invites-title" className="flex items-center gap-2 text-[13px] font-medium text-muted-foreground">
-            Invites
+            دعوت‌ها
             {pending > 0 && (
               <span
                 className="flex h-5 min-w-5 items-center justify-center rounded-full bg-surface-3 px-1.5 font-display text-[13px] font-bold text-foreground"
-                aria-label={`${pending} pending`}
+                aria-label={`${formatNumber(pending)} در انتظار`}
               >
-                {pending}
+                {formatNumber(pending)}
               </span>
             )}
             <Link
               href="/invites"
               className="ms-auto -my-3 flex h-11 items-center gap-0.5 rounded-md ps-2 font-semibold text-muted-foreground outline-none hover:text-foreground focus-visible:ring-[3px] focus-visible:ring-ring/60"
             >
-              See all
-              <ChevronRight className="size-4" aria-hidden="true" />
+              همه
+              <ChevronRight className="size-4 rtl:rotate-180" aria-hidden="true" />
             </Link>
           </h2>
 
@@ -75,10 +77,10 @@ export function InviteStrip({ invites }: { invites: InviteWithMatch[] }) {
                       </Avatar>
                       <div className="min-w-0 flex-1">
                         <p className="truncate text-sm font-semibold">
-                          {inv.from} <span className="font-normal text-muted-foreground">invited you</span>
+                          {inv.from} <span className="font-normal text-muted-foreground">دعوتت کرد</span>
                         </p>
                         <p className="truncate text-xs text-muted-foreground">
-                          {inv.league} · {inv.entry.toLocaleString("en-US")} entry
+                          {inv.league} • ورودی {formatNumber(inv.entry)}
                         </p>
                       </div>
                       {!isIn && (
@@ -86,7 +88,7 @@ export function InviteStrip({ invites }: { invites: InviteWithMatch[] }) {
                           variant="ghost"
                           size="icon-sm"
                           className="-me-1.5 -mt-1.5 self-start"
-                          aria-label={`Decline ${inv.from}'s invite`}
+                          aria-label={`رد دعوت ${inv.from}`}
                           onClick={() => setDeclined((d) => [...d, inv.id])}
                         >
                           <X />
@@ -97,13 +99,13 @@ export function InviteStrip({ invites }: { invites: InviteWithMatch[] }) {
                     <div className="flex items-center gap-3">
                       <div className="min-w-0 flex-1">
                         <p className="font-display text-lg leading-none font-bold">
-                          {m.home.code} <span className="text-muted-foreground">v</span> {m.away.code}
+                          {m.home.code} <span className="text-muted-foreground">-</span> {m.away.code}
                         </p>
                         <div className="mt-1.5 flex items-center gap-2">
                           <span className="font-display text-sm font-bold text-muted-foreground">
-                            {m.day ?? "Today"} {m.kickoff}
+                            {matchWhen(m)}
                           </span>
-                          <AvatarGroup aria-label={`${inv.members.length} in`}>
+                          <AvatarGroup aria-label={`${formatNumber(inv.members.length)} نفر عضو`}>
                             {inv.members.map((x, i) => (
                               <Avatar key={i} className="size-5 ring-surface">
                                 <AvatarFallback className="text-[11px]">{x}</AvatarFallback>
@@ -116,9 +118,9 @@ export function InviteStrip({ invites }: { invites: InviteWithMatch[] }) {
                         {isIn ? (
                           <motion.span key="in" initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} aria-live="polite">
                             <Button asChild variant="soft" className="h-9 rounded-sm px-3 text-sm">
-                              <Link href={`/challenges/${inv.id}`} aria-label={`You're in ${inv.league}. Open challenge`}>
+                              <Link href={`/challenges/${inv.id}`} aria-label={`عضو ${inv.league} شدی. باز کردن چالش`}>
                                 <Check className="size-4" strokeWidth={2.6} />
-                                Open
+                                باز کن
                                 <ChevronRight className="size-4 rtl:rotate-180" />
                               </Link>
                             </Button>
@@ -129,9 +131,9 @@ export function InviteStrip({ invites }: { invites: InviteWithMatch[] }) {
                               variant="secondary"
                               className="h-9 rounded-sm px-4 text-sm"
                               onClick={() => setJoined((j) => [...j, inv.id])}
-                              aria-label={`Join ${inv.league}`}
+                              aria-label={`پیوستن به ${inv.league}`}
                             >
-                              Join
+                              بپیوند
                             </Button>
                           </motion.div>
                         )}

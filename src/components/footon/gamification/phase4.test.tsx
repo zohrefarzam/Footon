@@ -1,3 +1,4 @@
+import { copy } from "@/lib/gamification/strings";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
@@ -94,11 +95,11 @@ function setup(ui: React.ReactNode, p = progress(), items: ShopItem[] = [item()]
 
 describe("ShopItemCard", () => {
   it.each([
-    [item({ id: "stadium", slot: "stadium", name: "Terrace", requiredLevel: 10 }), "locked", "Terrace, Level 10 required"],
-    [item({ owned: true, equipped: true }), "equipped", "Home kit, On your club"],
-    [item({ owned: true }), "owned", "Home kit, Owned"],
-    [item({ isNew: true }), "new", "Home kit, New, 1,500 coins"],
-    [item(), "buyable", "Home kit, 1,500 coins"],
+    [item({ id: "stadium", slot: "stadium", name: "Terrace", requiredLevel: 10 }), "locked", copy.itemAria("Terrace", copy.levelRequired(10))],
+    [item({ owned: true, equipped: true }), "equipped", copy.itemAria("Home kit", copy.equipped)],
+    [item({ owned: true }), "owned", copy.itemAria("Home kit", copy.owned)],
+    [item({ isNew: true }), "new", copy.itemAria("Home kit", `${copy.isNew}، ${copy.priceAria(1500)}`)],
+    [item(), "buyable", copy.itemAria("Home kit", copy.priceAria(1500))],
   ])("%#: reads its state in words, not colour alone", (it_, state, name) => {
     const onSelect = vi.fn();
     render(<ShopItemCard item={it_} level={7} onSelect={onSelect} />);
@@ -120,13 +121,13 @@ describe("Purchase flow", () => {
 
   it("can't buy a locked item: the level is the reason", () => {
     open(item({ requiredLevel: 10 }));
-    expect(screen.getByRole("button", { name: "Level 10 required" })).toBeDisabled();
+    expect(screen.getByRole("button", { name: copy.levelRequired(10) })).toBeDisabled();
   });
 
   it("short of coins: says how many and where to earn, no buy", () => {
     open(item(), progress({ coins: { free: 1000, premium: 0 } }));
-    expect(screen.getByRole("button", { name: "Need 500 more coins" })).toBeDisabled();
-    expect(screen.getByRole("link", { name: "Ways to earn" })).toHaveAttribute("href", "/wallet");
+    expect(screen.getByRole("button", { name: copy.needMore(500) })).toBeDisabled();
+    expect(screen.getByRole("link", { name: copy.waysToEarn })).toHaveAttribute("href", "/wallet");
   });
 
   it("confirms, waits for the server (no double submit), then shows the server's balance", async () => {
@@ -135,10 +136,10 @@ describe("Purchase flow", () => {
     const qc = open(item());
     const user = userEvent.setup();
 
-    await user.click(screen.getByRole("button", { name: /^Buy/ }));
-    expect(screen.getByText("1,500 coins. You'll have 4,950 left.")).toBeInTheDocument();
-    await user.click(screen.getByRole("button", { name: "Buy it" }));
-    const busy = await screen.findByRole("button", { name: "Buying…" });
+    await user.click(screen.getByRole("button", { name: new RegExp(`^${copy.buyLabel}`) }));
+    expect(screen.getByText(copy.confirmBody(1500, 4950))).toBeInTheDocument();
+    await user.click(screen.getByRole("button", { name: copy.confirm }));
+    const busy = await screen.findByRole("button", { name: copy.buying });
     expect(busy).toBeDisabled();
     await user.click(busy);
     expect(server.calls).toHaveLength(1);
@@ -146,19 +147,19 @@ describe("Purchase flow", () => {
 
     // the server's numbers win, whatever the preview said
     resolve({ item: item({ owned: true }), coins: { free: 5000, premium: 0 }, spent: { free: 1450, premium: 0 } });
-    expect(await screen.findByText("It's yours")).toBeInTheDocument();
+    expect(await screen.findByText(copy.bought)).toBeInTheDocument();
     expect(qc.getQueryData<UserProgress>(gamificationKeys.progress)?.coins.free).toBe(5000);
-    expect(screen.getByRole("button", { name: "Put it on" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: copy.equip })).toBeInTheDocument();
   });
 
   it("a lost request retries with the same key; nothing was charged", async () => {
     server.purchase = () => Promise.reject(new ApiError("offline"));
     open(item());
     const user = userEvent.setup();
-    await user.click(screen.getByRole("button", { name: /^Buy/ }));
-    await user.click(screen.getByRole("button", { name: "Buy it" }));
-    expect(await screen.findByText("Couldn't reach the shop. Nothing was charged.")).toBeInTheDocument();
-    await user.click(screen.getByRole("button", { name: "Try again" }));
+    await user.click(screen.getByRole("button", { name: new RegExp(`^${copy.buyLabel}`) }));
+    await user.click(screen.getByRole("button", { name: copy.confirm }));
+    expect(await screen.findByText(copy.offline)).toBeInTheDocument();
+    await user.click(screen.getByRole("button", { name: copy.tryAgain }));
     await waitFor(() => expect(server.calls).toHaveLength(2));
     expect(server.calls[1].idempotencyKey).toBe(server.calls[0].idempotencyKey);
   });
@@ -167,16 +168,16 @@ describe("Purchase flow", () => {
     server.purchase = () => Promise.reject(new ApiError("conflict"));
     const qc = open(item());
     const user = userEvent.setup();
-    await user.click(screen.getByRole("button", { name: /^Buy/ }));
-    await user.click(screen.getByRole("button", { name: "Buy it" }));
-    expect(await screen.findByText(/That changed while you were looking/)).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Buy it" })).toBeDisabled();
+    await user.click(screen.getByRole("button", { name: new RegExp(`^${copy.buyLabel}`) }));
+    await user.click(screen.getByRole("button", { name: copy.confirm }));
+    expect(await screen.findByText(copy.conflict)).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: copy.confirm })).toBeDisabled();
     expect(qc.getQueryState(gamificationKeys.shop)?.isInvalidated).toBe(true);
   });
 
   it("won't sell a freeze past the most you can hold", () => {
     open(item({ id: "freeze", slot: "freeze", name: "Streak freeze", look: undefined, price: { free: 2500 }, requiredLevel: 3 }), progress({ streak: { ...progress().streak, freezesHeld: 2 } }));
-    expect(screen.getByRole("button", { name: "You hold 2 freezes, the most you can" })).toBeDisabled();
+    expect(screen.getByRole("button", { name: copy.freezeFull(2) })).toBeDisabled();
   });
 });
 
@@ -188,14 +189,14 @@ describe("ShopPreview (Home)", () => {
 
   it("shows what you could get, new first", () => {
     setup(<ShopPreview />, progress(), [item({ id: "a", name: "Away kit" }), item({ id: "n", name: "Night kit", isNew: true })]);
-    expect(screen.getByRole("link")).toHaveAccessibleName("Shop, 1 new: Night kit, Away kit");
+    expect(screen.getByRole("link")).toHaveAccessibleName("فروشگاه، ۱ تازه: Night kit، Away kit");
   });
 });
 
 describe("My Club", () => {
   it("describes the club, and the try-on swaps one slot", () => {
     render(<MyClubView club={club} tierName="Reserve" preview={{ slot: "kit", item: { id: "kit-home", name: "Home kit" } }} />);
-    expect(screen.getByRole("group")).toHaveAccessibleName("Your club: level 7, Reserve, wearing Home kit, 3 match days in a row");
+    expect(screen.getByRole("group")).toHaveAccessibleName(copy.clubAria("Your club", 7, "Reserve", "Home kit", 3));
   });
 
   it("draws the card with the club's own numbers", () => {
@@ -206,7 +207,7 @@ describe("My Club", () => {
     }) as unknown as CanvasRenderingContext2D;
     vi.stubGlobal("Path2D", class {});
     drawClubCard(ctx, club, "Reserve", { sans: "sans-serif", display: "sans-serif" });
-    expect(texts).toEqual(expect.arrayContaining(["Your club", "7", "Reserve", "3 match days in a row", "FOOTON"]));
+    expect(texts).toEqual(expect.arrayContaining(["Your club", "۷", "Reserve", `۳ ${copy.streakUnit(3)}`, "FOOTON"]));
     vi.unstubAllGlobals();
   });
 
@@ -217,7 +218,7 @@ describe("My Club", () => {
     (window as Window & { dataLayer?: unknown[] }).dataLayer = dataLayer;
     vi.spyOn(console, "error").mockImplementation(() => {}); // jsdom has no canvas: the card falls back to the link
     render(<ShareCardRenderer club={club} tierName="Reserve" />);
-    await userEvent.setup().click(screen.getByRole("button", { name: "Share to Telegram" }));
+    await userEvent.setup().click(screen.getByRole("button", { name: copy.shareClub }));
     await waitFor(() => expect(openTelegramLink).toHaveBeenCalledOnce());
     expect(openTelegramLink.mock.calls[0][0]).toMatch(/^https:\/\/t\.me\/share\/url\?/);
     expect(dataLayer).toContainEqual({ event: "card_shared", surface: "my_club", method: "telegram" });

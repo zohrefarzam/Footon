@@ -9,7 +9,7 @@ export type MatchSection = { value: string; label: string; badge?: React.ReactNo
 
 /**
  * Match page frame, after FotMob's match flow:
- *   top bar (back · title · live minute) — sticky
+ *   top bar (back • title • live minute) — sticky
  *   big scoreboard — scrolls away; once it's gone the top bar swaps the title for
  *     the compact score, so the score is never off screen
  *   section tabs — sticky under the top bar; one tap between Predict, Chat,
@@ -98,7 +98,7 @@ export function MatchCentre({
       <div ref={tabsTopRef} aria-hidden="true" className="scroll-mt-14" />
 
       <Tabs value={tab} onValueChange={changeTab} className="flex flex-col gap-4">
-        <TabsList aria-label="Match sections" className="sticky top-14 z-20 bg-background">
+        <TabsList aria-label="بخش‌های بازی" className="sticky top-14 z-20 bg-background">
           {sections.map((s) => (
             <TabsTrigger key={s.value} value={s.value} className="gap-1.5">
               {s.label}

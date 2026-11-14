@@ -8,6 +8,7 @@ import { copy } from "@/lib/gamification/strings";
 import { cn } from "@/lib/utils";
 import { ItemSwatch } from "./gamification/club-view";
 import { Price } from "./gamification/shop-grid";
+import { formatNumber } from "@/lib/format";
 
 /**
  * The shop on Home: a full-width dotted card with three items you could get
@@ -29,7 +30,7 @@ export function ShopPreview({ className }: { className?: string }) {
   return (
     <Link
       href="/shop"
-      aria-label={`Shop${fresh ? `, ${fresh} new` : ""}: ${picks.map((i) => i.name).join(", ")}`}
+      aria-label={`${copy.shopTitle}${fresh ? `، ${formatNumber(fresh)} ${copy.isNew}` : ""}: ${picks.map((i) => i.name).join("، ")}`}
       className={cn(
         "group bg-dots flex flex-col gap-3 rounded-xl border border-line-strong bg-surface p-3.5 outline-none transition-colors duration-300 hover:border-[#2c4d3f] focus-visible:ring-[3px] focus-visible:ring-ring/60",
         className,
@@ -44,14 +45,14 @@ export function ShopPreview({ className }: { className?: string }) {
             <span className="text-[15px] font-semibold">{copy.shopTitle}</span>
             {fresh > 0 && (
               <span className="rounded-full border border-line-strong px-2 py-0.5 text-[11px] font-semibold text-muted-foreground">
-                {fresh} {copy.isNew.toLowerCase()}
+                {formatNumber(fresh)} {copy.isNew}
               </span>
             )}
           </span>
           <span className="mt-0.5 block truncate text-xs text-muted-foreground">{copy.shopBlurb}</span>
         </span>
         <ChevronRight
-          className="size-4 shrink-0 text-muted-foreground transition-transform duration-200 ease-spring group-hover:translate-x-0.5 rtl:rotate-180"
+          className="size-4 shrink-0 text-muted-foreground transition-transform duration-200 ease-spring group-hover:translate-x-0.5 rtl:group-hover:-translate-x-0.5 rtl:rotate-180"
           aria-hidden="true"
         />
       </span>

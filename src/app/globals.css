@@ -143,10 +143,12 @@
   --radius-2xl: 1.375rem; /* 22px */
   --radius-3xl: 1.75rem; /* 28px */
 
-  /* Type: Geist for UI, Geist Mono for codes, Barlow Condensed for scores and coins */
-  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
-  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
-  --font-display: var(--font-barlow), "Arial Narrow", sans-serif;
+  /* Type: Vazirmatn FaNum first (Persian text, and every digit as ۰–۹), then
+     Geist for Latin UI text, Barlow Condensed for Latin display text (XP, LV).
+     Mono (codes, invite links) keeps Latin digits: Geist Mono comes first. */
+  --font-sans: var(--font-vazirmatn), var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), var(--font-vazirmatn), ui-monospace, monospace;
+  --font-display: var(--font-vazirmatn), var(--font-barlow), "Arial Narrow", sans-serif;
 }
 
 @theme {
@@ -236,7 +238,14 @@
   }
   body {
     @apply bg-background text-foreground font-sans antialiased;
-    font-feature-settings: "ss01", "cv11";
+  }
+  /* Persian is a joined script: letter-spacing pulls the letters apart, and it
+     has no capitals or italics. Tracking, uppercase and italic utilities stay
+     harmless on Latin bits (a `lang="en"` subtree, like the wordmark, keeps
+     them) but never touch Persian text. */
+  *:lang(fa) {
+    letter-spacing: normal !important;
+    font-style: normal !important;
   }
   button:not(:disabled),
   [role="button"]:not(:disabled) {

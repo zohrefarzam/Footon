@@ -2,18 +2,19 @@ import type { Lineup, MatchEvent, Player, Team } from "@/lib/mock-data";
 import { cn } from "@/lib/utils";
 import { Football } from "./football";
 import { TeamCrest } from "./team-crest";
+import { formatNumber } from "@/lib/format";
 
 const posName: Record<string, string> = {
-  GK: "goalkeeper",
-  RB: "right back",
-  CB: "centre back",
-  LB: "left back",
-  CM: "midfielder",
-  DM: "defensive midfielder",
-  AM: "attacking midfielder",
-  RW: "right wing",
-  LW: "left wing",
-  ST: "striker",
+  GK: "دروازه‌بان",
+  RB: "دفاع راست",
+  CB: "دفاع میانی",
+  LB: "دفاع چپ",
+  CM: "هافبک",
+  DM: "هافبک دفاعی",
+  AM: "هافبک هجومی",
+  RW: "وینگر راست",
+  LW: "وینگر چپ",
+  ST: "مهاجم",
 };
 
 /** Black or white text on a shirt colour, whichever reads. */
@@ -37,30 +38,31 @@ function Token({ p, team, events, x, y }: { p: Player; team: Team; events: Match
   const [shirt, trim] = team.colors ?? ["#2e4b3f", "#9db1a6"];
 
   const label = [
-    `${p.number}, ${p.name}, ${posName[p.pos] ?? p.pos}`,
-    ...goals.map((g) => `goal ${g.minute}'`),
-    card ? `${card.kind} card ${card.minute}'` : "",
+    `${formatNumber(p.number)}، ${p.name}، ${posName[p.pos] ?? p.pos}`,
+    ...goals.map((g) => `گل دقیقهٔ ${formatNumber(g.minute)}`),
+    card ? `کارت ${card.kind === "red" ? "قرمز" : "زرد"} دقیقهٔ ${formatNumber(card.minute)}` : "",
   ]
     .filter(Boolean)
-    .join(", ");
+    .join("، ");
 
   return (
     <li
       aria-label={label}
-      className="absolute flex w-[4.5rem] -translate-x-1/2 -translate-y-1/2 flex-col items-center gap-1 max-[359px]:w-[3.75rem] rtl:translate-x-1/2"
-      style={{ insetInlineStart: `${x}%`, top: `${y}%` }}
+      className="absolute flex w-[4.5rem] -translate-x-1/2 -translate-y-1/2 flex-col items-center gap-1 max-[359px]:w-[3.75rem]"
+      // a pitch is physical: positions use left, never the reading direction (a right back stays on his right)
+      style={{ left: `${x}%`, top: `${y}%` }}
     >
       <span aria-hidden="true" className="relative">
         <span
           className="flex size-9 items-center justify-center rounded-full border-2 font-display text-[15px] font-bold shadow-[0_2px_8px_rgb(0_0_0/0.45)]"
           style={{ background: shirt, borderColor: trim, color: ink(shirt) }}
         >
-          {p.number}
+          {formatNumber(p.number)}
         </span>
         {goals.length > 0 && (
           <span className="absolute -end-1.5 -top-1 flex items-center rounded-full bg-background p-px">
             <Football className="size-3.5" />
-            {goals.length > 1 && <span className="px-0.5 font-display text-[11px] font-bold">{goals.length}</span>}
+            {goals.length > 1 && <span className="px-0.5 font-display text-[11px] font-bold">{formatNumber(goals.length)}</span>}
           </span>
         )}
         {card && (
@@ -127,7 +129,7 @@ export function MatchLineups({
 }) {
   return (
     <section
-      aria-label="Starting line-ups"
+      aria-label="ترکیب اصلی دو تیم"
       className="relative -mx-1 overflow-hidden rounded-2xl border border-[#1c2a1f] bg-[repeating-linear-gradient(180deg,var(--pitch)_0_9%,var(--pitch-2)_9%_18%)]"
     >
       <TeamTag team={home} formation={lineups.home.formation} className="top-0 h-10 border-b border-pitch-line bg-black/25" />

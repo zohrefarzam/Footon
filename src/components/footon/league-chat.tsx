@@ -7,7 +7,9 @@ import { Avatar, AvatarFallback, AvatarGroup } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { COSTS, formatCoins } from "@/lib/economy";
 import { cn } from "@/lib/utils";
+import { YOU_INITIAL } from "@/lib/mock-data";
 import { Coin } from "./coin";
+import { formatNumber } from "@/lib/format";
 
 type Member = { name: string; initial: string; you?: boolean };
 type Answer = "yes" | "no";
@@ -41,21 +43,21 @@ function QuestionItem({ q }: { q: FriendQuestion }) {
       >
         <div className="min-w-0 flex-1">
           <p className="text-[11px] text-muted-foreground">
-            {q.you ? "You asked" : `${q.from} asks`} · closes {q.closes}
+            {q.you ? "تو پرسیدی" : `${q.from} می‌پرسد`} • تا {q.closes}
           </p>
           <p className="mt-0.5 text-sm font-semibold">{q.text}</p>
         </div>
         {answered ? (
           <span className="shrink-0 rounded-full border border-primary-line bg-primary-soft px-2.5 py-1 text-xs font-semibold text-primary">
-            {q.you ? "Your call" : "You"}: {(q.you ? q.yourCall : pick) === "yes" ? "Yes" : "No"}
+            {q.you ? "نظر تو" : "تو"}: {(q.you ? q.yourCall : pick) === "yes" ? "بله" : "نه"}
           </span>
         ) : (
           <>
-            <Button size="sm" className="h-[34px] rounded-sm" onClick={() => setPick("yes")} aria-label={`Yes to ${q.text}`}>
-              Yes
+            <Button size="sm" className="h-[34px] rounded-sm" onClick={() => setPick("yes")} aria-label={`بله به ${q.text}`}>
+              بله
             </Button>
-            <Button size="sm" variant="secondary" className="h-[34px] rounded-sm border-0" onClick={() => setPick("no")} aria-label={`No to ${q.text}`}>
-              No
+            <Button size="sm" variant="secondary" className="h-[34px] rounded-sm border-0" onClick={() => setPick("no")} aria-label={`نه به ${q.text}`}>
+              نه
             </Button>
           </>
         )}
@@ -70,7 +72,7 @@ function QuestionItem({ q }: { q: FriendQuestion }) {
  * reactions, and a composer pinned to the bottom of the screen. The + turns the
  * composer into "ask a prediction": a short question and your own Yes / No.
  */
-export function LeagueChat({ chat, members, closes = "90'" }: { chat: ChatData; members: Member[]; closes?: string }) {
+export function LeagueChat({ chat, members, closes = "دقیقهٔ ۹۰" }: { chat: ChatData; members: Member[]; closes?: string }) {
   const endRef = useRef<HTMLDivElement>(null);
   const [items, setItems] = useState<Item[]>(() => [
     ...chat.messages.map((m) => ({ kind: "msg" as const, ...m })),
@@ -93,13 +95,13 @@ export function LeagueChat({ chat, members, closes = "90'" }: { chat: ChatData; 
   const send = (t: string) => {
     const v = t.trim();
     if (!v) return;
-    setItems((xs) => [...xs, { kind: "msg", from: "You", initial: "Y", text: v, you: true }]);
+    setItems((xs) => [...xs, { kind: "msg", from: "تو", initial: YOU_INITIAL, text: v, you: true }]);
     setText("");
   };
   const post = () => {
     const v = question.trim();
     if (!v || !call) return;
-    setItems((xs) => [...xs, { kind: "q", id: `mine-${seq}`, from: "You", initial: "Y", text: v.endsWith("?") ? v : `${v}?`, closes, you: true, yourCall: call }]);
+    setItems((xs) => [...xs, { kind: "q", id: `mine-${seq}`, from: "تو", initial: YOU_INITIAL, text: /[?؟]$/.test(v) ? v : `${v}؟`, closes, you: true, yourCall: call }]);
     setSeq((n) => n + 1);
     setQuestion("");
     setCall(undefined);
@@ -107,7 +109,7 @@ export function LeagueChat({ chat, members, closes = "90'" }: { chat: ChatData; 
   };
 
   return (
-    <section aria-label="League chat" className="flex min-h-[calc(100dvh-180px)] flex-col">
+    <section aria-label="چت لیگ" className="flex min-h-[calc(100dvh-180px)] flex-col">
       <div className="flex items-center gap-2 pb-3">
         <AvatarGroup className="[&>[data-slot=avatar]]:ring-background">
           {members.map((m) => (
@@ -116,7 +118,7 @@ export function LeagueChat({ chat, members, closes = "90'" }: { chat: ChatData; 
             </Avatar>
           ))}
         </AvatarGroup>
-        <span className="text-xs text-muted-foreground">{members.length} in the league</span>
+        <span className="text-xs text-muted-foreground">{formatNumber(members.length)} نفر در لیگ</span>
       </div>
 
       <div className="flex flex-1 flex-col gap-2.5 pb-3" aria-live="polite">
@@ -125,7 +127,7 @@ export function LeagueChat({ chat, members, closes = "90'" }: { chat: ChatData; 
           it.kind === "q" ? (
             <QuestionItem key={it.id} q={it} />
           ) : it.you ? (
-            <p key={i} className="ms-auto max-w-[80%] rounded-[16px_16px_4px_16px] border border-primary-line bg-primary-soft px-3 py-2 text-sm">
+            <p key={i} className="ms-auto max-w-[80%] rounded-[16px] rounded-ee-[4px] border border-primary-line bg-primary-soft px-3 py-2 text-sm">
               {it.text}
             </p>
           ) : (
@@ -133,7 +135,7 @@ export function LeagueChat({ chat, members, closes = "90'" }: { chat: ChatData; 
               <Avatar className="size-[26px]">
                 <AvatarFallback>{it.initial}</AvatarFallback>
               </Avatar>
-              <p className="max-w-[80%] rounded-[16px_16px_16px_4px] bg-surface-3 px-3 py-2 text-sm">
+              <p className="max-w-[80%] rounded-[16px] rounded-es-[4px] bg-surface-3 px-3 py-2 text-sm">
                 <span className="sr-only">{it.from}: </span>
                 {it.text}
               </p>
@@ -147,21 +149,21 @@ export function LeagueChat({ chat, members, closes = "90'" }: { chat: ChatData; 
         {asking ? (
           <form
             className="animate-in-up flex flex-col gap-2.5"
-            aria-label="Ask a prediction"
+            aria-label="یک پیش‌بینی بپرس"
             onSubmit={(e) => {
               e.preventDefault();
               post();
             }}
           >
             <div className="flex items-center justify-between">
-              <span className="text-[13px] font-medium text-muted-foreground">Ask the league · closes {closes}</span>
-              <Button type="button" variant="ghost" size="icon-sm" aria-label="Close question" onClick={() => setAsking(false)}>
+              <span className="text-[13px] font-medium text-muted-foreground">از لیگ بپرس • تا {closes}</span>
+              <Button type="button" variant="ghost" size="icon-sm" aria-label="بستن سؤال" onClick={() => setAsking(false)}>
                 <X />
               </Button>
             </div>
             <div className="relative">
               <label htmlFor="ask-input" className="sr-only">
-                Your question
+                سؤال تو
               </label>
               <input
                 ref={askRef}
@@ -169,16 +171,16 @@ export function LeagueChat({ chat, members, closes = "90'" }: { chat: ChatData; 
                 value={question}
                 maxLength={MAX_Q}
                 onChange={(e) => setQuestion(e.target.value)}
-                placeholder="Pen before 60'?"
+                placeholder="پنالتی قبل از دقیقهٔ ۶۰؟"
                 className="h-11 w-full rounded-md border border-line-strong bg-surface-2 ps-3.5 pe-14 text-sm outline-none placeholder:text-subtle focus-visible:border-ring"
               />
               <span className="pointer-events-none absolute end-3.5 top-1/2 -translate-y-1/2 font-mono text-[11px] text-muted-foreground">
-                {question.length}/{MAX_Q}
+                {formatNumber(question.length)}/{formatNumber(MAX_Q)}
               </span>
             </div>
             <div className="flex items-center gap-2">
               <span id="your-call" className="text-xs text-muted-foreground">
-                Your call
+                نظر تو
               </span>
               <div role="radiogroup" aria-labelledby="your-call" className="flex gap-1.5">
                 {(["yes", "no"] as const).map((a) => (
@@ -193,16 +195,16 @@ export function LeagueChat({ chat, members, closes = "90'" }: { chat: ChatData; 
                       call === a ? "border-primary-line bg-primary-soft text-primary" : "border-line-strong bg-surface-2 text-muted-foreground",
                     )}
                   >
-                    {a === "yes" ? "Yes" : "No"}
+                    {a === "yes" ? "بله" : "نه"}
                   </button>
                 ))}
               </div>
               <Button type="submit" variant="soft" className="ms-auto h-9 rounded-sm px-3.5" disabled={!question.trim() || !call}>
-                Post
+                بفرست
                 <span className="flex items-center gap-1 font-display text-[15px] font-bold">
                   {formatCoins(COSTS.chatQuestion)}
                   <Coin className="size-4 text-[8px]" />
-                  <span className="sr-only">coins</span>
+                  <span className="sr-only">سکه</span>
                 </span>
               </Button>
             </div>
@@ -223,20 +225,20 @@ export function LeagueChat({ chat, members, closes = "90'" }: { chat: ChatData; 
                 send(text);
               }}
             >
-              <Button type="button" variant="soft" size="icon" aria-label="Ask friends a prediction" onClick={() => setAsking(true)}>
+              <Button type="button" variant="soft" size="icon" aria-label="از دوستانت یک پیش‌بینی بپرس" onClick={() => setAsking(true)}>
                 <Plus strokeWidth={2.4} />
               </Button>
               <label htmlFor="chat-input" className="sr-only">
-                Message
+                پیام
               </label>
               <input
                 id="chat-input"
                 value={text}
                 onChange={(e) => setText(e.target.value)}
-                placeholder="Say something…"
+                placeholder="یک چیزی بگو…"
                 className="h-11 min-w-0 flex-1 rounded-md border border-line-strong bg-surface-2 px-3.5 text-sm outline-none placeholder:text-subtle focus-visible:border-ring"
               />
-              <Button type="submit" variant="secondary" size="icon" aria-label="Send message">
+              <Button type="submit" variant="secondary" size="icon" aria-label="فرستادن پیام">
                 <ArrowUp />
               </Button>
             </form>

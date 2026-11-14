@@ -30,13 +30,13 @@ export type Match = {
   minute?: number;
   score?: [number, number];
   kickoff?: string;
-  /** Day label for fixtures after today ("Sat"); absent = today. */
+  /** Day label for fixtures after today ("شنبه"); absent = today. */
   day?: string;
   /** Days from `mockToday` (-1 yesterday, 1 tomorrow); absent = today. Drives the Live tab's day strip. */
   dayOffset?: number;
   /** Short context line: your league on this match, or the competition. */
   caption: string;
-  /** Competition, for grouping the live list ("Premier League"). */
+  /** Competition, for grouping the live list ("لیگ برتر"). */
   competition: string;
   /** Set when you play this match in one of your leagues. */
   league?: string;
@@ -97,12 +97,12 @@ export const wallet = { coins: 6450 };
 /** The mock "today" (a Tuesday). Day offsets and the day strip are relative to it. */
 export const mockToday = "2026-11-03";
 
-/** Country per competition, for the group headers ("England · Premier League"). */
+/** Country per competition, for the group headers ("انگلیس • لیگ برتر"). */
 export const competitions: Record<string, { country: string; code: string }> = {
-  "Premier League": { country: "England", code: "ENG" },
-  LaLiga: { country: "Spain", code: "ESP" },
-  "Serie A": { country: "Italy", code: "ITA" },
-  "Ligue 1": { country: "France", code: "FRA" },
+  "لیگ برتر": { country: "انگلیس", code: "ENG" },
+  "لالیگا": { country: "اسپانیا", code: "ESP" },
+  "سری آ": { country: "ایتالیا", code: "ITA" },
+  "لوشامپیونه": { country: "فرانسه", code: "FRA" },
 };
 
 const plTable: TableRow[] = [
@@ -119,30 +119,30 @@ export const recentForm: Outcome[] = ["W", "W", "L", "W", "V", "L"];
 export const matches: Match[] = [
   {
     id: "liv-mci",
-    home: { code: "LIV", name: "Liverpool", colors: ["#C8102E", "#F6EB61"] },
-    away: { code: "MCI", name: "Man City", colors: ["#6CABDD", "#1C2C5B"] },
+    home: { code: "LIV", name: "لیورپول", colors: ["#C8102E", "#F6EB61"] },
+    away: { code: "MCI", name: "منچسترسیتی", colors: ["#6CABDD", "#1C2C5B"] },
     status: "live",
     minute: 67,
     score: [1, 1],
-    caption: "Sunday Rivals · 500 entry",
-    competition: "Premier League",
-    league: "Sunday Rivals",
+    caption: "رقبای جمعه • ورودی ۵۰۰",
+    competition: "لیگ برتر",
+    league: "رقبای جمعه",
     you: { calls: 4, right: 3, points: 120, streak: 3 },
     events: [
-      { minute: 23, side: "home", player: "Salah", kind: "goal" },
-      { minute: 34, side: "away", player: "Rodri", kind: "yellow" },
-      { minute: 58, side: "away", player: "Haaland", kind: "goal" },
-      { minute: 61, side: "home", player: "Núñez", kind: "sub", detail: "Jota" },
+      { minute: 23, side: "home", player: "صلاح", kind: "goal" },
+      { minute: 34, side: "away", player: "رودری", kind: "yellow" },
+      { minute: 58, side: "away", player: "هالند", kind: "goal" },
+      { minute: 61, side: "home", player: "نونیز", kind: "sub", detail: "ژوتا" },
     ],
     stats: [
-      { label: "Possession", home: 54, away: 46, unit: "%" },
-      { label: "Shots", home: 11, away: 9 },
-      { label: "Corners", home: 4, away: 3 },
-      { label: "On target", home: 5, away: 4 },
-      { label: "Fouls", home: 8, away: 10 },
-      { label: "Offsides", home: 1, away: 2 },
+      { label: "مالکیت توپ", home: 54, away: 46, unit: "%" },
+      { label: "شوت", home: 11, away: 9 },
+      { label: "کرنر", home: 4, away: 3 },
+      { label: "شوت در چارچوب", home: 5, away: 4 },
+      { label: "خطا", home: 8, away: 10 },
+      { label: "آفساید", home: 1, away: 2 },
     ],
-    market: { id: "mk-liv-1", question: "Next corner before 75'?", yesShare: 58, closesIn: 38 },
+    market: { id: "mk-liv-1", question: "کرنر بعدی قبل از دقیقهٔ ۷۵؟", yesShare: 58, closesIn: 38 },
     progress: { asked: 7, total: 10 },
     crowd: { home: 41, draw: 33, away: 26, topScore: [2, 1], votes: 18412 },
     h2h: { won: 2, drawn: 2, lost: 1 },
@@ -151,223 +151,223 @@ export const matches: Match[] = [
       home: {
         formation: "4-3-3",
         players: [
-          { number: 1, name: "Alisson", pos: "GK" },
-          { number: 66, name: "Alexander-Arnold", pos: "RB" },
-          { number: 5, name: "Konaté", pos: "CB" },
-          { number: 4, name: "Van Dijk", pos: "CB" },
-          { number: 26, name: "Robertson", pos: "LB" },
-          { number: 10, name: "Mac Allister", pos: "CM" },
-          { number: 38, name: "Gravenberch", pos: "CM" },
-          { number: 8, name: "Szoboszlai", pos: "CM" },
-          { number: 11, name: "Salah", pos: "RW" },
-          { number: 9, name: "Núñez", pos: "ST" },
-          { number: 7, name: "Díaz", pos: "LW" },
+          { number: 1, name: "آلیسون", pos: "GK" },
+          { number: 66, name: "الکساندر-آرنولد", pos: "RB" },
+          { number: 5, name: "کوناته", pos: "CB" },
+          { number: 4, name: "فن‌دایک", pos: "CB" },
+          { number: 26, name: "رابرتسون", pos: "LB" },
+          { number: 10, name: "مک‌آلیستر", pos: "CM" },
+          { number: 38, name: "خراونبرخ", pos: "CM" },
+          { number: 8, name: "سوبوسلای", pos: "CM" },
+          { number: 11, name: "صلاح", pos: "RW" },
+          { number: 9, name: "نونیز", pos: "ST" },
+          { number: 7, name: "دیاز", pos: "LW" },
         ],
       },
       away: {
         formation: "4-3-3",
         players: [
-          { number: 31, name: "Ederson", pos: "GK" },
-          { number: 2, name: "Walker", pos: "RB" },
-          { number: 3, name: "Dias", pos: "CB" },
-          { number: 25, name: "Akanji", pos: "CB" },
-          { number: 24, name: "Gvardiol", pos: "LB" },
-          { number: 16, name: "Rodri", pos: "CM" },
-          { number: 17, name: "De Bruyne", pos: "CM" },
-          { number: 20, name: "Silva", pos: "CM" },
-          { number: 47, name: "Foden", pos: "RW" },
-          { number: 9, name: "Haaland", pos: "ST" },
-          { number: 11, name: "Doku", pos: "LW" },
+          { number: 31, name: "ادرسون", pos: "GK" },
+          { number: 2, name: "واکر", pos: "RB" },
+          { number: 3, name: "دیاش", pos: "CB" },
+          { number: 25, name: "آکانجی", pos: "CB" },
+          { number: 24, name: "گواردیول", pos: "LB" },
+          { number: 16, name: "رودری", pos: "CM" },
+          { number: 17, name: "دی‌بروینه", pos: "CM" },
+          { number: 20, name: "سیلوا", pos: "CM" },
+          { number: 47, name: "فودن", pos: "RW" },
+          { number: 9, name: "هالند", pos: "ST" },
+          { number: 11, name: "دوکو", pos: "LW" },
         ],
       },
     },
   },
   {
     id: "bet-sev",
-    home: { code: "BET", name: "Real Betis", colors: ["#00954C", "#FFFFFF"] },
-    away: { code: "SEV", name: "Sevilla", colors: ["#F43333", "#FFFFFF"] },
+    home: { code: "BET", name: "رئال بتیس", colors: ["#00954C", "#FFFFFF"] },
+    away: { code: "SEV", name: "سویا", colors: ["#F43333", "#FFFFFF"] },
     status: "live",
     minute: 35,
     score: [1, 0],
-    caption: "LaLiga",
-    competition: "LaLiga",
+    caption: "لالیگا",
+    competition: "لالیگا",
     events: [
-      { minute: 12, side: "away", player: "Agoumé", kind: "yellow" },
-      { minute: 29, side: "home", player: "Isco", kind: "goal" },
+      { minute: 12, side: "away", player: "آگومه", kind: "yellow" },
+      { minute: 29, side: "home", player: "ایسکو", kind: "goal" },
     ],
     stats: [
-      { label: "Possession", home: 58, away: 42, unit: "%" },
-      { label: "Shots", home: 6, away: 3 },
-      { label: "Corners", home: 3, away: 1 },
-      { label: "On target", home: 3, away: 1 },
+      { label: "مالکیت توپ", home: 58, away: 42, unit: "%" },
+      { label: "شوت", home: 6, away: 3 },
+      { label: "کرنر", home: 3, away: 1 },
+      { label: "شوت در چارچوب", home: 3, away: 1 },
     ],
     crowd: { home: 52, draw: 27, away: 21, topScore: [2, 0], votes: 6204 },
   },
   {
     id: "ata-par",
-    home: { code: "ATA", name: "Atalanta", colors: ["#1E71B8", "#000000"] },
-    away: { code: "PAR", name: "Parma", colors: ["#FFDD00", "#1B4094"] },
+    home: { code: "ATA", name: "آتالانتا", colors: ["#1E71B8", "#000000"] },
+    away: { code: "PAR", name: "پارما", colors: ["#FFDD00", "#1B4094"] },
     status: "live",
     minute: 12,
     score: [0, 0],
-    caption: "Serie A",
-    competition: "Serie A",
+    caption: "سری آ",
+    competition: "سری آ",
     events: [],
     stats: [
-      { label: "Possession", home: 63, away: 37, unit: "%" },
-      { label: "Shots", home: 2, away: 0 },
+      { label: "مالکیت توپ", home: 63, away: 37, unit: "%" },
+      { label: "شوت", home: 2, away: 0 },
     ],
     crowd: { home: 68, draw: 20, away: 12, topScore: [2, 0], votes: 3877 },
   },
   {
     id: "ars-che",
-    home: { code: "ARS", name: "Arsenal", colors: ["#EF0107", "#FFFFFF"] },
-    away: { code: "CHE", name: "Chelsea", colors: ["#034694", "#FFFFFF"] },
+    home: { code: "ARS", name: "آرسنال", colors: ["#EF0107", "#FFFFFF"] },
+    away: { code: "CHE", name: "چلسی", colors: ["#034694", "#FFFFFF"] },
     status: "upcoming",
     kickoff: "21:00",
-    caption: "Tonight",
-    competition: "Premier League",
+    caption: "امشب",
+    competition: "لیگ برتر",
     boost: 2,
     you: { calls: 2, right: 0, points: 0, streak: 0 },
-    market: { id: "mk-ars-1", question: "Arsenal win?", yesShare: 47 },
+    market: { id: "mk-ars-1", question: "آرسنال می‌برد؟", yesShare: 47 },
     crowd: { home: 47, draw: 28, away: 25, topScore: [2, 1], votes: 9310 },
     table: plTable,
     h2h: { won: 2, drawn: 1, lost: 2 },
     preview: {
-      venue: { name: "Emirates Stadium", city: "London, England", capacity: 60704, surface: "Grass" },
-      weather: { tempC: 9, sky: "Cloudy" },
-      referee: "M. Oliver",
+      venue: { name: "ورزشگاه امارات", city: "لندن، انگلیس", capacity: 60704, surface: "چمن طبیعی" },
+      weather: { tempC: 9, sky: "ابری" },
+      referee: "مایکل الیور",
       tv: ["Sky Sports Main Event", "Sky Go"],
       form: { home: ["W", "W", "D", "W", "L"], away: ["W", "L", "W", "D", "W"] },
-      news: { title: "Arsenal v Chelsea: team news and predicted line-ups", source: "Footon", ago: "2 hours ago" },
+      news: { title: "آرسنال - چلسی: اخبار دو تیم و ترکیب احتمالی", source: "فوتون", ago: "۲ ساعت پیش" },
     },
   },
   {
     id: "new-tot",
-    home: { code: "NEW", name: "Newcastle", colors: ["#241F20", "#FFFFFF"] },
-    away: { code: "TOT", name: "Tottenham", colors: ["#132257", "#FFFFFF"] },
+    home: { code: "NEW", name: "نیوکاسل", colors: ["#241F20", "#FFFFFF"] },
+    away: { code: "TOT", name: "تاتنهام", colors: ["#132257", "#FFFFFF"] },
     status: "upcoming",
     kickoff: "19:30",
-    caption: "Premier League",
-    competition: "Premier League",
-    market: { id: "mk-new-1", question: "Both teams score?", yesShare: 64 },
+    caption: "لیگ برتر",
+    competition: "لیگ برتر",
+    market: { id: "mk-new-1", question: "هر دو تیم گل می‌زنند؟", yesShare: 64 },
     crowd: { home: 44, draw: 26, away: 30, topScore: [1, 1], votes: 4127 },
     table: plTable,
     h2h: { won: 3, drawn: 0, lost: 2 },
     preview: {
-      venue: { name: "St. James' Park", city: "Newcastle upon Tyne, England", capacity: 52758, surface: "Grass" },
-      weather: { tempC: 8, sky: "Light rain" },
-      referee: "A. Taylor",
+      venue: { name: "سنت جیمز پارک", city: "نیوکاسل، انگلیس", capacity: 52758, surface: "چمن طبیعی" },
+      weather: { tempC: 8, sky: "باران سبک" },
+      referee: "آنتونی تیلور",
       tv: ["TNT Sports 1", "discovery+"],
       form: { home: ["D", "W", "W", "L", "W"], away: ["L", "W", "D", "W", "L"] },
-      news: { title: "Five things to watch at St. James' Park tonight", source: "Footon", ago: "5 hours ago" },
+      news: { title: "پنج نکته برای امشب در سنت جیمز پارک", source: "فوتون", ago: "۵ ساعت پیش" },
     },
   },
   {
     id: "bha-eve",
-    home: { code: "BHA", name: "Brighton", colors: ["#0057B8", "#FFFFFF"] },
-    away: { code: "EVE", name: "Everton", colors: ["#003399", "#FFFFFF"] },
+    home: { code: "BHA", name: "برایتون", colors: ["#0057B8", "#FFFFFF"] },
+    away: { code: "EVE", name: "اورتون", colors: ["#003399", "#FFFFFF"] },
     status: "finished",
     score: [2, 0],
-    caption: "Premier League",
-    competition: "Premier League",
+    caption: "لیگ برتر",
+    competition: "لیگ برتر",
     events: [
-      { minute: 17, side: "home", player: "Mitoma", kind: "goal" },
-      { minute: 44, side: "away", player: "Gueye", kind: "yellow" },
-      { minute: 71, side: "home", player: "Welbeck", kind: "goal" },
-      { minute: 78, side: "away", player: "Calvert-Lewin", kind: "sub", detail: "Beto" },
+      { minute: 17, side: "home", player: "میتوما", kind: "goal" },
+      { minute: 44, side: "away", player: "گی", kind: "yellow" },
+      { minute: 71, side: "home", player: "ولبک", kind: "goal" },
+      { minute: 78, side: "away", player: "کالورت-لوین", kind: "sub", detail: "بتو" },
     ],
     stats: [
-      { label: "Possession", home: 61, away: 39, unit: "%" },
-      { label: "Shots", home: 14, away: 6 },
-      { label: "On target", home: 6, away: 2 },
-      { label: "Corners", home: 7, away: 2 },
+      { label: "مالکیت توپ", home: 61, away: 39, unit: "%" },
+      { label: "شوت", home: 14, away: 6 },
+      { label: "شوت در چارچوب", home: 6, away: 2 },
+      { label: "کرنر", home: 7, away: 2 },
     ],
     you: { calls: 6, right: 5, points: 240, streak: 5 },
     settlement: [
-      { id: "s-1", label: "Seaside pool", reason: "1st of 2 · 5% burned", amount: 950 },
-      { id: "s-2", label: "Watched to the end", reason: "3+ answers to 90'", amount: 100 },
-      { id: "s-3", label: "Rare call right", reason: "Only 14% said Yes to the 71' goal", amount: 50 },
+      { id: "s-1", label: "صندوق ساحلی‌ها", reason: "اول از ۲ نفر • ۵٪ سوخت", amount: 950 },
+      { id: "s-2", label: "تا آخر بازی ماندی", reason: "۳ جواب یا بیشتر تا دقیقهٔ ۹۰", amount: 100 },
+      { id: "s-3", label: "پیش‌بینی کمیاب درست", reason: "فقط ۱۴٪ به گل دقیقهٔ ۷۱ «بله» گفتند", amount: 50 },
     ],
   },
   {
     id: "mun-liv",
-    home: { code: "MUN", name: "Man Utd", colors: ["#DA291C", "#FBE122"] },
-    away: { code: "LIV", name: "Liverpool", colors: ["#C8102E", "#F6EB61"] },
+    home: { code: "MUN", name: "منچستریونایتد", colors: ["#DA291C", "#FBE122"] },
+    away: { code: "LIV", name: "لیورپول", colors: ["#C8102E", "#F6EB61"] },
     status: "upcoming",
     kickoff: "13:30",
-    day: "Sat",
+    day: "شنبه",
     dayOffset: 4,
-    caption: "Premier League",
-    competition: "Premier League",
+    caption: "لیگ برتر",
+    competition: "لیگ برتر",
     boost: 2,
-    market: { id: "mk-mun-1", question: "Liverpool win at Old Trafford?", yesShare: 52 },
+    market: { id: "mk-mun-1", question: "لیورپول در اولدترافورد می‌برد؟", yesShare: 52 },
   },
   {
     id: "che-mci",
-    home: { code: "CHE", name: "Chelsea", colors: ["#034694", "#FFFFFF"] },
-    away: { code: "MCI", name: "Man City", colors: ["#6CABDD", "#1C2C5B"] },
+    home: { code: "CHE", name: "چلسی", colors: ["#034694", "#FFFFFF"] },
+    away: { code: "MCI", name: "منچسترسیتی", colors: ["#6CABDD", "#1C2C5B"] },
     status: "upcoming",
     kickoff: "16:30",
-    day: "Sun",
+    day: "یکشنبه",
     dayOffset: 5,
-    caption: "Premier League",
-    competition: "Premier League",
+    caption: "لیگ برتر",
+    competition: "لیگ برتر",
   },
 ];
 
 matches.push(
   {
     id: "avl-whu",
-    home: { code: "AVL", name: "Aston Villa", colors: ["#670E36", "#95BFE5"] },
-    away: { code: "WHU", name: "West Ham", colors: ["#7A263A", "#1BB1E7"] },
+    home: { code: "AVL", name: "استون‌ویلا", colors: ["#670E36", "#95BFE5"] },
+    away: { code: "WHU", name: "وستهم", colors: ["#7A263A", "#1BB1E7"] },
     status: "finished",
     score: [3, 1],
-    day: "Yesterday",
+    day: "دیروز",
     dayOffset: -1,
-    caption: "Premier League",
-    competition: "Premier League",
+    caption: "لیگ برتر",
+    competition: "لیگ برتر",
   },
   {
     id: "lor-bre",
-    home: { code: "LOR", name: "Lorient", colors: ["#F58113", "#000000"] },
-    away: { code: "BRE", name: "Brest", colors: ["#E2001A", "#FFFFFF"] },
+    home: { code: "LOR", name: "لوریان", colors: ["#F58113", "#000000"] },
+    away: { code: "BRE", name: "برست", colors: ["#E2001A", "#FFFFFF"] },
     status: "finished",
     score: [1, 1],
-    day: "Yesterday",
+    day: "دیروز",
     dayOffset: -1,
-    caption: "Ligue 1",
-    competition: "Ligue 1",
+    caption: "لوشامپیونه",
+    competition: "لوشامپیونه",
   },
   {
     id: "rma-val",
-    home: { code: "RMA", name: "Real Madrid", colors: ["#FFFFFF", "#00529F"] },
-    away: { code: "VAL", name: "Valencia", colors: ["#FFFFFF", "#EE3524"] },
+    home: { code: "RMA", name: "رئال مادرید", colors: ["#FFFFFF", "#00529F"] },
+    away: { code: "VAL", name: "والنسیا", colors: ["#FFFFFF", "#EE3524"] },
     status: "upcoming",
     kickoff: "20:00",
-    day: "Wed",
+    day: "چهارشنبه",
     dayOffset: 1,
-    caption: "LaLiga",
-    competition: "LaLiga",
+    caption: "لالیگا",
+    competition: "لالیگا",
     crowd: { home: 71, draw: 17, away: 12, topScore: [3, 1], votes: 12880 },
     preview: {
-      venue: { name: "Santiago Bernabéu", city: "Madrid, Spain", capacity: 83186, surface: "Hybrid grass" },
-      weather: { tempC: 12, sky: "Clear" },
-      referee: "J. Martínez Munuera",
+      venue: { name: "سانتیاگو برنابئو", city: "مادرید، اسپانیا", capacity: 83186, surface: "چمن هیبریدی" },
+      weather: { tempC: 12, sky: "صاف" },
+      referee: "خوان مارتینس مونوئرا",
       tv: ["Premier Sports 1", "LaLigaTV"],
       form: { home: ["W", "W", "W", "D", "W"], away: ["L", "D", "L", "W", "D"] },
     },
   },
   {
     id: "int-nap",
-    home: { code: "INT", name: "Inter", colors: ["#0068A8", "#000000"] },
-    away: { code: "NAP", name: "Napoli", colors: ["#12A0D7", "#FFFFFF"] },
+    home: { code: "INT", name: "اینتر", colors: ["#0068A8", "#000000"] },
+    away: { code: "NAP", name: "ناپولی", colors: ["#12A0D7", "#FFFFFF"] },
     status: "upcoming",
     kickoff: "19:45",
-    day: "Wed",
+    day: "چهارشنبه",
     dayOffset: 1,
-    caption: "Serie A",
-    competition: "Serie A",
+    caption: "سری آ",
+    competition: "سری آ",
   },
 );
 
@@ -390,13 +390,13 @@ export type Standing = {
 };
 
 export const league = {
-  name: "Sunday Rivals",
+  name: "رقبای جمعه",
   code: "sun9k",
   link: "t.me/footon_bot?start=sun9k",
   standings: [
-    { name: "You", initial: "Y", points: 840, you: true, delta: 1, right: 17, calls: 22 },
-    { name: "Sara", initial: "S", points: 790, delta: -1, right: 16, calls: 22 },
-    { name: "Omid", initial: "O", points: 770, right: 15, calls: 21 },
+    { name: "تو", initial: "ت", points: 840, you: true, delta: 1, right: 17, calls: 22 },
+    { name: "سارا", initial: "س", points: 790, delta: -1, right: 16, calls: 22 },
+    { name: "امید", initial: "ا", points: 770, right: 15, calls: 21 },
   ] satisfies Standing[],
 };
 
@@ -407,49 +407,49 @@ export const league = {
  * you, and the bottom.
  */
 export const division = {
-  name: "Silver",
+  name: "نقره‌ای",
   week: 10,
-  endsIn: "4 days",
+  endsIn: "۴ روز",
   size: 30,
   promote: 5,
   relegate: 5,
   rows: [
-    { rank: 1, name: "Nima", initial: "N", points: 5610, right: 112, calls: 158, delta: 0 },
-    { rank: 2, name: "Hana", initial: "H", points: 5480, right: 109, calls: 161, delta: 2 },
-    { rank: 3, name: "Leo", initial: "L", points: 5320, right: 106, calls: 149, delta: -1 },
-    { rank: 4, name: "Mina", initial: "M", points: 5150, right: 103, calls: 155, delta: -1 },
-    { rank: 5, name: "Theo", initial: "T", points: 5040, right: 100, calls: 147, delta: 1 },
-    { rank: 6, name: "Dara", initial: "D", points: 4990, right: 99, calls: 152, delta: -1 },
-    { rank: 7, name: "Iris", initial: "I", points: 4900, right: 98, calls: 150, delta: 0 },
-    { rank: 8, name: "You", initial: "Y", points: 4820, right: 96, calls: 141, delta: 3, you: true },
-    { rank: 9, name: "Sam", initial: "S", points: 4770, right: 95, calls: 150, delta: -2 },
-    { rank: 10, name: "Arash", initial: "A", points: 4700, right: 94, calls: 146, delta: 0 },
-    { rank: 28, name: "Ben", initial: "B", points: 3180, right: 63, calls: 132, delta: -1 },
-    { rank: 29, name: "Kai", initial: "K", points: 3050, right: 61, calls: 128, delta: 0 },
-    { rank: 30, name: "Ela", initial: "E", points: 2910, right: 58, calls: 140, delta: -2 },
+    { rank: 1, name: "نیما", initial: "ن", points: 5610, right: 112, calls: 158, delta: 0 },
+    { rank: 2, name: "هانا", initial: "ه", points: 5480, right: 109, calls: 161, delta: 2 },
+    { rank: 3, name: "لیلا", initial: "ل", points: 5320, right: 106, calls: 149, delta: -1 },
+    { rank: 4, name: "مینا", initial: "م", points: 5150, right: 103, calls: 155, delta: -1 },
+    { rank: 5, name: "تینا", initial: "ت", points: 5040, right: 100, calls: 147, delta: 1 },
+    { rank: 6, name: "دارا", initial: "د", points: 4990, right: 99, calls: 152, delta: -1 },
+    { rank: 7, name: "ایرج", initial: "ا", points: 4900, right: 98, calls: 150, delta: 0 },
+    { rank: 8, name: "تو", initial: "ت", points: 4820, right: 96, calls: 141, delta: 3, you: true },
+    { rank: 9, name: "سام", initial: "س", points: 4770, right: 95, calls: 150, delta: -2 },
+    { rank: 10, name: "آرش", initial: "آ", points: 4700, right: 94, calls: 146, delta: 0 },
+    { rank: 28, name: "بهرام", initial: "ب", points: 3180, right: 63, calls: 132, delta: -1 },
+    { rank: 29, name: "کاوه", initial: "ک", points: 3050, right: 61, calls: 128, delta: 0 },
+    { rank: 30, name: "الهام", initial: "ا", points: 2910, right: 58, calls: 140, delta: -2 },
   ] satisfies Standing[],
 };
 
 export const liveQuestion: LiveQuestion = {
   index: 4,
   total: 10,
-  text: "Next corner before 75'?",
-  hint: "Either team · answers lock when the timer ends",
+  text: "کرنر بعدی قبل از دقیقهٔ ۷۵؟",
+  hint: "هر کدام از دو تیم • با تمام شدن زمان جواب‌ها قفل می‌شوند",
   seconds: 38,
   yesShare: 58,
-  resolvesAt: "75'",
+  resolvesAt: "دقیقهٔ ۷۵",
 };
 
 export const chat = {
   messages: [
-    { from: "Omid", initial: "O", text: "Haaland again. Unreal." },
-    { from: "You", initial: "Y", text: "City are all over them now", you: true },
-    { from: "Sara", initial: "S", text: "Liverpool get a corner in the next 5, watch" },
-    { from: "You", initial: "Y", text: "Going No on that one", you: true },
-    { from: "Sara", initial: "S", text: "You will miss that one." },
+    { from: "امید", initial: "ا", text: "باز هم هالند. باورنکردنیه." },
+    { from: "تو", initial: "ت", text: "سیتی الان کامل مسلطه", you: true },
+    { from: "سارا", initial: "س", text: "ببین، لیورپول تا ۵ دقیقهٔ دیگه کرنر می‌گیره" },
+    { from: "تو", initial: "ت", text: "من این یکی رو «نه» می‌زنم", you: true },
+    { from: "سارا", initial: "س", text: "این یکی رو از دست میدی." },
   ],
-  questions: [{ id: "fq-1", from: "Omid", initial: "O", text: "Yellow card before 80'?", closes: "80'" }],
-  reactions: ["VAR!", "Offside", "What a save"],
+  questions: [{ id: "fq-1", from: "امید", initial: "ا", text: "کارت زرد قبل از دقیقهٔ ۸۰؟", closes: "دقیقهٔ ۸۰" }],
+  reactions: ["VAR!", "آفساید", "عجب سیوی"],
 };
 
 /**
@@ -460,56 +460,56 @@ export const chat = {
 export const onboarding = {
   startingCoins: 1000,
   sample: {
-    match: "LIV 1–1 MCI",
+    match: "لیورپول ۱–۱ سیتی",
     minute: 67,
-    text: "Next corner before 75'?",
+    text: "کرنر بعدی قبل از دقیقهٔ ۷۵؟",
     yesShare: 62,
     /** How the sample resolves, so the demo can show a real outcome. */
     outcome: "yes" as "yes" | "no",
-    resolvedLabel: "Corner at 71'",
+    resolvedLabel: "کرنر در دقیقهٔ ۷۱",
     /** Points for a right call. Calls earn points; coins come from missions and play. */
     reward: 50,
   },
   /** The next three starter missions, shown as the numbered row. */
   steps: [
-    { title: "Make a call", coins: 1000 },
-    { title: "Join a league", coins: 2000 },
-    { title: "Invite a friend", coins: 2000 },
+    { title: "یک پیش‌بینی کن", coins: 1000 },
+    { title: "به یک لیگ بپیوند", coins: 2000 },
+    { title: "یک دوست دعوت کن", coins: 2000 },
   ],
   clubs: [
-    { code: "LIV", name: "Liverpool", colors: ["#C8102E", "#F6EB61"] },
-    { code: "MCI", name: "Man City", colors: ["#6CABDD", "#1C2C5B"] },
-    { code: "ARS", name: "Arsenal", colors: ["#EF0107", "#FFFFFF"] },
-    { code: "CHE", name: "Chelsea", colors: ["#034694", "#FFFFFF"] },
-    { code: "MUN", name: "Man United", colors: ["#DA291C", "#FBE122"] },
-    { code: "TOT", name: "Tottenham", colors: ["#132257", "#FFFFFF"] },
-    { code: "NEW", name: "Newcastle", colors: ["#241F20", "#FFFFFF"] },
-    { code: "AVL", name: "Aston Villa", colors: ["#670E36", "#95BFE5"] },
+    { code: "LIV", name: "لیورپول", colors: ["#C8102E", "#F6EB61"] },
+    { code: "MCI", name: "منچسترسیتی", colors: ["#6CABDD", "#1C2C5B"] },
+    { code: "ARS", name: "آرسنال", colors: ["#EF0107", "#FFFFFF"] },
+    { code: "CHE", name: "چلسی", colors: ["#034694", "#FFFFFF"] },
+    { code: "MUN", name: "منچستریونایتد", colors: ["#DA291C", "#FBE122"] },
+    { code: "TOT", name: "تاتنهام", colors: ["#132257", "#FFFFFF"] },
+    { code: "NEW", name: "نیوکاسل", colors: ["#241F20", "#FFFFFF"] },
+    { code: "AVL", name: "استون‌ویلا", colors: ["#670E36", "#95BFE5"] },
   ] satisfies Team[],
 };
 
 /** Every club you can follow from Profile (searchable). Onboarding shows only the first eight. */
 export const clubDirectory: Team[] = [
   ...onboarding.clubs,
-  { code: "BHA", name: "Brighton", colors: ["#0057B8", "#FFFFFF"] },
-  { code: "EVE", name: "Everton", colors: ["#003399", "#FFFFFF"] },
-  { code: "WHU", name: "West Ham", colors: ["#7A263A", "#1BB1E7"] },
-  { code: "BRE", name: "Brentford", colors: ["#E30613", "#FFFFFF"] },
-  { code: "NFO", name: "Nott'm Forest", colors: ["#DD0000", "#FFFFFF"] },
-  { code: "FUL", name: "Fulham", colors: ["#FFFFFF", "#000000"] },
-  { code: "CRY", name: "Crystal Palace", colors: ["#1B458F", "#C4122E"] },
-  { code: "WOL", name: "Wolves", colors: ["#FDB913", "#231F20"] },
-  { code: "BOU", name: "Bournemouth", colors: ["#DA291C", "#000000"] },
-  { code: "RMA", name: "Real Madrid", colors: ["#FFFFFF", "#00529F"] },
-  { code: "BAR", name: "Barcelona", colors: ["#A50044", "#004D98"] },
-  { code: "BET", name: "Real Betis", colors: ["#00954C", "#FFFFFF"] },
-  { code: "SEV", name: "Sevilla", colors: ["#FFFFFF", "#D81E05"] },
-  { code: "VAL", name: "Valencia", colors: ["#FFFFFF", "#EE3524"] },
-  { code: "INT", name: "Inter", colors: ["#0068A8", "#000000"] },
-  { code: "NAP", name: "Napoli", colors: ["#12A0D7", "#FFFFFF"] },
-  { code: "ATA", name: "Atalanta", colors: ["#1E71B8", "#000000"] },
-  { code: "PSG", name: "Paris SG", colors: ["#004170", "#DA291C"] },
-  { code: "BAY", name: "Bayern", colors: ["#DC052D", "#FFFFFF"] },
+  { code: "BHA", name: "برایتون", colors: ["#0057B8", "#FFFFFF"] },
+  { code: "EVE", name: "اورتون", colors: ["#003399", "#FFFFFF"] },
+  { code: "WHU", name: "وستهم", colors: ["#7A263A", "#1BB1E7"] },
+  { code: "BRE", name: "برنتفورد", colors: ["#E30613", "#FFFFFF"] },
+  { code: "NFO", name: "ناتینگهام فارست", colors: ["#DD0000", "#FFFFFF"] },
+  { code: "FUL", name: "فولام", colors: ["#FFFFFF", "#000000"] },
+  { code: "CRY", name: "کریستال پالاس", colors: ["#1B458F", "#C4122E"] },
+  { code: "WOL", name: "ولورهمپتون", colors: ["#FDB913", "#231F20"] },
+  { code: "BOU", name: "بورنموث", colors: ["#DA291C", "#000000"] },
+  { code: "RMA", name: "رئال مادرید", colors: ["#FFFFFF", "#00529F"] },
+  { code: "BAR", name: "بارسلونا", colors: ["#A50044", "#004D98"] },
+  { code: "BET", name: "رئال بتیس", colors: ["#00954C", "#FFFFFF"] },
+  { code: "SEV", name: "سویا", colors: ["#FFFFFF", "#D81E05"] },
+  { code: "VAL", name: "والنسیا", colors: ["#FFFFFF", "#EE3524"] },
+  { code: "INT", name: "اینتر", colors: ["#0068A8", "#000000"] },
+  { code: "NAP", name: "ناپولی", colors: ["#12A0D7", "#FFFFFF"] },
+  { code: "ATA", name: "آتالانتا", colors: ["#1E71B8", "#000000"] },
+  { code: "PSG", name: "پاری‌سن‌ژرمن", colors: ["#004170", "#DA291C"] },
+  { code: "BAY", name: "بایرن", colors: ["#DC052D", "#FFFFFF"] },
 ];
 
 /**
@@ -534,7 +534,7 @@ export type Challenge = {
   matchId: string;
   /** Coins each player puts in the pool (one of ENTRY_TIERS). */
   entry: number;
-  /** Who's in, by initial ("Y" is you). */
+  /** Who's in, by initial (`YOU_INITIAL` is you). */
   members: string[];
   status: "invited" | "joined" | "expired" | "finished";
   rules: ChallengeRules;
@@ -548,70 +548,70 @@ export type Challenge = {
 };
 
 export const challenges: Challenge[] = [
-  { id: "ch-1", name: "Sunday Rivals", matchId: "liv-mci", entry: 500, members: ["Y", "S", "O"], status: "joined", mine: true, rank: 1, rules: { stake: "free", cap: 2500 }, table: league.standings },
+  { id: "ch-1", name: "رقبای جمعه", matchId: "liv-mci", entry: 500, members: ["ت", "س", "ا"], status: "joined", mine: true, rank: 1, rules: { stake: "free", cap: 2500 }, table: league.standings },
   {
     id: "ch-2",
-    name: "Derby night",
+    name: "شب دربی",
     matchId: "ars-che",
     entry: 1500,
-    members: ["S", "M", "R", "Y"],
+    members: ["س", "م", "ر", "ت"],
     status: "joined",
-    from: { name: "Sara", initial: "S" },
+    from: { name: "سارا", initial: "س" },
     rules: { stake: { fixed: 250 }, cap: 1500 },
   },
   {
     id: "ch-4",
-    name: "Office five",
+    name: "پنج‌نفرهٔ اداره",
     matchId: "new-tot",
     entry: 500,
-    members: ["O", "K"],
+    members: ["ا", "ک"],
     status: "invited",
-    from: { name: "Omid", initial: "O" },
+    from: { name: "امید", initial: "ا" },
     rules: { stake: { fixed: 100 }, cap: 1000 },
   },
   {
     id: "ch-5",
-    name: "North West",
+    name: "شمال‌غرب",
     matchId: "mun-liv",
     entry: 2500,
-    members: ["L", "J", "P", "A"],
+    members: ["ل", "ی", "پ", "آ"],
     status: "invited",
-    from: { name: "Lena", initial: "L" },
+    from: { name: "لنا", initial: "ل" },
     rules: { stake: "free", cap: 2500 },
   },
   {
     id: "ch-3",
-    name: "Seaside",
+    name: "ساحلی‌ها",
     matchId: "bha-eve",
     entry: 500,
-    members: ["Y", "K"],
+    members: ["ت", "ک"],
     status: "finished",
     mine: true,
     rank: 1,
     rules: { stake: "free" },
     table: [
-      { name: "You", initial: "Y", points: 240, right: 5, calls: 6, you: true },
-      { name: "Kian", initial: "K", points: 190, right: 4, calls: 6 },
+      { name: "تو", initial: "ت", points: 240, right: 5, calls: 6, you: true },
+      { name: "کیان", initial: "ک", points: 190, right: 4, calls: 6 },
     ],
   },
   {
     id: "ch-6",
-    name: "Claret and blue",
+    name: "زرشکی و آبی",
     matchId: "avl-whu",
     entry: 500,
-    members: ["K", "J"],
+    members: ["ک", "ی"],
     status: "expired",
-    from: { name: "Kian", initial: "K" },
+    from: { name: "کیان", initial: "ک" },
     rules: { stake: "free", cap: 1000 },
   },
   {
     id: "ch-7",
-    name: "Ligue 1 nerds",
+    name: "خوره‌های لوشامپیونه",
     matchId: "lor-bre",
     entry: 1500,
-    members: ["P", "A", "R"],
+    members: ["پ", "آ", "ر"],
     status: "expired",
-    from: { name: "Paul", initial: "P" },
+    from: { name: "پویا", initial: "پ" },
     rules: { stake: { fixed: 250 } },
   },
 ];
@@ -665,33 +665,36 @@ export const predictionSlips: Record<string, Prediction[]> = {
 /** Chat before kickoff, for a challenge whose match hasn't started. */
 export const prematchChat = {
   messages: [
-    { from: "Sara", initial: "S", text: "Calling it now, two goals before half time" },
-    { from: "You", initial: "Y", text: "Bold. I've gone over on the corners", you: true },
-    { from: "Max", initial: "M", text: "Anyone else smell a red card?" },
+    { from: "سارا", initial: "س", text: "از الان میگم، دو گل قبل از نیمه" },
+    { from: "تو", initial: "ت", text: "جسورانه‌ست. من کرنرها رو «بیشتر» زدم", you: true },
+    { from: "مکس", initial: "م", text: "کس دیگه‌ای هم بوی کارت قرمز حس می‌کنه؟" },
   ],
-  questions: [{ id: "fq-pre", from: "Sara", initial: "S", text: "Saka scores first?", closes: "kickoff" }],
-  reactions: ["Told you", "Easy", "Not again"],
+  questions: [{ id: "fq-pre", from: "سارا", initial: "س", text: "ساکا گل اول را می‌زند؟", closes: "شروع بازی" }],
+  reactions: ["گفته بودم", "آسون بود", "باز نه"],
 };
 
 /** First names for the initials in league member lists. */
 /** Friends whose club (`/club/[userId]`) you can open, by initial. */
-export const clubIds: Record<string, string> = { S: "sara", O: "omid" };
+/** Your initial in member lists ("ت" for تو, "you"). */
+export const YOU_INITIAL = "ت";
+
+export const clubIds: Record<string, string> = { "س": "sara", "ا": "omid" };
 
 export const people: Record<string, string> = {
-  Y: "You",
-  S: "Sara",
-  O: "Omid",
-  M: "Max",
-  R: "Reza",
-  K: "Kian",
-  L: "Lena",
-  J: "Jonas",
-  P: "Paul",
-  A: "Aria",
+  "ت": "تو",
+  "س": "سارا",
+  "ا": "امید",
+  "م": "مکس",
+  "ر": "رضا",
+  "ک": "کیان",
+  "ل": "لنا",
+  "ی": "یونس",
+  "پ": "پویا",
+  "آ": "آریا",
 };
 
 export const profile = {
-  name: "You",
+  name: "تو",
   /** Total points: skill only, from right calls. Rank and prizes read this. */
   points: 4820,
   referral: { code: "FOOT-Y7K2", bonus: 1500, joined: 2 },
@@ -703,9 +706,9 @@ export const profile = {
 
 /** Banter you can send without typing. Grouped for the quick-reply palette. */
 export const chatPresets: { group: string; phrases: string[] }[] = [
-  { group: "Banter", phrases: ["Told you", "Not again", "Easy", "Bottle job", "Who's laughing now"] },
-  { group: "Ref", phrases: ["VAR!", "Offside", "Never a pen", "Book him", "Play on"] },
-  { group: "Goal", phrases: ["What a strike", "What a save", "Get in", "Top bins"] },
+  { group: "کل‌کل", phrases: ["گفته بودم", "باز نه", "آسون بود", "باز وا دادن", "حالا کی می‌خنده"] },
+  { group: "داور", phrases: ["VAR!", "آفساید", "پنالتی نبود", "کارتش بده", "ادامه بده"] },
+  { group: "گل", phrases: ["چه ضربه‌ای", "عجب سیوی", "آره!", "گوشهٔ دروازه"] },
 ];
 
 /** In-house sticker ids (SVG drawn in components/footon/stickers.tsx). */
@@ -726,45 +729,45 @@ export type Mission = { id: string; title: string; coins: number; done?: string 
 export const starter = {
   day: 3,
   missions: [
-    { id: "m-1", title: "Pick your club and profile", coins: 1000, done: "You picked Liverpool" },
-    { id: "m-2", title: "Make your first call", coins: 1000, done: "You called it at Brighton v Everton" },
-    { id: "m-3", title: "Join your first friends' league", coins: 2000, done: "You joined Seaside" },
-    { id: "m-4", title: "Invite a friend who joins", coins: 2000 },
-    { id: "m-5", title: "Stay to the end of a match", coins: 2000, done: "You watched to the final whistle" },
-    { id: "m-6", title: "Answer 10 live questions", coins: 1500, done: "10 answers in" },
-    { id: "m-7", title: "Ask your first question in chat", coins: 1500 },
-    { id: "m-8", title: "Come back on day 3", coins: 2000, done: "You came back today" },
-    { id: "m-9", title: "Win a pool or the free table", coins: 2000, done: "You won Seaside" },
+    { id: "m-1", title: "باشگاه و پروفایلت را انتخاب کن", coins: 1000, done: "لیورپول را انتخاب کردی" },
+    { id: "m-2", title: "اولین پیش‌بینی‌ات را بکن", coins: 1000, done: "در برایتون - اورتون پیش‌بینی کردی" },
+    { id: "m-3", title: "به اولین لیگ دوستانه‌ات بپیوند", coins: 2000, done: "به ساحلی‌ها پیوستی" },
+    { id: "m-4", title: "دوستی دعوت کن که بپیوندد", coins: 2000 },
+    { id: "m-5", title: "تا آخر یک بازی بمان", coins: 2000, done: "تا سوت پایان ماندی" },
+    { id: "m-6", title: "به ۱۰ سؤال زنده جواب بده", coins: 1500, done: "۱۰ جواب ثبت شد" },
+    { id: "m-7", title: "اولین سؤالت را در چت بپرس", coins: 1500 },
+    { id: "m-8", title: "روز سوم برگرد", coins: 2000, done: "امروز برگشتی" },
+    { id: "m-9", title: "یک صندوق یا جدول رایگان را ببر", coins: 2000, done: "ساحلی‌ها را بردی" },
   ] satisfies Mission[],
 };
 
 /** This week's capped earnings, so you can see what's left to earn. */
 export const weekly = {
-  mission: { title: "Watch 3 matches to the end", done: 2, total: 3, coins: 750 },
+  mission: { title: "۳ بازی را تا آخر ببین", done: 2, total: 3, coins: 750 },
   caps: [
-    { id: "free-table", label: "Free table rewards", used: 700, cap: 2000, period: "this week" },
-    { id: "invites", label: "Friends who finished a match", used: 1, cap: 6, period: "this month", unit: "friends" },
+    { id: "free-table", label: "جایزه‌های جدول رایگان", used: 700, cap: 2000, period: "این هفته" },
+    { id: "invites", label: "دوستانی که یک بازی را تمام کردند", used: 1, cap: 6, period: "این ماه", unit: "دوست" },
   ],
 };
 
 /** Ways to keep earning after the first week. `cap` is shown as written. */
 export const earnWays = [
-  { id: "e-1", label: "Watch to the end", detail: "3+ answers to 90'", coins: 100, cap: "Every match" },
-  { id: "e-2", label: "Free table top 3", detail: "400 / 300 / 200", coins: 400, cap: "Up to 2,000 a week" },
-  { id: "e-3", label: "Rare call right", detail: "Under 20% picked it", coins: 50, cap: "Up to 150 a match" },
-  { id: "e-4", label: "Five matches in a row", detail: "To the end, each time", coins: 500, cap: "Every 5 matches" },
-  { id: "e-5", label: "A friend finishes a match", detail: "Their first, after your invite", coins: 1500, cap: "Up to 6 a month" },
-  { id: "e-6", label: "Friends answer your question", detail: "50 for each friend", coins: 50, cap: "Up to 250 a question" },
-  { id: "e-7", label: "Up a weekly league", detail: "Promotion", coins: 1000, cap: "Weekly" },
+  { id: "e-1", label: "تا آخر ببین", detail: "۳ جواب یا بیشتر تا دقیقهٔ ۹۰", coins: 100, cap: "هر بازی" },
+  { id: "e-2", label: "سه نفر اول جدول رایگان", detail: "۴۰۰ / ۳۰۰ / ۲۰۰", coins: 400, cap: "تا ۲٬۰۰۰ در هفته" },
+  { id: "e-3", label: "پیش‌بینی کمیاب درست", detail: "کمتر از ۲۰٪ انتخابش کردند", coins: 50, cap: "تا ۱۵۰ در هر بازی" },
+  { id: "e-4", label: "پنج بازی پشت سر هم", detail: "هر بار تا آخر", coins: 500, cap: "هر ۵ بازی" },
+  { id: "e-5", label: "دوستت یک بازی را تمام کند", detail: "اولین بازی‌اش، بعد از دعوت تو", coins: 1500, cap: "تا ۶ بار در ماه" },
+  { id: "e-6", label: "دوستانت به سؤالت جواب بدهند", detail: "۵۰ برای هر دوست", coins: 50, cap: "تا ۲۵۰ برای هر سؤال" },
+  { id: "e-7", label: "صعود در لیگ هفتگی", detail: "صعود", coins: 1000, cap: "هر هفته" },
 ];
 
 export const coinActivity: CoinEntry[] = [
-  { id: "a-1", label: "Sunday Rivals entry", reason: "LIV v MCI · into the pool", amount: -500, day: "Today" },
-  { id: "a-2", label: "Came back on day 3", reason: "Starter mission", amount: 2000, day: "Today" },
-  { id: "a-3", label: "Seaside pool", reason: "1st of 2 · BHA v EVE", amount: 950, day: "Yesterday" },
-  { id: "a-4", label: "Watched to the end", reason: "BHA v EVE", amount: 100, day: "Yesterday" },
-  { id: "a-5", label: "Created Sunday Rivals", reason: "New league", amount: -1500, day: "Yesterday" },
-  { id: "a-6", label: "2nd on the free table", reason: "AVL v WHU", amount: 300, day: "Sun" },
+  { id: "a-1", label: "ورودی رقبای جمعه", reason: "لیورپول - سیتی • به صندوق", amount: -500, day: "امروز" },
+  { id: "a-2", label: "روز سوم برگشتی", reason: "مأموریت شروع", amount: 2000, day: "امروز" },
+  { id: "a-3", label: "صندوق ساحلی‌ها", reason: "اول از ۲ نفر • برایتون - اورتون", amount: 950, day: "دیروز" },
+  { id: "a-4", label: "تا آخر بازی ماندی", reason: "برایتون - اورتون", amount: 100, day: "دیروز" },
+  { id: "a-5", label: "ساختن رقبای جمعه", reason: "لیگ تازه", amount: -1500, day: "دیروز" },
+  { id: "a-6", label: "دوم در جدول رایگان", reason: "استون‌ویلا - وستهم", amount: 300, day: "یکشنبه" },
 ];
 
 
@@ -782,7 +785,7 @@ export type Promo = {
   id: string;
   partner: string;
   /** What kind of deal this is, shown next to "Sponsored". */
-  kind: "Prize partner" | "Kit partner" | "Broadcast partner";
+  kind: "شریک جایزه" | "شریک تجهیزات" | "شریک پخش";
   headline: string;
   body: string;
   cta: string;
@@ -795,22 +798,22 @@ export type Promo = {
 export const promos: Promo[] = [
   {
     id: "promo-kestrel-ball",
-    partner: "Kestrel Sports",
-    kind: "Prize partner",
-    headline: "Win a signed match ball",
-    body: "Finish top 3 in your division this week. Points only.",
-    cta: "See the table",
+    partner: "ورزشی کسترل",
+    kind: "شریک جایزه",
+    headline: "یک توپ امضاشده ببر",
+    body: "این هفته در دسته‌ات جزو سه نفر اول باش. فقط با امتیاز.",
+    cta: "دیدن جدول",
     href: "/leaderboard",
     colors: ["#f2ede1", "#10231a", "#c8392b"],
     art: "trophy",
   },
   {
     id: "promo-northpitch-boots",
-    partner: "Northpitch",
-    kind: "Kit partner",
-    headline: "Built for the last minute",
-    body: "The new Glide. Light, and quiet on the ball.",
-    cta: "Visit Northpitch",
+    partner: "نورث‌پیچ",
+    kind: "شریک تجهیزات",
+    headline: "ساخته‌شده برای دقیقهٔ آخر",
+    body: "گلاید تازه. سبک، و آرام روی توپ.",
+    cta: "رفتن به نورث‌پیچ",
     href: "https://example.com/northpitch",
     external: true,
     colors: ["#14171f", "#f4f5f7", "#5b8cff"],
@@ -818,11 +821,11 @@ export const promos: Promo[] = [
   },
   {
     id: "promo-halfway-tv",
-    partner: "Halfway Line TV",
-    kind: "Broadcast partner",
-    headline: "Every Premier League game, live",
-    body: "Watch it there. Call it here.",
-    cta: "Watch on Halfway Line",
+    partner: "تلویزیون خط میانی",
+    kind: "شریک پخش",
+    headline: "همهٔ بازی‌های لیگ برتر، زنده",
+    body: "آنجا ببین. اینجا پیش‌بینی کن.",
+    cta: "تماشا در خط میانی",
     href: "https://example.com/halfwayline",
     external: true,
     colors: ["#3b1d5c", "#fbf7ff", "#f2b84b"],

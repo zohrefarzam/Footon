@@ -1,16 +1,17 @@
 import { Card } from "@/components/ui/card";
 import type { MatchStat } from "@/lib/mock-data";
 import { cn } from "@/lib/utils";
+import { formatNumber } from "@/lib/format";
 
 /**
- * Head-to-head stat rows (FotMob style): value · label · value, with a split bar
+ * Head-to-head stat rows (FotMob style): value • label • value, with a split bar
  * under each. The side ahead on that stat reads bright, the other dims. Neutral
  * on purpose: being ahead on shots isn't a win, so no lime.
  */
 export function MatchStats({ stats, home, away }: { stats: MatchStat[]; home: string; away: string }) {
   return (
     <Card className="overflow-hidden">
-      <ul aria-label="Match stats">
+      <ul aria-label="آمار بازی">
         {stats.map((st) => {
           const total = st.home + st.away || 1;
           const lead = st.home === st.away ? null : st.home > st.away ? "home" : "away";
@@ -21,14 +22,14 @@ export function MatchStats({ stats, home, away }: { stats: MatchStat[]; home: st
                 lead && lead !== side && "text-muted-foreground",
               )}
             >
-              {st[side]}
-              {st.unit}
+              {formatNumber(st[side])}
+              {st.unit === "%" ? "٪" : st.unit}
             </span>
           );
           return (
             <li
               key={st.label}
-              aria-label={`${st.label}: ${home} ${st.home}${st.unit ?? ""}, ${away} ${st.away}${st.unit ?? ""}`}
+              aria-label={`${st.label}: ${home} ${formatNumber(st.home)}${st.unit ?? ""}، ${away} ${formatNumber(st.away)}${st.unit ?? ""}`}
               className="flex flex-col gap-2 px-4 py-3 [&+&]:border-t [&+&]:border-line"
             >
               <div aria-hidden="true" className="flex items-center justify-between">

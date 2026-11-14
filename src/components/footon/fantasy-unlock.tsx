@@ -29,7 +29,7 @@ export function FantasyUnlock({ href = "/fantasy", className }: { href?: string;
     return (
       <Link
         href={href}
-        aria-label="Fantasy is open"
+        aria-label="فانتزی باز است"
         className={cn(
           tile,
           "group border-primary-line bg-primary-soft outline-none transition-transform duration-200 ease-spring focus-visible:ring-[3px] focus-visible:ring-ring/60 active:scale-[0.98]",
@@ -37,14 +37,14 @@ export function FantasyUnlock({ href = "/fantasy", className }: { href?: string;
         )}
       >
         <span className="flex items-center gap-1.5">
-          <span className="truncate text-[13px] font-semibold">Fantasy open</span>
+          <span className="truncate text-[13px] font-semibold">فانتزی باز شد</span>
           <ChevronRight
-            className="ms-auto size-3.5 shrink-0 text-muted-foreground transition-transform duration-200 ease-spring group-hover:translate-x-0.5 rtl:rotate-180"
+            className="ms-auto size-3.5 shrink-0 text-muted-foreground transition-transform duration-200 ease-spring group-hover:translate-x-0.5 rtl:group-hover:-translate-x-0.5 rtl:rotate-180"
             aria-hidden="true"
           />
         </span>
         <span aria-hidden="true" className="text-xs text-muted-foreground">
-          Build squad
+          تیمت را بچین
         </span>
       </Link>
     );
@@ -59,14 +59,14 @@ export function FantasyUnlock({ href = "/fantasy", className }: { href?: string;
     <div
       role="group"
       aria-disabled="true"
-      aria-label={`Fantasy, ${copy.locked}. ${copy.levelRequired(need)}. ${copy.xpToGo(toGo)}`}
+      aria-label={`فانتزی، ${copy.locked}. ${copy.levelRequired(need)}. ${copy.xpToGo(toGo)}`}
       data-locked="fantasy"
       className={cn(tile, "bg-dots border-dashed border-line-strong bg-surface", className)}
     >
       <span aria-hidden="true" className="flex items-center gap-1.5">
         <Lock className="size-3.5 shrink-0 text-muted-foreground" strokeWidth={2.2} />
         <span className="truncate text-[13px] font-semibold">
-          Fantasy<span className="max-[359px]:hidden"> locked</span>
+          فانتزی<span className="max-[359px]:hidden"> قفل است</span>
         </span>
       </span>
       <span aria-hidden="true" className="flex items-center gap-2">

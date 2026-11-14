@@ -8,6 +8,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useBadges, useConfig, useProgress } from "@/lib/gamification/queries";
 import { copy } from "@/lib/gamification/strings";
 import { BadgeWall } from "./badge-wall";
+import { formatNumber } from "@/lib/format";
 
 /**
  * Profile's badges: the (up to 3) you pinned, empty slots that open the wall
@@ -28,7 +29,7 @@ export function PinnedBadges() {
         {copy.badgesTitle}
         {badges && (
           <span className="ms-1.5 text-xs">
-            <span className="font-display text-sm font-bold text-foreground">{badges.filter((b) => b.earnedAt).length}</span> of {badges.length}
+            <span className="font-display text-sm font-bold text-foreground">{formatNumber(badges.filter((b) => b.earnedAt).length)}</span> از {formatNumber(badges.length)}
           </span>
         )}
         <button

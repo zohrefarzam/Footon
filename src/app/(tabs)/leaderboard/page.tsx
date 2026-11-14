@@ -11,6 +11,7 @@ import { Card } from "@/components/ui/card";
 import { challengeHref, challengesWithMatch } from "@/lib/challenges";
 import { division } from "@/lib/mock-data";
 import { ordinal } from "@/lib/utils";
+import { formatNumber, matchup } from "@/lib/format";
 
 /**
  * Your division as a football table: a floodlit header with your place, the
@@ -33,9 +34,9 @@ export default function LeaderboardPage() {
           <LeagueBadge name={d.name} tone="silver" size="lg" />
           <div className="min-w-0 flex-1">
             <p className="text-[11px] font-semibold tracking-[0.08em] text-muted-foreground uppercase">
-              Week {d.week} · ends in {d.endsIn}
+              هفتهٔ {formatNumber(d.week)} • {d.endsIn} تا پایان
             </p>
-            <h1 className="mt-0.5 font-display text-[32px] leading-none font-bold tracking-[0.02em] uppercase">{d.name} division</h1>
+            <h1 className="mt-0.5 font-display text-[32px] leading-none font-bold tracking-[0.02em] uppercase">دستهٔ {d.name}</h1>
           </div>
         </div>
         {you?.rank && (
@@ -43,37 +44,37 @@ export default function LeaderboardPage() {
             <div className="flex items-end justify-between gap-4">
               <p className="font-display text-[64px] leading-[0.85] font-bold text-primary">
                 {ordinal(you.rank)}
-                <span className="ms-2 text-2xl text-muted-foreground">of {d.size}</span>
+                <span className="ms-2 text-2xl text-muted-foreground">از {formatNumber(d.size)}</span>
               </p>
               <dl className="flex gap-4 pb-1 text-end">
                 <div className="flex flex-col-reverse">
-                  <dt className="text-[11px] text-muted-foreground">points</dt>
-                  <dd className="font-display text-[26px] leading-none font-bold">{you.points.toLocaleString("en-US")}</dd>
+                  <dt className="text-[11px] text-muted-foreground">امتیاز</dt>
+                  <dd className="font-display text-[26px] leading-none font-bold">{formatNumber(you.points)}</dd>
                 </div>
                 <div className="flex flex-col-reverse">
-                  <dt className="text-[11px] text-muted-foreground">to promotion</dt>
-                  <dd className="font-display text-[26px] leading-none font-bold">{need ? need.toLocaleString("en-US") : "In"}</dd>
+                  <dt className="text-[11px] text-muted-foreground">تا صعود</dt>
+                  <dd className="font-display text-[26px] leading-none font-bold">{need ? formatNumber(need) : "صعود"}</dd>
                 </div>
               </dl>
             </div>
             <RankStrip rank={you.rank} size={d.size} promote={d.promote} relegate={d.relegate} />
             <p className="text-xs text-muted-foreground">
-              Top {d.promote} go up a division, bottom {d.relegate} go down when the week ends. Only right calls earn points.
+              آخر هفته {formatNumber(d.promote)} نفر اول یک دسته بالا می‌روند و {formatNumber(d.relegate)} نفر آخر پایین. فقط پیش‌بینی درست امتیاز دارد.
             </p>
           </>
         )}
       </header>
 
       <section aria-labelledby="lb-table" className="flex flex-col gap-2.5">
-        <SectionHeading id="lb-table" title="Table" meta={<span className="text-xs font-medium text-muted-foreground">{d.size} players</span>} />
+        <SectionHeading id="lb-table" title="جدول" meta={<span className="text-xs font-medium text-muted-foreground">{formatNumber(d.size)} بازیکن</span>} />
         <Card className="overflow-hidden pb-1">
-          <Standings rows={d.rows} caption={`${d.name} division, week ${d.week}`} zones={{ promote: d.promote, relegate: d.relegate, size: d.size }} />
+          <Standings rows={d.rows} caption={`دستهٔ ${d.name}، هفتهٔ ${formatNumber(d.week)}`} zones={{ promote: d.promote, relegate: d.relegate, size: d.size }} />
         </Card>
       </section>
 
       {leagues.length > 0 && (
         <section aria-labelledby="lb-leagues" className="flex flex-col gap-2.5">
-          <SectionHeading id="lb-leagues" title="Friends' leagues" />
+          <SectionHeading id="lb-leagues" title="لیگ‌های دوستان" />
           <Card className="overflow-hidden">
             {leagues.map((c) => {
               const i = c.table!.findIndex((r) => r.you);
@@ -87,7 +88,7 @@ export default function LeaderboardPage() {
                   <span className="min-w-0 flex-1">
                     <span className="block truncate text-[15px] font-semibold">{c.name}</span>
                     <span className="mt-0.5 block text-xs text-muted-foreground">
-                      {c.table!.length} players · {c.status === "finished" ? "final table" : `${c.match.home.code} v ${c.match.away.code}`}
+                      {formatNumber(c.table!.length)} بازیکن • {c.status === "finished" ? "جدول نهایی" : matchup(c.match.home.code, c.match.away.code)}
                     </span>
                   </span>
                   {i >= 0 && (

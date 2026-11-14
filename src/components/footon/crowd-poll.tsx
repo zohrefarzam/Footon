@@ -7,6 +7,7 @@ import { Card } from "@/components/ui/card";
 import type { Team } from "@/lib/mock-data";
 import { cn } from "@/lib/utils";
 import { TeamCrest } from "./team-crest";
+import { formatNumber, formatPercent } from "@/lib/format";
 
 type Pick = "home" | "draw" | "away";
 
@@ -33,20 +34,20 @@ export function CrowdPoll({
 
   const options: { id: Pick; label: string; team?: Team }[] = [
     { id: "home", label: home.name, team: home },
-    { id: "draw", label: "Draw" },
+    { id: "draw", label: "مساوی" },
     { id: "away", label: away.name, team: away },
   ];
 
   return (
     <Card className={cn("gap-3 p-4", className)}>
       <div className="flex items-baseline justify-between gap-3">
-        <h3 className="text-[15px] font-semibold">Who wins?</h3>
+        <h3 className="text-[15px] font-semibold">کی می‌برد؟</h3>
         <p className="text-xs text-muted-foreground" aria-live="polite">
-          <span className="font-display text-sm font-bold text-foreground">{votes.toLocaleString("en-US")}</span> votes
+          <span className="font-display text-sm font-bold text-foreground">{formatNumber(votes)}</span> رأی
         </p>
       </div>
 
-      <div className="grid grid-cols-3 gap-2" role="group" aria-label="Who wins?">
+      <div className="grid grid-cols-3 gap-2" role="group" aria-label="کی می‌برد؟">
         {options.map((o) => {
           const on = pick === o.id;
           const share = crowd[o.id];
@@ -56,7 +57,7 @@ export function CrowdPoll({
               type="button"
               aria-pressed={on}
               disabled={!!pick}
-              aria-label={pick ? `${o.label}, ${share}%${on ? ", your pick" : ""}` : o.label}
+              aria-label={pick ? `${o.label}، ${formatPercent(share)}${on ? "، انتخاب تو" : ""}` : o.label}
               onClick={() => setPick(o.id)}
               className={cn(
                 "relative flex h-12 items-center justify-center gap-2 overflow-hidden rounded-md border text-sm font-semibold outline-none",
@@ -77,7 +78,7 @@ export function CrowdPoll({
               <span className="relative flex items-center gap-2">
                 {o.team ? <TeamCrest code={o.team.code} colors={o.team.colors} size="xs" /> : null}
                 {pick ? (
-                  <span className="font-display text-lg font-bold">{share}%</span>
+                  <span className="font-display text-lg font-bold">{formatPercent(share)}</span>
                 ) : o.team ? (
                   <span className="font-display text-[15px] tracking-wide">{o.team.code}</span>
                 ) : (

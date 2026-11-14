@@ -64,7 +64,7 @@ export function PromoBanner({ promo: p, slot, className }: { promo: Promo; slot:
       slot={slot}
       href={p.href}
       external={p.external}
-      aria-label={`Sponsored by ${p.partner}: ${p.headline}. ${p.body} ${p.cta}${p.external ? ", opens the partner's site" : ""}`}
+      aria-label={`تبلیغ ${p.partner}: ${p.headline}. ${p.body} ${p.cta}${p.external ? "، سایت شریک باز می‌شود" : ""}`}
       className={cn(
         "group relative isolate grid h-[172px] grid-cols-[minmax(0,1fr)_88px] gap-2 overflow-hidden rounded-2xl p-4 outline-none transition-transform duration-200 ease-spring active:scale-[0.98] focus-visible:ring-[3px] focus-visible:ring-ring/60",
         className,
@@ -79,7 +79,7 @@ export function PromoBanner({ promo: p, slot, className }: { promo: Promo; slot:
         <span className="mt-2 line-clamp-2 font-display text-[25px] max-[359px]:text-[21px] leading-[0.95] font-bold tracking-[0.01em] text-balance uppercase">{p.headline}</span>
         <span className="mt-1.5 line-clamp-2 text-[12px] leading-snug opacity-80 max-[359px]:line-clamp-1">{p.body}</span>
         <span
-          className="mt-auto inline-flex h-8 w-fit items-center gap-1 rounded-full px-3 text-[13px] font-semibold whitespace-nowrap transition-transform duration-200 ease-spring group-hover:translate-x-0.5"
+          className="mt-auto inline-flex h-8 w-fit items-center gap-1 rounded-full px-3 text-[13px] font-semibold whitespace-nowrap transition-transform duration-200 ease-spring group-hover:translate-x-0.5 rtl:group-hover:-translate-x-0.5"
           style={{ background: ink, color: ground }}
         >
           {p.cta}
@@ -93,7 +93,7 @@ export function PromoBanner({ promo: p, slot, className }: { promo: Promo; slot:
         className="absolute end-3 top-3 rounded-full border px-1.5 py-px text-[11px] font-medium opacity-80"
         style={{ borderColor: `${ink}40`, color: ink }}
       >
-        Sponsored
+        تبلیغ
       </span>
       <span aria-hidden="true" className="flex items-center justify-center pt-5">
         <PromoArt art={p.art} ink={ink} accent={accent} />
@@ -110,7 +110,7 @@ export function PromoCarousel({ promos, className }: { promos: Promo[]; classNam
   if (!promos.length) return null;
   const single = promos.length === 1;
   return (
-    <section aria-label="Partners" className={className}>
+    <section aria-label="شرکا" className={className}>
       <ul className={cn(!single && "-mx-5 flex snap-x snap-mandatory scroll-px-5 gap-3 overflow-x-auto px-5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden")}>
         {promos.map((p, i) => (
           <li key={p.id} className={cn(!single && "w-[88%] max-w-[380px] shrink-0 snap-start")}>

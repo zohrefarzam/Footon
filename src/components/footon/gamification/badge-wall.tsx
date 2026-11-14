@@ -43,7 +43,7 @@ export function BadgeWall({ open, onOpenChange }: { open: boolean; onOpenChange:
       <DialogContent closeLabel={copy.close} className="gap-5">
         <DialogHeader>
           <DialogTitle>{copy.allBadges}</DialogTitle>
-          <DialogDescription>{badges ? `${copy.earnedOf(earned, badges.length)} earned` : " "}</DialogDescription>
+          <DialogDescription>{badges ? `${copy.earnedOf(earned, badges.length)} گرفته‌ای` : " "}</DialogDescription>
         </DialogHeader>
 
         <p aria-live="polite" className="-mt-2 text-xs text-muted-foreground empty:hidden">

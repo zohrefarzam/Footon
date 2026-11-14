@@ -1,6 +1,7 @@
 import { Flame } from "lucide-react";
 
 import { cn } from "@/lib/utils";
+import { formatNumber } from "@/lib/format";
 
 /**
  * Hot streak: correct calls in a row. Amber (it's a boost, like the 2x tokens),
@@ -14,10 +15,10 @@ export function StreakFlame({ count, size = "sm", className }: { count: number; 
         size === "sm" ? "h-5 ps-1 pe-1.5 text-[13px]" : "h-7 ps-1.5 pe-2.5 text-base",
         className,
       )}
-      aria-label={`${count} in a row`}
+      aria-label={`${formatNumber(count)} پشت سر هم`}
     >
       <Flame className={cn("fill-live/30", size === "sm" ? "size-3" : "size-4")} strokeWidth={2.4} aria-hidden="true" />
-      <span aria-hidden="true">{count}</span>
+      <span aria-hidden="true">{formatNumber(count)}</span>
     </span>
   );
 }

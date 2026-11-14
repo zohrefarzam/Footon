@@ -9,16 +9,17 @@ import { useProgress } from "@/lib/gamification/queries";
 import { cn } from "@/lib/utils";
 import { Coin } from "./coin";
 import { LiveDot } from "./live";
+import { formatMinute, formatNumber } from "@/lib/format";
 
 export type IslandLive = {
   minute: number;
   home: string;
   away: string;
   score: [number, number];
-  /** e.g. "Q4" */
+  /** e.g. "سؤال ۴" */
   questionLabel: string;
   question: string;
-  /** e.g. "75'", shown while an answer waits to resolve. */
+  /** e.g. "دقیقهٔ ۷۵", shown while an answer waits to resolve. */
   resolvesAt: string;
   href: string;
 };
@@ -58,11 +59,11 @@ export function LiveIsland({ coins: fallback, live }: { coins: number; live?: Is
   const wallet = (
     <Link
       href="/wallet"
-      aria-label={`${coins.toLocaleString("en-US")} coins. Open wallet`}
+      aria-label={`${formatNumber(coins)} سکه. باز کردن کیف پول`}
       className="flex h-11 shrink-0 items-center gap-1.5 rounded-full ps-2 pe-3.5 outline-none transition-[transform,background-color] duration-200 ease-spring hover:bg-white/5 active:scale-95 focus-visible:ring-[3px] focus-visible:ring-ring/60"
     >
       <Coin className="size-[22px]" />
-      <span className="font-display text-lg font-bold tabular-nums">{coins.toLocaleString("en-US")}</span>
+      <span className="font-display text-lg font-bold tabular-nums">{formatNumber(coins)}</span>
     </Link>
   );
 
@@ -81,13 +82,18 @@ export function LiveIsland({ coins: fallback, live }: { coins: number; live?: Is
             onClick={() => setOpen((v) => !v)}
             aria-expanded={open}
             aria-controls="island-question"
-            aria-label={`Live: ${live.home} ${live.score[0]}, ${live.away} ${live.score[1]}, ${live.minute} minutes. ${open ? "Hide" : "Show"} question ${live.questionLabel}`}
+            aria-label={`زنده: ${live.home} ${formatNumber(live.score[0])}، ${live.away} ${formatNumber(live.score[1])}، دقیقهٔ ${formatNumber(live.minute)}. ${open ? "بستن" : "نمایش"} ${live.questionLabel}`}
             className="flex h-11 min-w-0 flex-1 items-center gap-2.5 rounded-full ps-3 pe-2 outline-none focus-visible:ring-[3px] focus-visible:ring-ring/60"
           >
             <LiveDot />
-            <span className="font-display text-base font-bold text-live tabular-nums">{live.minute}&apos;</span>
-            <span className="min-w-0 truncate text-start font-display text-[17px] font-bold tracking-wide">
-              {live.home} <span className="tabular-nums">{live.score[0]}–{live.score[1]}</span> {live.away}
+            <span className="font-display text-base font-bold text-live tabular-nums">{formatMinute(live.minute)}</span>
+            {/* separate flex items so home sits on the right (its side in RTL) */}
+            <span className="flex min-w-0 items-center gap-1.5 overflow-hidden font-display text-[17px] font-bold tracking-wide">
+              <span>{live.home}</span>
+              <span className="flex tabular-nums">
+                {formatNumber(live.score[0])}–{formatNumber(live.score[1])}
+              </span>
+              <span>{live.away}</span>
             </span>
             <span className="ms-auto flex shrink-0 items-center">
               <AnimatePresence mode="popLayout" initial={false}>
@@ -109,7 +115,7 @@ export function LiveIsland({ coins: fallback, live }: { coins: number; live?: Is
                     exit={{ opacity: 0 }}
                     className="flex h-7 items-center rounded-full border border-primary-line bg-primary-soft px-2.5 text-xs font-semibold text-primary"
                   >
-                    {live.questionLabel} · {answer === "yes" ? "Yes" : "No"}
+                    {live.questionLabel} • {answer === "yes" ? "بله" : "نه"}
                   </motion.span>
                 ) : (
                   <motion.span
@@ -120,7 +126,7 @@ export function LiveIsland({ coins: fallback, live }: { coins: number; live?: Is
                     className="flex h-7 items-center rounded-full bg-primary px-2.5 text-xs font-bold text-primary-foreground"
                   >
                     {live.questionLabel}
-                    <span className="max-[360px]:hidden">&nbsp;open</span>
+                    <span className="max-[360px]:hidden">&nbsp;باز</span>
                   </motion.span>
                 )}
               </AnimatePresence>
@@ -161,7 +167,7 @@ export function LiveIsland({ coins: fallback, live }: { coins: number; live?: Is
                             : "border border-line-strong bg-surface-3",
                         )}
                       >
-                        {a === "yes" ? "Yes" : "No"}
+                        {a === "yes" ? "بله" : "نه"}
                       </button>
                     ))}
                   </motion.div>
@@ -185,8 +191,8 @@ export function LiveIsland({ coins: fallback, live }: { coins: number; live?: Is
                         transition={{ duration: 0.45, delay: 0.1, ease: [0.65, 0, 0.35, 1] }}
                       />
                     </svg>
-                    <span className="text-sm font-semibold">You said {answer === "yes" ? "Yes" : "No"}</span>
-                    <span className="text-shimmer ms-auto text-[13px] font-medium">Waiting for {live.resolvesAt}…</span>
+                    <span className="text-sm font-semibold">گفتی {answer === "yes" ? "بله" : "نه"}</span>
+                    <span className="text-shimmer ms-auto text-[13px] font-medium">در انتظار {live.resolvesAt}…</span>
                   </motion.div>
                 )}
               </AnimatePresence>
@@ -196,8 +202,8 @@ export function LiveIsland({ coins: fallback, live }: { coins: number; live?: Is
                 onClick={() => setOpen(false)}
                 className="group flex h-9 items-center justify-between rounded-sm text-[13px] font-semibold text-muted-foreground outline-none transition-colors hover:text-foreground focus-visible:ring-[3px] focus-visible:ring-ring/60"
               >
-                Open match and chat
-                <ArrowRight className="size-4 transition-transform duration-200 ease-spring group-hover:translate-x-0.5 rtl:rotate-180" strokeWidth={2.2} />
+                باز کردن بازی و چت
+                <ArrowRight className="size-4 transition-transform duration-200 ease-spring group-hover:translate-x-0.5 rtl:group-hover:-translate-x-0.5 rtl:rotate-180" strokeWidth={2.2} />
               </Link>
             </div>
           </motion.div>

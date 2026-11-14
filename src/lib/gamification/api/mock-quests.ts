@@ -18,12 +18,12 @@ export type QuestTemplate = Omit<Quest, "progress" | "completed" | "expiresAt"> 
 };
 
 export const QUEST_TEMPLATES: QuestTemplate[] = [
-  // daily: easy · social · challenge (the A/B flag can drop the last one)
+  // daily: easy • social • challenge (the A/B flag can drop the last one)
   {
     id: "d-easy",
     kind: "daily",
     difficulty: "easy",
-    title: "Make a prediction",
+    title: "یک پیش‌بینی بکن",
     target: 1,
     reward: { xp: 30, coins: 30 },
     requiredLevel: 1,
@@ -33,7 +33,7 @@ export const QUEST_TEMPLATES: QuestTemplate[] = [
     id: "d-social",
     kind: "daily",
     difficulty: "social",
-    title: "Answer 2 live questions with your league",
+    title: "با لیگت به ۲ سؤال زنده جواب بده",
     target: 2,
     reward: { xp: 40, coins: 40 },
     requiredLevel: 1,
@@ -43,7 +43,7 @@ export const QUEST_TEMPLATES: QuestTemplate[] = [
     id: "d-challenge",
     kind: "daily",
     difficulty: "challenge",
-    title: "Get 3 right in a row",
+    title: "۳ تا پشت سر هم درست بگو",
     target: 3,
     reward: { xp: 75, coins: 75 },
     requiredLevel: 1,
@@ -54,7 +54,7 @@ export const QUEST_TEMPLATES: QuestTemplate[] = [
   {
     id: "w-days",
     kind: "weekly",
-    title: "Predict on 3 match days",
+    title: "در ۳ روز مسابقه پیش‌بینی کن",
     target: 3,
     reward: { xp: 150, coins: 150 },
     requiredLevel: 6,
@@ -64,7 +64,7 @@ export const QUEST_TEMPLATES: QuestTemplate[] = [
   {
     id: "w-right",
     kind: "weekly",
-    title: "Get 10 live calls right",
+    title: "۱۰ پیش‌بینی زندهٔ درست",
     target: 10,
     reward: { xp: 150, coins: 150 },
     requiredLevel: 6,
@@ -75,7 +75,7 @@ export const QUEST_TEMPLATES: QuestTemplate[] = [
   {
     id: "s-days",
     kind: "seasonal",
-    title: "Play 20 match days this season",
+    title: "این فصل ۲۰ روز مسابقه بازی کن",
     target: 20,
     reward: { xp: 500, coins: 500 },
     requiredLevel: 1,
@@ -85,7 +85,7 @@ export const QUEST_TEMPLATES: QuestTemplate[] = [
   {
     id: "g-calls",
     kind: "group",
-    title: "Sunday Rivals: 50 calls between you this week",
+    title: "رقبای جمعه: این هفته روی هم ۵۰ پیش‌بینی",
     target: 50,
     reward: { xp: 200, coins: 200 },
     requiredLevel: 1,

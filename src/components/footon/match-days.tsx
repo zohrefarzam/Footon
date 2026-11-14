@@ -10,6 +10,7 @@ import { cn } from "@/lib/utils";
 import { BallSwitch } from "./ball-switch";
 import { LiveDot } from "./live";
 import { MatchRow } from "./match-row";
+import { formatNumber } from "@/lib/format";
 
 const DAYS = [-2, -1, 0, 1, 2, 3, 4, 5];
 const order = { live: 0, upcoming: 1, finished: 2 } as const;
@@ -51,7 +52,7 @@ function Groups({ list, empty }: { list: Match[]; empty: string }) {
   return (
     <>
       {comps.map((c) => (
-        <Group key={c} title={`${competitions[c]?.country ?? ""} · ${c}`} code={competitions[c]?.code} list={list.filter((m) => m.competition === c)} />
+        <Group key={c} title={`${competitions[c]?.country ?? ""} • ${c}`} code={competitions[c]?.code} list={list.filter((m) => m.competition === c)} />
       ))}
     </>
   );
@@ -59,7 +60,7 @@ function Groups({ list, empty }: { list: Match[]; empty: string }) {
 
 /**
  * The Live tab, after FotMob's Matches screen: a scrollable day strip
- * (Yesterday · Today · Tomorrow · dates) and a Live pill that narrows everything
+ * (Yesterday • Today • Tomorrow • dates) and a Live pill that narrows everything
  * to what's on right now. No CTA: every row opens its match.
  */
 export function MatchDays({ matches }: { matches: Match[] }) {
@@ -70,18 +71,18 @@ export function MatchDays({ matches }: { matches: Match[] }) {
 
   // start with Today centred in the strip
   useEffect(() => {
-    const list = listRef.current;
-    const active = list?.querySelector<HTMLElement>("[data-state=active]");
-    if (list && active) list.scrollLeft = active.offsetLeft - list.clientWidth / 2 + active.clientWidth / 2;
+    // scrollIntoView is direction-agnostic (scrollLeft runs negative in RTL)
+    const active = listRef.current?.querySelector<HTMLElement>("[data-state=active]");
+    active?.scrollIntoView?.({ behavior: "instant", block: "nearest", inline: "center" });
   }, [liveOnly]);
 
   return (
     <>
       <div className="flex items-center justify-between gap-3">
         <div>
-          <h1 className="text-[26px] font-bold tracking-[-0.03em]">Live</h1>
+          <h1 className="text-[26px] font-bold tracking-[-0.03em]">زنده</h1>
           <p className="text-[13px] text-muted-foreground" aria-live="polite">
-            {live.length ? `${live.length} ${live.length === 1 ? "match" : "matches"} on now` : "Nothing on right now"}
+            {live.length ? `${formatNumber(live.length)} بازی در جریان` : "الان بازی‌ای در جریان نیست"}
           </p>
         </div>
         {/* a switch, not a toggle pill: on/off reads at a glance and the same tap turns it off. The thumb is the ball. */}
@@ -90,7 +91,7 @@ export function MatchDays({ matches }: { matches: Match[] }) {
             htmlFor="live-only"
             className={cn("cursor-pointer text-sm font-semibold transition-colors duration-200 select-none", liveOnly ? "text-live" : "text-muted-foreground")}
           >
-            Live only
+            فقط زنده
           </label>
           <BallSwitch id="live-only" checked={liveOnly} onCheckedChange={setLiveOnly} />
         </div>
@@ -98,11 +99,11 @@ export function MatchDays({ matches }: { matches: Match[] }) {
 
       {liveOnly ? (
         <div className="animate-in-up flex flex-col gap-3" aria-live="polite">
-          <Groups list={live} empty="Nothing live right now. Turn Live off to see today's fixtures." />
+          <Groups list={live} empty="الان بازی زنده‌ای نیست. «فقط زنده» را خاموش کن تا بازی‌های امروز را ببینی." />
         </div>
       ) : (
         <Tabs value={day} onValueChange={setDay} className="flex flex-col gap-3">
-          <TabsList ref={listRef} aria-label="Day" className="scroll-smooth">
+          <TabsList ref={listRef} aria-label="روز" className="scroll-smooth">
             {DAYS.map((d) => (
               <TabsTrigger key={d} value={String(d)}>
                 {dayLabel(d)}
@@ -111,7 +112,7 @@ export function MatchDays({ matches }: { matches: Match[] }) {
           </TabsList>
           {DAYS.map((d) => (
             <TabsContent key={d} value={String(d)} className="flex flex-col gap-3">
-              <Groups list={matches.filter((m) => (m.dayOffset ?? 0) === d)} empty={`No matches ${d === 0 ? "today" : `on ${dayLabel(d)}`}.`} />
+              <Groups list={matches.filter((m) => (m.dayOffset ?? 0) === d)} empty={d === 0 ? "امروز بازی‌ای نیست." : `${dayLabel(d)} بازی‌ای نیست.`} />
             </TabsContent>
           ))}
         </Tabs>

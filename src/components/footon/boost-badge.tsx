@@ -2,11 +2,12 @@ import { Zap } from "lucide-react";
 
 import { BOOST_MULTIPLIER } from "@/lib/economy";
 import { cn } from "@/lib/utils";
+import { formatNumber } from "@/lib/format";
 
 /**
  * A big match: right predictions pay 2x the coins. Amber-soft pill (a boost,
  * like the streak flame and the 2x tokens), lucide Zap + "2x" in display font.
- * `label` adds the words for spots with room ("Wins pay 2x").
+ * `label` adds the words for spots with room ("بردها ۲x").
  */
 export function BoostBadge({ label, size = "sm", className }: { label?: string; size?: "sm" | "md"; className?: string }) {
   return (
@@ -17,7 +18,7 @@ export function BoostBadge({ label, size = "sm", className }: { label?: string; 
         className,
       )}
       role="img"
-      aria-label={`${label ?? "Big match, wins pay"} ${BOOST_MULTIPLIER}x`}
+      aria-label={`${label ?? "بازی بزرگ، بردها"} ${formatNumber(BOOST_MULTIPLIER)} برابر`}
     >
       <Zap className={cn("fill-live/30", size === "sm" ? "size-3" : "size-4")} strokeWidth={2.4} aria-hidden="true" />
       {label && (
@@ -25,7 +26,7 @@ export function BoostBadge({ label, size = "sm", className }: { label?: string; 
           {label}
         </span>
       )}
-      <span aria-hidden="true">{BOOST_MULTIPLIER}x</span>
+      <span aria-hidden="true">{formatNumber(BOOST_MULTIPLIER)}x</span>
     </span>
   );
 }

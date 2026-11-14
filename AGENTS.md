@@ -26,7 +26,7 @@ The visual reference is the Footon design canvas (7 artboards: Onboarding, Home,
 | Motion | `motion` (`motion/react`) for springs, layout and presence; CSS for simple loops |
 | Icons | `lucide-react` (stroke 2–2.4 in buttons). One exception: the dock uses Footon's own set in `components/footon/nav-icons.tsx` (outline 1.8 inactive, filled active) |
 | Language | **Persian only, right to left**: `<html lang="fa" dir="rtl">`, Radix `Direction.Provider dir="rtl"` in `app/providers.tsx`. See "Persian and RTL" |
-| Fonts | **Yekan Bakh FaNum** (Fontiran, licensed; local woff2 in `src/fonts`): the one typeface for UI and display, Persian and Latin, every digit drawn as ۰–۹. Weights on hand: 300, 700, 800, 900, 950 (400–500 render Light, 600 renders Bold until Regular/Medium/SemiBold are added). Geist Mono for codes; Geist and Barlow Condensed stay only as fallbacks |
+| Fonts | **Yekan Bakh** variable (Fontiran, licensed; `src/fonts/yekan-bakh-vf.woff2`): the one typeface for UI and display, Persian and Latin, every weight from one file. `ss01` (on for `body`) draws every digit as ۰–۹. The file has an `avar` axis map so standard CSS weights hit the named styles (400 Regular, 500 Medium, 600 SemiBold, 700 Bold, 800 ExtraBold, 900 Black); keep using Tailwind's `font-*` weights. Geist Mono for codes; Geist and Barlow Condensed stay only as fallbacks |
 | Server state | TanStack Query (gamification data, in the browser; `app/providers.tsx`) |
 | Client state | Zustand, only for UI queues (celebrations, the prediction outbox) |
 | Validation | Zod: every gamification response is parsed before the UI sees it |
@@ -88,7 +88,7 @@ src/
       share.ts            share to a Telegram group (Mini App → Web Share → link)
       celebrations/       expand.ts (RewardResult → ordered moments) + store.ts (the queue)
       api/                client.ts (interface, HTTP client, Zod-validated wrapper), mock.ts + mock-rules.ts + mock-quests.ts + mock-shop.ts (in-memory MOCK SERVER), index.ts
-  fonts/                  Yekan Bakh FaNum woff2 (licensed), Barlow Condensed woff2 (fallback)
+  fonts/                  Yekan Bakh variable woff2 (licensed), Barlow Condensed woff2 (fallback)
   proxy.ts                first-run redirect: `/` → `/welcome` until `footon_onboarded` is set
 ```
 
@@ -365,7 +365,7 @@ From the Footon economy doc. Numbers live in `lib/economy.ts`; mock state in `mo
 
 The app is Persian only and laid out right to left. Home sits on the right of every fixture, the dock starts with خانه on the right, carousels peek from the left.
 
-- **Digits.** Every digit renders Persian (۰–۹): format numbers with `formatNumber` & co. (Persian digits, `٬` thousands separator, `٪`, `٫`). Yekan Bakh FaNum draws any stray Latin digit as Persian too, but formatted numbers also read right to screen readers. Mono (codes, invite links) keeps Latin digits.
+- **Digits.** Every digit renders Persian (۰–۹): format numbers with `formatNumber` & co. (Persian digits, `٬` thousands separator, `٪`, `٫`). Yekan Bakh's `ss01` draws any stray Latin digit as Persian too, but formatted numbers also read right to screen readers. Mono (codes, invite links) keeps Latin digits.
 - **Mixed runs.** Signs, minutes and boosts flip inside Persian text unless isolated: use `formatSigned` (`+۲۰`), `formatMinute` (`۶۷'`), `formatBoost` (`۲x`), `formatTimes` (`×۲`), or `ltr()` for anything else. Two sides of a fixture use `matchup(home, away)` so home stays first (right), even for Latin codes.
 - **Scores.** Put the two numbers in separate flex items (`flex items-center`), never one text run: `۱:۱` with a colon becomes one left-to-right number and puts home on the left.
 - **Separators.** Inline metadata uses `•`, never `·`: the Persian zero `۰` is a dot, so `۱٬۵۰۰ · ۴` reads as one number.

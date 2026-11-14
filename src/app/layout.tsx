@@ -17,21 +17,16 @@ const barlow = localFont({
 });
 
 /**
- * Yekan Bakh FaNum (Fontiran, licensed): the app's typeface for Persian and
- * Latin, with every digit drawn as a Persian digit (۰–۹). The family ships
- * Light, Bold, ExtraBold, Black and ExtraBlack; 400–500 text uses Light and
- * 600 uses Bold until Regular, Medium and SemiBold are added here.
+ * Yekan Bakh (Fontiran, licensed), variable: one file for every weight, the
+ * app's typeface for Persian and Latin. Its `ss01` feature (on in globals.css)
+ * draws every digit as Persian (۰–۹). The file carries an axis map so CSS
+ * weights mean what they say: 400 = Regular, 600 = SemiBold, 700 = Bold
+ * (the font's own scale puts them at 325, 450 and 600).
  */
 const yekanBakh = localFont({
   variable: "--font-yekan-bakh",
   display: "swap",
-  src: [
-    { path: "../fonts/yekan-bakh-fanum-300.woff2", weight: "300", style: "normal" },
-    { path: "../fonts/yekan-bakh-fanum-700.woff2", weight: "700", style: "normal" },
-    { path: "../fonts/yekan-bakh-fanum-800.woff2", weight: "800", style: "normal" },
-    { path: "../fonts/yekan-bakh-fanum-900.woff2", weight: "900", style: "normal" },
-    { path: "../fonts/yekan-bakh-fanum-950.woff2", weight: "950", style: "normal" },
-  ],
+  src: [{ path: "../fonts/yekan-bakh-vf.woff2", weight: "1 1000", style: "normal" }],
 });
 
 export const metadata: Metadata = {

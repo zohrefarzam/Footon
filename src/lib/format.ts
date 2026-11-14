@@ -1,7 +1,7 @@
 /**
  * Every number the UI shows goes through here, in Persian: Persian digits and
  * the Persian thousands separator (`۱۰٬۰۰۰`), no decimals for counts and coins,
- * a real minus sign for losses. The FaNum font draws any stray Latin digit as
+ * a real minus sign for losses. Yekan Bakh's ss01 draws any stray Latin digit as
  * Persian too, but formatted numbers also read right to screen readers and on copy.
  */
 const int = new Intl.NumberFormat("fa-IR", { maximumFractionDigits: 0 });

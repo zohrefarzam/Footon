@@ -2,10 +2,10 @@
 @import "tw-animate-css";
 
 /*
- * Footon design tokens: "stadium at night".
+ * Lucky Fan design tokens: "stadium at night".
  * Neutrals are a green-tinted ladder (deep stadium green → turf), the brand is
  * a floodlit pitch green, amber stays live/coins, gold is trophies only.
- * Footon is dark-only. Values live on :root; `.dark` mirrors them so
+ * Lucky Fan is dark-only. Values live on :root; `.dark` mirrors them so
  * shadcn components that check for the class still behave.
  * Read AGENTS.md before adding or changing a token.
  */

@@ -1,4 +1,4 @@
-# Footon v2: plan for the new IA and screens
+# Lucky Fan v2: plan for the new IA and screens
 
 ## Context
 The product brief (in Persian) redesigns six areas: Home, the bottom nav, Challenges/Leagues, Match details, Fantasy and Profile. The aim is to fit 3–4 matches above the fold, add Polymarket-style quick calls and FOMO cues, use a 4-tab nav, give invites their own hub, add a tabbed match page with preset-phrase banter, show Fantasy as a "coming soon" tease, and add a profile with history.

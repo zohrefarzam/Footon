@@ -30,7 +30,7 @@ const yekanBakh = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "فوتون: بازی را زنده با دوستات پیش‌بینی کن",
+  title: "لاکی فن: بازی را زنده با دوستات پیش‌بینی کن",
   description: "فوتبال رو زنده با دوستات پیش‌بینی کن. رایگانه.",
 };
 

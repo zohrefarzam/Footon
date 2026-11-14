@@ -207,7 +207,7 @@ describe("My Club", () => {
     }) as unknown as CanvasRenderingContext2D;
     vi.stubGlobal("Path2D", class {});
     drawClubCard(ctx, club, "Reserve", { sans: "sans-serif", display: "sans-serif" });
-    expect(texts).toEqual(expect.arrayContaining(["Your club", "۷", "Reserve", `۳ ${copy.streakUnit(3)}`, "FOOTON"]));
+    expect(texts).toEqual(expect.arrayContaining(["Your club", "۷", "Reserve", `۳ ${copy.streakUnit(3)}`, "لاکی فن"]));
     vi.unstubAllGlobals();
   });
 

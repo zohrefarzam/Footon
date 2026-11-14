@@ -54,12 +54,12 @@ export function FootballPattern({ className }: { className?: string }) {
   return (
     <svg viewBox="0 0 100 100" aria-hidden="true" className={cn("block size-full", className)}>
       <defs>
-        <clipPath id="footon-ball-clip">
+        <clipPath id="luckyfan-ball-clip">
           <circle cx={C} cy={C} r="48" />
         </clipPath>
       </defs>
       <circle cx={C} cy={C} r="48" fill="#f4f4f5" />
-      <g clipPath="url(#footon-ball-clip)" strokeLinejoin="round">
+      <g clipPath="url(#luckyfan-ball-clip)" strokeLinejoin="round">
         <g stroke="#a1a1aa" strokeWidth="1.4" strokeLinecap="round">
           {seams.map(([p, q], i) => (
             <line key={i} x1={p[0]} y1={p[1]} x2={q[0]} y2={q[1]} />
@@ -81,11 +81,11 @@ export function FootballShade({ className }: { className?: string }) {
   return (
     <svg viewBox="0 0 100 100" aria-hidden="true" className={cn("block size-full", className)}>
       <defs>
-        <clipPath id="footon-ball-shade">
+        <clipPath id="luckyfan-ball-shade">
           <circle cx={C} cy={C} r="48" />
         </clipPath>
       </defs>
-      <g clipPath="url(#footon-ball-shade)">
+      <g clipPath="url(#luckyfan-ball-shade)">
         {/* core shadow: an offset circle subtracted from the ball */}
         <path
           d="M2 50a48 48 0 1 0 96 0a48 48 0 1 0-96 0ZM-6 40a52 52 0 1 1 104 0a52 52 0 1 1-104 0Z"

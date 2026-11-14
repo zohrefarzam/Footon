@@ -1,4 +1,4 @@
-# Footon
+# Lucky Fan
 
 Predict the match live with your friends. Mobile-first Next.js app.
 
@@ -21,6 +21,6 @@ npm run dev        # http://localhost:3000
 
 Read **[AGENTS.md](./AGENTS.md)**: colour roles, type, motion, components and rules.
 Tokens live in `src/app/globals.css` (Tailwind v4 `@theme`). UI primitives are shadcn/ui
-(`components.json`) restyled to Footon tokens; product components are in `src/components/footon`.
+(`components.json`) restyled to Lucky Fan tokens; product components are in `src/components/footon`.
 
 Add shadcn components with `npx shadcn@latest add <name>`, then restyle them per AGENTS.md.

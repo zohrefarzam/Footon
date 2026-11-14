@@ -13,7 +13,7 @@ import { useProgress } from "@/lib/gamification/queries";
 import { copy } from "@/lib/gamification/strings";
 import { track } from "@/lib/track";
 
-const SEEN = "footon_streak_broken_seen";
+const SEEN = "luckyfan_streak_broken_seen";
 
 function readSeen(): string | null {
   try {

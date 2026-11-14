@@ -8,11 +8,11 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 <!-- END:nextjs-agent-rules -->
 
-# Footon — agent guide
+# Lucky Fan (لاکی فن): agent guide
 
-Footon is a free-to-play, mobile-first web app where friends predict live football moments together ("Next corner before 75'?"), compete in small leagues, and unlock fantasy features. This file is the source of truth for **how the UI looks and behaves**. Read it fully before you add or change any screen or component.
+Lucky Fan («لاکی فن», formerly Footon) is a free-to-play, mobile-first web app where friends predict live football moments together ("Next corner before 75'?"), compete in small leagues, and unlock fantasy features. This file is the source of truth for **how the UI looks and behaves**. Read it fully before you add or change any screen or component.
 
-The visual reference is the Footon design canvas (7 artboards: Onboarding, Home, Create league, Live match, Full time, My team, Profile). When the canvas and this file disagree, this file wins; flag the mismatch.
+The visual reference is the Lucky Fan design canvas (7 artboards: Onboarding, Home, Create league, Live match, Full time, My team, Profile). When the canvas and this file disagree, this file wins; flag the mismatch.
 
 ## Stack
 
@@ -24,7 +24,7 @@ The visual reference is the Footon design canvas (7 artboards: Onboarding, Home,
 | Components | shadcn/ui (new-york style, `components.json`), on the unified `radix-ui` package |
 | Variants | `class-variance-authority` + `cn()` from `@/lib/utils` |
 | Motion | `motion` (`motion/react`) for springs, layout and presence; CSS for simple loops |
-| Icons | `lucide-react` (stroke 2–2.4 in buttons). One exception: the dock uses Footon's own set in `components/footon/nav-icons.tsx` (outline 1.8 inactive, filled active) |
+| Icons | `lucide-react` (stroke 2–2.4 in buttons). One exception: the dock uses Lucky Fan's own set in `components/footon/nav-icons.tsx` (outline 1.8 inactive, filled active) |
 | Language | **Persian only, right to left**: `<html lang="fa" dir="rtl">`, Radix `Direction.Provider dir="rtl"` in `app/providers.tsx`. See "Persian and RTL" |
 | Fonts | **Yekan Bakh** variable (Fontiran, licensed; `src/fonts/yekan-bakh-vf.woff2`): the one typeface for UI and display, Persian and Latin, every weight from one file. `ss01` (on for `body`) draws every digit as ۰–۹. The file has an `avar` axis map so standard CSS weights hit the named styles (400 Regular, 500 Medium, 600 SemiBold, 700 Bold, 800 ExtraBold, 900 Black); keep using Tailwind's `font-*` weights. Geist Mono for codes; Geist and Barlow Condensed stay only as fallbacks |
 | Server state | TanStack Query (gamification data, in the browser; `app/providers.tsx`) |
@@ -89,7 +89,7 @@ src/
       celebrations/       expand.ts (RewardResult → ordered moments) + store.ts (the queue)
       api/                client.ts (interface, HTTP client, Zod-validated wrapper), mock.ts + mock-rules.ts + mock-quests.ts + mock-shop.ts (in-memory MOCK SERVER), index.ts
   fonts/                  Yekan Bakh variable woff2 (licensed), Barlow Condensed woff2 (fallback)
-  proxy.ts                first-run redirect: `/` → `/welcome` until `footon_onboarded` is set
+  proxy.ts                first-run redirect: `/` → `/welcome` until `luckyfan_onboarded` is set
 ```
 
 Rules:
@@ -105,11 +105,11 @@ Rules:
 3. **One lime thing per view.** The lime primary is the single main action on screen (plus wins and "you"). Two lime CTAs side by side is a bug. The one exception is a Yes/No answer pair: Yes is lime, No is `secondary`.
 4. **No white buttons.** Primary = lime; everything else is dark (`secondary`, `outline`, `ghost`, `soft`).
 5. **Lists over boxes.** Group related rows inside *one* `Card` with hairline dividers (`CardRow`, `MatchRow`). Don't stack many small bordered cards.
-6. **Broadcast numbers.** Scores, minutes, coins, points, ranks and big stats use the display font (`font-display`, Yekan Bakh in bold weights). It is what makes Footon feel like football and not a dashboard.
+6. **Broadcast numbers.** Scores, minutes, coins, points, ranks and big stats use the display font (`font-display`, Yekan Bakh in bold weights). It is what makes Lucky Fan feel like football and not a dashboard.
 7. **Learn by doing.** Teach with a real interaction (onboarding asks a sample question), not with explanatory paragraphs or numbered lists.
 8. **Motion confirms, never decorates.** Every animation answers "what just changed?" Springs for things you touch; ease-out for things that appear.
 9. **Not AI-generic.** No gradient washes, glowing blobs, emoji, left-border accent cards, "✨" sparkle icons or glassmorphism everywhere. Glass is allowed on exactly two surfaces: the dock and bottom sheets.
-10. **Football first, tastefully.** Footon is a stadium at night: a green-tinted ground, a calm grass green for the brand (flat buttons: no gloss, no glow), and football's own language (pitch lines, scoreboards, league tables, medals, kit colours). Pitch texture lives only on **hero canvases** (scoreboards, the Home match hero, the score picker, the leaderboard header, result cards, empty states): `floodlight` (one top light + turf stripes) or `bg-turf`, plus `PitchMarkings`. Never on list cards, buttons or every card.
+10. **Football first, tastefully.** Lucky Fan is a stadium at night: a green-tinted ground, a calm grass green for the brand (flat buttons: no gloss, no glow), and football's own language (pitch lines, scoreboards, league tables, medals, kit colours). Pitch texture lives only on **hero canvases** (scoreboards, the Home match hero, the score picker, the leaderboard header, result cards, empty states): `floodlight` (one top light + turf stripes) or `bg-turf`, plus `PitchMarkings`. Never on list cards, buttons or every card.
 
 ## Colour
 
@@ -256,7 +256,7 @@ Rules:
 | `FavouriteClubs` | Profile's "Your clubs": crest chips with ✕, "Add club" opens a sheet with a search field (name or code, clear ✕, "No club matches" empty state, result count announced) over the crest grid of `clubDirectory` (`aria-pressed`, soft-lime when picked). |
 | `ShopPreview` | Home's shop card: full width, dotted, neutral; "Shop" (+ "N new") over three items you could get now (newly unlocked first) with their amber prices. Links to `/shop`. Never lime; hidden when your balance can't cover any of them (and never after a loss). |
 | `SegmentedTabs` | 2–4 filters with sliding lime pill. |
-| `CoinBadge` / `Coin` / `CoinAmount` | Wallet pill. Coins are always amber with an "F". `CoinAmount` is a coin figure in a row: gains amber, spends neutral with a minus (an entry isn't a loss). |
+| `CoinBadge` / `Coin` / `CoinAmount` | Wallet pill. Coins are always amber with an «ل». `CoinAmount` is a coin figure in a row: gains amber, spends neutral with a minus (an entry isn't a loss). |
 | `StarterMissions` | First-week missions (15,000 over 7 days): progress, open rows first, done rows muted with the reason they paid. |
 | `MatchTables` | "Two tables, same calls" card on a match: Free table (always open, top 3 get coins) and Coin table (your league's pool, or "Start a league"). Footer: entry never changes rank. `poolLine()` gives "winner takes 5,700". |
 | `NumberTicker` | Count-up for rewards. Starts from `from` on both server and client (hydration-safe), jumps to the value with reduced motion. |
@@ -280,12 +280,12 @@ Rules:
 | `LiveDot` / `LiveMinute` | Pulsing amber dot / "● زنده ۶۷'". |
 | `EmptyState` | Dotted canvas, title, one line, one secondary action. |
 | `Football` | The ball mark. `FootballPattern` (spins) + `FootballShade` (static light) for animation. Neutral, never lime. |
-| `Splash` | Launch brand moment: ball drops, bounces, rolls into the wordmark as the first O (~2.6s). Reduced motion: static wordmark. |
+| `Splash` | Launch brand moment, right to left: the ball drops past the end of «لاکی فن», bounces, then rolls right to sit at the start of the name, uncovering it as it goes (~2.6s). Reduced motion: static wordmark. |
 | `SplashGate` | In the root layout: plays `Splash` on every app open (full page load, any route), never on in-app navigation. Page is `inert` until it lifts; `useSplashDone()` lets a screen hold its entrance animations until then. |
 
 ### Screen patterns (from the canvas)
 
-- **Splash → Onboarding (`/welcome`):** the launch splash (from `SplashGate`), then 3 steps with a segmented progress bar, back button and wallet badge (ticks to 10,000 on claim). 1) Try one: dealt card stack; the sample question resolves to a right/wrong result; Continue is `secondary` until answered, then lime. 2) Pick clubs: crest tiles with `aria-pressed`, soft-lime when selected. 3) Claim: coin stack + ticking amount, the three numbered steps, lime "Claim 10,000 coins". Claiming or "Skip to Home" sets the `footon_onboarded` cookie. Links to `/` from here use `prefetch={false}` so a pre-cookie redirect isn't cached.
+- **Splash → Onboarding (`/welcome`):** the launch splash (from `SplashGate`), then 3 steps with a segmented progress bar, back button and wallet badge (ticks to 10,000 on claim). 1) Try one: dealt card stack; the sample question resolves to a right/wrong result; Continue is `secondary` until answered, then lime. 2) Pick clubs: crest tiles with `aria-pressed`, soft-lime when selected. 3) Claim: coin stack + ticking amount, the three numbered steps, lime "Claim 10,000 coins". Claiming or "Skip to Home" sets the `luckyfan_onboarded` cookie. Links to `/` from here use `prefetch={false}` so a pre-cookie redirect isn't cached.
 - **Onboarding (canvas):** dealt card stack on a dotted canvas with one real sample question; three steps as a single numbered row; lime CTA "Claim 10,000 coins" with an inset arrow; "Skip to Home" as a text link.
 - **Home:** (sticky island + `LevelProgressBar` from the tabs layout) → `PromoCarousel` (the partner slot) → **Big fixtures · Wins pay 2x** (`MatchRow`s; "All matches" → `/live`) → two compact tiles (`InviteTile`, `FantasyUnlock`) → `QuestsTile` (one row: "1 of 3 done" + the next quest → `/quests`) → `ShopPreview`. No big matches → `EmptyState`. Keep Home short: leagues live on Challenges, standings on `/leaderboard`, quests on `/quests`, results on each match. `MatchHero`, `LeagueCard`, `DivisionCard` and `ResultCard` stay available (styleguide) but are not on Home.
 - **Quests (`/quests`, from Home's quests tile):** back → Home, title, then **Today** (daily), **This week** (weekly; a locked row below its level), **Season and league**, each a `QuestList` under a `SectionHeading`. No lime CTA: quests move by playing.
@@ -296,7 +296,7 @@ Rules:
 - **Live tab (`/live`):** FotMob's Matches screen via `MatchDays`: title + "Live only" switch → day strip (Yesterday · **Today** · Tomorrow · dates) → one folding card per competition (your own matches live on Home, not pinned here). No lime CTA here: your live match row and the island's "Q4 open" already take you in. Your live match → `/play`; everything else → `/match/[id]`.
 - **Match page (`/match/[id]`, focus mode):** same `MatchCentre` frame as live. Upcoming: **Predict** (`PredictionBuilder` with the one lime "Lock in", `MatchTables`, `CrowdPoll`) · **Preview** (`MatchInfo`, `TeamForm`, `MatchNews`) · Table · H2H. Finished: **Result** (your +points, streak, right/wrong bars, your resolved predictions, coins) · Facts · Stats · Table · H2H.
 - **Challenge page (`/challenges/[id]`, focus mode):** `MatchCentre` titled with the league. **Predict** (invited → `ChallengeGate`, then the builder with the league's rules; joined → the builder; expired → a read-only note, nothing charged) · Chat (once you're in) · League (players, pool) · Match (preview or facts). Your league's live match redirects to `/play`.
-- **Live match (`/play` for your league, `/match/[id]` for any other live match; focus mode, no dock):** `LiveMatch`. FotMob's flow (score always visible, everything one tap away in sticky section tabs), Footon's job: Predict is the first tab, and the question card is the first thing in it. Chat is its own tab, not a panel under the details.
+- **Live match (`/play` for your league, `/match/[id]` for any other live match; focus mode, no dock):** `LiveMatch`. FotMob's flow (score always visible, everything one tap away in sticky section tabs), Lucky Fan's job: Predict is the first tab, and the question card is the first thing in it. Chat is its own tab, not a panel under the details.
 - **Full time:** ticking `+450`, streak pill with lime "Next match 2x", podium (yours lime-soft, tallest), match-timeline of calls (lime filled dots = right, red rings = wrong), rematch chat replies, lime "Rematch with same friends".
 - **Fantasy (`/fantasy`, was My team):** stats header (display 56), striped pitch with shirt tokens (selected = lime, captain = amber "C"), captain + transfers list, lime "Save lineup".
 - **Create league:** entry slider uses `ENTRY_TIERS`; the pool preview under it; "Prediction stakes": a "Same stake for everyone" switch with `STAKE_STEPS` chips and a "Most one player can stake" cap slider (both shown on the ticket); the lime CTA carries the total cost (create + your entry). Short of coins → disabled "Need N more coins" + "Ways to earn".
@@ -349,7 +349,7 @@ From the gamification brief. Code in `lib/gamification` and `components/footon/g
 
 ## Economy (coins, points, prizes)
 
-From the Footon economy doc. Numbers live in `lib/economy.ts`; mock state in `mock-data.ts`.
+From the Lucky Fan economy doc. Numbers live in `lib/economy.ts`; mock state in `mock-data.ts`.
 
 - **Three things never mix.** Points = skill (right calls only; rank and prizes read points only; show in lime/neutral, never with a coin). Coins = play money (amber; entries, leagues, moments, looks). Prizes = real things from sponsors by weekly/monthly rank. A right call shows `+50 pts`, never coins.
 - **Two tables per match.** Free table always open (top 3 get 400/300/200, 2,000/week cap). Coin table = a friends' league pool, entry 500 / 1,500 / 2,500 (the cap). 5% of each pool burns; under 5 players the winner takes the rest, from 5 it's 70/30. Use `splitPool()`.
@@ -369,11 +369,12 @@ The app is Persian only and laid out right to left. Home sits on the right of ev
 - **Mixed runs.** Signs, minutes and boosts flip inside Persian text unless isolated: use `formatSigned` (`+۲۰`), `formatMinute` (`۶۷'`), `formatBoost` (`۲x`), `formatTimes` (`×۲`), or `ltr()` for anything else. Two sides of a fixture use `matchup(home, away)` so home stays first (right), even for Latin codes.
 - **Scores.** Put the two numbers in separate flex items (`flex items-center`), never one text run: `۱:۱` with a colon becomes one left-to-right number and puts home on the left.
 - **Separators.** Inline metadata uses `•`, never `·`: the Persian zero `۰` is a dot, so `۱٬۵۰۰ · ۴` reads as one number.
-- **No tracking, uppercase or italic on Persian.** Persian is a joined script with no capitals: `globals.css` resets `letter-spacing` and `font-style` on every `:lang(fa)` element. Latin bits that need them (the FOOTON wordmark) carry `lang="en" dir="ltr"`.
+- **No tracking, uppercase or italic on Persian.** Persian is a joined script with no capitals: `globals.css` resets `letter-spacing` and `font-style` on every `:lang(fa)` element. Latin bits that need them carry `lang="en" dir="ltr"`.
 - **Direction-aware code.** Direction icons get `rtl:rotate-180` (chevrons, arrows) or `rtl:-scale-x-100` (diagonal arrows, send); checks and symmetric icons don't flip. `scaleX` bars use `origin-left rtl:origin-right`; hover nudges add `rtl:group-hover:-translate-x-0.5`; switch thumbs add `rtl:data-[state=checked]:-translate-x-[18px]`. Motion slides use negative x for "forward". `scrollLeft` is negative in RTL: use `scrollIntoView`. Canvas text sets `ctx.direction = "rtl"`.
 - **Pitches are physical.** Line-ups and the fantasy pitch place players with `left`, not the reading direction: a right back stays on his right.
 - **Dates** use the Persian calendar (`fa-IR`): «سه‌شنبه ۱۳ آبان».
 - **Inputs** that take numbers run `toLatinDigits()` first, so a Persian keyboard works.
+- The name is «لاکی فن» everywhere a user sees it (title, splash, share texts and card, the coin's «ل»); "Lucky Fan" only in code and docs. Internal paths keep the old name (`components/footon`).
 - Club codes on crests (`LIV`), TV channel names, `XP` and `VAR` stay Latin.
 
 ## Adapting shadcn components
@@ -414,5 +415,5 @@ When you add a new shadcn component:
 - ❌ `subtle` grey for small body text.
 - ❌ New colours, fonts or radii without adding a token here and in `globals.css`.
 - ❌ `"use client"` on whole pages.
-- ❌ Tablet or desktop layouts (`sm:`/`md:`/`lg:` breakpoints, wide grids). Footon is one phone column.
+- ❌ Tablet or desktop layouts (`sm:`/`md:`/`lg:` breakpoints, wide grids). Lucky Fan is one phone column.
 - ❌ `transition: all`, layout-thrashing animations, motion without a reduced-motion path.

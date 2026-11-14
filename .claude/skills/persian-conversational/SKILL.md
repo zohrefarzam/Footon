@@ -16,7 +16,7 @@ to; colloquial (محاوره) is what Iranians type to each other. Mixing them i
 text is the fastest way to sound like a machine. This skill is for the second
 register only.
 
-## Footon: how this applies here
+## Lucky Fan: how this applies here
 
 - **App UI copy** (every string in `src/`, `lib/gamification/strings.ts`, page
   and component text, aria-labels, mock missions, badges, quests, shop items,
@@ -108,7 +108,7 @@ a visible kasre for clarity).
 
 - **تو vs شما**: default to «شما» with spoken verbs for customers, followers and
   strangers («شما بگید چی می‌خواید»). Use «تو» only when the brand already
-  talks like a friend and the user asked for it. (Footon: «تو», by choice.)
+  talks like a friend and the user asked for it. (Lucky Fan: «تو», by choice.)
 - **Slang budget**: everyday words are fine (عالیه، کلی، یه عالمه، حله). Street
   slang (داش، خفن، باحال) only if the brand voice already uses it.
 - **تعارف**: one beat maximum («قابلی نداره»). Three rituals in a DM read as

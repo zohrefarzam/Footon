@@ -1,7 +1,7 @@
 import { cn } from "@/lib/utils";
 
 /**
- * Footon's own dock icons — the one exception to "lucide only" (see AGENTS.md).
+ * Lucky Fan's own dock icons — the one exception to "lucide only" (see AGENTS.md).
  * 24px grid, `currentColor`. Inactive = 1.8 stroke outline; active = filled
  * silhouette with the inner detail knocked out in the background colour, so the
  * state differs by shape, not just colour.

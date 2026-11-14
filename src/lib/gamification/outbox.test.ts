@@ -34,7 +34,7 @@ describe("outbox", () => {
     expect(box.getState().entries.k1.status).toBe("failed");
     expect(qc.getQueryData<{ totalXp: number }>(gamificationKeys.progress)?.totalXp).toBe(1640); // no ghost XP
     expect(celebrations.getState().current).toBeNull();
-    expect(JSON.parse(localStorage.getItem("footon_outbox")!)).toHaveLength(1); // survives a reload
+    expect(JSON.parse(localStorage.getItem("luckyfan_outbox")!)).toHaveLength(1); // survives a reload
 
     server.dev.setOffline(false);
     await box.getState().retryFailed();

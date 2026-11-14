@@ -1,7 +1,7 @@
 import { cn } from "@/lib/utils";
 
 /**
- * The phone column (430px), centred on any larger screen. Footon is a
+ * The phone column (430px), centred on any larger screen. Lucky Fan is a
  * mobile app: there is no tablet or desktop layout, every screen is this column.
  * `dock={false}` for focus mode (live match, flows with their own CTA). The dock
  * itself is rendered once by `app/(tabs)/layout.tsx`; `dock` here only reserves room for it.

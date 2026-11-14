@@ -239,7 +239,7 @@ export const matches: Match[] = [
       referee: "مایکل الیور",
       tv: ["Sky Sports Main Event", "Sky Go"],
       form: { home: ["W", "W", "D", "W", "L"], away: ["W", "L", "W", "D", "W"] },
-      news: { title: "آرسنال - چلسی: اخبار دو تیم و ترکیب احتمالی", source: "فوتون", ago: "۲ ساعت پیش" },
+      news: { title: "آرسنال - چلسی: اخبار دو تیم و ترکیب احتمالی", source: "لاکی فن", ago: "۲ ساعت پیش" },
     },
   },
   {
@@ -260,7 +260,7 @@ export const matches: Match[] = [
       referee: "آنتونی تیلور",
       tv: ["TNT Sports 1", "discovery+"],
       form: { home: ["D", "W", "W", "L", "W"], away: ["L", "W", "D", "W", "L"] },
-      news: { title: "پنج نکته برای امشب در سنت جیمز پارک", source: "فوتون", ago: "۵ ساعت پیش" },
+      news: { title: "پنج نکته برای امشب در سنت جیمز پارک", source: "لاکی فن", ago: "۵ ساعت پیش" },
     },
   },
   {
@@ -392,7 +392,7 @@ export type Standing = {
 export const league = {
   name: "رقبای جمعه",
   code: "sun9k",
-  link: "t.me/footon_bot?start=sun9k",
+  link: "t.me/luckyfan_bot?start=sun9k",
   standings: [
     { name: "تو", initial: "ت", points: 840, you: true, delta: 1, right: 17, calls: 22 },
     { name: "سارا", initial: "س", points: 790, delta: -1, right: 16, calls: 22 },
@@ -401,7 +401,7 @@ export const league = {
 };
 
 /**
- * Your weekly division: everyone on Footon at your level, ranked by points
+ * Your weekly division: everyone on Lucky Fan at your level, ranked by points
  * (skill only). Top `promote` go up, bottom `relegate` go down when the week ends.
  * `rows` is the slice the app shows: the top of the table, the places around
  * you, and the bottom.
@@ -776,7 +776,7 @@ export const coinActivity: CoinEntry[] = [
 /**
  * A commercial banner in Home's partner slot. Always labelled as sponsored and
  * named after the partner. `colors` = [ground, ink, accent] from the partner's
- * brand (data, like a club's kit), never Footon's own roles. `art` picks the
+ * brand (data, like a club's kit), never Lucky Fan's own roles. `art` picks the
  * illustration. Rules: no countdowns, no "last chance", never shown after a
  * loss; prizes are won by points (rank), never bought.
  * Partners below are fictional examples.

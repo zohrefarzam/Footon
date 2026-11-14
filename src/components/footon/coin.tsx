@@ -2,7 +2,7 @@ import { cn } from "@/lib/utils";
 import { NumberTicker } from "./number-ticker";
 import { formatNumber, formatSigned } from "@/lib/format";
 
-/** The Footon coin ("ف"). Amber, always — coins are never lime. */
+/** The Lucky Fan coin ("ل"). Amber, always — coins are never lime. */
 export function Coin({ className }: { className?: string }) {
   return (
     <span
@@ -12,7 +12,7 @@ export function Coin({ className }: { className?: string }) {
         className,
       )}
     >
-      ف
+      ل
     </span>
   );
 }

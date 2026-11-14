@@ -3,7 +3,7 @@ import type { FeatureId } from "./schemas";
 
 /**
  * Copy for gamification surfaces, in Persian. Short and spoken, like the rest
- * of Footon. Numbers always go through `format.ts` (Persian digits).
+ * of Lucky Fan. Numbers always go through `format.ts` (Persian digits).
  */
 export const copy = {
   levelShort: "سطح",
@@ -23,7 +23,7 @@ export const copy = {
   levelBadge: "نشان سطح",
   continue: "ادامه",
   share: "اشتراک‌گذاری",
-  shareLevelText: (l: number, tier: string) => `همین الان توی فوتون رسیدم به سطح ${n(l)} (${tier}). بیا بازی بعدی را با هم پیش‌بینی کنیم.`,
+  shareLevelText: (l: number, tier: string) => `همین الان توی لاکی فن رسیدم به سطح ${n(l)} (${tier}). بیا بازی بعدی را با هم پیش‌بینی کنیم.`,
 
   // Celebrations, announced via aria-live
   announceXp: (xp: number, coins: number, multiplier: number) =>
@@ -131,7 +131,7 @@ export const copy = {
   customise: "توی فروشگاه عوضش کن",
   shareClub: "اشتراک در تلگرام",
   sharing: "داریم کارت را می‌سازیم…",
-  shareClubText: (name: string, level: number, tier: string) => `${name} توی فوتون: سطح ${n(level)}، ${tier}. بیا بازی بعدی را با هم پیش‌بینی کنیم.`,
+  shareClubText: (name: string, level: number, tier: string) => `${name} توی لاکی فن: سطح ${n(level)}، ${tier}. بیا بازی بعدی را با هم پیش‌بینی کنیم.`,
   clubAria: (name: string, level: number, tier: string, kit: string | null, streak: number) =>
     `${name}: سطح ${n(level)}، ${tier}${kit ? `، با ${kit}` : ""}${streak > 0 ? `، ${n(streak)} روز مسابقه پشت سر هم` : ""}`,
 

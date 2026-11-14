@@ -1,5 +1,5 @@
 /**
- * Share to a Telegram group from wherever Footon runs:
+ * Share to a Telegram group from wherever Lucky Fan runs:
  * 1. inside Telegram (Mini App): Telegram's own share link opener,
  * 2. a browser with the Web Share API (with the image when given and supported),
  * 3. otherwise download the image (if any) and open a t.me/share link.
@@ -10,7 +10,7 @@ export type ShareMethod = "telegram" | "web_share" | "download" | "link";
 type TelegramWebApp = { openTelegramLink?: (url: string) => void };
 
 const telegramShareUrl = (text: string, url?: string) =>
-  `https://t.me/share/url?url=${encodeURIComponent(url ?? (typeof location !== "undefined" ? location.origin : "https://footon.app"))}&text=${encodeURIComponent(text)}`;
+  `https://t.me/share/url?url=${encodeURIComponent(url ?? (typeof location !== "undefined" ? location.origin : ""))}&text=${encodeURIComponent(text)}`;
 
 export async function shareToTelegram({ text, url, file }: { text: string; url?: string; file?: File }): Promise<ShareMethod | null> {
   const tg = (globalThis as { Telegram?: { WebApp?: TelegramWebApp } }).Telegram?.WebApp;

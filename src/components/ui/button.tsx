@@ -5,7 +5,7 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 /**
- * Footon buttons.
+ * Lucky Fan buttons.
  * - `default` (lime) is the ONE main action on a screen. Never two side by side,
  *   except a Yes/No answer pair where Yes is lime and No is `secondary`.
  * - Never white. Secondary actions are dark (`secondary`, `outline`, `ghost`).

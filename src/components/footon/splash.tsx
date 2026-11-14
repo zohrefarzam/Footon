@@ -5,11 +5,11 @@ import { motion, useAnimate, useReducedMotion, type AnimationSequence } from "mo
 
 import { FootballPattern, FootballShade } from "./football";
 
-const LETTERS = ["O", "T", "O", "N"];
-
 /**
- * Brand splash. A ball drops in on the right, bounces, then rolls left into
- * the wordmark, writing "OTON" as it passes and landing as the first O.
+ * Brand splash, right to left. A ball drops in at the far (left) end of the
+ * wordmark, bounces, then rolls right to its place at the start of «لاکی فن»,
+ * uncovering the name behind it as it goes (Persian letters join, so the word
+ * is revealed with a wipe that follows the ball, not letter by letter).
  * ~2.6s, then `onDone`. Reduced motion: the finished wordmark, briefly.
  */
 export function Splash({ onDone }: { onDone: () => void }) {
@@ -26,12 +26,13 @@ export function Splash({ onDone }: { onDone: () => void }) {
     const rise: [number, number, number, number] = [0, 0.55, 0.45, 1]; // and decelerate out of it
     const roll: [number, number, number, number] = [0.25, 0.9, 0.3, 1];
 
-    // how far right of its slot the ball lands before rolling home
-    const off = Math.min(window.innerWidth * 0.46, 230);
+    // the ball lands just past the end (left) of the word, then rolls back to its slot
+    const word = (scope.current as HTMLElement | null)?.querySelector<HTMLElement>("[data-word]");
+    const off = -((word?.offsetWidth ?? 200) + 36);
 
     const sequence: AnimationSequence = [
       ["[data-ball-x]", { x: off }, { duration: 0 }],
-      // 1. drop and first bounce, on the right
+      // 1. drop and first bounce, past the end of the word
       ["[data-ball-y]", { y: [-360, 0] }, { duration: 0.55, ease: fall }],
       ["[data-ball-squash]", { scaleX: [1, 1.2, 1], scaleY: [1, 0.78, 1] }, { duration: 0.22, at: "<+0.5" }],
       ["[data-shadow]", { scale: [0.3, 1], opacity: [0, 0.9] }, { duration: 0.55, ease: fall, at: 0 }],
@@ -40,20 +41,11 @@ export function Splash({ onDone }: { onDone: () => void }) {
       ["[data-ball-y]", { y: 0 }, { duration: 0.3, ease: fall, at: 0.9 }],
       ["[data-shadow]", { scale: 1, opacity: 0.9 }, { duration: 0.3, ease: fall, at: 0.9 }],
       ["[data-ball-squash]", { scaleX: [1, 1.1, 1], scaleY: [1, 0.88, 1] }, { duration: 0.18, at: 1.16 }],
-      // 2. roll left into the slot, spinning by distance travelled
+      // 2. roll right into its slot, spinning by distance travelled, uncovering the name
       ["[data-ball-x]", { x: [off, 0] }, { duration: 0.95, ease: roll, at: 0.95 }],
-      ["[data-ball-spin]", { rotate: [0, -600] }, { duration: 0.95, ease: roll, at: 0.95 }],
-      // 3. letters appear as the ball passes them (right to left)
-      ...LETTERS.map(
-        (_, i) =>
-          [
-            `[data-letter="${LETTERS.length - 1 - i}"]`,
-            { opacity: [0, 1], y: [10, 0], filter: ["blur(6px)", "blur(0px)"] },
-            { duration: 0.32, ease: "easeOut", at: 1.08 + i * 0.1 },
-          ] satisfies AnimationSequence[number],
-      ),
-      // 4. the F lands last, the ball settles, the line underneath
-      ["[data-letter='f']", { opacity: [0, 1], x: [-14, 0], filter: ["blur(6px)", "blur(0px)"] }, { duration: 0.4, ease: "easeOut", at: 1.6 }],
+      ["[data-ball-spin]", { rotate: [0, 600] }, { duration: 0.95, ease: roll, at: 0.95 }],
+      ["[data-word]", { clipPath: ["inset(-20% 100% -20% 0)", "inset(-20% 0% -20% 0)"], opacity: [1, 1] }, { duration: 0.95, ease: roll, at: 0.95 }],
+      // 3. the ball settles, the line underneath
       ["[data-ball-squash]", { scaleX: [1, 1.06, 1], scaleY: [1, 0.94, 1] }, { duration: 0.2, at: 1.86 }],
       ["[data-shadow]", { opacity: 0 }, { duration: 0.3, at: 1.8 }],
       ["[data-tagline]", { opacity: [0, 1], y: [8, 0] }, { duration: 0.4, ease: "easeOut", at: 1.85 }],
@@ -76,28 +68,19 @@ export function Splash({ onDone }: { onDone: () => void }) {
     <motion.div
       ref={scope}
       role="status"
-      aria-label="فوتون داره باز میشه"
+      aria-label="لاکی فن داره باز میشه"
       exit={{ opacity: 0, scale: 1.04, filter: "blur(8px)" }}
       transition={{ duration: 0.35, ease: [0.2, 0.8, 0.2, 1] }}
       className="bg-dots fixed inset-0 z-50 flex flex-col items-center justify-center overflow-hidden bg-background"
     >
       <div aria-hidden="true" className="flex flex-col items-center">
-        {/* the wordmark is Latin and reads left to right; the ball rolls in from the right into the first O */}
-        <div lang="en" dir="ltr" className="flex items-end font-display text-[84px] leading-[0.8] font-bold italic uppercase">
-          <span data-letter="f" style={hidden}>
-            F
-          </span>
-
-          {/* the ball sits in the slot of the first O */}
-          <span className="relative mx-[3px] mb-[1px] size-[60px]">
-            <span
-              data-ball-x
-              className="absolute inset-0 block"
-              style={reduce ? undefined : { transform: "translateX(min(46vw, 230px))" }}
-            >
+        {/* the ball is the mark, at the start (right) of the name */}
+        <div className="flex items-center gap-3">
+          <span className="relative z-10 size-[56px] shrink-0">
+            <span data-ball-x className="absolute inset-0 block" style={reduce ? undefined : { transform: "translateX(-240px)" }}>
               <span
                 data-shadow
-                className="absolute -bottom-3 left-1/2 block h-2.5 w-[56px] -translate-x-1/2 rounded-[50%] bg-black blur-[3px]"
+                className="absolute -bottom-3 left-1/2 block h-2.5 w-[52px] -translate-x-1/2 rounded-[50%] bg-black blur-[3px]"
                 style={{ opacity: 0 }}
               />
               <span data-ball-y className="absolute inset-0 block" style={reduce ? undefined : { transform: "translateY(-360px)" }}>
@@ -110,12 +93,9 @@ export function Splash({ onDone }: { onDone: () => void }) {
               </span>
             </span>
           </span>
-
-          {LETTERS.map((l, i) => (
-            <span key={i} data-letter={i} style={hidden}>
-              {l}
-            </span>
-          ))}
+          <span data-word className="font-display text-[64px] leading-[1.25] font-extrabold whitespace-nowrap" style={reduce ? undefined : { clipPath: "inset(-20% 100% -20% 0)" }}>
+            لاکی فن
+          </span>
         </div>
 
         <p data-tagline className="mt-6 text-[15px] font-medium text-muted-foreground" style={hidden}>

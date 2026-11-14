@@ -20,7 +20,7 @@ import { formatNumber, formatSigned } from "@/lib/format";
 const SLOTS = 3;
 const fmt = formatNumber;
 const MODES = [
-  { id: "system", label: "سؤال‌های زندهٔ فوتون", desc: "خودمون وسط بازی می‌پرسیم" },
+  { id: "system", label: "سؤال‌های زندهٔ لاکی فن", desc: "خودمون وسط بازی می‌پرسیم" },
   { id: "friends", label: "سؤال‌های دوستان", desc: "هر کسی توی لیگ می‌تونه بپرسه" },
   { id: "pre", label: "پیش‌بینی پیش از بازی", desc: "نتیجه و گلزن‌ها قبل از شروع" },
 ] as const;

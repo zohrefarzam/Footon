@@ -76,7 +76,7 @@ export default function StyleguidePage() {
   return (
     <main className="mx-auto flex max-w-3xl flex-col gap-12 px-5 py-12">
       <header>
-        <p className="font-display text-lg font-bold text-primary">FOOTON</p>
+        <p className="font-display text-lg font-bold text-primary">لاکی فن</p>
         <h1 className="mt-1 text-4xl font-bold tracking-[-0.035em]">Design system</h1>
         <p className="mt-2 max-w-prose text-muted-foreground">
           Tokens and components used across the app. Rules live in <code className="font-mono text-foreground">AGENTS.md</code>.
@@ -105,7 +105,7 @@ export default function StyleguidePage() {
           <p className="text-[32px] leading-tight font-bold tracking-[-0.035em]">Call the next moment. — Geist 700</p>
           <p className="text-[15px] font-semibold">Body strong 15/600 — Geist</p>
           <p className="text-[13px] text-muted-foreground">Secondary 13/400 — muted-foreground</p>
-          <p className="font-mono text-xs">t.me/footon_bot?start=sun9k — Geist Mono</p>
+          <p className="font-mono text-xs">t.me/luckyfan_bot?start=sun9k — Geist Mono</p>
         </div>
       </Section>
 

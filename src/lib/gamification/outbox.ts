@@ -25,7 +25,7 @@ type OutboxState = {
   retryFailed(): Promise<void>;
 };
 
-const STORAGE = "footon_outbox";
+const STORAGE = "luckyfan_outbox";
 let queryClient: QueryClient | null = null;
 
 /** The provider hands over its client so results can land in the cache. */

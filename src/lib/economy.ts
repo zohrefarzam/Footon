@@ -1,8 +1,8 @@
 import { formatNumber, ltr } from "./format";
 
 /**
- * Footon's in-game economy: the fixed rules every coin screen reads from.
- * Source: "Footon internal economy" (strategy doc). Keep the numbers here so the
+ * Lucky Fan's in-game economy: the fixed rules every coin screen reads from.
+ * Source: "Lucky Fan internal economy" (strategy doc). Keep the numbers here so the
  * UI never hard-codes a price, a cap or a split.
  *
  * Three things never mix:

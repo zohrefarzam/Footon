@@ -37,7 +37,7 @@ export type LiveLeague = {
 };
 
 /**
- * A live match, laid out like a FotMob match page but played the Footon way:
+ * A live match, laid out like a FotMob match page but played the Lucky Fan way:
  * scoreboard with scorers → sticky section tabs. Predict comes first because
  * calling the next moment is the point; the football facts sit one tap away.
  */

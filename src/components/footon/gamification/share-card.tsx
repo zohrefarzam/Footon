@@ -36,7 +36,7 @@ function roundRect(ctx: CanvasRenderingContext2D, x: number, y: number, w: numbe
 /**
  * Draws a club as a 1080×1350 card (Telegram's tall image): dotted ground,
  * the club card with its frame, stadium stands, the kit, then name, level,
- * tier, streak and pinned badges, and the Footon mark. Pure drawing: give it
+ * tier, streak and pinned badges, and the Lucky Fan mark. Pure drawing: give it
  * any 2D context.
  */
 export function drawClubCard(ctx: CanvasRenderingContext2D, club: MyClub, tierName: string, fonts: CardFonts) {
@@ -130,13 +130,11 @@ export function drawClubCard(ctx: CanvasRenderingContext2D, club: MyClub, tierNa
     ctx.fillText(club.pinnedBadges.map((b) => b.name).join(" • "), end, line, w / 2);
   }
 
-  // mark: the Latin wordmark on the start corner, the line on the end
+  // mark: the name on the start corner, the line on the end
   ctx.fillStyle = C.fg;
-  ctx.font = `italic 700 60px ${fonts.display}`;
-  ctx.direction = "ltr";
+  ctx.font = `800 60px ${fonts.display}`;
   ctx.textAlign = "right";
-  ctx.fillText("FOOTON", W - 80, H - 120);
-  ctx.direction = "rtl";
+  ctx.fillText("لاکی فن", W - 80, H - 120);
   ctx.fillStyle = C.muted;
   ctx.font = `500 34px ${fonts.sans}`;
   ctx.textAlign = "left";
@@ -153,7 +151,7 @@ export async function renderClubCard(club: MyClub, tierName: string): Promise<Fi
   await document.fonts?.ready;
   drawClubCard(ctx, club, tierName, pageFonts());
   const blob = await new Promise<Blob | null>((res) => canvas.toBlob(res, "image/png"));
-  return blob ? new File([blob], "footon-club.png", { type: "image/png" }) : null;
+  return blob ? new File([blob], "luckyfan-club.png", { type: "image/png" }) : null;
 }
 
 /**

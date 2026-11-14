@@ -26,7 +26,7 @@ The visual reference is the Footon design canvas (7 artboards: Onboarding, Home,
 | Motion | `motion` (`motion/react`) for springs, layout and presence; CSS for simple loops |
 | Icons | `lucide-react` (stroke 2–2.4 in buttons). One exception: the dock uses Footon's own set in `components/footon/nav-icons.tsx` (outline 1.8 inactive, filled active) |
 | Language | **Persian only, right to left**: `<html lang="fa" dir="rtl">`, Radix `Direction.Provider dir="rtl"` in `app/providers.tsx`. See "Persian and RTL" |
-| Fonts | Vazirmatn FaNum (local woff2 in `src/fonts`, built by `scripts/build-fanum-font.py`: Persian script, every digit drawn as ۰–۹), Geist + Geist Mono (`geist` package) for Latin, Barlow Condensed (local woff2) for Latin display text |
+| Fonts | **Yekan Bakh FaNum** (Fontiran, licensed; local woff2 in `src/fonts`): the one typeface for UI and display, Persian and Latin, every digit drawn as ۰–۹. Weights on hand: 300, 700, 800, 900, 950 (400–500 render Light, 600 renders Bold until Regular/Medium/SemiBold are added). Geist Mono for codes; Geist and Barlow Condensed stay only as fallbacks |
 | Server state | TanStack Query (gamification data, in the browser; `app/providers.tsx`) |
 | Client state | Zustand, only for UI queues (celebrations, the prediction outbox) |
 | Validation | Zod: every gamification response is parsed before the UI sees it |
@@ -88,7 +88,7 @@ src/
       share.ts            share to a Telegram group (Mini App → Web Share → link)
       celebrations/       expand.ts (RewardResult → ordered moments) + store.ts (the queue)
       api/                client.ts (interface, HTTP client, Zod-validated wrapper), mock.ts + mock-rules.ts + mock-quests.ts + mock-shop.ts (in-memory MOCK SERVER), index.ts
-  fonts/                  Barlow Condensed woff2
+  fonts/                  Yekan Bakh FaNum woff2 (licensed), Barlow Condensed woff2 (fallback)
   proxy.ts                first-run redirect: `/` → `/welcome` until `footon_onboarded` is set
 ```
 
@@ -105,7 +105,7 @@ Rules:
 3. **One lime thing per view.** The lime primary is the single main action on screen (plus wins and "you"). Two lime CTAs side by side is a bug. The one exception is a Yes/No answer pair: Yes is lime, No is `secondary`.
 4. **No white buttons.** Primary = lime; everything else is dark (`secondary`, `outline`, `ghost`, `soft`).
 5. **Lists over boxes.** Group related rows inside *one* `Card` with hairline dividers (`CardRow`, `MatchRow`). Don't stack many small bordered cards.
-6. **Broadcast numbers.** Scores, minutes, coins, points, ranks and big stats use the display font (`font-display`: Persian digits from Vazirmatn, Latin from Barlow Condensed). It is what makes Footon feel like football and not a dashboard.
+6. **Broadcast numbers.** Scores, minutes, coins, points, ranks and big stats use the display font (`font-display`, Yekan Bakh in bold weights). It is what makes Footon feel like football and not a dashboard.
 7. **Learn by doing.** Teach with a real interaction (onboarding asks a sample question), not with explanatory paragraphs or numbered lists.
 8. **Motion confirms, never decorates.** Every animation answers "what just changed?" Springs for things you touch; ease-out for things that appear.
 9. **Not AI-generic.** No gradient washes, glowing blobs, emoji, left-border accent cards, "✨" sparkle icons or glassmorphism everywhere. Glass is allowed on exactly two surfaces: the dock and bottom sheets.
@@ -156,7 +156,7 @@ Accessibility for colour:
 
 | Role | Font / class | Size / weight | Example |
 | --- | --- | --- | --- |
-| Display numbers | `font-display` (Vazirmatn digits, Barlow for Latin) | 88 / 64 / 56 / 28 / 22 / 16, 700 | `+۴۵۰`, `۱ : ۱`, `زنده ۶۷'`, `۲٬۴۵۰`, `دوم` |
+| Display numbers | `font-display` (Yekan Bakh) | 88 / 64 / 56 / 28 / 22 / 16, 700 | `+۴۵۰`, `۱ : ۱`, `زنده ۶۷'`, `۲٬۴۵۰`, `دوم` |
 | Display title (rare) | `font-display italic uppercase` | 44, 700 | League name on the invite ticket |
 | Screen title | Geist | 26–32, 700, `tracking-[-0.03em]` | "Your matches" |
 | Question | Geist | 26, 700, `-0.03em`, `text-balance` | "Next corner before 75'?" |
@@ -365,7 +365,7 @@ From the Footon economy doc. Numbers live in `lib/economy.ts`; mock state in `mo
 
 The app is Persian only and laid out right to left. Home sits on the right of every fixture, the dock starts with خانه on the right, carousels peek from the left.
 
-- **Digits.** Every digit renders Persian (۰–۹): format numbers with `formatNumber` & co. (Persian digits, `٬` thousands separator, `٪`, `٫`). The FaNum font draws any stray Latin digit as Persian too, but formatted numbers also read right to screen readers. Mono (codes, invite links) keeps Latin digits.
+- **Digits.** Every digit renders Persian (۰–۹): format numbers with `formatNumber` & co. (Persian digits, `٬` thousands separator, `٪`, `٫`). Yekan Bakh FaNum draws any stray Latin digit as Persian too, but formatted numbers also read right to screen readers. Mono (codes, invite links) keeps Latin digits.
 - **Mixed runs.** Signs, minutes and boosts flip inside Persian text unless isolated: use `formatSigned` (`+۲۰`), `formatMinute` (`۶۷'`), `formatBoost` (`۲x`), `formatTimes` (`×۲`), or `ltr()` for anything else. Two sides of a fixture use `matchup(home, away)` so home stays first (right), even for Latin codes.
 - **Scores.** Put the two numbers in separate flex items (`flex items-center`), never one text run: `۱:۱` with a colon becomes one left-to-right number and puts home on the left.
 - **Separators.** Inline metadata uses `•`, never `·`: the Persian zero `۰` is a dot, so `۱٬۵۰۰ · ۴` reads as one number.

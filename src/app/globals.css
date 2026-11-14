@@ -143,12 +143,11 @@
   --radius-2xl: 1.375rem; /* 22px */
   --radius-3xl: 1.75rem; /* 28px */
 
-  /* Type: Vazirmatn FaNum first (Persian text, and every digit as ۰–۹), then
-     Geist for Latin UI text, Barlow Condensed for Latin display text (XP, LV).
-     Mono (codes, invite links) keeps Latin digits: Geist Mono comes first. */
-  --font-sans: var(--font-vazirmatn), var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
-  --font-mono: var(--font-geist-mono), var(--font-vazirmatn), ui-monospace, monospace;
-  --font-display: var(--font-vazirmatn), var(--font-barlow), "Arial Narrow", sans-serif;
+  /* Type: Yekan Bakh FaNum for everything (Persian, Latin, and every digit as
+     ۰–۹); Geist Mono for codes and invite links, which keep Latin digits. */
+  --font-sans: var(--font-yekan-bakh), var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), var(--font-yekan-bakh), ui-monospace, monospace;
+  --font-display: var(--font-yekan-bakh), var(--font-barlow), "Arial Narrow", sans-serif;
 }
 
 @theme {
@@ -238,6 +237,8 @@
   }
   body {
     @apply bg-background text-foreground font-sans antialiased;
+    /* Yekan Bakh FaNum: ss01 draws every digit (0–9 and ٠–٩) as a Persian digit */
+    font-feature-settings: "ss01";
   }
   /* Persian is a joined script: letter-spacing pulls the letters apart, and it
      has no capitals or italics. Tracking, uppercase and italic utilities stay

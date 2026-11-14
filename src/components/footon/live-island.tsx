@@ -83,17 +83,17 @@ export function LiveIsland({ coins: fallback, live }: { coins: number; live?: Is
             aria-expanded={open}
             aria-controls="island-question"
             aria-label={`زنده: ${live.home} ${formatNumber(live.score[0])}، ${live.away} ${formatNumber(live.score[1])}، دقیقهٔ ${formatNumber(live.minute)}. ${open ? "بستن" : "نمایش"} ${live.questionLabel}`}
-            className="flex h-11 min-w-0 flex-1 items-center gap-2.5 rounded-full ps-3 pe-2 outline-none focus-visible:ring-[3px] focus-visible:ring-ring/60"
+            className="flex h-11 min-w-0 flex-1 items-center gap-2 rounded-full ps-3 pe-2 outline-none focus-visible:ring-[3px] focus-visible:ring-ring/60"
           >
             <LiveDot />
-            <span className="font-display text-base font-bold text-live tabular-nums">{formatMinute(live.minute)}</span>
+            <span className="shrink-0 font-display text-base font-bold whitespace-nowrap text-live tabular-nums">{formatMinute(live.minute)}</span>
             {/* separate flex items so home sits on the right (its side in RTL) */}
             <span className="flex min-w-0 items-center gap-1.5 overflow-hidden font-display text-[17px] font-bold tracking-wide">
-              <span>{live.home}</span>
-              <span className="flex tabular-nums">
+              <span className="shrink-0 max-[359px]:hidden">{live.home}</span>
+              <span className="flex shrink-0 whitespace-nowrap tabular-nums">
                 {formatNumber(live.score[0])}–{formatNumber(live.score[1])}
               </span>
-              <span>{live.away}</span>
+              <span className="shrink-0 max-[359px]:hidden">{live.away}</span>
             </span>
             <span className="ms-auto flex shrink-0 items-center">
               <AnimatePresence mode="popLayout" initial={false}>
@@ -126,7 +126,7 @@ export function LiveIsland({ coins: fallback, live }: { coins: number; live?: Is
                     className="flex h-7 items-center rounded-full bg-primary px-2.5 text-xs font-bold text-primary-foreground"
                   >
                     {live.questionLabel}
-                    <span className="max-[360px]:hidden">&nbsp;باز</span>
+                    <span className="max-[420px]:hidden">&nbsp;باز</span>
                   </motion.span>
                 )}
               </AnimatePresence>

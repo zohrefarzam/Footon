@@ -17,19 +17,20 @@ const barlow = localFont({
 });
 
 /**
- * Persian text, and every digit drawn as a Persian digit (۰–۹): a "FaNum" build
- * of Vazirmatn (scripts/build-fanum-font.py). It holds no Latin letters, so
- * Latin falls through to Geist (UI) and Barlow Condensed (display).
+ * Yekan Bakh FaNum (Fontiran, licensed): the app's typeface for Persian and
+ * Latin, with every digit drawn as a Persian digit (۰–۹). The family ships
+ * Light, Bold, ExtraBold, Black and ExtraBlack; 400–500 text uses Light and
+ * 600 uses Bold until Regular, Medium and SemiBold are added here.
  */
-const vazirmatn = localFont({
-  variable: "--font-vazirmatn",
+const yekanBakh = localFont({
+  variable: "--font-yekan-bakh",
   display: "swap",
   src: [
-    { path: "../fonts/vazirmatn-fd-400.woff2", weight: "400", style: "normal" },
-    { path: "../fonts/vazirmatn-fd-500.woff2", weight: "500", style: "normal" },
-    { path: "../fonts/vazirmatn-fd-600.woff2", weight: "600", style: "normal" },
-    { path: "../fonts/vazirmatn-fd-700.woff2", weight: "700", style: "normal" },
-    { path: "../fonts/vazirmatn-fd-800.woff2", weight: "800", style: "normal" },
+    { path: "../fonts/yekan-bakh-fanum-300.woff2", weight: "300", style: "normal" },
+    { path: "../fonts/yekan-bakh-fanum-700.woff2", weight: "700", style: "normal" },
+    { path: "../fonts/yekan-bakh-fanum-800.woff2", weight: "800", style: "normal" },
+    { path: "../fonts/yekan-bakh-fanum-900.woff2", weight: "900", style: "normal" },
+    { path: "../fonts/yekan-bakh-fanum-950.woff2", weight: "950", style: "normal" },
   ],
 });
 
@@ -46,7 +47,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="fa" dir="rtl" className={`dark ${vazirmatn.variable} ${GeistSans.variable} ${GeistMono.variable} ${barlow.variable} h-full`}>
+    <html lang="fa" dir="rtl" className={`dark ${yekanBakh.variable} ${GeistSans.variable} ${GeistMono.variable} ${barlow.variable} h-full`}>
       <body className="min-h-full">
         <SplashGate>
           <Providers>{children}</Providers>

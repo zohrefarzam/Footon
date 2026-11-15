@@ -12,7 +12,7 @@ export default function QuestsPage() {
     <AppShell className="pt-3.5">
       <header className="flex items-center gap-3">
         <BackButton href="/" />
-        <h1 className="text-[26px] font-bold tracking-[-0.03em]">مأموریت‌ها</h1>
+        <h1 className="text-[22px] leading-tight font-bold">مأموریت‌ها</h1>
       </header>
       <QuestList kinds={["daily"]} title="امروز" />
       <QuestList kinds={["weekly"]} title="این هفته" feature="weeklyQuests" />

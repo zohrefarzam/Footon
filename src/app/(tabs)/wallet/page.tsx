@@ -25,7 +25,7 @@ export default function WalletPage() {
   return (
     <AppShell>
       <header className="flex items-center justify-between gap-3">
-        <h1 className="text-[26px] font-bold tracking-[-0.03em]">کیف پول</h1>
+        <h1 className="text-[22px] leading-tight font-bold">کیف پول</h1>
         <Button asChild variant="secondary" size="sm" className="h-10 rounded-sm px-3.5">
           <Link href="/shop">
             <ShoppingBag aria-hidden="true" />

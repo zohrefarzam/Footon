@@ -13,6 +13,7 @@ import { cn, ordinal } from "@/lib/utils";
 import { BoostBadge } from "./boost-badge";
 import { LeagueBadge } from "./league-badge";
 import { LiveDot } from "./live";
+import { SectionHeading } from "./section-heading";
 import { SegmentedTabs } from "./segmented-tabs";
 import { formatNumber, matchup } from "@/lib/format";
 import { matchWhen } from "@/lib/dates";
@@ -35,7 +36,8 @@ export function ChallengeRow({ c }: { c: ChallengeWithMatch }) {
   const m = c.match;
   const live = m.status === "live";
   const expired = c.status === "expired";
-  const when = matchWhen(m);
+  // a row is tight: today's kickoff reads as just the time, like a fixtures list
+  const when = m.status === "upcoming" && (!m.day || m.day === "امروز") && m.kickoff ? m.kickoff : matchWhen(m);
   return (
     <Link
       href={challengeHref(c)}
@@ -53,14 +55,18 @@ export function ChallengeRow({ c }: { c: ChallengeWithMatch }) {
             {matchup(m.home.code, m.away.code)}
           </span>
           <span className={cn("shrink-0 font-display text-[13px] font-bold", live && "text-live")}>{when}</span>
-          <span className="truncate">
-            • {c.mine ? "ساختهٔ تو" : c.from ? `از ${c.from.name}` : ""} • ورودی {formatCoins(c.entry)}
+          <span className="shrink-0">•</span>
+          <span className="flex shrink-0 items-center gap-0.5 font-display text-[13px] font-bold text-live">
+            <span className="sr-only">ورودی</span>
+            {formatCoins(c.entry)}
+            <span aria-hidden="true" className="text-[11px] max-[359px]:hidden">C</span>
           </span>
+          <span className="sr-only">• {c.mine ? "ساختهٔ تو" : c.from ? `از ${c.from.name}` : ""}</span>
         </p>
       </div>
       <AvatarGroup aria-label={`${formatNumber(c.members.length)} بازیکن`} className="max-[359px]:hidden">
-        {c.members.slice(0, 4).map((x, i) => (
-          <Avatar key={i} className="size-6 ring-surface">
+        {c.members.slice(0, 3).map((x, i) => (
+          <Avatar key={i} className="size-[22px] ring-surface">
             <AvatarFallback className={cn("text-[11px]", x === YOU_INITIAL && "bg-primary text-primary-foreground")}>{x}</AvatarFallback>
           </Avatar>
         ))}
@@ -91,7 +97,8 @@ export function ChallengeList({ challenges }: { challenges: ChallengeWithMatch[]
   const [seg, setSeg] = useState<Segment>("عضوی");
   const list = challenges.filter((c) => inSegment[seg].includes(c.status));
   return (
-    <section aria-label="چالش‌های تو" className="flex flex-col gap-2.5">
+    <section aria-labelledby="my-challenges" className="flex flex-col gap-2.5">
+      <SectionHeading id="my-challenges" title="چالش‌های من" />
       <SegmentedTabs options={SEGMENTS} value={seg} onValueChange={setSeg} label="چالش‌ها" />
       <div aria-live="polite">
         {list.length ? (

@@ -20,7 +20,7 @@ export default function InvitesPage() {
             <ChevronLeft className="rtl:rotate-180" />
           </Link>
         </Button>
-        <h1 className="text-[26px] font-bold tracking-[-0.03em]">دعوت‌ها</h1>
+        <h1 className="text-[22px] leading-tight font-bold">دعوت‌ها</h1>
       </header>
 
       <ul className="flex flex-col divide-y divide-line overflow-hidden rounded-[20px] border border-line bg-surface">

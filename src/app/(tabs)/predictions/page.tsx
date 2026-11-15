@@ -137,7 +137,7 @@ export default function PredictionsPage() {
   return (
     <AppShell>
       <header className="flex items-baseline justify-between gap-3">
-        <h1 className="text-[26px] font-bold tracking-[-0.03em]">پیش‌بینی‌ها</h1>
+        <h1 className="text-[22px] leading-tight font-bold">پیش‌بینی‌ها</h1>
         {open.length > 0 && (
           <span className="text-[13px] text-muted-foreground">
             <span className="font-display text-base font-bold text-foreground">{formatNumber(open.length)}</span> بازی باز

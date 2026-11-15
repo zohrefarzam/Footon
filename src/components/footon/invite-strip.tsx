@@ -5,6 +5,8 @@ import Link from "next/link";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { Check, ChevronRight, X } from "lucide-react";
 
+import { SectionHeading } from "./section-heading";
+
 import { Avatar, AvatarFallback, AvatarGroup } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import type { Invite, Match } from "@/lib/mock-data";
@@ -36,24 +38,21 @@ export function InviteStrip({ invites }: { invites: InviteWithMatch[] }) {
           transition={{ duration: reduce ? 0 : 0.3, ease: [0.2, 0.8, 0.2, 1] }}
           className="flex flex-col gap-2.5"
         >
-          <h2 id="invites-title" className="flex items-center gap-2 text-[13px] font-medium text-muted-foreground">
-            دعوت‌ها
-            {pending > 0 && (
-              <span
-                className="flex h-5 min-w-5 items-center justify-center rounded-full bg-surface-3 px-1.5 font-display text-[13px] font-bold text-foreground"
-                aria-label={`${formatNumber(pending)} در انتظار`}
-              >
-                {formatNumber(pending)}
-              </span>
-            )}
-            <Link
-              href="/invites"
-              className="ms-auto -my-3 flex h-11 items-center gap-0.5 rounded-md ps-2 font-semibold text-muted-foreground outline-none hover:text-foreground focus-visible:ring-[3px] focus-visible:ring-ring/60"
-            >
-              همه
-              <ChevronRight className="size-4 rtl:rotate-180" aria-hidden="true" />
-            </Link>
-          </h2>
+          <SectionHeading
+            id="invites-title"
+            title="دعوت‌ها"
+            meta={
+              pending > 0 && (
+                <span
+                  className="flex h-5 min-w-5 items-center justify-center rounded-full bg-surface-3 px-1.5 font-display text-[12px] leading-none font-bold"
+                  aria-label={`${formatNumber(pending)} در انتظار`}
+                >
+                  {formatNumber(pending)}
+                </span>
+              )
+            }
+            action={{ label: "همه", href: "/invites" }}
+          />
 
           <ul className="-mx-5 flex snap-x snap-mandatory scroll-px-5 gap-2.5 overflow-x-auto px-5 pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
             <AnimatePresence initial={false} mode="popLayout">

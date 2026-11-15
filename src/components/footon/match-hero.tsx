@@ -12,6 +12,7 @@ import { LiveMinute } from "./live";
 import { PitchMarkings } from "./pitch-markings";
 import { TeamCrest } from "./team-crest";
 import { formatNumber, matchup } from "@/lib/format";
+import { HostMark } from "./host-mark";
 
 /**
  * Home's match centre: the one fixture that matters most right now (your live
@@ -83,7 +84,7 @@ export function MatchHero({
                 <span className="max-[359px]:hidden">{t.name}</span>
                 <span className="font-display tracking-wide min-[360px]:hidden">{t.code}</span>
               </span>
-              <span className="text-[11px] font-semibold tracking-[0.08em] text-muted-foreground uppercase">{i === 0 ? "میزبان" : "میهمان"}</span>
+              <HostMark side={i === 0 ? "home" : "away"} label />
             </div>
           ))}
 

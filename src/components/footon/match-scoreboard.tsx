@@ -7,6 +7,7 @@ import { LiveMinute } from "./live";
 import { PitchMarkings } from "./pitch-markings";
 import { TeamCrest } from "./team-crest";
 import { formatMinute, formatNumber } from "@/lib/format";
+import { HostMark } from "./host-mark";
 
 /**
  * The big scoreboard at the top of every match page, on the dotted canvas:
@@ -43,6 +44,7 @@ export function MatchScoreboard({ match: m }: { match: Match }) {
           return (
             <div key={side} className={cn("flex flex-col items-center gap-1.5 text-center", i === 1 && "col-start-3 row-start-1")}>
               <TeamCrest code={t.code} colors={t.colors} size="xl" />
+              <HostMark side={side} label />
               <span className="flex items-center gap-1.5 text-sm font-bold">
                 {t.name}
                 {reds

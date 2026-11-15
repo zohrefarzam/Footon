@@ -9,16 +9,20 @@ import { cn } from "@/lib/utils";
 import { PitchMarkings } from "./pitch-markings";
 import { TeamCrest } from "./team-crest";
 import { formatNumber } from "@/lib/format";
+import { HostMark } from "./host-mark";
 
 /** One side's stepper: − big number +. The number rolls up or down as it changes. */
-function Stepper({ team, value, set, active }: { team: Team; value: number; set: (n: number) => void; active: boolean }) {
+function Stepper({ team, side, value, set, active }: { team: Team; side: "home" | "away"; value: number; set: (n: number) => void; active: boolean }) {
   const reduce = useReducedMotion();
   const btn =
     "flex size-11 items-center justify-center rounded-md border border-line-strong bg-surface-3 text-foreground outline-none transition-[transform,background-color] duration-150 ease-spring hover:bg-surface-4 active:scale-90 disabled:opacity-35 focus-visible:ring-[3px] focus-visible:ring-ring/60";
   return (
     <div className="flex min-w-0 flex-col items-center gap-2" role="group" aria-label={`گل‌های ${team.name}`}>
       <TeamCrest code={team.code} colors={team.colors} size="lg" />
-      <span className="w-full truncate text-center text-[13px] font-semibold">{team.name}</span>
+      <span className="flex w-full min-w-0 items-center justify-center gap-1">
+        <HostMark side={side} />
+        <span className="truncate text-[13px] font-semibold">{team.name}</span>
+      </span>
       <div className="flex items-center gap-1 max-[379px]:flex-col-reverse">
         <button type="button" className={btn} onClick={() => set(value - 1)} disabled={value <= 0} aria-label={`یک گل کمتر برای ${team.name}`}>
           <Minus className="size-4" strokeWidth={2.6} />
@@ -74,11 +78,11 @@ export function ScorePicker({
         <span className="text-xs text-muted-foreground">{value ? "در برگهٔ پیش‌بینی‌ات" : "+ را بزن تا بگی"}</span>
       </div>
       <div className="mt-4 grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-end gap-1">
-        <Stepper team={home} value={h} active={!!value} set={(n) => onChange([clamp(n), a])} />
+        <Stepper team={home} side="home" value={h} active={!!value} set={(n) => onChange([clamp(n), a])} />
         <span aria-hidden="true" className="pb-3 font-display text-[40px] leading-none font-bold text-dim">
           :
         </span>
-        <Stepper team={away} value={a} active={!!value} set={(n) => onChange([h, clamp(n)])} />
+        <Stepper team={away} side="away" value={a} active={!!value} set={(n) => onChange([h, clamp(n)])} />
       </div>
     </section>
   );

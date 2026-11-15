@@ -3,6 +3,7 @@ import { cn } from "@/lib/utils";
 import { Football } from "./football";
 import { TeamCrest } from "./team-crest";
 import { formatNumber } from "@/lib/format";
+import { HostMark } from "./host-mark";
 
 const posName: Record<string, string> = {
   GK: "دروازه‌بان",
@@ -100,11 +101,12 @@ function Side({ team, lineup, events, top }: { team: Team; lineup: Lineup; event
   );
 }
 
-function TeamTag({ team, formation, className }: { team: Team; formation: string; className?: string }) {
+function TeamTag({ team, side, formation, className }: { team: Team; side: "home" | "away"; formation: string; className?: string }) {
   return (
     <div aria-hidden="true" className={cn("absolute inset-x-0 flex items-center gap-2 px-4", className)}>
       <TeamCrest code={team.code} colors={team.colors} size="xs" />
       <span className="text-[13px] font-semibold text-[#e1ebe5]">{team.name}</span>
+      <HostMark side={side} label className="text-white/60" />
       <span className="ms-auto font-display text-[15px] font-bold text-white/60">{formation}</span>
     </div>
   );
@@ -132,7 +134,7 @@ export function MatchLineups({
       aria-label="ترکیب اصلی دو تیم"
       className="relative -mx-1 overflow-hidden rounded-2xl border border-[#1c2a1f] bg-[repeating-linear-gradient(180deg,var(--pitch)_0_9%,var(--pitch-2)_9%_18%)]"
     >
-      <TeamTag team={home} formation={lineups.home.formation} className="top-0 h-10 border-b border-pitch-line bg-black/25" />
+      <TeamTag team={home} side="home" formation={lineups.home.formation} className="top-0 h-10 border-b border-pitch-line bg-black/25" />
 
       <div className="relative mx-3 my-12 h-[600px]">
         {/* markings */}
@@ -151,7 +153,7 @@ export function MatchLineups({
         <Side team={away} lineup={lineups.away} events={events} top={false} />
       </div>
 
-      <TeamTag team={away} formation={lineups.away.formation} className="bottom-0 h-10 border-t border-pitch-line bg-black/25" />
+      <TeamTag team={away} side="away" formation={lineups.away.formation} className="bottom-0 h-10 border-t border-pitch-line bg-black/25" />
     </section>
   );
 }

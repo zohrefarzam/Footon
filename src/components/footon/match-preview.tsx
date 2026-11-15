@@ -6,6 +6,7 @@ import type { FormResult, Match, MatchPreview, Team } from "@/lib/mock-data";
 import { cn } from "@/lib/utils";
 import { TeamCrest } from "./team-crest";
 import { formatNumber } from "@/lib/format";
+import { HostMark } from "./host-mark";
 
 const icon = "size-[18px] shrink-0 text-muted-foreground";
 
@@ -82,10 +83,11 @@ export function TeamForm({ home, away, form }: { home: Team; away: Team; form: M
       {([
         [home, form.home],
         [away, form.away],
-      ] as const).map(([t, results]) => (
+      ] as const).map(([t, results], i) => (
         <CardRow key={t.code} className="py-3">
           <TeamCrest code={t.code} colors={t.colors} size="xs" />
-          <span className="min-w-0 flex-1 truncate text-[15px] font-semibold">{t.name}</span>
+          <span className="min-w-0 truncate text-[15px] font-semibold">{t.name}</span>
+          <HostMark side={i === 0 ? "home" : "away"} className="me-auto" />
           <ol className="flex gap-1" aria-label={`وضعیت ${t.name}، از قدیمی به جدید: ${results.map((r) => formLabel[r]).join("، ")}`}>
             {results.map((r, i) => (
               <li

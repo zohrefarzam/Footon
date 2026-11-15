@@ -124,7 +124,7 @@ export function MatchRow({
 
   // symmetric: an edge column on each side, so the score / kickoff box sits on the card's centre line
   const row =
-    "grid grid-cols-[38px_minmax(0,1fr)_auto_minmax(0,1fr)_38px] items-center gap-2 px-1.5 py-2.5 max-[359px]:grid-cols-[30px_minmax(0,1fr)_auto_minmax(0,1fr)_30px] max-[359px]:gap-1 max-[359px]:px-1";
+    "grid grid-cols-[44px_minmax(0,1fr)_auto_minmax(0,1fr)_44px] items-center gap-1.5 px-1.5 py-2.5 max-[359px]:grid-cols-[30px_minmax(0,1fr)_auto_minmax(0,1fr)_30px] max-[359px]:gap-1 max-[359px]:px-1";
 
   return (
     <div className={cn("[&+&]:border-t [&+&]:border-line", className)}>

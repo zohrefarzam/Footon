@@ -18,7 +18,18 @@ import { matchWhen } from "@/lib/dates";
  * an amber flame for a hot streak (or calls made, before kickoff), else a chevron.
  * Names fall back to 3-letter codes on narrow screens.
  */
-export function MatchRow({ match, href, className }: { match: Match; href?: string; className?: string }) {
+export function MatchRow({
+  match,
+  href,
+  showBoost = true,
+  className,
+}: {
+  match: Match;
+  href?: string;
+  /** Off where every row is a big match and the section header already says so (Home's big fixtures). */
+  showBoost?: boolean;
+  className?: string;
+}) {
   const live = match.status === "live";
   const done = match.status === "finished";
   const upcoming = match.status === "upcoming";
@@ -47,12 +58,19 @@ export function MatchRow({ match, href, className }: { match: Match; href?: stri
 
   const body = (
     <>
+      {/* start edge: the boost tag on big matches (balances the "you" column on the end edge) */}
+      <span className="flex justify-center">
+        {showBoost && match.boost && !done && (
+          <span className="rounded-full bg-live-soft px-1.5 py-0.5 font-display text-xs leading-none font-bold text-live">{formatBoost(match.boost)}</span>
+        )}
+      </span>
+
       {team(0)}
 
       {/* centre: score or kickoff, with the minute / day / FT underneath */}
       <span
         className={cn(
-          "flex h-11 w-[58px] flex-col items-center justify-center gap-0.5 rounded-sm",
+          "flex h-11 w-[60px] flex-col items-center justify-center gap-1 rounded-sm max-[359px]:w-[54px]",
           live ? "bg-live-soft" : done ? "bg-surface-2" : "",
         )}
       >
@@ -76,10 +94,7 @@ export function MatchRow({ match, href, className }: { match: Match; href?: stri
           ) : done ? (
             <span className="text-muted-foreground">پایان</span>
           ) : (
-            <>
-              {match.boost && <span className="font-display text-xs text-live">{formatBoost(match.boost)}</span>}
-              <span className="font-medium text-muted-foreground">{match.day ?? "امروز"}</span>
-            </>
+            <span className="font-medium text-muted-foreground">{match.day ?? "امروز"}</span>
           )}
         </span>
       </span>
@@ -87,17 +102,17 @@ export function MatchRow({ match, href, className }: { match: Match; href?: stri
       {team(1)}
 
       {/* end: your stake if you're in (points + hot-streak flame, or calls made), else a chevron */}
-      <span className="flex flex-col items-end justify-center gap-1">
+      <span className="flex flex-col items-center justify-center gap-1">
         {you ? (
           upcoming ? (
             <>
               <span className="font-display text-[15px] leading-none font-bold text-primary">{formatNumber(you.calls)}</span>
-              <span className="text-[11px] leading-none text-muted-foreground">پیش‌بینی</span>
+              <span className="text-[11px] leading-none text-muted-foreground max-[359px]:hidden">پیش‌بینی</span>
             </>
           ) : (
             <>
               <span className="font-display text-[15px] leading-none font-bold text-primary">{formatSigned(you.points)}</span>
-              {hot ? <StreakFlame count={you.streak} /> : <span className="text-[11px] leading-none text-muted-foreground">امتیاز</span>}
+              {hot ? <StreakFlame count={you.streak} /> : <span className="text-[11px] leading-none text-muted-foreground max-[359px]:hidden">امتیاز</span>}
             </>
           )
         ) : href ? (
@@ -107,7 +122,9 @@ export function MatchRow({ match, href, className }: { match: Match; href?: stri
     </>
   );
 
-  const row = "grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)_38px] items-center gap-1.5 py-2 ps-2.5 pe-3";
+  // symmetric: an edge column on each side, so the score / kickoff box sits on the card's centre line
+  const row =
+    "grid grid-cols-[38px_minmax(0,1fr)_auto_minmax(0,1fr)_38px] items-center gap-2 px-1.5 py-2.5 max-[359px]:grid-cols-[30px_minmax(0,1fr)_auto_minmax(0,1fr)_30px] max-[359px]:gap-1 max-[359px]:px-1";
 
   return (
     <div className={cn("[&+&]:border-t [&+&]:border-line", className)}>

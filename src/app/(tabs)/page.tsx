@@ -28,19 +28,21 @@ export default function HomePage() {
       <PromoCarousel promos={promos} />
 
       {big.length > 0 ? (
-        <section aria-labelledby="home-big" className="flex flex-col gap-2.5">
-          <SectionHeading id="home-big" title="بازی‌های بزرگ" meta={
-              <>
-                <BoostBadge label="بردها" className="max-[359px]:hidden" />
-                <BoostBadge className="min-[360px]:hidden" />
-              </>
-            } action={{ label: "همهٔ بازی‌ها", href: "/live" }} />
-          <Card className="overflow-hidden">
+        <Card className="overflow-hidden">
+          <section aria-labelledby="home-big">
+            {/* the heading is the card's header, so the title and its matches read as one block */}
+            <SectionHeading
+              id="home-big"
+              title="بازی‌های بزرگ"
+              meta={<BoostBadge label="بردها" className="max-[359px]:hidden" />}
+              action={{ label: "همهٔ بازی‌ها", href: "/live" }}
+              className="border-b border-line ps-4 pe-3 pt-3.5 pb-3"
+            />
             {big.map((m) => (
-              <MatchRow key={m.id} match={m} href={m.status === "live" && m.league ? "/play" : `/match/${m.id}`} />
+              <MatchRow key={m.id} match={m} showBoost={false} href={m.status === "live" && m.league ? "/play" : `/match/${m.id}`} />
             ))}
-          </Card>
-        </section>
+          </section>
+        </Card>
       ) : (
         <EmptyState title="فعلاً بازی بزرگی نیست" body="همهٔ بازی‌ها توی بخش زنده‌ست. یکی را انتخاب کن و پیش‌بینی‌ات را بکن." action={{ label: "دیدن بازی‌ها", href: "/live" }} />
       )}

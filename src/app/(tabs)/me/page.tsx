@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ChevronRight, Settings, UserRound } from "lucide-react";
+import { UserRound } from "lucide-react";
 
 import { AppShell } from "@/components/footon/app-shell";
 import { RankStrip } from "@/components/footon/division-card";
@@ -9,75 +9,50 @@ import { MyClubLink } from "@/components/footon/gamification/club-page";
 import { LevelCard } from "@/components/footon/gamification/level-card";
 import { PinnedBadges } from "@/components/footon/gamification/pinned-badges";
 import { StreakCounter } from "@/components/footon/gamification/streak";
-import { Button } from "@/components/ui/button";
+import { PitchMarkings } from "@/components/footon/pitch-markings";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { clubDirectory, division, profile, recentForm } from "@/lib/mock-data";
 import { ordinal } from "@/lib/utils";
-import { formatBoost, formatNumber } from "@/lib/format";
+import { formatNumber } from "@/lib/format";
 
 export default function MePage() {
   const wins = recentForm.filter((r) => r === "W").length;
   const losses = recentForm.filter((r) => r === "L").length;
   const voids = recentForm.length - wins - losses;
-  const rate = Math.round((wins / Math.max(1, wins + losses)) * 100);
   const RANK = division.rows.find((r) => r.you)?.rank ?? division.size;
   const OF = division.size;
 
-  const stats = [
-    { label: "درست", value: <>{formatNumber(rate)}<span className="text-[15px] opacity-60">٪</span></> },
-    { label: "برد", value: formatNumber(wins) },
-    { label: `بوست ${formatBoost(2)}`, value: formatNumber(2) },
-  ];
-
   return (
     <AppShell className="gap-4 pt-3.5">
-      {/* no title bar: the dock names the tab. ponytail: one hero + tabs instead of eight stacked cards */}
+      {/* no title bar: the dock names the tab. ponytail: the division card + tabs instead of eight stacked cards */}
       <h1 className="sr-only">پروفایل</h1>
 
-      {/* the silver division card: everything you check most, one glance, no scroll */}
+      {/* Silver division card — a silver trading card, tilts slightly on hover */}
       <div className="group perspective-[900px]">
         <section className="relative isolate overflow-hidden rounded-3xl bg-silver p-5 text-background shadow-[0_24px_50px_-24px_rgb(201_212_206/0.35)] transition-transform duration-500 ease-spring-soft group-hover:-translate-y-0.5 group-hover:rotate-x-6 group-hover:-rotate-y-8 [--pitch-line:rgb(6_20_15/0.12)]">
-          <div className="flex items-start justify-between gap-3">
-            <div className="flex items-center gap-3">
-              <span className="flex size-12 items-center justify-center rounded-[14px] bg-background text-silver" aria-hidden="true">
-                <UserRound className="size-6" strokeWidth={1.8} />
-              </span>
-              <div>
-                <p className="text-[15px] font-bold">{profile.name}</p>
-                <p className="text-xs font-semibold opacity-70">دستهٔ {division.name} • هفتهٔ {formatNumber(division.week)}</p>
-              </div>
+          <PitchMarkings variant="box" className="-z-10" />
+          <div className="flex items-start justify-between">
+            <div>
+              <p className="text-[11px] font-bold tracking-[0.12em]">دستهٔ {division.name}</p>
+              <p className="mt-2 font-display text-[64px] leading-[0.95] font-bold">{formatNumber(profile.points)}</p>
+              <p className="text-[13px] font-semibold opacity-70">کل امتیاز</p>
             </div>
-            <Button variant="ghost" size="icon" aria-label="تنظیمات" className="-me-2 -mt-1.5 size-10 text-background hover:bg-background/10">
-              <Settings />
-            </Button>
+            <span className="flex size-[60px] items-center justify-center rounded-[18px] bg-background text-silver" aria-hidden="true">
+              <UserRound className="size-7" strokeWidth={1.8} />
+            </span>
           </div>
-
-          <div className="mt-4 flex items-end justify-between gap-3">
-            <p className="min-w-0 font-display text-[56px] leading-[0.9] font-bold max-[359px]:text-[44px]">
-              {formatNumber(profile.points)}
-              <span className="ms-1.5 text-[13px] font-semibold opacity-70">امتیاز</span>
-            </p>
-            <Link
-              href="/leaderboard"
-              aria-label={`رتبهٔ ${ordinal(RANK)} از ${formatNumber(OF)}، دیدن جدول`}
-              className="flex h-11 shrink-0 items-center gap-1 rounded-full bg-background px-3.5 text-silver outline-none transition-transform duration-150 ease-spring focus-visible:ring-[3px] focus-visible:ring-background/40 active:scale-95"
-            >
-              <span className="font-display text-[17px] font-bold">{ordinal(RANK)}</span>
-              <span className="text-xs font-semibold opacity-70 max-[359px]:hidden">از {formatNumber(OF)}</span>
-              <ChevronRight className="size-4 opacity-70 rtl:rotate-180" aria-hidden="true" />
-            </Link>
+          <div className="mt-[18px]">
+            <div className="flex justify-between text-xs font-semibold">
+              <span>
+                {ordinal(RANK)} از {formatNumber(OF)} • هفتهٔ {formatNumber(division.week)}
+              </span>
+              <Link href="/leaderboard" className="-my-3 py-3 underline underline-offset-3">
+                دیدن جدول
+              </Link>
+            </div>
+            <RankStrip rank={RANK} size={OF} promote={division.promote} relegate={division.relegate} tone="light" className="mt-2" />
           </div>
-          <RankStrip rank={RANK} size={OF} promote={division.promote} relegate={division.relegate} tone="light" className="mt-3" />
-
-          <dl className="mt-4 grid grid-cols-3 gap-2 text-center">
-            {stats.map((st) => (
-              <div key={st.label} className="flex flex-col-reverse rounded-xl bg-background/[0.07] py-2">
-                <dt className="text-[11px] font-semibold opacity-70">{st.label}</dt>
-                <dd className="font-display text-[22px] leading-tight font-bold">{st.value}</dd>
-              </div>
-            ))}
-          </dl>
         </section>
       </div>
 

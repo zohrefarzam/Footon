@@ -26,7 +26,7 @@ The visual reference is the Lucky Fan design canvas (7 artboards: Onboarding, Ho
 | Motion | `motion` (`motion/react`) for springs, layout and presence; CSS for simple loops |
 | Icons | `lucide-react` (stroke 2–2.4 in buttons). One exception: the dock uses Lucky Fan's own set in `components/footon/nav-icons.tsx` (outline 1.8 inactive, filled active) |
 | Language | **Persian only, right to left**: `<html lang="fa" dir="rtl">`, Radix `Direction.Provider dir="rtl"` in `app/providers.tsx`. See "Persian and RTL" |
-| Fonts | **Yekan Bakh** variable (Fontiran, licensed; `src/fonts/yekan-bakh-vf.woff2`): the one typeface for UI and display, Persian and Latin, every weight from one file. `ss01` (on for `body`) draws every digit as ۰–۹. The file has an `avar` axis map so standard CSS weights hit the named styles (400 Regular, 500 Medium, 600 SemiBold, 700 Bold, 800 ExtraBold, 900 Black); keep using Tailwind's `font-*` weights. Geist Mono for codes; Geist and Barlow Condensed stay only as fallbacks |
+| Fonts | **Yekan Bakh** (Fontiran, licensed): the one typeface for UI and display, Persian and Latin. Static files per weight, `src/fonts/yekan-bakh-{400,500,600,700,800,900}.woff2` (Regular, Medium, SemiBold, Bold, ExtraBold, Black), cut from the variable master with the `ss01` Persian digits baked into the cmap, so every digit draws as ۰–۹ without relying on a feature. Don't go back to the variable file: its `avar` remap isn't honoured by Chrome on macOS, so weights render wrong there. Keep using Tailwind's `font-*` weights; nothing under 400. Geist Mono for codes; Geist and Barlow Condensed stay only as fallbacks |
 | Server state | TanStack Query (gamification data, in the browser; `app/providers.tsx`) |
 | Client state | Zustand, only for UI queues (celebrations, the prediction outbox) |
 | Validation | Zod: every gamification response is parsed before the UI sees it |
@@ -90,7 +90,7 @@ src/
       share.ts            share to a Telegram group (Mini App → Web Share → link)
       celebrations/       expand.ts (RewardResult → ordered moments) + store.ts (the queue)
       api/                client.ts (interface, HTTP client, Zod-validated wrapper), mock.ts + mock-rules.ts + mock-quests.ts + mock-shop.ts (in-memory MOCK SERVER), index.ts
-  fonts/                  Yekan Bakh variable woff2 (licensed), Barlow Condensed woff2 (fallback)
+  fonts/                  Yekan Bakh static woff2 per weight (licensed), Barlow Condensed woff2 (fallback)
   proxy.ts                first-run redirect: `/` → `/welcome` until `luckyfan_onboarded` is set
 ```
 

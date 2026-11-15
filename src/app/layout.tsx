@@ -17,16 +17,24 @@ const barlow = localFont({
 });
 
 /**
- * Yekan Bakh (Fontiran, licensed), variable: one file for every weight, the
- * app's typeface for Persian and Latin. Its `ss01` feature (on in globals.css)
- * draws every digit as Persian (۰–۹). The file carries an axis map so CSS
- * weights mean what they say: 400 = Regular, 600 = SemiBold, 700 = Bold
- * (the font's own scale puts them at 325, 450 and 600).
+ * Yekan Bakh (Fontiran, licensed): the app's typeface for Persian and Latin.
+ * Static files, one per weight (400 Regular … 900 Black), cut from the
+ * variable master with the `ss01` digits baked in, so every digit draws as
+ * Persian (۰–۹) and every weight renders the same in every browser. The
+ * variable file relied on an `avar` remap that Chrome on macOS ignores, which
+ * left weights wrong there.
  */
 const yekanBakh = localFont({
   variable: "--font-yekan-bakh",
   display: "swap",
-  src: [{ path: "../fonts/yekan-bakh-vf.woff2", weight: "1 1000", style: "normal" }],
+  src: [
+    { path: "../fonts/yekan-bakh-400.woff2", weight: "400", style: "normal" },
+    { path: "../fonts/yekan-bakh-500.woff2", weight: "500", style: "normal" },
+    { path: "../fonts/yekan-bakh-600.woff2", weight: "600", style: "normal" },
+    { path: "../fonts/yekan-bakh-700.woff2", weight: "700", style: "normal" },
+    { path: "../fonts/yekan-bakh-800.woff2", weight: "800", style: "normal" },
+    { path: "../fonts/yekan-bakh-900.woff2", weight: "900", style: "normal" },
+  ],
 });
 
 export const metadata: Metadata = {

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
+import { formatNumber } from "@/lib/format";
 import { cn } from "@/lib/utils";
 import { LiveDot } from "./live";
 import { ChallengesIcon, HomeIcon, LiveIcon, PredictionsIcon, ProfileIcon, type NavIconProps } from "./nav-icons";
@@ -19,10 +20,11 @@ const items: Item[] = [
 
 /**
  * Floating glass dock, 5 tabs: Home • Challenges • Predictions • Live • Profile. Active = filled icon + white label + lime dot.
- * The Live tab carries a pulsing amber dot while a match is on.
+ * The Live tab carries a pulsing amber dot while a match is on; the Challenges tab carries the count of
+ * pending league invites as a small neutral badge (neutral: an invite is news, not a loss, a live moment or a CTA).
  * Rendered once by `app/(tabs)/layout.tsx`; hidden in focus mode.
  */
-export function Dock({ live = false, className }: { live?: boolean; className?: string }) {
+export function Dock({ live = false, invites = 0, className }: { live?: boolean; invites?: number; className?: string }) {
   const pathname = usePathname();
 
   return (
@@ -36,12 +38,14 @@ export function Dock({ live = false, className }: { live?: boolean; className?: 
       {items.map(({ href, label, short, icon: Icon, match }) => {
         const active = match(pathname);
         const showLive = live && href === "/live";
+        const count = href === "/challenges" ? invites : 0;
+        const note = showLive ? "یه بازی زنده‌ست" : count > 0 ? `${formatNumber(count)} دعوت تازه` : null;
         return (
           <Link
             key={href}
             href={href}
             aria-current={active ? "page" : undefined}
-            aria-label={showLive ? `${label}، یه بازی زنده‌ست` : undefined}
+            aria-label={note ? `${label}، ${note}` : undefined}
             className={cn(
               "flex h-full min-w-0 flex-col items-center justify-center gap-[3px] rounded-[18px] text-[11px] whitespace-nowrap outline-none transition-[color,transform] duration-200 ease-spring active:scale-90 focus-visible:ring-[3px] focus-visible:ring-ring/60",
               active ? "font-semibold text-foreground" : "font-medium text-nav-muted hover:text-foreground",
@@ -50,6 +54,14 @@ export function Dock({ live = false, className }: { live?: boolean; className?: 
             <span className="relative">
               <Icon active={active} />
               {showLive && <LiveDot className="absolute -end-0.5 -top-0.5 size-2" />}
+              {count > 0 && (
+                <span
+                  aria-hidden="true"
+                  className="absolute animate-in-up -end-2.5 -top-1.5 flex h-[17px] min-w-[17px] items-center justify-center rounded-full bg-foreground px-1 font-display text-[11px] leading-none font-bold text-background ring-2 ring-surface-2"
+                >
+                  {count > 9 ? `${formatNumber(9)}+` : formatNumber(count)}
+                </span>
+              )}
             </span>
             {short ? (
               <>

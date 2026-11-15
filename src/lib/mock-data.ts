@@ -616,7 +616,7 @@ export const challenges: Challenge[] = [
   },
 ];
 
-/** A pending invite, as the invite tile / strip / rows read it. `id` is the challenge id. */
+/** A pending invite, as the dock badge / strip / rows read it. `id` is the challenge id. */
 export type Invite = {
   id: string;
   from: string;

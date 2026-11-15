@@ -1,6 +1,6 @@
 import { Dock } from "@/components/footon/dock";
 import { LevelProgressBar } from "@/components/footon/gamification/level-progress-bar";
-import { matches, wallet } from "@/lib/mock-data";
+import { invites, matches, wallet } from "@/lib/mock-data";
 
 /**
  * Shared shell for the dock tabs (Home, Challenges, Predictions, Live, Profile, plus their sub-pages).
@@ -16,7 +16,7 @@ export default function TabsLayout({ children }: LayoutProps<"/">) {
         <LevelProgressBar coins={wallet.coins} />
       </div>
       {children}
-      <Dock live={live} />
+      <Dock live={live} invites={invites.length} />
     </>
   );
 }

@@ -10,7 +10,6 @@ import { copy } from "@/lib/gamification/strings";
 import { cn } from "@/lib/utils";
 import { Coin } from "../coin";
 import { StreakChip } from "./streak";
-import { TIER_ICON } from "./tier-badge";
 
 /**
  * The XP track itself: neutral fill (it never competes with the screen's one
@@ -32,8 +31,9 @@ export function XpTrack({ pct, className, fillClassName }: { pct: number; classN
 }
 
 /**
- * The top bar of every dock tab: level • XP • streak • badges (→ the Level card
- * on Profile) and, at the end, the wallet (→ /wallet). Two links in one pill.
+ * The top bar of every dock tab, kept minimal: level and XP at the start, streak
+ * and badges at the end (→ the Level card on Profile), then the wallet (→ /wallet).
+ * Two links in one pill; one divider, before the wallet.
  * Reads the server's progress and balance; `coins` is the fallback until it loads.
  */
 export function LevelProgressBar({ coins: fallback, className }: { coins: number; className?: string }) {
@@ -61,7 +61,6 @@ export function LevelProgressBar({ coins: fallback, className }: { coins: number
     );
 
   const { progress, bar, tier } = lv;
-  const Icon = TIER_ICON[tier.id];
   const label = bar.isMax
     ? `${copy.levelN(progress.level)}، ${tier.name}، ${copy.maxLevel}، ${copy.badges(progress.badgeCount)}`
     : `${copy.levelN(progress.level)}، ${tier.name}، ${copy.xpOf(bar.into, bar.span)} تا ${copy.levelN(progress.level + 1)}، ${copy.badges(progress.badgeCount)}`;
@@ -71,15 +70,13 @@ export function LevelProgressBar({ coins: fallback, className }: { coins: number
       <Link
         href="/me#level"
         aria-label={label}
-        className="flex h-full min-w-0 flex-1 items-center gap-2.5 overflow-hidden rounded-s-full ps-1.5 pe-2.5 outline-none transition-[transform,background-color] duration-200 ease-spring hover:bg-surface-hover focus-visible:ring-[3px] focus-visible:ring-ring/60 active:scale-[0.98]"
+        className="flex h-full min-w-0 flex-1 items-center gap-3 overflow-hidden rounded-s-full ps-1.5 pe-3 outline-none transition-[transform,background-color] duration-200 ease-spring hover:bg-surface-hover focus-visible:ring-[3px] focus-visible:ring-ring/60 active:scale-[0.98]"
       >
         <span className="flex h-8 shrink-0 items-center gap-1 rounded-full bg-surface-3 px-2.5 font-display text-[15px] leading-none font-bold">
-          <Icon className="size-3.5 text-muted-foreground" strokeWidth={2.2} aria-hidden="true" />
-          <span className="text-[11px] text-muted-foreground">{copy.levelShort}</span>
+          <span className="text-[12px] font-semibold text-muted-foreground">{copy.levelShort}</span>
           {formatNumber(progress.level)}
         </span>
-        <XpTrack pct={bar.pct} className="min-w-6 flex-1" />
-        <span aria-hidden="true" className="shrink-0 font-display text-[13px] font-bold text-muted-foreground max-[399px]:hidden">
+        <span aria-hidden="true" className="shrink-0 font-display text-[13px] font-bold text-muted-foreground max-[359px]:hidden">
           {bar.isMax ? (
             copy.maxLevel
           ) : (
@@ -88,10 +85,12 @@ export function LevelProgressBar({ coins: fallback, className }: { coins: number
             </>
           )}
         </span>
-        <StreakChip className="border-s border-line ps-2.5" />
-        <span aria-hidden="true" className="flex shrink-0 items-center gap-0.5 border-s border-line ps-2.5 font-display text-[15px] font-bold max-[359px]:hidden">
-          <Award className="size-3.5 text-muted-foreground" strokeWidth={2.2} />
-          {formatNumber(progress.badgeCount)}
+        <span className="ms-auto flex shrink-0 items-center gap-3">
+          <StreakChip />
+          <span aria-hidden="true" className="flex items-center gap-0.5 font-display text-[15px] font-bold">
+            <Award className="size-3.5 text-muted-foreground" strokeWidth={2.2} />
+            {formatNumber(progress.badgeCount)}
+          </span>
         </span>
       </Link>
       {wallet}

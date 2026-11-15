@@ -453,7 +453,7 @@ function ClaimStep({ coins, steps, claimed }: { coins: number; steps: { title: s
             transition={claimed ? { duration: 0.9, ease: [0.2, 0.8, 0.2, 1] } : { type: "spring", stiffness: 260, damping: 20, delay: 0.3 }}
             className="absolute inset-x-0 bottom-0 flex aspect-square items-center justify-center rounded-full bg-live font-display text-[64px] font-bold text-live-foreground shadow-[inset_0_-6px_0_rgb(0_0_0/0.22),inset_0_0_0_8px_rgb(255_255_255/0.14),0_20px_40px_-16px_rgb(0_0_0/0.9)]"
           >
-            ل
+            C
           </motion.span>
         </div>
         <p className="relative mt-7 font-display text-[64px] leading-none font-bold text-live">

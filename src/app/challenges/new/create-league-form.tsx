@@ -2,10 +2,10 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Send } from "lucide-react";
+import { Check, Link2 } from "lucide-react";
 
 import { Coin } from "@/components/footon/coin";
-import { InviteTicket, renderInviteTicket, type TicketData } from "@/components/footon/invite-ticket";
+import { InviteTicket, type TicketData } from "@/components/footon/invite-ticket";
 import { Button } from "@/components/ui/button";
 import { Card, CardRow } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -16,8 +16,6 @@ import { COSTS, ENTRY_TIERS, STAKE_STEPS, splitPool } from "@/lib/economy";
 import { cn } from "@/lib/utils";
 import { league } from "@/lib/mock-data";
 import { formatNumber, formatSigned, matchup } from "@/lib/format";
-import { shareToTelegram, type ShareMethod } from "@/lib/gamification/share";
-import { track } from "@/lib/track";
 
 /** Invite slots on the ticket; with you that's the pool size we preview. */
 const SLOTS = 3;
@@ -48,9 +46,6 @@ export function CreateLeagueForm({ balance }: { balance: number }) {
   const [capIndex, setCapIndex] = useState(ENTRY_TIERS.length - 1);
   const cap = ENTRY_TIERS[capIndex];
 
-  const [created, setCreated] = useState(false);
-  const [sending, setSending] = useState(false);
-  const [sent, setSent] = useState<ShareMethod | null>(null);
   const ticket: TicketData = {
     name,
     code: league.code,
@@ -63,28 +58,7 @@ export function CreateLeagueForm({ balance }: { balance: number }) {
     joined: 0,
   };
 
-  /** Create the league (mock: instant), then send the ticket to a Telegram group; the image rides along where it can. */
-  const send = async () => {
-    if (sending) return;
-    setSending(true);
-    setCreated(true);
-    try {
-      const file = await renderInviteTicket(ticket).catch(() => null);
-      const method = await shareToTelegram({
-        text: `بیا توی لیگ «${ticket.name || "لیگ تو"}» تا ببینیم کی بهتر پیش‌بینی می‌کنه. ${ticket.match} • ورودی ${fmt(entry)} سکه`,
-        url: `https://${league.link}`,
-        ...(file ? { file } : {}),
-      });
-      if (method) {
-        setSent(method);
-        track("card_shared", { surface: "league_invite", method });
-      }
-    } finally {
-      setSending(false);
-    }
-  };
-
-  const copyLink = async () => {
+  const copy = async () => {
     try {
       await navigator.clipboard.writeText(`https://${league.link}`);
     } catch {
@@ -96,10 +70,8 @@ export function CreateLeagueForm({ balance }: { balance: number }) {
 
   return (
     <>
-      {/* the live invite ticket: updates as the form changes, and is what goes to Telegram */}
-      <InviteTicket t={ticket} created={created} copied={copied} onCopy={copyLink} />
-
-      <fieldset disabled={created} className="contents">
+      {/* the live invite ticket: updates as the form changes, and shares itself to Telegram */}
+      <InviteTicket t={ticket} />
 
       <div className="flex flex-col gap-2">
         <Label htmlFor="league-name">نام لیگ</Label>
@@ -214,8 +186,6 @@ export function CreateLeagueForm({ balance }: { balance: number }) {
         </Card>
       </div>
 
-      </fieldset>
-
       <p className="flex items-center gap-2.5 text-[13px] text-muted-foreground">
         <Coin className="size-[18px] text-[9px]" />
         <span>
@@ -226,45 +196,32 @@ export function CreateLeagueForm({ balance }: { balance: number }) {
       <div className="flex-1" />
 
       <div className="flex flex-col gap-2.5">
-        {created ? (
-          <div className="flex gap-2">
-            <Button variant="secondary" size="lg" disabled={sending} onClick={send}>
-              <Send className="rtl:-scale-x-100" aria-hidden="true" />
-              {sending ? "دارم می‌فرستم…" : "دوباره بفرست"}
-            </Button>
-            <Button asChild size="lg" className="min-w-0 flex-1">
-              <Link href="/play">برو به لیگ</Link>
-            </Button>
-          </div>
-        ) : short > 0 ? (
-          <Button size="lg" className="w-full" disabled>
-            {fmt(short)} سکهٔ دیگر لازم داری
+        <div className="flex gap-2">
+          <Button variant="secondary" size="lg" onClick={copy} aria-live="polite">
+            {copied ? <Check /> : <Link2 />}
+            {copied ? "کپی شد" : "کپی"}
           </Button>
-        ) : (
-          <Button size="lg" className="w-full justify-between ps-5 pe-4" onClick={send} disabled={sending} aria-label={`بساز و توی تلگرام بفرست، ${fmt(cost)} سکه`}>
-            <span className="flex items-center gap-2">
-              <Send className="rtl:-scale-x-100" aria-hidden="true" />
-              <span>
-                بساز و<span className="max-[359px]:hidden"> توی تلگرام</span> بفرست
-              </span>
-            </span>
-            <span className="flex items-center gap-1 font-display text-base font-bold">
-              {fmt(cost)}
-              <Coin className="size-4 text-[8px]" />
-              <span className="sr-only">سکه</span>
-            </span>
-          </Button>
-        )}
+          {short > 0 ? (
+            <Button size="lg" className="min-w-0 flex-1" disabled>
+              {fmt(short)} سکهٔ دیگر لازم داری
+            </Button>
+          ) : (
+            <Button asChild size="lg" className="min-w-0 flex-1 justify-between ps-5 pe-4">
+              <Link href="/play">
+                <span>
+                  بساز<span className="max-[359px]:hidden"> و بفرست</span>
+                </span>
+                <span className="flex items-center gap-1 font-display text-base font-bold">
+                  {fmt(cost)}
+                  <Coin className="size-4 text-[8px]" />
+                  <span className="sr-only">سکه</span>
+                </span>
+              </Link>
+            </Button>
+          )}
+        </div>
         <p className="text-center text-xs text-muted-foreground">
-          {created ? (
-            <span role="status">
-              {sent === "download"
-                ? "عکس بلیت ذخیره شد. توی تلگرام بفرستش، لینک هم باهاشه."
-                : sent
-                  ? "لیگ ساخته شد و دعوتش رفت. هر کی بیاد اینجا می‌بینیش."
-                  : "لیگ ساخته شد. لینک را برای دوستات بفرست."}
-            </span>
-          ) : short > 0 ? (
+          {short > 0 ? (
             <>
               با جایزه‌های جدول رایگان و مأموریت‌ها سکه‌ات دوباره پر میشه.{" "}
               <Link href="/wallet" className="font-semibold text-foreground underline underline-offset-3">

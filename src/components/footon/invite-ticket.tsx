@@ -1,9 +1,12 @@
 "use client";
 
-import { Check, Copy, Send } from "lucide-react";
+import { useState } from "react";
+import { Check, Send } from "lucide-react";
 
 import { pageFonts, type CardFonts } from "@/components/footon/gamification/share-card";
 import { formatNumber } from "@/lib/format";
+import { shareToTelegram } from "@/lib/gamification/share";
+import { track } from "@/lib/track";
 import { cn } from "@/lib/utils";
 
 export type TicketData = {
@@ -26,23 +29,35 @@ const fmt = formatNumber;
 /**
  * The league invite as a matchday ticket: lime, notched, a dashed tear line.
  * The top names the league and the match; the stub carries the numbers (entry,
- * stake per prediction, the cap) and who's in; the strip at the foot is the
- * invite link itself, a tap copies it. `created` stamps the ticket once the
+ * stake per prediction) and who's in; the strip at the foot is the invite link
+ * with a Telegram button that sends the ticket (image + link). `created` stamps the ticket once the
  * league exists. The same ticket is drawn as an image for Telegram (`drawInviteTicket`).
  */
-export function InviteTicket({
-  t,
-  created = false,
-  copied = false,
-  onCopy,
-  className,
-}: {
-  t: TicketData;
-  created?: boolean;
-  copied?: boolean;
-  onCopy?: () => void;
-  className?: string;
-}) {
+export function InviteTicket({ t, created = false, className }: { t: TicketData; created?: boolean; className?: string }) {
+  const [busy, setBusy] = useState(false);
+  const [sent, setSent] = useState(false);
+
+  /** The ticket as a PNG (where Web Share takes files) + the bot link, through the Telegram share chain. */
+  const share = async () => {
+    if (busy) return;
+    setBusy(true);
+    try {
+      const file = await renderInviteTicket(t).catch(() => null);
+      const method = await shareToTelegram({
+        text: `بیا توی لیگ «${t.name || "لیگ تو"}» تا ببینیم کی بهتر پیش‌بینی می‌کنه. ${t.match} • ورودی ${fmt(t.entry)} سکه`,
+        url: `https://${t.link}`,
+        ...(file ? { file } : {}),
+      });
+      if (method) {
+        setSent(true);
+        setTimeout(() => setSent(false), 2400);
+        track("card_shared", { surface: "league_invite", method });
+      }
+    } finally {
+      setBusy(false);
+    }
+  };
+
   return (
     <section aria-label="پیش‌نمایش دعوت" className={cn("relative rounded-2xl bg-primary text-primary-foreground", className)}>
       <div className="bg-[radial-gradient(rgb(4_23_14/0.12)_1px,transparent_1px)] bg-[length:12px_12px] rounded-t-2xl px-5 pt-[18px] pb-4">
@@ -101,21 +116,22 @@ export function InviteTicket({
         </div>
       </dl>
 
-      {/* the invite link, part of the ticket: tap to copy */}
-      <button
-        type="button"
-        onClick={onCopy}
-        aria-label={copied ? "لینک دعوت کپی شد" : "کپی لینک دعوت"}
-        className="mx-3 mb-3 flex h-11 w-[calc(100%-24px)] items-center gap-2 rounded-md bg-primary-foreground/10 ps-3 pe-2 outline-none transition-[transform,background-color] duration-150 ease-spring hover:bg-primary-foreground/15 focus-visible:ring-[3px] focus-visible:ring-primary-foreground/50 active:scale-[0.98]"
-      >
-        <span dir="ltr" className="min-w-0 flex-1 truncate text-start font-mono text-[12px] font-medium rtl:text-end">
+      {/* the invite link, part of the ticket, with its own way out: send the ticket to a Telegram group */}
+      <div className="mx-3 mb-3 flex h-12 items-center gap-2 rounded-md bg-primary-foreground/10 ps-3 pe-1.5">
+        <span dir="ltr" className="min-w-0 flex-1 truncate font-mono text-[12px] font-medium rtl:text-end">
           {t.link}
         </span>
-        <span aria-live="polite" className="flex shrink-0 items-center gap-1 rounded-sm bg-primary-foreground px-2 py-1 text-[11px] font-bold text-primary">
-          {copied ? <Check className="size-3.5" strokeWidth={3} aria-hidden="true" /> : <Copy className="size-3.5" strokeWidth={2.4} aria-hidden="true" />}
-          {copied ? "کپی شد" : "کپی"}
-        </span>
-      </button>
+        <button
+          type="button"
+          onClick={share}
+          disabled={busy}
+          className="flex h-9 shrink-0 items-center gap-1.5 rounded-sm bg-primary-foreground px-3 text-[13px] font-bold text-primary outline-none transition-[transform,opacity] duration-150 ease-spring focus-visible:ring-[3px] focus-visible:ring-primary-foreground/50 active:scale-95 disabled:opacity-70"
+        >
+          {sent ? <Check className="size-4" strokeWidth={3} aria-hidden="true" /> : <Send className="size-4 rtl:-scale-x-100" strokeWidth={2.4} aria-hidden="true" />}
+          <span aria-live="polite">{busy ? "صبر کن…" : sent ? "رفت" : "تلگرام"}</span>
+          <span className="sr-only">: فرستادن دعوت لیگ توی تلگرام</span>
+        </button>
+      </div>
     </section>
   );
 }

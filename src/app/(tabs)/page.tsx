@@ -12,7 +12,7 @@ import { matches, promos } from "@/lib/mock-data";
 
 /**
  * Home, kept short: the partner slot (sponsor banners), tonight's big 2x
- * fixtures, then the Fantasy tile, one quests tile (→ /quests) and
+ * fixtures, then quests (→ /quests) and Fantasy as one row of two tiles, and
  * the shop preview. Invites are a badge on the Challenges tab. Your
  * leagues live on Challenges, standings on the Leaderboard, results on each
  * match; every fixture is on the Live tab.
@@ -46,8 +46,11 @@ export default function HomePage() {
         <EmptyState title="فعلاً بازی بزرگی نیست" body="همهٔ بازی‌ها توی بخش زنده‌ست. یکی را انتخاب کن و پیش‌بینی‌ات را بکن." action={{ label: "دیدن بازی‌ها", href: "/live" }} />
       )}
 
-      <FantasyUnlock />
-      <QuestsTile />
+      {/* quests and fantasy share one row: same tile anatomy, equal halves */}
+      <div className="grid grid-cols-2 gap-2.5">
+        <QuestsTile />
+        <FantasyUnlock />
+      </div>
 
       <ShopPreview />
     </AppShell>

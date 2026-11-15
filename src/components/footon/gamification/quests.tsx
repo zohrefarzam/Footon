@@ -6,6 +6,7 @@ import { CalendarRange, Check, ChevronRight, CircleDot, Leaf, ListChecks, Swords
 import { motion, useReducedMotion } from "motion/react";
 
 import { Coin } from "@/components/footon/coin";
+import { homeTile } from "@/components/footon/fantasy-unlock";
 import { SectionHeading } from "@/components/footon/section-heading";
 import { Card, CardRow } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -141,7 +142,7 @@ export function QuestList({ kinds, title, feature, className }: { kinds: Quest["
  */
 export function QuestsTile({ className }: { className?: string }) {
   const board = useQuests().data;
-  if (!board) return <Skeleton className={cn("h-[66px] rounded-xl", className)} />;
+  if (!board) return <Skeleton className={cn("h-[94px] min-w-0 rounded-xl", className)} />;
 
   const daily = board.quests.filter((q) => q.kind === "daily");
   const done = daily.filter((q) => q.completed).length;
@@ -155,38 +156,28 @@ export function QuestsTile({ className }: { className?: string }) {
       href="/quests"
       aria-label={label}
       className={cn(
-        "group flex items-center gap-3 rounded-xl border border-line bg-surface px-3.5 py-3 outline-none transition-[transform,background-color] duration-200 ease-spring hover:bg-surface-hover focus-visible:ring-[3px] focus-visible:ring-ring/60 active:scale-[0.98]",
+        homeTile,
+        "group border-line bg-surface outline-none transition-[transform,background-color] duration-200 ease-spring hover:bg-surface-hover focus-visible:ring-[3px] focus-visible:ring-ring/60 active:scale-[0.98]",
         className,
       )}
     >
-      <span
-        aria-hidden="true"
-        className={cn("flex size-10 shrink-0 items-center justify-center rounded-sm", next ? "bg-surface-3 text-foreground" : "bg-primary-soft text-primary")}
-      >
-        {next ? <ListChecks className="size-[18px]" strokeWidth={2.2} /> : <Check className="size-[18px]" strokeWidth={2.6} />}
-      </span>
-      <span aria-hidden="true" className="min-w-0 flex-1">
-        <span className="flex items-baseline gap-2">
-          <span className="text-[13px] font-semibold">{copy.questsTitle}</span>
-          <span className="text-xs text-muted-foreground">{copy.doneOf(done, daily.length)}</span>
+      <span aria-hidden="true" className="flex items-center gap-2">
+        <span className={cn("flex size-7 shrink-0 items-center justify-center rounded-sm", next ? "bg-surface-3 text-foreground" : "bg-primary-soft text-primary")}>
+          {next ? <ListChecks className="size-4" strokeWidth={2.2} /> : <Check className="size-4" strokeWidth={2.6} />}
         </span>
-        {next ? (
-          <span className="mt-1 flex items-center gap-2.5">
-            <span className="min-w-0 flex-1 truncate text-xs text-muted-foreground">{next.title}</span>
-            <XpTrack pct={next.progress / next.target} className="w-14 shrink-0" />
-            <span className="shrink-0 font-display text-[13px] font-bold">
-              {formatNumber(next.progress)}
-              <span className="text-muted-foreground">/{formatNumber(next.target)}</span>
-            </span>
-          </span>
-        ) : (
-          <span className="mt-0.5 block text-xs text-muted-foreground">{copy.allDoneToday}</span>
-        )}
+        <span className="min-w-0 flex-1 truncate text-[13px] font-semibold">{copy.questsTitle}</span>
+        <ChevronRight className="size-3.5 shrink-0 text-muted-foreground max-[359px]:hidden transition-transform duration-200 ease-spring group-hover:translate-x-0.5 rtl:group-hover:-translate-x-0.5 rtl:rotate-180" />
       </span>
-      <ChevronRight
-        className="size-4 shrink-0 text-muted-foreground transition-transform duration-200 ease-spring group-hover:translate-x-0.5 rtl:group-hover:-translate-x-0.5 rtl:rotate-180"
-        aria-hidden="true"
-      />
+      <span aria-hidden="true" className="truncate text-xs text-muted-foreground">
+        {next ? next.title : copy.allDoneToday}
+      </span>
+      <span aria-hidden="true" className="flex items-center gap-2">
+        <XpTrack pct={daily.length ? done / daily.length : 0} className="flex-1" fillClassName={next ? undefined : "bg-primary"} />
+        <span className="shrink-0 font-display text-[13px] leading-none font-bold">
+          {formatNumber(done)}
+          <span className="text-muted-foreground">/{formatNumber(daily.length)}</span>
+        </span>
+      </span>
     </Link>
   );
 }

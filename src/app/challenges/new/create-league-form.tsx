@@ -203,7 +203,7 @@ export function CreateLeagueForm({ balance }: { balance: number }) {
           </Button>
           {short > 0 ? (
             <Button size="lg" className="min-w-0 flex-1" disabled>
-              {fmt(short)} سکهٔ دیگر لازم داری
+              {fmt(short)} سکه کم داری
             </Button>
           ) : (
             <Button asChild size="lg" className="min-w-0 flex-1 justify-between ps-5 pe-4">

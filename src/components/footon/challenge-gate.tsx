@@ -88,7 +88,7 @@ export function ChallengeGate({ league, from, entry, players, rules, kickoff, po
             </Button>
             {short > 0 ? (
               <Button size="lg" className="min-w-0 flex-1" disabled>
-                {formatCoins(short)} سکهٔ دیگر لازم داری
+                {formatCoins(short)} سکه کم داری
               </Button>
             ) : (
               <Button size="lg" className="min-w-0 flex-1 justify-between ps-5 pe-4" onClick={() => setState("accepted")}>

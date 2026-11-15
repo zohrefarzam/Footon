@@ -39,7 +39,7 @@ function Slip({ m, settled = false }: { m: Match; settled?: boolean }) {
     <li className="[&+&]:border-t [&+&]:border-line">
       <Link
         href={`/match/${m.id}`}
-        aria-label={`${title}، ${settled ? "تموم شد، دیدن نتیجه" : `تا ${when} می‌تونی عوضشون کنی، ویرایش`}${boosted && !settled ? "، بردها ۲ برابر" : ""}`}
+        aria-label={`${title}، ${settled ? "بازی تمام شد، دیدن نتیجه" : `تا ${when} می‌تونی عوضشون کنی، ویرایش`}${boosted && !settled ? "، بردهاش ۲ برابره" : ""}`}
         className="group flex items-center gap-3 px-4 pt-3.5 pb-2 outline-none transition-colors hover:bg-surface-hover focus-visible:ring-[3px] focus-visible:ring-inset focus-visible:ring-ring/60"
       >
         <span className="flex shrink-0" aria-hidden="true">
@@ -56,7 +56,7 @@ function Slip({ m, settled = false }: { m: Match; settled?: boolean }) {
           <span className="mt-0.5 flex items-center gap-1 text-xs whitespace-nowrap text-muted-foreground">
             {settled && m.score ? (
               <>
-                تموم شد
+                نتیجه
                 {/* the two sides as separate items, home first: one text run would flip in RTL */}
                 <span className="ms-1 flex items-center gap-1 font-display text-[13px] font-bold text-foreground">
                   <span>{formatNumber(m.score[0])}</span>
@@ -66,7 +66,7 @@ function Slip({ m, settled = false }: { m: Match; settled?: boolean }) {
               </>
             ) : (
               <>
-                تا <span className="font-display text-[13px] font-bold text-foreground">{when}</span> عوض‌شدنیه
+                تا <span className="font-display text-[13px] font-bold text-foreground">{when}</span> وقت داری
               </>
             )}
           </span>
@@ -120,13 +120,14 @@ function Slip({ m, settled = false }: { m: Match; settled?: boolean }) {
                 ) : wrong ? (
                   <span className="font-display text-[15px] leading-none font-bold text-muted-foreground">
                     {formatSigned(-p.stake)}
-                    <span className="sr-only"> سکه رفت</span>
+                    <span className="sr-only"> سکه، از دست رفت</span>
                   </span>
                 ) : (
                   <>
                     <Coins value={win} className="text-[15px] leading-none" />
                     <span className="text-[11px] text-muted-foreground">
                       با <span className="font-display text-xs font-bold text-foreground">{formatCoins(p.stake)}</span>
+                      <span className="sr-only"> سکه شرط</span>
                     </span>
                   </>
                 )}
@@ -183,7 +184,7 @@ export default function PredictionsPage() {
 
           {open.length > 0 && (
             <section aria-labelledby="pred-open" className="flex flex-col gap-2.5">
-              <SectionHeading id="pred-open" title="باز" meta={<span className="text-xs text-muted-foreground">تا شروع بازی عوض‌شدنیه</span>} />
+              <SectionHeading id="pred-open" title="باز" meta={<span className="text-xs text-muted-foreground">تا شروع بازی می‌تونی عوضشون کنی</span>} />
               <Card className="overflow-hidden">
                 <ul>
                   {open.map((m) => (
@@ -198,7 +199,7 @@ export default function PredictionsPage() {
             <section aria-labelledby="pred-settled" className="flex flex-col gap-2.5">
               <SectionHeading
                 id="pred-settled"
-                title="تموم‌شده"
+                title="نتیجه‌ها"
                 meta={
                   <span className="text-xs text-muted-foreground">
                     <span className="font-display text-[13px] font-bold text-foreground">{formatNumber(rightCount)}</span> از{" "}

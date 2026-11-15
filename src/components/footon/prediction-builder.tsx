@@ -296,7 +296,7 @@ export function PredictionBuilder({ match: m, teams, initial = [], rules, balanc
                               ))}
                             </div>
                             <span id={`stake-min-${p.id}`} className={cn("sr-only", p.stake < min && "not-sr-only text-xs text-loss")}>
-                              دست‌کم {formatCoins(min)}
+                              حداقل {formatCoins(min)}
                             </span>
                           </>
                         )}
@@ -354,7 +354,7 @@ export function PredictionBuilder({ match: m, teams, initial = [], rules, balanc
               {rules?.cap ? ` از سقف ${formatCoins(rules.cap)}` : ""} • موجودی {formatCoins(balance)}
             </span>
             <span>
-              همه درست: <CoinAmount value={wins} className="text-sm" /> + {formatNumber(items.length * POINTS_PER_RIGHT_CALL)} امتیاز
+              اگه همه درست دربیان: <CoinAmount value={wins} className="text-sm" /> + {formatNumber(items.length * POINTS_PER_RIGHT_CALL)} امتیاز
             </span>
           </p>
         )}
@@ -363,15 +363,15 @@ export function PredictionBuilder({ match: m, teams, initial = [], rules, balanc
           <>
             {overCap > 0 ? (
               <Button size="lg" disabled>
-                {formatCoins(overCap)} بیشتر از سقف
+                {formatCoins(overCap)} سکه از سقف بیشتره
               </Button>
             ) : short > 0 ? (
               <Button size="lg" disabled>
-                {formatCoins(short)} سکهٔ دیگر لازم داری
+                {formatCoins(short)} سکه کم داری
               </Button>
             ) : unpicked > 0 ? (
               <Button size="lg" disabled>
-                برای {formatNumber(unpicked)} مورد دیگر جواب انتخاب کن
+                برای {formatNumber(unpicked)} تای دیگه هم جواب انتخاب کن
               </Button>
             ) : (
               <Button size="lg" disabled={lowStake} onClick={lockIn} className="justify-between ps-5 pe-4">
@@ -430,7 +430,7 @@ function SyncStatus({ entry, onRetry }: { entry: OutboxEntry | undefined; onRetr
       {entry?.status === "sending" && <p className="text-shimmer text-center text-xs">ذخیره شد • داریم می‌فرستیمش</p>}
       {entry?.status === "failed" && (
         <p className="flex items-center justify-center gap-2 text-xs text-muted-foreground">
-          روی همین گوشی ذخیره شده، ولی هنوز فرستاده نشده.
+          روی همین گوشی ذخیره شده، ولی هنوز نرفته.
           <Button variant="secondary" size="sm" className="h-8 rounded-sm px-3" onClick={onRetry}>
             دوباره
           </Button>

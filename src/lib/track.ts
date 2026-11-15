@@ -10,7 +10,7 @@
 export type TrackEvents = {
   // gamification surfaces
   shop_viewed: { surface?: string };
-  card_shared: { surface: "level_up" | "my_club"; method: "telegram" | "web_share" | "download" | "link" };
+  card_shared: { surface: "level_up" | "my_club" | "league_invite"; method: "telegram" | "web_share" | "download" | "link" };
   level_up_viewed: { level: number };
   badge_toast_viewed: { badge: string };
   badge_wall_viewed: Record<string, never>;

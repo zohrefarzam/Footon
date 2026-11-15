@@ -64,7 +64,7 @@ src/
                           streak (StreakChip, StreakCounter, FreezeIndicator, StreakTick), streak-broken-sheet, combo-meter,
                           quests (QuestCard, QuestList, QuestsTile, QuestToast), shop-grid (ShopGrid, ShopItemCard),
                           shop-view, item-preview (ItemPreview, PurchaseConfirm), club-view (MyClubView,
-                          ItemSwatch, Shirt, Boots), club-page (ClubPage, MyClubLink), share-card
+                          ItemSwatch), item-art (KitArt, BootArt, StadiumArt, FrameArt, FreezeArt), club-page (ClubPage, MyClubLink), share-card
                           (ShareCardRenderer, drawClubCard), coin-balance
   lib/
     utils.ts              cn(), ordinal() (re-exported from format.ts)
@@ -341,6 +341,7 @@ From the gamification brief. Code in `lib/gamification` and `components/footon/g
 | `QuestsTile` | Home's one line about quests: list icon, "Quests · 1 of 3 done", the next open daily quest with its neutral track and `0/1`, chevron → `/quests`. All done → soft-lime check "All done today". `Skeleton` while loading. |
 | `QuestToast` | "QUEST DONE", soft-lime check, title, "+40 XP · 40 coins". Plays after the XP moment. |
 | `ShopGrid` / `ShopItemCard` | Sections (Keep your run, Kits, Stadiums, Boots, Frames), two tiles a row. Tile states read in words and shape: locked (dashed, lock, "Level 10"), on your club (soft-lime, check), owned, new (outlined "New" tag), buyable (amber price). Every tile opens the preview, locked ones too. |
+| `KitArt` / `BootArt` / `StadiumArt` / `FrameArt` / `FreezeArt` | The shop's pictures (`item-art.tsx`), cartoon in Winky's sticker style: flat colours, an ink outline, one flat shade, no gradients. Every colour and design is item data (`look`: `primary`, `secondary`, optional `accent`, `pattern`): kits plain / stripes / hoops / halves / sash / chevron with collar, cuffs and crest; stadiums as a night scene (floodlights, stands in the stadium's colours with fans, the pitch) in terrace / classic / bowl / arena; boots classic / speed / high; frames line / double / laurel / stars. `ItemSwatch` shows them on shop tiles and `MyClubView` builds the club from them. |
 | `ItemPreview` / `PurchaseConfirm` | Sheet: the item tried on your own `MyClubView` (freeze: your freezes), then the one action that fits: Buy (lime, price on the button) → confirm ("1,500 coins. You'll have 4,950 left.", Buy it / Not now), Put it on, or the disabled reason (level, "Need N more coins" + Ways to earn, freezes full). Confirm waits for the server; a lost request retries with the same idempotency key ("Nothing was charged"); a 409 stops it and refreshes the shop. Success: drawn check "It's yours" + lime "Put it on". |
 | `MyClubView` | A club as friends see it: frame colour on the border, stadium stands behind (or the floodlit pitch with a penalty box before you own one), kit + boots in front, name, tier + level, streak, pinned badges. `preview` swaps one slot for the try-on. One `aria-label` sums it up. |
 | `ClubPage` / `MyClubLink` | `/me/club` (yours: share + "Customise in the shop") and `/club/[userId]` (a friend's, look only; linked from challenge League rows). Profile shows yours compact. |

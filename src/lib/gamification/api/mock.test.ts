@@ -213,7 +213,7 @@ describe("mock server: shop", () => {
 
   it("marks newly unlocked items as new until the shop is seen", async () => {
     const api = shop();
-    expect((await api.getShop()).items.filter((i) => i.isNew).map((i) => i.id)).toEqual(["kit-home", "kit-away", "kit-night", "frame-pitch"]);
+    expect((await api.getShop()).items.filter((i) => i.isNew).map((i) => i.id)).toEqual(["kit-home", "kit-away", "kit-night", "kit-retro", "frame-pitch", "frame-laurel"]);
     await api.markShopSeen();
     expect((await api.getShop()).items.some((i) => i.isNew)).toBe(false);
   });
@@ -223,7 +223,7 @@ describe("mock server: shop", () => {
     await expect(api.equip("kit-home")).rejects.toMatchObject({ code: "conflict" });
     await api.purchase(buy("kit-home", "b1", 1500));
     const { club } = await api.equip("kit-home");
-    expect(club.kit).toMatchObject({ id: "kit-home", name: "لباس اول" });
+    expect(club.kit).toMatchObject({ id: "kit-home", name: "آبی راه‌راه" });
     expect((await api.getShop()).items.find((i) => i.id === "kit-home")?.equipped).toBe(true);
   });
 

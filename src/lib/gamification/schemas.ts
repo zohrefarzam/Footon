@@ -184,8 +184,13 @@ export type QuestBoard = z.infer<typeof QuestBoard>;
 export const ShopSlot = z.enum(["kit", "stadium", "boots", "frame", "freeze"]);
 export type ShopSlot = z.infer<typeof ShopSlot>;
 
-/** How a cosmetic looks: its two colours (data, like a club's shirt colours). */
-export const ItemLook = z.object({ primary: z.string(), secondary: z.string() });
+/**
+ * How a cosmetic looks (data, like a club's shirt colours): two colours, an
+ * optional third (`accent`) and the design (`pattern`): kits plain / stripes /
+ * hoops / halves / sash / chevron; stadiums terrace / bowl / arena / classic;
+ * boots classic / speed / high; frames line / double / laurel / stars.
+ */
+export const ItemLook = z.object({ primary: z.string(), secondary: z.string(), accent: z.string().optional(), pattern: z.string().optional() });
 export type ItemLook = z.infer<typeof ItemLook>;
 
 export const ShopItem = z.object({

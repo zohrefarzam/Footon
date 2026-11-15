@@ -1,4 +1,4 @@
-import { CalendarCheck, Snowflake } from "lucide-react";
+import { CalendarCheck } from "lucide-react";
 
 import { formatNumber } from "@/lib/gamification/format";
 import type { ClubItem, ItemLook, MyClub, ShopSlot, TierId } from "@/lib/gamification/schemas";
@@ -7,46 +7,19 @@ import { cn } from "@/lib/utils";
 import { PitchMarkings } from "@/components/footon/pitch-markings";
 import { BadgeGlyph } from "./badge-glyph";
 import { TIER_ICON } from "./tier-badge";
+import { BootArt, FrameArt, FreezeArt, KitArt, StadiumArt } from "./item-art";
 
 /** The shirt outline (same mark as the Fantasy tile's shirts). */
 export const SHIRT_PATH = "M8 3 3 6l2 4 2-1v12h10V9l2 1 2-4-5-3a4 4 0 0 1-8 0z";
-const NEUTRAL: ItemLook = { primary: "var(--dim)", secondary: "var(--muted-foreground)" };
-
-export function Shirt({ look = NEUTRAL, className }: { look?: ItemLook; className?: string }) {
-  return (
-    <svg viewBox="0 0 24 24" aria-hidden="true" className={className}>
-      <path d={SHIRT_PATH} fill={look.primary} stroke={look.secondary} strokeWidth="1.2" strokeLinejoin="round" />
-      {/* collar trim in the second colour */}
-      <path d="M9 3.6a3 3 0 0 0 6 0" fill="none" stroke={look.secondary} strokeWidth="1.2" strokeLinecap="round" />
-    </svg>
-  );
-}
-
-export function Boots({ look = NEUTRAL, className }: { look?: ItemLook; className?: string }) {
-  const boot = "M2 9V4h5l1 3 7 1.5a2 2 0 0 1 1.5 2V12H2z";
-  return (
-    <svg viewBox="0 0 38 14" aria-hidden="true" className={className}>
-      <path d={boot} fill={look.primary} stroke={look.secondary} strokeWidth="1" strokeLinejoin="round" />
-      <path d={boot} transform="translate(19 0)" fill={look.primary} stroke={look.secondary} strokeWidth="1" strokeLinejoin="round" />
-    </svg>
-  );
-}
-
-/** Stand stripes in the stadium's colours (a pattern, like the pitch, never a wash). */
-const stands = (look: ItemLook) => ({
-  backgroundColor: look.primary,
-  backgroundImage: `repeating-linear-gradient(0deg, color-mix(in srgb, ${look.secondary} 14%, transparent) 0 2px, transparent 2px 10px)`,
-});
-
-/** A small picture of one item, for shop cards and the preview. */
+/** A picture of one item, for shop cards and the preview (the cartoon art in `item-art.tsx`). */
 export function ItemSwatch({ slot, look, className }: { slot: ShopSlot; look?: ItemLook; className?: string }) {
   return (
     <span aria-hidden="true" className={cn("flex items-center justify-center overflow-hidden rounded-md bg-surface-2", className)}>
-      {slot === "kit" && <Shirt look={look} className="size-12" />}
-      {slot === "boots" && <Boots look={look} className="w-14" />}
-      {slot === "stadium" && look && <span className="size-full" style={stands(look)} />}
-      {slot === "frame" && look && <span className="size-11 rounded-lg border-[3px]" style={{ borderColor: look.primary, boxShadow: `inset 0 0 0 1px ${look.secondary}` }} />}
-      {slot === "freeze" && <Snowflake className="size-8 text-foreground" strokeWidth={1.8} />}
+      {slot === "kit" && <KitArt look={look} className="h-[86%] w-auto" />}
+      {slot === "boots" && <BootArt look={look} className="w-[72%] max-w-28" />}
+      {slot === "stadium" && <StadiumArt look={look} className="size-full" />}
+      {slot === "frame" && <FrameArt look={look} className="h-[86%] w-auto" />}
+      {slot === "freeze" && <FreezeArt look={look} className="h-[86%] w-auto" />}
     </span>
   );
 }
@@ -88,12 +61,11 @@ export function MyClubView({
     >
       <div
         aria-hidden="true"
-        className={cn("relative isolate flex flex-col items-center justify-end overflow-hidden", full ? "h-[220px] pb-5" : "h-[150px] pb-3", !stadium && "bg-pitch floodlight")}
-        style={stadium?.look ? stands(stadium.look) : undefined}
+        className={cn("relative isolate flex items-end justify-center gap-1 overflow-hidden", full ? "h-[220px] pb-4" : "h-[150px] pb-2.5", !stadium && "bg-pitch floodlight")}
       >
-        {!stadium && <PitchMarkings variant="box" className="-z-10" />}
-        <Shirt look={kit?.look} className={cn("drop-shadow-[0_12px_18px_rgb(0_0_0/0.55)]", full ? "size-28" : "size-20")} />
-        {boots && <Boots look={boots.look} className={cn("mt-1", full ? "w-16" : "w-12")} />}
+        {stadium?.look ? <StadiumArt look={stadium.look} className="absolute inset-0 -z-10 size-full" /> : <PitchMarkings variant="box" className="-z-10" />}
+        <KitArt look={kit?.look} className={cn("drop-shadow-[0_12px_18px_rgb(0_0_0/0.55)]", full ? "size-32" : "size-24")} />
+        {boots && <BootArt look={boots.look} className={cn("mb-1 drop-shadow-[0_6px_10px_rgb(0_0_0/0.5)]", full ? "w-16" : "w-12")} />}
       </div>
       <figcaption className={cn("flex flex-col gap-2 border-t border-line", full ? "p-4" : "px-3.5 py-3")}>
         <div className="flex items-center gap-2">

@@ -34,6 +34,8 @@ The visual reference is the Lucky Fan design canvas (7 artboards: Onboarding, Ho
 
 Commands: `npm run dev`, `npm run build`, `npm run lint`, `npx tsc --noEmit`, `npm test`. All five must pass before you hand work back.
 
+Design skill: load **`frontend-design`** (`.claude/skills/frontend-design`, installed with `npx skills add`, pinned in `skills-lock.json`) before designing a new screen or reshaping one. Use it for the plan → critique → screenshot loop and its "spend your boldness in one place" restraint; this file's tokens, colour roles, type, RTL and mobile-only rules always win where they differ (dark stadium ground, Yekan Bakh, lime primary are settled, not up for reinvention).
+
 Adding shadcn components: `npx shadcn@latest add <name>`, then **restyle it to these tokens** (see "Adapting shadcn components"). Never leave default shadcn colours, radii or white primary buttons in the codebase.
 
 ## Project layout

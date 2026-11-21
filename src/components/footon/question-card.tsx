@@ -34,6 +34,7 @@ export function QuestionCard({
   question,
   onAnswer,
   reward,
+  initialAnswer = null,
   compact = false,
   className,
 }: {
@@ -41,10 +42,12 @@ export function QuestionCard({
   onAnswer?: (a: Answer) => void;
   /** Sends the answer to the gamification server (XP, streak). Omit for demo cards. */
   reward?: { matchId: string; questionId: string; kickoffAt: string };
+  /** Backend: the answer you already gave this question (so a reload doesn't ask again). */
+  initialAnswer?: Answer | null;
   compact?: boolean;
   className?: string;
 }) {
-  const [answer, setAnswer] = useState<Answer | null>(null);
+  const [answer, setAnswer] = useState<Answer | null>(initialAnswer);
   const [left, setLeft] = useState(question.seconds);
   const reduce = useReducedMotion();
 

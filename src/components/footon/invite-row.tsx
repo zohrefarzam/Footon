@@ -19,7 +19,7 @@ type State = "pending" | "joined" | "declined";
  * Decline resolve in place: joining confirms with a drawn check, declining
  * leaves an Undo instead of vanishing. Buttons match the Home InviteStrip.
  */
-export function InviteRow({ invite }: { invite: InviteWithMatch }) {
+export function InviteRow({ invite, onJoin }: { invite: InviteWithMatch; onJoin?: (id: string) => Promise<boolean> }) {
   const [state, setState] = useState<State>("pending");
   const reduce = useReducedMotion();
   const m = invite.match;
@@ -57,7 +57,9 @@ export function InviteRow({ invite }: { invite: InviteWithMatch }) {
                 size="sm"
                 className="h-9 rounded-sm px-3.5"
                 aria-label={`پیوستن به ${invite.league}`}
-                onClick={() => setState("joined")}
+                onClick={async () => {
+                  if (!onJoin || (await onJoin(invite.id))) setState("joined");
+                }}
               >
                 بپیوند
               </Button>

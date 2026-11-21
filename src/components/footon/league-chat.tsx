@@ -72,7 +72,19 @@ function QuestionItem({ q }: { q: FriendQuestion }) {
  * reactions, and a composer pinned to the bottom of the screen. The + turns the
  * composer into "ask a prediction": a short question and your own Yes / No.
  */
-export function LeagueChat({ chat, members, closes = "دقیقهٔ ۹۰" }: { chat: ChatData; members: Member[]; closes?: string }) {
+export function LeagueChat({
+  chat,
+  members,
+  closes = "دقیقهٔ ۹۰",
+  onSend,
+}: {
+  chat: ChatData;
+  members: Member[];
+  closes?: string;
+  /** Backend: messages come from `chat` (the server's thread) and go out through here. Friends' questions are off. Resolves false when it didn't send. */
+  onSend?: (text: string) => Promise<boolean>;
+}) {
+  const live = !!onSend;
   const endRef = useRef<HTMLDivElement>(null);
   const [items, setItems] = useState<Item[]>(() => [
     ...chat.messages.map((m) => ({ kind: "msg" as const, ...m })),
@@ -84,10 +96,11 @@ export function LeagueChat({ chat, members, closes = "دقیقهٔ ۹۰" }: { ch
   const [call, setCall] = useState<Answer | undefined>();
   const [seq, setSeq] = useState(0);
   const askRef = useRef<HTMLInputElement>(null);
+  const all = live ? chat.messages.map((m) => ({ kind: "msg" as const, ...m })) : items;
 
   useEffect(() => {
     endRef.current?.scrollIntoView({ block: "nearest" });
-  }, [items.length]);
+  }, [all.length]);
   useEffect(() => {
     if (asking) askRef.current?.focus();
   }, [asking]);
@@ -95,6 +108,10 @@ export function LeagueChat({ chat, members, closes = "دقیقهٔ ۹۰" }: { ch
   const send = (t: string) => {
     const v = t.trim();
     if (!v) return;
+    if (onSend) {
+      void onSend(v).then((ok) => ok && setText(""));
+      return;
+    }
     setItems((xs) => [...xs, { kind: "msg", from: "تو", initial: YOU_INITIAL, text: v, you: true }]);
     setText("");
   };
@@ -123,7 +140,7 @@ export function LeagueChat({ chat, members, closes = "دقیقهٔ ۹۰" }: { ch
 
       <div className="flex flex-1 flex-col gap-2.5 pb-3" aria-live="polite">
         <div aria-hidden="true" className="mt-auto" />
-        {items.map((it, i) =>
+        {all.map((it, i) =>
           it.kind === "q" ? (
             <QuestionItem key={it.id} q={it} />
           ) : it.you ? (
@@ -225,9 +242,11 @@ export function LeagueChat({ chat, members, closes = "دقیقهٔ ۹۰" }: { ch
                 send(text);
               }}
             >
-              <Button type="button" variant="soft" size="icon" aria-label="از دوستانت یک پیش‌بینی بپرس" onClick={() => setAsking(true)}>
-                <Plus strokeWidth={2.4} />
-              </Button>
+              {!live && (
+                <Button type="button" variant="soft" size="icon" aria-label="از دوستانت یک پیش‌بینی بپرس" onClick={() => setAsking(true)}>
+                  <Plus strokeWidth={2.4} />
+                </Button>
+              )}
               <label htmlFor="chat-input" className="sr-only">
                 پیام
               </label>

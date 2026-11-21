@@ -25,7 +25,7 @@ import {
   type ShopCatalog as ShopCat,
 } from "../schemas";
 
-export type ApiErrorCode = "offline" | "server" | "conflict" | "insufficient_balance" | "invalid_response";
+export type ApiErrorCode = "offline" | "server" | "conflict" | "unauthorized" | "insufficient_balance" | "invalid_response";
 
 export class ApiError extends Error {
   constructor(
@@ -134,6 +134,13 @@ export function createHttpApi(baseUrl: string): GamificationApi {
       });
     } catch {
       throw new ApiError("offline");
+    }
+    if (res.status === 401) {
+      // providers on /login and /welcome fetch too: only leave a screen that needs a session
+      if (!/^\/(login|welcome|styleguide)/.test(window.location.pathname)) {
+        window.location.href = `${window.location.origin}/login`;
+      }
+      throw new ApiError("unauthorized");
     }
     if (res.status === 409) throw new ApiError("conflict");
     if (res.status === 402) throw new ApiError("insufficient_balance");

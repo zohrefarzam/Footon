@@ -21,7 +21,7 @@ export type InviteWithMatch = Invite & { match: Match };
  * Declined cards fold away; joined cards stay, marked soft-lime, with Open →
  * the challenge page (the next step: predictions and chat).
  */
-export function InviteStrip({ invites }: { invites: InviteWithMatch[] }) {
+export function InviteStrip({ invites, onJoin }: { invites: InviteWithMatch[]; onJoin?: (id: string) => Promise<boolean> }) {
   const [declined, setDeclined] = useState<string[]>([]);
   const [joined, setJoined] = useState<string[]>([]);
   const reduce = useReducedMotion();
@@ -129,7 +129,9 @@ export function InviteStrip({ invites }: { invites: InviteWithMatch[] }) {
                             <Button
                               variant="secondary"
                               className="h-9 rounded-sm px-4 text-sm"
-                              onClick={() => setJoined((j) => [...j, inv.id])}
+                              onClick={async () => {
+                                if (!onJoin || (await onJoin(inv.id))) setJoined((j) => [...j, inv.id]);
+                              }}
                               aria-label={`پیوستن به ${inv.league}`}
                             >
                               بپیوند

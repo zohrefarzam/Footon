@@ -21,16 +21,21 @@ export function CrowdPoll({
   home,
   away,
   crowd,
+  myPick = null,
+  onVote,
   className,
 }: {
   home: Team;
   away: Team;
   crowd: { home: number; draw: number; away: number; votes: number };
+  /** Backend: the pick you already made, and where a new vote goes. */
+  myPick?: Pick | null;
+  onVote?: (pick: Pick) => void;
   className?: string;
 }) {
-  const [pick, setPick] = useState<Pick | null>(null);
+  const [pick, setPick] = useState<Pick | null>(myPick);
   const reduce = useReducedMotion();
-  const votes = crowd.votes + (pick ? 1 : 0);
+  const votes = crowd.votes + (pick && !myPick ? 1 : 0);
 
   const options: { id: Pick; label: string; team?: Team }[] = [
     { id: "home", label: home.name, team: home },
@@ -58,7 +63,10 @@ export function CrowdPoll({
               aria-pressed={on}
               disabled={!!pick}
               aria-label={pick ? `${o.label}، ${formatPercent(share)}${on ? "، انتخاب تو" : ""}` : o.label}
-              onClick={() => setPick(o.id)}
+              onClick={() => {
+                setPick(o.id);
+                onVote?.(o.id);
+              }}
               className={cn(
                 "relative flex h-12 items-center justify-center gap-2 overflow-hidden rounded-md border text-sm font-semibold outline-none",
                 "transition-[transform,border-color,color] duration-200 ease-spring active:scale-95 focus-visible:ring-[3px] focus-visible:ring-ring/60 disabled:active:scale-100",

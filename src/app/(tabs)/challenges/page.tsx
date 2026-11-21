@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Plus, Swords } from "lucide-react";
 
 import { AppShell } from "@/components/footon/app-shell";
+import { ChallengesLive } from "@/components/footon/challenges-live";
 import { ChallengeList } from "@/components/footon/challenge-list";
 import { InviteStrip } from "@/components/footon/invite-strip";
 import { LockedFeatureGate } from "@/components/footon/gamification/locked-feature-gate";
@@ -46,11 +47,17 @@ export default function ChallengesPage() {
         </Link>
       </LockedFeatureGate>
 
-      <div id="invites" className="scroll-mt-20">
-        <InviteStrip invites={pending} />
-      </div>
+      {process.env.NEXT_PUBLIC_GAMIFICATION_API ? (
+        <ChallengesLive />
+      ) : (
+        <>
+          <div id="invites" className="scroll-mt-20">
+            <InviteStrip invites={pending} />
+          </div>
 
-      <ChallengeList challenges={challengesWithMatch()} />
+          <ChallengeList challenges={challengesWithMatch()} />
+        </>
+      )}
     </AppShell>
   );
 }

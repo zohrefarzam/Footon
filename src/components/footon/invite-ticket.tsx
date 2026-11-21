@@ -124,7 +124,7 @@ export function InviteTicket({ t, created = false, className }: { t: TicketData;
         <button
           type="button"
           onClick={share}
-          disabled={busy}
+          disabled={busy || !t.link}
           className="flex h-9 shrink-0 items-center gap-1.5 rounded-sm bg-primary-foreground px-3 text-[13px] font-bold text-primary outline-none transition-[transform,opacity] duration-150 ease-spring focus-visible:ring-[3px] focus-visible:ring-primary-foreground/50 active:scale-95 disabled:opacity-70"
         >
           {sent ? <Check className="size-4" strokeWidth={3} aria-hidden="true" /> : <Send className="size-4 rtl:-scale-x-100" strokeWidth={2.4} aria-hidden="true" />}

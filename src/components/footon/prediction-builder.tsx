@@ -65,6 +65,8 @@ export type PredictionBuilderProps = {
   /** The challenge's stake rules, when you play this match in one. */
   rules?: ChallengeRules & { league: string; setBy?: string };
   balance: number;
+  /** Backend: saves the slip. Resolves false when it didn't reach the server (the slip then stays open). */
+  onLock?: (items: Prediction[]) => Promise<boolean>;
 };
 
 /**
@@ -73,7 +75,7 @@ export type PredictionBuilderProps = {
  * Until kickoff the slip stays editable; after it, it reads back right / wrong.
  * A challenge can fix the stake per prediction and cap the total.
  */
-export function PredictionBuilder({ match: m, teams, initial = [], rules, balance }: PredictionBuilderProps) {
+export function PredictionBuilder({ match: m, teams, initial = [], rules, balance, onLock }: PredictionBuilderProps) {
   const open = m.status === "upcoming";
   const [items, setItems] = useState<Prediction[]>(initial);
   const [locked, setLocked] = useState(initial.length > 0);
@@ -108,9 +110,17 @@ export function PredictionBuilder({ match: m, teams, initial = [], rules, balanc
   };
   // the slip is saved the moment you lock it; the server call (and any
   // reward) follows, and a failed send stays retryable with the same key
-  const lockIn = () => {
+  const [saveFailed, setSaveFailed] = useState(false);
+  const lockIn = async () => {
     setLocked(true);
     setJustLocked(true);
+    setSaveFailed(false);
+    if (onLock && !(await onLock(items))) {
+      setLocked(false);
+      setJustLocked(false);
+      setSaveFailed(true);
+      return;
+    }
     const key = newIdempotencyKey(`pred_${m.id}`);
     setSendKey(key);
     void outbox.getState().send({
@@ -409,6 +419,11 @@ export function PredictionBuilder({ match: m, teams, initial = [], rules, balanc
               <span className="text-muted-foreground">تا {m.kickoff} می‌تونی عوضشون کنی.</span>
             </p>
           </div>
+        )}
+        {saveFailed && (
+          <p role="alert" className="text-center text-xs text-muted-foreground">
+            پیش‌بینی‌هات ثبت نشد. دوباره امتحان کن.
+          </p>
         )}
         <SyncStatus entry={sending} onRetry={() => sendKey && void outbox.getState().retry(sendKey)} />
 

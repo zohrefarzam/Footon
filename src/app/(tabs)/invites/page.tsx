@@ -2,6 +2,7 @@ import Link from "next/link";
 import { ChevronLeft } from "lucide-react";
 
 import { AppShell } from "@/components/footon/app-shell";
+import { InvitesLive } from "@/components/footon/invites-live";
 import { InviteRow } from "@/components/footon/invite-row";
 import { Button } from "@/components/ui/button";
 import { invites, matches } from "@/lib/mock-data";
@@ -23,11 +24,15 @@ export default function InvitesPage() {
         <h1 className="text-[22px] leading-tight font-bold">دعوت‌ها</h1>
       </header>
 
-      <ul className="flex flex-col divide-y divide-line overflow-hidden rounded-[20px] border border-line bg-surface">
-        {pending.map((inv) => (
-          <InviteRow key={inv.id} invite={inv} />
-        ))}
-      </ul>
+      {process.env.NEXT_PUBLIC_GAMIFICATION_API ? (
+        <InvitesLive />
+      ) : (
+        <ul className="flex flex-col divide-y divide-line overflow-hidden rounded-[20px] border border-line bg-surface">
+          {pending.map((inv) => (
+            <InviteRow key={inv.id} invite={inv} />
+          ))}
+        </ul>
+      )}
     </AppShell>
   );
 }

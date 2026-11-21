@@ -17,8 +17,11 @@ export function requiredLevel(feature: FeatureId, config: GamificationConfig): n
   return config.unlocks[feature] ?? 1;
 }
 
+/** Local testing only: `NEXT_PUBLIC_UNLOCK_ALL=1` in `.env.local` opens every gated feature. Ignored in production builds. */
+const UNLOCK_ALL = process.env.NODE_ENV !== "production" && process.env.NEXT_PUBLIC_UNLOCK_ALL === "1";
+
 export function isUnlocked(feature: FeatureId, level: number, config: GamificationConfig): boolean {
-  if (CORE_FEATURES.has(feature)) return true;
+  if (UNLOCK_ALL || CORE_FEATURES.has(feature)) return true;
   return level >= requiredLevel(feature, config);
 }
 

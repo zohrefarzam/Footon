@@ -15,6 +15,8 @@ export type Prediction = {
   pick: string;
   /** Coins on this prediction. */
   stake: number;
+  /** The server's figure for what it wins, when it sent one (else `payout()`). */
+  win?: number;
   /** Set once it has resolved. */
   result?: "right" | "wrong";
 };

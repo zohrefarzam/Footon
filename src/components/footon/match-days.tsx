@@ -42,6 +42,8 @@ function Group({ title, code, list }: { title: string; code?: string; list: Matc
   );
 }
 
+const meta = (c: string, list: Match[]) => competitions[c] ?? list.find((m) => m.competition === c)?.competitionMeta;
+
 /** One group per competition, in the competitions' order. Your own matches live on Home. */
 function Groups({ list, empty }: { list: Match[]; empty: string }) {
   if (!list.length)
@@ -52,7 +54,7 @@ function Groups({ list, empty }: { list: Match[]; empty: string }) {
   return (
     <>
       {comps.map((c) => (
-        <Group key={c} title={`${competitions[c]?.country ?? ""} • ${c}`} code={competitions[c]?.code} list={list.filter((m) => m.competition === c)} />
+        <Group key={c} title={`${meta(c, list)?.country ?? ""} • ${c}`} code={meta(c, list)?.code} list={list.filter((m) => m.competition === c)} />
       ))}
     </>
   );
@@ -63,7 +65,7 @@ function Groups({ list, empty }: { list: Match[]; empty: string }) {
  * (Yesterday • Today • Tomorrow • dates) and a Live pill that narrows everything
  * to what's on right now. No CTA: every row opens its match.
  */
-export function MatchDays({ matches }: { matches: Match[] }) {
+export function MatchDays({ matches, today }: { matches: Match[]; today?: string }) {
   const [day, setDay] = useState("0");
   const [liveOnly, setLiveOnly] = useState(false);
   const listRef = useRef<HTMLDivElement>(null);
@@ -106,13 +108,13 @@ export function MatchDays({ matches }: { matches: Match[] }) {
           <TabsList ref={listRef} aria-label="روز" className="scroll-smooth">
             {DAYS.map((d) => (
               <TabsTrigger key={d} value={String(d)}>
-                {dayLabel(d)}
+                {dayLabel(d, today)}
               </TabsTrigger>
             ))}
           </TabsList>
           {DAYS.map((d) => (
             <TabsContent key={d} value={String(d)} className="flex flex-col gap-3">
-              <Groups list={matches.filter((m) => (m.dayOffset ?? 0) === d)} empty={d === 0 ? "امروز بازی‌ای نیست." : `${dayLabel(d)} بازی‌ای نیست.`} />
+              <Groups list={matches.filter((m) => (m.dayOffset ?? 0) === d)} empty={d === 0 ? "امروز بازی‌ای نیست." : `${dayLabel(d, today)} بازی‌ای نیست.`} />
             </TabsContent>
           ))}
         </Tabs>

@@ -1,6 +1,7 @@
 import { AppShell } from "@/components/footon/app-shell";
 import { BoostBadge } from "@/components/footon/boost-badge";
 import { EmptyState } from "@/components/footon/empty-state";
+import { HomeBigFixtures } from "@/components/footon/home-big-fixtures";
 import { FantasyUnlock } from "@/components/footon/fantasy-unlock";
 import { QuestsTile } from "@/components/footon/gamification/quests";
 import { MatchRow } from "@/components/footon/match-row";
@@ -26,7 +27,9 @@ export default function HomePage() {
 
       <PromoCarousel promos={promos} />
 
-      {big.length > 0 ? (
+      {process.env.NEXT_PUBLIC_GAMIFICATION_API ? (
+        <HomeBigFixtures />
+      ) : big.length > 0 ? (
         <Card className="overflow-hidden">
           <section aria-labelledby="home-big">
             {/* the heading is the card's header, so the title and its matches read as one block */}

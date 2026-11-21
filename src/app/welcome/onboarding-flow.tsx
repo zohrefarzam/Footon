@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useQueryClient } from "@tanstack/react-query";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { ArrowRight, Check, ChevronLeft, X } from "lucide-react";
 
@@ -11,7 +12,10 @@ import { NumberTicker } from "@/components/footon/number-ticker";
 import { useSplashDone } from "@/components/footon/splash-gate";
 import { TeamCrest } from "@/components/footon/team-crest";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import type { Team } from "@/lib/mock-data";
+import { useClubs, useSaveClubs } from "@/lib/profile/api";
+import { gamificationKeys } from "@/lib/gamification/queries";
 import { cn } from "@/lib/utils";
 import { formatMinute, formatNumber, formatPercent, formatSigned } from "@/lib/format";
 
@@ -48,7 +52,12 @@ export function OnboardingFlow({ data }: { data: OnboardingData }) {
   const [answer, setAnswer] = useState<"yes" | "no" | null>(null);
   const [clubs, setClubs] = useState<string[]>([]);
   const [claimed, setClaimed] = useState(false);
+  // with a backend the clubs come from the team directory (searchable) and are saved when you leave the step
+  const live = !!process.env.NEXT_PUBLIC_GAMIFICATION_API;
+  const directory = useClubs(live);
+  const saveClubs = useSaveClubs(directory.data?.idOf ?? {});
   const router = useRouter();
+  const qc = useQueryClient();
   const reduce = useReducedMotion();
 
   const go = (to: number) => {
@@ -58,6 +67,12 @@ export function OnboardingFlow({ data }: { data: OnboardingData }) {
 
   const claim = () => {
     setClaimed(true);
+    // with a backend the server pays the starter coins; a repeat or a failure never blocks onboarding
+    if (process.env.NEXT_PUBLIC_GAMIFICATION_API) {
+      void fetch("/api/wallet/onboarding/claim", { method: "POST" })
+        .then(() => qc.invalidateQueries({ queryKey: gamificationKeys.progress }))
+        .catch(() => {});
+    }
     markOnboarded();
     setTimeout(() => router.replace("/"), reduce ? 300 : 1500);
   };
@@ -120,7 +135,9 @@ export function OnboardingFlow({ data }: { data: OnboardingData }) {
               {step === 0 && <TryStep sample={data.sample} answer={answer} onAnswer={setAnswer} />}
               {step === 1 && (
                 <ClubsStep
-                  clubs={data.clubs}
+                  clubs={live ? (directory.data?.teams ?? []) : data.clubs}
+                  searchable={live}
+                  loading={live && directory.isPending}
                   selected={clubs}
                   onToggle={(code) => setClubs((s) => (s.includes(code) ? s.filter((c) => c !== code) : [...s, code]))}
                 />
@@ -141,7 +158,12 @@ export function OnboardingFlow({ data }: { data: OnboardingData }) {
               </Button>
             ))}
           {step === 1 && (
-            <ArrowCta onClick={() => go(2)}>
+            <ArrowCta
+              onClick={() => {
+                if (live && clubs.length) saveClubs(clubs);
+                go(2);
+              }}
+            >
               {clubs.length ? `دنبال کردن ${formatNumber(clubs.length)} باشگاه` : "ادامه"}
             </ArrowCta>
           )}
@@ -372,13 +394,41 @@ function TryStep({ sample, answer, onAnswer }: { sample: Sample; answer: "yes" |
 
 /* ---------- Step 2: pick clubs ---------- */
 
-function ClubsStep({ clubs, selected, onToggle }: { clubs: Team[]; selected: string[]; onToggle: (code: string) => void }) {
+const SHOWN = 12;
+
+function ClubsStep({
+  clubs: all,
+  selected,
+  onToggle,
+  searchable = false,
+  loading = false,
+}: {
+  clubs: Team[];
+  selected: string[];
+  onToggle: (code: string) => void;
+  searchable?: boolean;
+  loading?: boolean;
+}) {
   const reduce = useReducedMotion();
+  const [query, setQuery] = useState("");
+  const q = query.trim().toLowerCase();
+  // a long directory: show a dozen, and let search find the rest
+  const clubs = searchable ? all.filter((c) => !q || c.name.toLowerCase().includes(q) || c.code.toLowerCase().includes(q)).slice(0, SHOWN) : all;
   return (
     <div className="flex flex-1 flex-col pt-6">
       <Headline title="طرفدار کدام تیمی؟" sub="بازی‌هاشون اول میاد." />
       <p className="mt-3 text-[15px] text-muted-foreground">هر چندتا دوست داری انتخاب کن. هر وقت خواستی می‌تونی عوضشون کنی.</p>
 
+      {searchable && (
+        <div className="mt-4">
+          <label htmlFor="club-search" className="sr-only">
+            جست‌وجوی باشگاه
+          </label>
+          <Input id="club-search" type="search" autoComplete="off" placeholder="جست‌وجوی باشگاه" value={query} onChange={(e) => setQuery(e.target.value)} />
+        </div>
+      )}
+      {loading && <p className="mt-6 text-center text-sm text-muted-foreground">داریم باشگاه‌ها را میاریم…</p>}
+      {searchable && !loading && clubs.length === 0 && <p className="mt-6 text-center text-sm text-muted-foreground">باشگاهی با این اسم پیدا نشد.</p>}
       <ul className="mt-6 grid grid-cols-4 gap-2" aria-label="باشگاه‌ها">
         {clubs.map((club, i) => {
           const on = selected.includes(club.code);

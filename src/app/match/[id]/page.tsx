@@ -5,6 +5,7 @@ import { AppShell } from "@/components/footon/app-shell";
 import { BackButton } from "@/components/footon/back-button";
 import { CrowdPoll } from "@/components/footon/crowd-poll";
 import { LiveMatch } from "@/components/footon/live-match";
+import { RealMatch } from "@/components/footon/real-match";
 import { MatchCentre, type MatchSection } from "@/components/footon/match-centre";
 import { MatchFacts } from "@/components/footon/match-facts";
 import { MatchInfo, MatchNews, TeamForm } from "@/components/footon/match-preview";
@@ -120,6 +121,7 @@ function YourCoins({ match: m }: { match: Match }) {
  */
 export default async function MatchPage({ params }: PageProps<"/match/[id]">) {
   const { id } = await params;
+  if (process.env.NEXT_PUBLIC_GAMIFICATION_API) return <RealMatch id={id} />;
   const m = matches.find((x) => x.id === id);
   if (!m) notFound();
   if (m.status === "live") {

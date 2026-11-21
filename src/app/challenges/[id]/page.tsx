@@ -8,6 +8,7 @@ import { ChallengeGate } from "@/components/footon/challenge-gate";
 import { CoinAmount } from "@/components/footon/coin";
 import { LeagueBadge } from "@/components/footon/league-badge";
 import { LeagueChat } from "@/components/footon/league-chat";
+import { RealChallenge } from "@/components/footon/real-challenge";
 import { MatchCentre, type MatchSection } from "@/components/footon/match-centre";
 import { MatchFacts } from "@/components/footon/match-facts";
 import { MatchInfo, MatchNews, TeamForm } from "@/components/footon/match-preview";
@@ -35,6 +36,7 @@ export function generateStaticParams() {
  */
 export default async function ChallengePage({ params }: PageProps<"/challenges/[id]">) {
   const { id } = await params;
+  if (process.env.NEXT_PUBLIC_GAMIFICATION_API) return <RealChallenge id={id} />;
   const c = challengesWithMatch().find((x) => x.id === id);
   if (!c) notFound();
   const m = c.match;

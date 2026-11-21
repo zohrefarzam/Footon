@@ -4,16 +4,16 @@ import { mockToday } from "./mock-data";
 const DAY = 86_400_000;
 
 /** The calendar date `offset` days from the mock today (UTC, so server and client agree). */
-export function dateFor(offset = 0) {
-  return new Date(Date.parse(`${mockToday}T00:00:00Z`) + offset * DAY);
+export function dateFor(offset = 0, today = mockToday) {
+  return new Date(Date.parse(`${today}T00:00:00Z`) + offset * DAY);
 }
 
 /** "دیروز" • "امروز" • "فردا" • "پنجشنبه ۱۵ آبان" (the Persian calendar, as Iran reads dates) */
-export function dayLabel(offset = 0) {
+export function dayLabel(offset = 0, today = mockToday) {
   if (offset === -1) return "دیروز";
   if (offset === 0) return "امروز";
   if (offset === 1) return "فردا";
-  return dateFor(offset).toLocaleDateString("fa-IR", { weekday: "long", month: "long", day: "numeric", timeZone: "UTC" });
+  return dateFor(offset, today).toLocaleDateString("fa-IR", { weekday: "long", month: "long", day: "numeric", timeZone: "UTC" });
 }
 
 /** "سه‌شنبه ۱۳ آبان" */

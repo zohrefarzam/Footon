@@ -38,6 +38,12 @@ export type Match = {
   caption: string;
   /** Competition, for grouping the live list ("لیگ برتر"). */
   competition: string;
+  /** Country and code for the group header when it isn't in `competitions` (backend fixtures). */
+  /** Backend fixtures: the local date `dayOffset` counts from (the mock uses `mockToday`). */
+  today?: string;
+  /** Backend fixtures: the kickoff instant (ISO). */
+  kickoffAt?: string;
+  competitionMeta?: { country: string; code: string };
   /** Set when you play this match in one of your leagues. */
   league?: string;
   /** Your part in this match (points, calls), when you've made calls on it. */

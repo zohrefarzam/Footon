@@ -21,6 +21,8 @@ type Props = {
   kickoff?: string;
   pool: string;
   balance: number;
+  /** Backend: joins for real. Resolves false when it didn't work (the gate stays on the invite). */
+  onAccept?: () => Promise<boolean>;
   /** What opens once you accept: the prediction builder. */
   children: React.ReactNode;
 };
@@ -30,7 +32,7 @@ type Props = {
  * prediction, cap, pool), lime Accept + secondary Decline. Accepting reveals
  * the predictions right here, so the next step is always on screen.
  */
-export function ChallengeGate({ league, from, entry, players, rules, kickoff, pool, balance, children }: Props) {
+export function ChallengeGate({ league, from, entry, players, rules, kickoff, pool, balance, onAccept, children }: Props) {
   const [state, setState] = useState<"pending" | "accepted" | "declined">("pending");
   const reduce = useReducedMotion();
   const short = entry - balance;
@@ -91,7 +93,9 @@ export function ChallengeGate({ league, from, entry, players, rules, kickoff, po
                 {formatCoins(short)} سکه کم داری
               </Button>
             ) : (
-              <Button size="lg" className="min-w-0 flex-1 justify-between ps-5 pe-4" onClick={() => setState("accepted")}>
+              <Button size="lg" className="min-w-0 flex-1 justify-between ps-5 pe-4" onClick={async () => {
+                  if (!onAccept || (await onAccept())) setState("accepted");
+                }}>
                 قبول
                 <span className="flex items-center gap-1 font-display text-base font-bold">
                   {formatCoins(entry)}

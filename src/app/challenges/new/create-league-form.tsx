@@ -3,8 +3,10 @@
 import { useState } from "react";
 import Link from "next/link";
 import { Check, Link2 } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 import { Coin } from "@/components/footon/coin";
+import { MatchPicker } from "@/components/footon/match-picker";
 import { InviteTicket, type TicketData } from "@/components/footon/invite-ticket";
 import { Button } from "@/components/ui/button";
 import { Card, CardRow } from "@/components/ui/card";
@@ -14,7 +16,9 @@ import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
 import { COSTS, ENTRY_TIERS, STAKE_STEPS, splitPool } from "@/lib/economy";
 import { cn } from "@/lib/utils";
-import { league } from "@/lib/mock-data";
+import { league, type Match } from "@/lib/mock-data";
+import { useProgress } from "@/lib/gamification/queries";
+import { useCreateChallenge } from "@/lib/slips/challenges";
 import { formatNumber, formatSigned, matchup } from "@/lib/format";
 
 /** Invite slots on the ticket; with you that's the pool size we preview. */
@@ -31,8 +35,18 @@ const MODES = [
  * Creating costs coins on top of your own first entry. If you're short, the
  * button says so and points to ways to earn; it never offers a purchase.
  */
-export function CreateLeagueForm({ balance }: { balance: number }) {
-  const [name, setName] = useState(league.name);
+export function CreateLeagueForm({ balance: mockBalance }: { balance: number }) {
+  // with a backend the league is really created (on a match you pick) and its invite code and link are the server's
+  const live = !!process.env.NEXT_PUBLIC_GAMIFICATION_API;
+  const router = useRouter();
+  const createChallenge = useCreateChallenge();
+  const progress = useProgress().data?.coins.free;
+  const balance = live ? (progress ?? 0) : mockBalance;
+  const [picked, setPicked] = useState<Match | null>(null);
+  const [made, setMade] = useState<{ id: string; code: string; link: string } | null>(null);
+  const [creating, setCreating] = useState(false);
+  const [failed, setFailed] = useState(false);
+  const [name, setName] = useState(live ? "" : league.name);
   const [stakeIndex, setStakeIndex] = useState(1);
   const entry = ENTRY_TIERS[stakeIndex];
   const split = splitPool(entry, SLOTS + 1);
@@ -48,9 +62,9 @@ export function CreateLeagueForm({ balance }: { balance: number }) {
 
   const ticket: TicketData = {
     name,
-    code: league.code,
-    link: league.link,
-    match: `${matchup("لیورپول", "منچسترسیتی")} • امشب ۲۱:۰۰`,
+    code: live ? (made?.code ?? "") : league.code,
+    link: live ? (made?.link ?? "") : league.link,
+    match: live ? (picked ? `${matchup(picked.home.name, picked.away.name)} • ${picked.kickoff}` : "یه بازی انتخاب کن") : `${matchup("لیورپول", "منچسترسیتی")} • امشب ۲۱:۰۰`,
     entry,
     perCall: fixedStake ? perCall : null,
     cap,
@@ -60,7 +74,7 @@ export function CreateLeagueForm({ balance }: { balance: number }) {
 
   const copy = async () => {
     try {
-      await navigator.clipboard.writeText(`https://${league.link}`);
+      await navigator.clipboard.writeText(`https://${live ? made?.link : league.link}`);
     } catch {
       /* clipboard can be blocked; still show feedback */
     }
@@ -68,10 +82,23 @@ export function CreateLeagueForm({ balance }: { balance: number }) {
     setTimeout(() => setCopied(false), 1800);
   };
 
+  const create = async () => {
+    if (!picked) return;
+    setCreating(true);
+    setFailed(false);
+    const c = await createChallenge({ matchId: picked.id, name: name.trim(), entry, fixedStake: fixedStake ? perCall : null, cap });
+    setCreating(false);
+    if (c) setMade(c);
+    else setFailed(true);
+  };
+  const canCreate = !!picked && name.trim().length > 0 && !creating;
+
   return (
     <>
       {/* the live invite ticket: updates as the form changes, and shares itself to Telegram */}
-      <InviteTicket t={ticket} />
+      <InviteTicket t={ticket} created={!!made} />
+
+      {live && !made && <MatchPicker value={picked?.id ?? null} onChange={setPicked} />}
 
       <div className="flex flex-col gap-2">
         <Label htmlFor="league-name">نام لیگ</Label>
@@ -197,13 +224,28 @@ export function CreateLeagueForm({ balance }: { balance: number }) {
 
       <div className="flex flex-col gap-2.5">
         <div className="flex gap-2">
-          <Button variant="secondary" size="lg" onClick={copy} aria-live="polite">
-            {copied ? <Check /> : <Link2 />}
-            {copied ? "کپی شد" : "کپی"}
-          </Button>
-          {short > 0 ? (
+          {(!live || made) && (
+            <Button variant="secondary" size="lg" onClick={copy} aria-live="polite">
+              {copied ? <Check /> : <Link2 />}
+              {copied ? "کپی شد" : "کپی"}
+            </Button>
+          )}
+          {made ? (
+            <Button size="lg" className="min-w-0 flex-1" onClick={() => router.push(`/challenges/${made.id}`)}>
+              باز کردن چالش
+            </Button>
+          ) : short > 0 ? (
             <Button size="lg" className="min-w-0 flex-1" disabled>
               {fmt(short)} سکه کم داری
+            </Button>
+          ) : live ? (
+            <Button size="lg" className="min-w-0 flex-1 justify-between ps-5 pe-4" disabled={!canCreate} onClick={create}>
+              <span>{creating ? "صبر کن…" : "بساز"}</span>
+              <span className="flex items-center gap-1 font-display text-base font-bold">
+                {fmt(cost)}
+                <Coin className="size-4 text-[8px]" />
+                <span className="sr-only">سکه</span>
+              </span>
             </Button>
           ) : (
             <Button asChild size="lg" className="min-w-0 flex-1 justify-between ps-5 pe-4">
@@ -220,6 +262,11 @@ export function CreateLeagueForm({ balance }: { balance: number }) {
             </Button>
           )}
         </div>
+        {failed && (
+          <p role="alert" className="text-center text-xs text-muted-foreground">
+            چالش ساخته نشد. دوباره امتحان کن.
+          </p>
+        )}
         <p className="text-center text-xs text-muted-foreground">
           {short > 0 ? (
             <>

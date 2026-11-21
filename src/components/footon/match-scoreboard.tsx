@@ -75,7 +75,7 @@ export function MatchScoreboard({ match: m }: { match: Match }) {
               {(m.dayOffset ?? 0) === 0 && m.kickoff ? (
                 <Countdown kickoff={m.kickoff} className="font-display text-base font-bold text-muted-foreground" />
               ) : (
-                <span className="text-[13px] font-medium text-muted-foreground">{dayLabel(m.dayOffset)}</span>
+                <span className="text-[13px] font-medium text-muted-foreground">{dayLabel(m.dayOffset, m.today)}</span>
               )}
               {m.boost && <BoostBadge label="بردها" className="mt-1" />}
             </>

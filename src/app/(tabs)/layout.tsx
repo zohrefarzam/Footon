@@ -1,4 +1,5 @@
 import { Dock } from "@/components/footon/dock";
+import { LiveDock } from "@/components/footon/live-dock";
 import { LevelProgressBar } from "@/components/footon/gamification/level-progress-bar";
 import { invites, matches, wallet } from "@/lib/mock-data";
 
@@ -16,7 +17,7 @@ export default function TabsLayout({ children }: LayoutProps<"/">) {
         <LevelProgressBar coins={wallet.coins} />
       </div>
       {children}
-      <Dock live={live} invites={invites.length} />
+      {process.env.NEXT_PUBLIC_GAMIFICATION_API ? <LiveDock /> : <Dock live={live} invites={invites.length} />}
     </>
   );
 }

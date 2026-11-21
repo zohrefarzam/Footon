@@ -18,10 +18,14 @@ import { formatNumber } from "@/lib/format";
  * is a chip with ✕ to drop it; "Add club" opens a sheet with the onboarding
  * crest grid (soft-lime when picked), searchable by name or code.
  */
-export function FavouriteClubs({ clubs, initial }: { clubs: Team[]; initial: string[] }) {
+export function FavouriteClubs({ clubs, initial, onChange }: { clubs: Team[]; initial: string[]; onChange?: (codes: string[]) => void }) {
   const [picked, setPicked] = useState<string[]>(initial);
   const reduce = useReducedMotion();
-  const toggle = (code: string) => setPicked((p) => (p.includes(code) ? p.filter((c) => c !== code) : [...p, code]));
+  const toggle = (code: string) => {
+    const next = picked.includes(code) ? picked.filter((c) => c !== code) : [...picked, code];
+    setPicked(next);
+    onChange?.(next);
+  };
   const mine = picked.flatMap((code) => clubs.filter((c) => c.code === code));
   const [query, setQuery] = useState("");
   const q = useDeferredValue(query).trim().toLowerCase();

@@ -14,7 +14,9 @@ type Tokens = {
 
 /** A call to one backend service, e.g. `backend("identity/auth/refresh")`. */
 export function backend(path: string, init?: RequestInit) {
-  return fetch(`${BACKEND}/api/${path}`, { ...init, cache: "no-store" });
+  const headers = new Headers(init?.headers);
+  headers.set("accept-language", "fa-IR"); // the app is Persian only, so the backend's messages come back in Persian
+  return fetch(`${BACKEND}/api/${path}`, { ...init, headers, cache: "no-store" });
 }
 
 /** Tokens live in httpOnly cookies: the browser never reads them. */

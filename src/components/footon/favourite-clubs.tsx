@@ -49,7 +49,7 @@ export function FavouriteClubs({ clubs, initial, onChange }: { clubs: Team[]; in
                 transition={{ type: "spring", stiffness: 420, damping: 30 }}
                 className="flex h-11 items-center gap-2 rounded-full border border-line-strong bg-surface-2 ps-1.5 pe-1"
               >
-                <TeamCrest code={c.code} colors={c.colors} size="xs" />
+                <TeamCrest code={c.code} colors={c.colors} logo={c.logo} size="xs" />
                 <span className="text-sm font-semibold">{c.name}</span>
                 <Button variant="ghost" size="icon-sm" className="size-8 rounded-full" aria-label={`حذف ${c.name}`} onClick={() => toggle(c.code)}>
                   <X />
@@ -117,7 +117,7 @@ export function FavouriteClubs({ clubs, initial, onChange }: { clubs: Team[]; in
                             on ? "border-primary-line bg-primary-soft" : "border-line bg-surface hover:bg-surface-hover",
                           )}
                         >
-                          <TeamCrest code={club.code} colors={club.colors} size="lg" />
+                          <TeamCrest code={club.code} colors={club.colors} logo={club.logo} size="lg" />
                           <span className={cn("w-full truncate text-center text-xs font-medium", on ? "text-primary" : "text-muted-foreground")}>{club.name}</span>
                           {on && (
                             <span

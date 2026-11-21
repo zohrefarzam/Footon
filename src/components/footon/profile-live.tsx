@@ -1,5 +1,6 @@
 "use client";
 
+import { PageLoader } from "./page-loader";
 import { AppShell } from "@/components/footon/app-shell";
 import { FavouriteClubs } from "@/components/footon/favourite-clubs";
 import { ProfileView } from "@/components/footon/profile-view";
@@ -10,7 +11,7 @@ import { useClubs, useFormStats, useSaveClubs } from "@/lib/profile/api";
 function LiveClubs() {
   const { data, isPending, isError } = useClubs();
   const save = useSaveClubs(data?.idOf ?? {});
-  if (isPending) return <Skeleton className="h-28 w-full rounded-2xl" />;
+  if (isPending) return <PageLoader />;
   if (isError || !data) return <p className="text-center text-sm text-muted-foreground">الان نمی‌تونیم باشگاه‌هات را بیاریم. چند لحظهٔ دیگه دوباره بیا.</p>;
   return <FavouriteClubs clubs={data.teams} initial={data.followed} onChange={save} />;
 }

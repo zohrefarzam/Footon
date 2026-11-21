@@ -7,7 +7,7 @@ import type { LiveQuestion } from "@/components/footon/question-card";
 import type { Prediction } from "@/lib/predictions";
 
 /** `colors` = [shirt, trim]; drives the placeholder crest. */
-export type Team = { code: string; name: string; colors?: [string, string] };
+export type Team = { code: string; name: string; colors?: [string, string]; logo?: string };
 
 export type MatchEventKind = "goal" | "yellow" | "red" | "sub" | "var";
 /** One thing that happened. `detail` = who came off for a sub, or the VAR call. */

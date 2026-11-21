@@ -76,8 +76,8 @@ export function JoinLanding({ code }: { code: string }) {
       <Card className="gap-3 p-4">
         <div className="flex items-center gap-3">
           <span className="flex shrink-0" aria-hidden="true">
-            <TeamCrest code={m.home.code} colors={m.home.colors} size="xs" className="relative z-10 size-[34px]" />
-            <TeamCrest code={m.away.code} colors={m.away.colors} size="xs" className="-ms-3 size-[34px] opacity-90" />
+            <TeamCrest code={m.home.code} colors={m.home.colors} logo={m.home.logo} size="xs" className="relative z-10 size-[34px]" />
+            <TeamCrest code={m.away.code} colors={m.away.colors} logo={m.away.logo} size="xs" className="-ms-3 size-[34px] opacity-90" />
           </span>
           <div className="min-w-0 flex-1">
             <p className="truncate text-[15px] font-semibold">{matchup(m.home.name, m.away.name)}</p>

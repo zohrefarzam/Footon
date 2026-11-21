@@ -1,5 +1,6 @@
 "use client";
 
+import { PageLoader } from "./page-loader";
 import { useSyncExternalStore } from "react";
 
 import { AppShell } from "@/components/footon/app-shell";
@@ -13,7 +14,6 @@ import { CompactScore, MatchScoreboard } from "@/components/footon/match-scorebo
 import { RealPredict } from "@/components/footon/real-match";
 import { Standings } from "@/components/footon/standings";
 import { Card } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
 import { dateKey } from "@/lib/football/fixtures";
 import { useProgress } from "@/lib/gamification/queries";
 import { linkOf, toChallenge, useChallengeDetail, useChallengeMessages, useJoinChallenge, useSendMessage } from "@/lib/slips/challenges";
@@ -50,7 +50,7 @@ export function RealChallenge({ id }: { id: string }) {
   if (!data || !today)
     return (
       <AppShell dock={false}>
-        <Skeleton className="h-72 w-full rounded-2xl" />
+        <PageLoader />
       </AppShell>
     );
 

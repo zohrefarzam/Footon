@@ -7,7 +7,7 @@ import { z } from "zod";
 import type { Match } from "@/lib/mock-data";
 
 const n = z.coerce.number();
-const Team = z.object({ id: n, name: z.string(), code: z.string().nullish() });
+const Team = z.object({ id: n, name: z.string(), code: z.string().nullish(), logo: z.string().nullish() });
 
 export const Fixture = z.object({
   id: z.string(),
@@ -39,8 +39,8 @@ export function toMatch(f: Fixture, today: string): Match {
   const at = new Date(f.kickoffUtc);
   return {
     id: f.id,
-    home: { code: code(f.homeTeam), name: f.homeTeam.name },
-    away: { code: code(f.awayTeam), name: f.awayTeam.name },
+    home: { code: code(f.homeTeam), name: f.homeTeam.name, logo: f.homeTeam.logo ?? undefined },
+    away: { code: code(f.awayTeam), name: f.awayTeam.name, logo: f.awayTeam.logo ?? undefined },
     status,
     minute: status === "live" ? (f.elapsed ?? undefined) : undefined,
     score: f.score && status !== "upcoming" ? [f.score.home, f.score.away] : undefined,

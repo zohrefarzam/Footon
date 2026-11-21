@@ -1,3 +1,6 @@
+"use client";
+
+import { useState } from "react";
 import { cn } from "@/lib/utils";
 
 const sizes = {
@@ -17,14 +20,26 @@ const sizes = {
 export function TeamCrest({
   code,
   colors,
+  logo,
   size = "md",
   className,
 }: {
   code: string;
   colors?: [string, string];
+  /** Real crest image; falls back to the placeholder if missing or broken. */
+  logo?: string;
   size?: keyof typeof sizes;
   className?: string;
 }) {
+  const [broken, setBroken] = useState(false);
+  if (logo && !broken) {
+    return (
+      <span className={cn("inline-flex shrink-0 items-center justify-center", sizes[size], className)}>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src={logo} alt="" loading="lazy" onError={() => setBroken(true)} className="size-full object-contain" />
+      </span>
+    );
+  }
   if (colors) {
     const [shirt, trim] = colors;
     return (

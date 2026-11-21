@@ -48,7 +48,7 @@ export function ResultCard({
         <span className="flex min-w-0 items-center justify-end gap-2">
           <HostMark side="home" />
           <span className={cn("truncate text-sm font-semibold", h < a && "text-muted-foreground")}>{m.home.name}</span>
-          <TeamCrest code={m.home.code} colors={m.home.colors} size="sm" />
+          <TeamCrest code={m.home.code} colors={m.home.colors} logo={m.home.logo} size="sm" />
         </span>
         <span className="flex items-center rounded-sm bg-surface-2 px-2.5 py-1 font-display text-[26px] leading-none font-bold">
           {formatNumber(h)}
@@ -56,7 +56,7 @@ export function ResultCard({
           {formatNumber(a)}
         </span>
         <span className="flex min-w-0 items-center gap-2">
-          <TeamCrest code={m.away.code} colors={m.away.colors} size="sm" />
+          <TeamCrest code={m.away.code} colors={m.away.colors} logo={m.away.logo} size="sm" />
           <span className={cn("truncate text-sm font-semibold", a < h && "text-muted-foreground")}>{m.away.name}</span>
           <HostMark side="away" />
         </span>

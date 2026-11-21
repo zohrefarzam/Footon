@@ -1,11 +1,11 @@
 "use client";
 
+import { PageLoader } from "./page-loader";
 import { useSyncExternalStore } from "react";
 
 import { ChallengeList } from "@/components/footon/challenge-list";
 import { JoinByCode } from "@/components/footon/join-by-code";
 import { InviteStrip } from "@/components/footon/invite-strip";
-import { Skeleton } from "@/components/ui/skeleton";
 import { dateKey } from "@/lib/football/fixtures";
 import { toInvite, useChallenges, useJoinChallenge } from "@/lib/slips/challenges";
 
@@ -18,7 +18,7 @@ export function ChallengesLive() {
   const join = useJoinChallenge();
 
   if (error) return <p className="text-center text-sm text-muted-foreground">الان نمی‌تونیم چالش‌هات را بیاریم. چند لحظهٔ دیگه دوباره بیا.</p>;
-  if (loading) return <Skeleton className="h-48 w-full rounded-2xl" />;
+  if (loading) return <PageLoader />;
   return (
     <>
       <JoinByCode today={today!} />

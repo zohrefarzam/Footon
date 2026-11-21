@@ -1,5 +1,6 @@
 "use client";
 
+import { PageLoader } from "./page-loader";
 import { useSyncExternalStore } from "react";
 
 import { AppShell } from "@/components/footon/app-shell";
@@ -32,7 +33,7 @@ export function RealPredict({ m }: { m: Match }) {
   const vote = useVote(m.id);
   const balance = useProgress().data?.coins.free ?? 0;
 
-  if (slip.isPending && m.status !== "live") return <Skeleton className="h-40 w-full rounded-2xl" />;
+  if (slip.isPending && m.status !== "live") return <PageLoader />;
   const open = m.status === "upcoming" && (slip.data?.editable ?? true);
   const myPick = crowd.data?.myPick ? (crowd.data.myPick.toLowerCase() as "home" | "draw" | "away") : null;
   return (

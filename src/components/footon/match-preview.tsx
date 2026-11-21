@@ -85,7 +85,7 @@ export function TeamForm({ home, away, form }: { home: Team; away: Team; form: M
         [away, form.away],
       ] as const).map(([t, results], i) => (
         <CardRow key={t.code} className="py-3">
-          <TeamCrest code={t.code} colors={t.colors} size="xs" />
+          <TeamCrest code={t.code} colors={t.colors} logo={t.logo} size="xs" />
           <span className="min-w-0 truncate text-[15px] font-semibold">{t.name}</span>
           <HostMark side={i === 0 ? "home" : "away"} className="me-auto" />
           <ol className="flex gap-1" aria-label={`وضعیت ${t.name}، از قدیمی به جدید: ${results.map((r) => formLabel[r]).join("، ")}`}>

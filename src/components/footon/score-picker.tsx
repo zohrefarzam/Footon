@@ -18,7 +18,7 @@ function Stepper({ team, side, value, set, active }: { team: Team; side: "home" 
     "flex size-11 items-center justify-center rounded-md border border-line-strong bg-surface-3 text-foreground outline-none transition-[transform,background-color] duration-150 ease-spring hover:bg-surface-4 active:scale-90 disabled:opacity-35 focus-visible:ring-[3px] focus-visible:ring-ring/60";
   return (
     <div className="flex min-w-0 flex-col items-center gap-2" role="group" aria-label={`گل‌های ${team.name}`}>
-      <TeamCrest code={team.code} colors={team.colors} size="lg" />
+      <TeamCrest code={team.code} colors={team.colors} logo={team.logo} size="lg" />
       <span className="flex w-full min-w-0 items-center justify-center gap-1">
         <HostMark side={side} />
         <span className="truncate text-[13px] font-semibold">{team.name}</span>

@@ -14,6 +14,7 @@ import { LiveDot, LiveMinute } from "@/components/footon/live";
 import { MatchFilter } from "@/components/footon/match-filter";
 import { ChallengesIcon, HomeIcon, LiveIcon, ProfileIcon } from "@/components/footon/nav-icons";
 import { ProgressRing } from "@/components/footon/progress-ring";
+import { BallLoader } from "@/components/footon/ball-loader";
 import { TeamCrest } from "@/components/footon/team-crest";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -189,6 +190,7 @@ export default function StyleguidePage() {
         <div className="flex items-center gap-6">
           <FormBars results={["W", "W", "L", "W", "V", "L"]} />
           <ProgressRing value={3} max={5} />
+          <BallLoader size="lg" className="pt-12" />
           <TeamCrest code="LIV" />
           <TeamCrest code="MCI" size="lg" />
         </div>

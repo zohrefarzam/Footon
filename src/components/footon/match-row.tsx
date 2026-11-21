@@ -49,7 +49,7 @@ export function MatchRow({
     return (
       <span className={cn("flex min-w-0 items-center gap-2", i === 0 && "flex-row-reverse text-end")}>
         <span className="relative shrink-0">
-          <TeamCrest code={t.code} colors={t.colors} size="xs" />
+          <TeamCrest code={t.code} colors={t.colors} logo={t.logo} size="xs" />
           <HostPin side={i === 0 ? "home" : "away"} />
         </span>
         <span className={cn("min-w-0 truncate text-sm font-semibold", lost(i) && "text-muted-foreground")}>

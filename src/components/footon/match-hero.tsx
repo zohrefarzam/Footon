@@ -79,7 +79,7 @@ export function MatchHero({
         <div className="grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-2">
           {[m.home, m.away].map((t, i) => (
             <div key={t.code} className={cn("flex min-w-0 flex-col items-center gap-2 text-center", i === 1 && "col-start-3 row-start-1")}>
-              <TeamCrest code={t.code} colors={t.colors} size="xl" className="size-16 text-base" />
+              <TeamCrest code={t.code} colors={t.colors} logo={t.logo} size="xl" className="size-16 text-base" />
               <span className="w-full truncate text-[15px] font-bold tracking-[-0.01em]">
                 <span className="max-[359px]:hidden">{t.name}</span>
                 <span className="font-display tracking-wide min-[360px]:hidden">{t.code}</span>

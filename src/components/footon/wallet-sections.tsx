@@ -1,10 +1,10 @@
 "use client";
 
+import { PageLoader } from "./page-loader";
 import { CoinAmount } from "@/components/footon/coin";
 import { StarterMissions } from "@/components/footon/missions";
 import { Card } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { Skeleton } from "@/components/ui/skeleton";
 import { STARTER_DAYS } from "@/lib/economy";
 import { formatNumber } from "@/lib/format";
 import { useWalletData } from "@/lib/wallet/queries";
@@ -105,5 +105,5 @@ export function WalletLive() {
   const { data, isError } = useWalletData();
   if (data) return <WalletSections {...data} />;
   if (isError) return <p className="text-center text-sm text-muted-foreground">الان نمی‌تونیم فعالیت کیف پولت را نشون بدیم. چند لحظهٔ دیگه دوباره بیا.</p>;
-  return <Skeleton className="h-48 w-full rounded-2xl" />;
+  return <PageLoader />;
 }

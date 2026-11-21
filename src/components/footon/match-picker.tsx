@@ -49,8 +49,8 @@ export function MatchPicker({ value, onChange }: { value: string | null; onChang
                 )}
               >
                 <span className="flex shrink-0" aria-hidden="true">
-                  <TeamCrest code={m.home.code} colors={m.home.colors} size="xs" className="relative z-10 size-[28px]" />
-                  <TeamCrest code={m.away.code} colors={m.away.colors} size="xs" className="-ms-2 size-[28px] opacity-90" />
+                  <TeamCrest code={m.home.code} colors={m.home.colors} logo={m.home.logo} size="xs" className="relative z-10 size-[28px]" />
+                  <TeamCrest code={m.away.code} colors={m.away.colors} logo={m.away.logo} size="xs" className="-ms-2 size-[28px] opacity-90" />
                 </span>
                 <span className={cn("min-w-0 flex-1 truncate text-[15px] font-semibold", on && "text-primary")}>{matchup(m.home.name, m.away.name)}</span>
                 <span className="shrink-0 font-display text-sm font-bold text-muted-foreground">

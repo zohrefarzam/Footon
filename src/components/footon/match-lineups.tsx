@@ -104,7 +104,7 @@ function Side({ team, lineup, events, top }: { team: Team; lineup: Lineup; event
 function TeamTag({ team, side, formation, className }: { team: Team; side: "home" | "away"; formation: string; className?: string }) {
   return (
     <div aria-hidden="true" className={cn("absolute inset-x-0 flex items-center gap-2 px-4", className)}>
-      <TeamCrest code={team.code} colors={team.colors} size="xs" />
+      <TeamCrest code={team.code} colors={team.colors} logo={team.logo} size="xs" />
       <span className="text-[13px] font-semibold text-[#e1ebe5]">{team.name}</span>
       <HostMark side={side} label className="text-white/60" />
       <span className="ms-auto font-display text-[15px] font-bold text-white/60">{formation}</span>

@@ -1,4 +1,5 @@
 import { AppShell } from "@/components/footon/app-shell";
+import { BallLoader } from "@/components/footon/ball-loader";
 import { PitchMarkings } from "@/components/footon/pitch-markings";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -6,9 +7,6 @@ import { Skeleton } from "@/components/ui/skeleton";
 export default function MatchLoading() {
   return (
     <AppShell dock={false} className="gap-0 pt-0">
-      <p className="sr-only" role="status">
-        بازی داره باز میشه
-      </p>
       <div className="h-14" />
       <div className="floodlight relative isolate -mx-5 flex items-center justify-between gap-3 overflow-hidden border-b border-line px-8 pt-3 pb-6">
         <PitchMarkings className="-z-10" />
@@ -18,7 +16,9 @@ export default function MatchLoading() {
             <Skeleton className="h-3 w-16" />
           </div>
         ))}
-        <Skeleton className="order-1 h-14 w-24" />
+        <div className="order-1 flex h-14 w-24 items-end justify-center">
+          <BallLoader label="بازی داره باز میشه" size="md" />
+        </div>
       </div>
       <div className="-mx-5 flex gap-4 border-b border-line px-5 py-3">
         {[56, 44, 48, 52].map((w) => (

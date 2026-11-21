@@ -84,7 +84,7 @@ export function CrowdPoll({
                 />
               )}
               <span className="relative flex items-center gap-2">
-                {o.team ? <TeamCrest code={o.team.code} colors={o.team.colors} size="xs" /> : null}
+                {o.team ? <TeamCrest code={o.team.code} colors={o.team.colors} logo={o.team.logo} size="xs" /> : null}
                 {pick ? (
                   <span className="font-display text-lg font-bold">{formatPercent(share)}</span>
                 ) : o.team ? (

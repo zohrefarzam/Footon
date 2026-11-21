@@ -47,8 +47,8 @@ function Slip({ m, slip, settled = false }: { m: Match; slip: Prediction[]; sett
       >
         <span className="flex shrink-0" aria-hidden="true">
           {/* home first (right in RTL) and on top; away tucks in behind it */}
-          <TeamCrest code={m.home.code} colors={m.home.colors} size="xs" className="relative z-10 size-[30px]" />
-          <TeamCrest code={m.away.code} colors={m.away.colors} size="xs" className="-ms-2.5 size-[30px] opacity-90" />
+          <TeamCrest code={m.home.code} colors={m.home.colors} logo={m.home.logo} size="xs" className="relative z-10 size-[30px]" />
+          <TeamCrest code={m.away.code} colors={m.away.colors} logo={m.away.logo} size="xs" className="-ms-2.5 size-[30px] opacity-90" />
         </span>
         <span className="min-w-0 flex-1" aria-hidden="true">
           <span className="flex items-center gap-2 text-[15px] font-semibold">

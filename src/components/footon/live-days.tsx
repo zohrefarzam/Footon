@@ -1,8 +1,8 @@
 "use client";
 
+import { PageLoader } from "./page-loader";
 import { useSyncExternalStore } from "react";
 
-import { Skeleton } from "@/components/ui/skeleton";
 import { dateKey } from "@/lib/football/fixtures";
 import { useFixtureDays } from "@/lib/football/queries";
 import { MatchDays } from "./match-days";
@@ -16,6 +16,6 @@ export function LiveDays() {
   const { matches, loading, error } = useFixtureDays(today, DAYS);
 
   if (error) return <p className="text-center text-sm text-muted-foreground">الان نمی‌تونیم بازی‌ها را بیاریم. چند لحظهٔ دیگه دوباره بیا.</p>;
-  if (loading || !today) return <Skeleton className="h-64 w-full rounded-2xl" />;
+  if (loading || !today) return <PageLoader />;
   return <MatchDays matches={matches} today={today} />;
 }

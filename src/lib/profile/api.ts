@@ -32,7 +32,7 @@ export const useFormStats = () =>
     },
   });
 
-const Teams = z.array(z.object({ id: n, name: z.string(), code: z.string().nullish() }));
+const Teams = z.array(z.object({ id: n, name: z.string(), code: z.string().nullish(), logo: z.string().nullish() }));
 const Followed = z.object({ teamIds: z.array(n) });
 
 export type ClubDirectory = { teams: Team[]; idOf: Record<string, number>; followed: string[] };
@@ -52,7 +52,7 @@ export const useClubs = (enabled = true) =>
         if (idOf[code] !== undefined) continue;
         idOf[code] = t.id;
         codeOf[t.id] = code;
-        list.push({ code, name: t.name });
+        list.push({ code, name: t.name, logo: t.logo ?? undefined });
       }
       return { teams: list, idOf, followed: followed.teamIds.flatMap((id) => (codeOf[id] ? [codeOf[id]] : [])) };
     },

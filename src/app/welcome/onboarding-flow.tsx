@@ -448,7 +448,7 @@ function ClubsStep({
                   on ? "border-primary-line bg-primary-soft" : "border-line bg-surface hover:bg-surface-hover",
                 )}
               >
-                <TeamCrest code={club.code} colors={club.colors} size="lg" />
+                <TeamCrest code={club.code} colors={club.colors} logo={club.logo} size="lg" />
                 <span className={cn("w-full truncate text-center text-xs font-medium", on ? "text-primary" : "text-muted-foreground")}>
                   {club.name}
                 </span>

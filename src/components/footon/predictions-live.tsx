@@ -1,10 +1,10 @@
 "use client";
 
+import { PageLoader } from "./page-loader";
 import { useSyncExternalStore } from "react";
 
 import { AppShell } from "@/components/footon/app-shell";
 import { PredictionsBoard, type CouponEntry } from "@/components/footon/predictions-board";
-import { Skeleton } from "@/components/ui/skeleton";
 import { dateKey } from "@/lib/football/fixtures";
 import { toServiceMatch } from "@/lib/slips/match";
 import { picksOf, useMyPredictions } from "@/lib/slips/api";
@@ -25,7 +25,7 @@ export function PredictionsLive() {
   if (!data || !today)
     return (
       <AppShell>
-        <Skeleton className="h-64 w-full rounded-2xl" />
+        <PageLoader />
       </AppShell>
     );
 

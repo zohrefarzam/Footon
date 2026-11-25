@@ -6,7 +6,6 @@ import { cn, ordinal } from "@/lib/utils";
 import { StreakFlame } from "./streak";
 import { TeamCrest } from "./team-crest";
 import { formatNumber, formatSigned } from "@/lib/format";
-import { HostMark } from "./host-mark";
 
 /**
  * Your latest result: the full-time score, then three broadcast stats (points
@@ -46,7 +45,6 @@ export function ResultCard({
 
       <span aria-hidden="true" className="grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-3">
         <span className="flex min-w-0 items-center justify-end gap-2">
-          <HostMark side="home" />
           <span className={cn("truncate text-sm font-semibold", h < a && "text-muted-foreground")}>{m.home.name}</span>
           <TeamCrest code={m.home.code} colors={m.home.colors} logo={m.home.logo} size="sm" />
         </span>
@@ -58,7 +56,6 @@ export function ResultCard({
         <span className="flex min-w-0 items-center gap-2">
           <TeamCrest code={m.away.code} colors={m.away.colors} logo={m.away.logo} size="sm" />
           <span className={cn("truncate text-sm font-semibold", a < h && "text-muted-foreground")}>{m.away.name}</span>
-          <HostMark side="away" />
         </span>
       </span>
 

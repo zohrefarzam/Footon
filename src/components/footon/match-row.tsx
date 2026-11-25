@@ -8,7 +8,6 @@ import { StreakFlame } from "./streak";
 import { TeamCrest } from "./team-crest";
 import { formatBoost, formatMinute, formatNumber, formatSigned } from "@/lib/format";
 import { matchWhen } from "@/lib/dates";
-import { HostPin } from "./host-mark";
 
 /**
  * One-line fixture row, scoreboard style, inside a divided list Card (~60px):
@@ -48,10 +47,7 @@ export function MatchRow({
     const t = i === 0 ? match.home : match.away;
     return (
       <span className={cn("flex min-w-0 items-center gap-2", i === 0 && "flex-row-reverse text-end")}>
-        <span className="relative shrink-0">
-          <TeamCrest code={t.code} colors={t.colors} logo={t.logo} size="xs" />
-          <HostPin side={i === 0 ? "home" : "away"} />
-        </span>
+        <TeamCrest code={t.code} colors={t.colors} logo={t.logo} size="xs" className="shrink-0" />
         <span className={cn("min-w-0 truncate text-sm font-semibold", lost(i) && "text-muted-foreground")}>
           <span className="max-[359px]:hidden">{t.name}</span>
           <span className="font-display text-[15px] tracking-wide min-[360px]:hidden">{t.code}</span>

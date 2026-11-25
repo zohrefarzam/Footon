@@ -1,19 +1,23 @@
 "use client";
 
+import { useState } from "react";
+
 import { PageLoader } from "./page-loader";
 import { AppShell } from "@/components/footon/app-shell";
 import { FavouriteClubs } from "@/components/footon/favourite-clubs";
 import { ProfileView } from "@/components/footon/profile-view";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useLeaderboard } from "@/lib/leaderboard/api";
-import { useClubs, useFormStats, useSaveClubs } from "@/lib/profile/api";
+import { useClubSearch, useClubs, useFormStats, useSaveClubs } from "@/lib/profile/api";
 
 function LiveClubs() {
   const { data, isPending, isError } = useClubs();
   const save = useSaveClubs(data?.idOf ?? {});
+  const [query, setQuery] = useState("");
+  const search = useClubSearch(query);
   if (isPending) return <PageLoader />;
   if (isError || !data) return <p className="text-center text-sm text-muted-foreground">الان نمی‌تونیم باشگاه‌هات را بیاریم. چند لحظهٔ دیگه دوباره بیا.</p>;
-  return <FavouriteClubs clubs={data.teams} initial={data.followed} onChange={save} />;
+  return <FavouriteClubs clubs={data.teams} initial={data.followed} onChange={save} onSearch={setQuery} searchResults={search.data} searching={search.isFetching} />;
 }
 
 /** Profile on the backend: your division card and recent form; level, streak and badges already come from the gamification server. */

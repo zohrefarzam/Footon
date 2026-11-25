@@ -1,6 +1,6 @@
 "use client";
 
-import { useDeferredValue, useState } from "react";
+import { useEffect, useState } from "react";
 import { Check, Plus, Search, X } from "lucide-react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 
@@ -13,12 +13,37 @@ import { cn } from "@/lib/utils";
 import { TeamCrest } from "./team-crest";
 import { formatNumber } from "@/lib/format";
 
+/** The value, but only once it has stopped changing for `ms`. */
+function useDebounced<T>(value: T, ms = 600) {
+  const [v, setV] = useState(value);
+  useEffect(() => {
+    const t = setTimeout(() => setV(value), ms);
+    return () => clearTimeout(t);
+  }, [value, ms]);
+  return v;
+}
+
 /**
  * Your clubs on Profile: picked in onboarding, changed here any time. Each club
  * is a chip with ✕ to drop it; "Add club" opens a sheet with the onboarding
  * crest grid (soft-lime when picked), searchable by name or code.
  */
-export function FavouriteClubs({ clubs, initial, onChange }: { clubs: Team[]; initial: string[]; onChange?: (codes: string[]) => void }) {
+export function FavouriteClubs({
+  clubs,
+  initial,
+  onChange,
+  onSearch,
+  searchResults,
+  searching = false,
+}: {
+  clubs: Team[];
+  initial: string[];
+  onChange?: (codes: string[]) => void;
+  /** Server search: gets the debounced query; `searchResults` are its hits. Without it the list filters locally. */
+  onSearch?: (query: string) => void;
+  searchResults?: Team[];
+  searching?: boolean;
+}) {
   const [picked, setPicked] = useState<string[]>(initial);
   const reduce = useReducedMotion();
   const toggle = (code: string) => {
@@ -28,8 +53,12 @@ export function FavouriteClubs({ clubs, initial, onChange }: { clubs: Team[]; in
   };
   const mine = picked.flatMap((code) => clubs.filter((c) => c.code === code));
   const [query, setQuery] = useState("");
-  const q = useDeferredValue(query).trim().toLowerCase();
-  const results = q ? clubs.filter((c) => c.name.toLowerCase().includes(q) || c.code.toLowerCase().includes(q)) : clubs;
+  const q = useDebounced(query).trim().toLowerCase();
+  useEffect(() => {
+    onSearch?.(q);
+  }, [q, onSearch]);
+  const remote = !!onSearch;
+  const results = q && remote ? (searchResults ?? []) : q ? clubs.filter((c) => c.name.toLowerCase().includes(q) || c.code.toLowerCase().includes(q)) : clubs;
 
   return (
     <section aria-labelledby="clubs-title" className="flex flex-col gap-2.5">
@@ -98,7 +127,7 @@ export function FavouriteClubs({ clubs, initial, onChange }: { clubs: Team[]; in
                 <p className="sr-only" aria-live="polite">
                   {q ? `${formatNumber(results.length)} باشگاه پیدا شد` : ""}
                 </p>
-                {results.length === 0 && (
+                {results.length === 0 && !searching && (
                   <p className="bg-dots rounded-xl border border-dashed border-line-strong px-6 py-8 text-center text-sm text-muted-foreground">
                     باشگاهی با «{query.trim()}» پیدا نشد.
                   </p>

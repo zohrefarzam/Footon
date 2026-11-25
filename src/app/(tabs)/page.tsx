@@ -1,6 +1,5 @@
 import { AppShell } from "@/components/footon/app-shell";
 import { BoostBadge } from "@/components/footon/boost-badge";
-import { EmptyState } from "@/components/footon/empty-state";
 import { HomeBigFixtures } from "@/components/footon/home-big-fixtures";
 import { FantasyUnlock } from "@/components/footon/fantasy-unlock";
 import { QuestsTile } from "@/components/footon/gamification/quests";
@@ -35,7 +34,7 @@ export default function HomePage() {
             {/* the heading is the card's header, so the title and its matches read as one block */}
             <SectionHeading
               id="home-big"
-              title="بازی‌های بزرگ"
+              title="بازی‌های داغ"
               meta={<BoostBadge label="بردها" className="max-[359px]:hidden" />}
               action={{ label: "همهٔ بازی‌ها", href: "/live" }}
               className="border-b border-line ps-4 pe-3 pt-3.5 pb-3"
@@ -45,9 +44,7 @@ export default function HomePage() {
             ))}
           </section>
         </Card>
-      ) : (
-        <EmptyState title="فعلاً بازی بزرگی نیست" body="همهٔ بازی‌ها توی بخش زنده‌ست. یکی را انتخاب کن و پیش‌بینی‌ات را بکن." action={{ label: "دیدن بازی‌ها", href: "/live" }} />
-      )}
+      ) : null}
 
       {/* quests and fantasy share one row: same tile anatomy, equal halves */}
       <div className="grid grid-cols-2 gap-2.5">

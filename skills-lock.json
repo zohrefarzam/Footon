@@ -7,6 +7,12 @@
       "skillPath": "skills/caveman/SKILL.md",
       "computedHash": "71b600c88c8d1d36f18c4875db23b53c5d6cb9ba3195e19451d6b1bb67db07c4"
     },
+    "context-engineering-collection": {
+      "source": "muratcankoylan/agent-skills-for-context-engineering",
+      "sourceType": "github",
+      "skillPath": "SKILL.md",
+      "computedHash": "fb62574e5725b8f6962795a9456cfc1d5b4a52c8b107ee9f10643a3677724a2b"
+    },
     "frontend-design": {
       "source": "anthropics/skills",
       "sourceType": "github",

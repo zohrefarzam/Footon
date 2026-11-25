@@ -3,10 +3,12 @@
 import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 
+import { LoginHero } from "@/components/footon/login-hero";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toLatinDigits } from "@/lib/format";
+import { cn } from "@/lib/utils";
 
 async function post(action: "otp" | "verify", body: object) {
   try {
@@ -52,8 +54,30 @@ export function LoginForm() {
   };
 
   return (
-    <form onSubmit={submit} className="mx-auto flex min-h-dvh w-full max-w-[430px] flex-col justify-center gap-5 px-5">
-      <h1 className="font-display text-[22px] font-bold">ورود به لاکی فن</h1>
+    <form onSubmit={submit} className="mx-auto flex min-h-dvh w-full max-w-[430px] flex-col gap-6 px-5 py-5">
+      <LoginHero sent={sent} />
+
+      <ol className="flex gap-2" aria-label="مرحله‌ها">
+        {["نیمهٔ اول: شماره", "نیمهٔ دوم: کد"].map((label, i) => (
+          <li
+            key={label}
+            aria-current={(i === 1) === sent ? "step" : undefined}
+            className={cn(
+              "flex h-8 items-center gap-1.5 rounded-full border px-3 text-[13px] font-semibold",
+              (i === 1) === sent ? "border-primary-line bg-primary-soft text-primary" : "border-line bg-surface text-muted-foreground",
+            )}
+          >
+            {label}
+          </li>
+        ))}
+      </ol>
+
+      <div key={String(sent)} className="animate-in-up flex flex-col gap-1.5">
+        <h1 className="font-display text-[28px] font-bold leading-tight">{sent ? "پاس گل رسید!" : "سوت شروع را بزن!"}</h1>
+        <p className="text-[15px] text-muted-foreground">
+          {sent ? "کدی که فرستادیم را اینجا بزن." : "شماره‌ات را بده تا برات کد بفرستیم."}
+        </p>
+      </div>
 
       <div className="flex flex-col gap-2">
         <Label htmlFor="phone">شماره موبایل</Label>
@@ -66,33 +90,39 @@ export function LoginForm() {
           value={phone}
           onChange={(e) => setPhone(e.target.value)}
           disabled={sent || busy}
+          className="h-14 rounded-lg text-lg"
           required
         />
       </div>
 
       {sent && (
-        <div className="flex flex-col gap-2">
-          <Label htmlFor="code">کدی که برات فرستادیم</Label>
+        <div className="animate-in-up flex flex-col gap-2">
+          <Label htmlFor="code">کد تأیید</Label>
           <Input
             id="code"
+            lang="en"
             inputMode="numeric"
             autoComplete="one-time-code"
             dir="ltr"
             value={code}
             onChange={(e) => setCode(e.target.value)}
             disabled={busy}
+            className="h-16 rounded-lg text-center font-mono text-2xl tracking-[0.4em]"
             required
             autoFocus
           />
+          <Button type="button" variant="ghost" size="sm" className="self-start" disabled={busy} onClick={() => { setSent(false); setCode(""); setError(null); }}>
+            شماره را عوض کن
+          </Button>
         </div>
       )}
 
-      <p role="alert" className="min-h-5 text-[13px] text-muted-foreground">
+      <p role="alert" className="min-h-5 text-[13px] text-loss">
         {error}
       </p>
 
-      <Button type="submit" size="lg" disabled={busy}>
-        {sent ? "ورود" : "ارسال کد"}
+      <Button type="submit" size="lg" className="mt-auto" disabled={busy}>
+        {busy ? "صبر کن…" : sent ? "ورود به زمین" : "ارسال کد"}
       </Button>
     </form>
   );

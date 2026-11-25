@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { KeyRound } from "lucide-react";
+import { ChevronRight, KeyRound } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -54,10 +54,16 @@ export function JoinByCode({ today }: { today: string }) {
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="flex h-11 items-center gap-2 self-start rounded-md px-1 text-sm font-semibold text-muted-foreground outline-none hover:text-foreground focus-visible:ring-[3px] focus-visible:ring-ring/60"
+        className="bg-dots flex w-full items-center gap-3 rounded-2xl border border-dashed border-line-strong p-3.5 text-start outline-none transition-[transform,border-color] duration-150 ease-spring hover:border-subtle focus-visible:ring-[3px] focus-visible:ring-ring/60 active:scale-[0.98]"
       >
-        <KeyRound className="size-4" aria-hidden="true" />
-        کد دعوت داری؟
+        <span className="grid size-11 shrink-0 place-items-center rounded-xl bg-surface-2 text-muted-foreground">
+          <KeyRound className="size-5" aria-hidden="true" />
+        </span>
+        <span className="flex min-w-0 flex-1 flex-col">
+          <span className="text-[15px] font-semibold">کد دعوت داری؟</span>
+          <span className="text-xs text-muted-foreground">کد را بزن و به چالش دوستت بپیوند.</span>
+        </span>
+        <ChevronRight className="size-4 shrink-0 text-muted-foreground rtl:rotate-180" aria-hidden="true" />
       </button>
     );
 
@@ -78,7 +84,9 @@ export function JoinByCode({ today }: { today: string }) {
               setFound(null);
               setError(null);
             }}
-            className="min-w-0 flex-1 font-mono"
+            placeholder="sun9k"
+            lang="en"
+            className="h-14 min-w-0 flex-1 rounded-lg text-center font-mono text-lg tracking-[0.2em]"
           />
           <Button type="submit" variant="secondary" size="lg" disabled={busy || !clean()}>
             پیدا کن

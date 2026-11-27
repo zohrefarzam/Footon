@@ -35,7 +35,7 @@ const MODES = [
  * Creating costs coins on top of your own first entry. If you're short, the
  * button says so and points to ways to earn; it never offers a purchase.
  */
-export function CreateLeagueForm({ balance: mockBalance }: { balance: number }) {
+export function CreateLeagueForm({ balance: mockBalance, matchId }: { balance: number; matchId?: string }) {
   // with a backend the league is really created (on a match you pick) and its invite code and link are the server's
   const live = !!process.env.NEXT_PUBLIC_GAMIFICATION_API;
   const router = useRouter();
@@ -64,12 +64,13 @@ export function CreateLeagueForm({ balance: mockBalance }: { balance: number }) 
     name,
     code: live ? (made?.code ?? "") : league.code,
     link: live ? (made?.link ?? "") : league.link,
-    match: live ? (picked ? `${matchup(picked.home.name, picked.away.name)} • ${picked.kickoff}` : "یه بازی انتخاب کن") : `${matchup("لیورپول", "منچسترسیتی")} • امشب ۲۱:۰۰`,
+    match: picked ? `${matchup(picked.home.name, picked.away.name)} • ${picked.kickoff}` : live ? "یه بازی انتخاب کن" : `${matchup("لیورپول", "منچسترسیتی")} • امشب ۲۱:۰۰`,
     entry,
     perCall: fixedStake ? perCall : null,
     cap,
     slots: SLOTS,
     joined: 0,
+    modes: MODES.filter((m) => modes[m.id]).map((m) => m.label),
   };
 
   const copy = async () => {
@@ -95,10 +96,7 @@ export function CreateLeagueForm({ balance: mockBalance }: { balance: number }) 
 
   return (
     <>
-      {/* the live invite ticket: updates as the form changes, and shares itself to Telegram */}
-      <InviteTicket t={ticket} created={!!made} />
-
-      {live && !made && <MatchPicker value={picked?.id ?? null} onChange={setPicked} />}
+      {!made && <MatchPicker value={picked?.id ?? null} onChange={setPicked} matchId={matchId} />}
 
       <div className="flex flex-col gap-2">
         <Label htmlFor="league-name">نام لیگ</Label>
@@ -219,6 +217,12 @@ export function CreateLeagueForm({ balance: mockBalance }: { balance: number }) 
           <span className="font-semibold text-live">{formatSigned(1500)}</span> برای هر دوستی که اولین بازی‌اش را تا آخر بازی کنه
         </span>
       </p>
+
+      {/* the invite as it will go out, drawn from everything above: it comes last, so the form reads top to bottom into it */}
+      <div className="flex flex-col gap-2">
+        <span className="text-[13px] font-medium text-muted-foreground">پیش‌نمایش دعوت</span>
+        <InviteTicket t={ticket} created={!!made} />
+      </div>
 
       <div className="flex-1" />
 

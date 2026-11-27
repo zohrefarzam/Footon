@@ -14,7 +14,7 @@ import { TeamCrest } from "./team-crest";
 import { formatNumber } from "@/lib/format";
 
 /** The value, but only once it has stopped changing for `ms`. */
-function useDebounced<T>(value: T, ms = 600) {
+export function useDebounced<T>(value: T, ms = 600) {
   const [v, setV] = useState(value);
   useEffect(() => {
     const t = setTimeout(() => setV(value), ms);

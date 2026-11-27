@@ -1,0 +1,59 @@
+- generic [ref=f5e1]:
+  - generic [ref=f5e2]:
+    - generic [ref=f5e4]:
+      - link "سطح ۱، آکادمی، ۰ از ۱۰۰ XP تا سطح ۲، ۰ نشان" [ref=f5e163] [cursor=pointer]:
+        - /url: /me#level
+        - generic [ref=f5e164]:
+          - generic [ref=f5e165]: سطح
+          - text: ۱
+        - generic [aria-hidden] [ref=f5e166]: ۰/۱۰۰ XP
+        - generic [aria-hidden] [ref=f5e168]: ۰
+      - link "۵٬۰۰۰ سکه. باز کردن کیف پول" [ref=f5e172] [cursor=pointer]:
+        - /url: /wallet
+        - generic [ref=f5e7]: ۵٬۰۰۰
+        - generic [aria-hidden] [ref=f5e8]: C
+    - main [ref=f5e174]:
+      - heading "چالش‌ها" [level=1] [ref=f5e175]
+      - group "چالش تازه، قفل. نیاز به سطح ۴. ۴۵۰ XP مانده" [ref=f5e176]:
+        - generic [ref=f5e182]:
+          - paragraph [ref=f5e183]: چالش تازه
+          - paragraph [ref=f5e184]: نیاز به سطح ۴
+        - generic [aria-hidden] [ref=f5e185]:
+          - generic [ref=f5e186]: سطح ۱
+          - generic [ref=f5e188]: سطح ۴
+        - paragraph [aria-hidden] [ref=f5e189]: ۴۵۰ XP مانده
+      - button "کد دعوت داری؟ کد را بزن و به چالش دوستت بپیوند." [ref=f5e190] [cursor=pointer]:
+        - generic [ref=f5e195]:
+          - generic [ref=f5e196]: کد دعوت داری؟
+          - generic [ref=f5e197]: کد را بزن و به چالش دوستت بپیوند.
+      - region "چالش‌های من" [ref=f5e200]:
+        - heading "چالش‌های من" [level=2] [ref=f5e202]
+        - tablist "چالش‌ها" [ref=f5e203]:
+          - tab "عضوی" [ref=f5e204] [cursor=pointer]
+          - tab "دعوت‌شده" [active] [selected] [ref=f5e205] [cursor=pointer]
+          - tab "منقضی" [ref=f5e207] [cursor=pointer]
+        - generic [ref=f5e209]:
+          - paragraph [ref=f5e224]: دعوتی در انتظار نیست
+          - paragraph [ref=f5e225]: وقتی دوستات دعوتت کنن، اینجا میاد.
+    - navigation "ناوبری اصلی" [ref=f5e67]:
+      - link "خانه" [ref=f5e68] [cursor=pointer]:
+        - /url: /
+      - link "چالش‌ها" [ref=f5e73] [cursor=pointer]:
+        - /url: /challenges
+      - link "پیش‌بینی‌ها" [ref=f5e80] [cursor=pointer]:
+        - /url: /predictions
+      - link "زنده، یه بازی زنده‌ست" [ref=f5e226] [cursor=pointer]:
+        - /url: /live
+        - text: زنده
+      - link "پروفایل" [ref=f5e96] [cursor=pointer]:
+        - /url: /me
+  - generic [ref=f5e149] [cursor=pointer]:
+    - button "Open Next.js Dev Tools" [ref=f5e150]
+    - generic [ref=f5e154]:
+      - button "Open issues overlay" [ref=f5e155]:
+        - generic [ref=f5e156]:
+          - generic [aria-hidden] [ref=f5e157]: "0"
+          - generic [ref=f5e158]: "1"
+        - generic [ref=f5e159]: Insight
+      - button "Collapse issues badge" [ref=f5e160]
+  - alert [ref=f5e228]

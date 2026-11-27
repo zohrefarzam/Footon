@@ -20,8 +20,8 @@ import { XpGainBurst } from "./xp-gain-burst";
 
 /** How long each non-blocking moment stays before the next one plays (ms). */
 export const HOLD: Record<Exclude<Celebration["kind"], "levelUp">, number> = {
-  xp: 1600,
-  streak: 2000,
+  xp: 3200,
+  streak: 3000,
   badge: 2800,
   quest: 2200,
 };

@@ -78,6 +78,30 @@ export function useSaveSlip(matchId: string) {
   return (items: Prediction[]) => m.mutateAsync(items).then(() => true, () => false);
 }
 
+/** Matches where you have your own open slip (picks, not yet settled). */
+export function useSoloMatchIds(enabled = true) {
+  const { data } = useMyPredictions(enabled);
+  return new Set(data?.items.filter((i) => i.picks.length > 0 && i.match.status !== "Finished").map((i) => i.match.id));
+}
+
+/** Empties your slip on a match (the PUT replaces it), so a challenge can take the match. Resolves true when the server did it. */
+export function useClearSlip() {
+  const qc = useQueryClient();
+  const m = useMutation({
+    mutationFn: async (matchId: string) => {
+      const res = await fetch(`/api/predictions/matches/${matchId}/slip`, {
+        method: "PUT",
+        headers: { "content-type": "application/json", "idempotency-key": newIdempotencyKey(`slip_${matchId}`) },
+        body: JSON.stringify({ picks: [] }),
+      });
+      if (!res.ok) throw new ApiError(res.status === 401 ? "unauthorized" : "server", `HTTP ${res.status}`);
+      return matchId;
+    },
+    onSuccess: (id) => Promise.all([qc.invalidateQueries({ queryKey: slipKey(id) }), qc.invalidateQueries({ queryKey: ["predictions", "me"] })]),
+  });
+  return (matchId: string) => m.mutateAsync(matchId).then(() => true, () => false);
+}
+
 export const useCrowd = (matchId: string) => useQuery({ queryKey: ["crowd", matchId], queryFn: () => getJson(`predictions/matches/${matchId}/crowd`, Crowd) });
 
 const PICK = { home: "Home", draw: "Draw", away: "Away" } as const;
@@ -107,7 +131,7 @@ const MyPredictions = z.object({
 });
 export type MyPredictionsData = z.infer<typeof MyPredictions>;
 
-export const useMyPredictions = () => useQuery({ queryKey: ["predictions", "me"], queryFn: () => getJson("predictions/predictions/me", MyPredictions) });
+export const useMyPredictions = (enabled = true) => useQuery({ queryKey: ["predictions", "me"], queryFn: () => getJson("predictions/predictions/me", MyPredictions), enabled });
 
 /** A prediction row's picks as the UI's `Prediction`s, with the server's own win figure. */
 export const picksOf = (item: MyPredictionsData["items"][number]): Prediction[] =>
@@ -120,6 +144,10 @@ const OpenMatches = z.array(
   z.object({ id: z.string(), homeTeam: TEAM, awayTeam: TEAM, kickoffUtc: z.string(), status: z.string() }),
 );
 const Boost = z.object({ boost: n });
+
+/** Whether a match is a big one (its markets carry a boost): the one markets call `useBigMatches` makes, for a single match. */
+export const useIsBig = (matchId: string) =>
+  useQuery({ queryKey: ["predictions", "boost", matchId], staleTime: 5 * 60_000, queryFn: () => getJson(`predictions/matches/${matchId}/markets`, Boost).then((b) => b.boost > 1, () => false) });
 
 /** How many of the nearest open matches are checked for a boost (one markets call each). */
 const BIG_CHECKED = 10;

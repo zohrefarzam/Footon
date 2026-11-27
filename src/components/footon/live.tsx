@@ -11,7 +11,7 @@ export function LiveMinute({ minute, className }: { minute: number; className?: 
   return (
     <span className={cn("inline-flex items-center gap-1.5 font-display text-base font-bold text-live", className)}>
       <LiveDot />
-      زنده {formatNumber(minute)}&apos;
+      بازی ها {formatNumber(minute)}&apos;
     </span>
   );
 }

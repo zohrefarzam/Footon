@@ -1,0 +1,54 @@
+- generic [active] [ref=f2e1]:
+  - generic [ref=f2e2]:
+    - generic [ref=f2e106]:
+      - link "سطح ۱، آکادمی، ۰ از ۱۰۰ XP تا سطح ۲، ۰ نشان" [ref=f2e107] [cursor=pointer]:
+        - /url: /me#level
+        - generic [ref=f2e108]:
+          - generic [ref=f2e109]: سطح
+          - text: ۱
+        - generic [aria-hidden] [ref=f2e110]: ۰/۱۰۰ XP
+        - generic [aria-hidden] [ref=f2e112]: ۰
+      - link "۵٬۰۰۰ سکه. باز کردن کیف پول" [ref=f2e116] [cursor=pointer]:
+        - /url: /wallet
+        - generic [ref=f2e117]: ۵٬۰۰۰
+        - generic [aria-hidden] [ref=f2e118]: C
+    - main [ref=f2e287]:
+      - generic [ref=f2e289]:
+        - generic [ref=f2e295]: ن
+        - generic [ref=f2e296]:
+          - paragraph [ref=f2e297]: هفتهٔ ۴۸ • ۳ روز تا پایان
+          - heading "دستهٔ برنزی" [level=1] [ref=f2e298]
+      - region "جدول" [ref=f2e299]:
+        - generic [ref=f2e300]:
+          - heading "جدول" [level=2] [ref=f2e301]
+          - generic [ref=f2e302]: ۰ بازیکن
+        - table "دستهٔ برنزی، هفتهٔ ۴۸" [ref=f2e304]:
+          - caption [ref=f2e305]: دستهٔ برنزی، هفتهٔ ۴۸
+          - rowgroup [ref=f2e306]:
+            - row [ref=f2e307]:
+              - columnheader "#" [ref=f2e308]
+              - columnheader "بازیکن" [ref=f2e310]
+              - columnheader "امتیاز" [ref=f2e311]
+          - rowgroup
+    - navigation "ناوبری اصلی" [ref=f2e251]:
+      - link "خانه" [ref=f2e252] [cursor=pointer]:
+        - /url: /
+      - link "چالش‌ها" [ref=f2e257] [cursor=pointer]:
+        - /url: /challenges
+      - link "پیش‌بینی‌ها" [ref=f2e264] [cursor=pointer]:
+        - /url: /predictions
+      - link "زنده، یه بازی زنده‌ست" [ref=f2e272] [cursor=pointer]:
+        - /url: /live
+        - text: زنده
+      - link "پروفایل" [ref=f2e281] [cursor=pointer]:
+        - /url: /me
+  - generic [ref=f2e66] [cursor=pointer]:
+    - button "Open Next.js Dev Tools" [ref=f2e67]
+    - generic [ref=f2e71]:
+      - button "Open issues overlay" [ref=f2e72]:
+        - generic [ref=f2e73]:
+          - generic [aria-hidden] [ref=f2e74]: "0"
+          - generic [ref=f2e75]: "1"
+        - generic [ref=f2e76]: Insight
+      - button "Collapse issues badge" [ref=f2e77]
+  - alert [ref=f2e104]: خانه

@@ -1,7 +1,10 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, Search, X } from "lucide-react";
+
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { dayLabel } from "@/lib/dates";
@@ -9,12 +12,17 @@ import { competitions, type Match } from "@/lib/mock-data";
 import { cn } from "@/lib/utils";
 import { BallSwitch } from "./ball-switch";
 import { LiveDot } from "./live";
+import { useDebounced } from "./favourite-clubs";
 import { MatchRow } from "./match-row";
 import { formatNumber } from "@/lib/format";
 
 const DAYS = [-2, -1, 0, 1, 2, 3, 4, 5];
 const order = { live: 0, upcoming: 1, finished: 2 } as const;
 const compOrder = Object.keys(competitions);
+
+/** Persian-friendly match text: Arabic ي/ك and the ZWNJ don't get in the way of a hit. */
+const norm = (t: string) => t.toLowerCase().replace(/ي/g, "ی").replace(/ك/g, "ک").replace(/[\u200c\s]+/g, "");
+const hits = (m: Match, q: string) => [m.home.name, m.away.name, m.home.code, m.away.code, m.competition].some((t) => norm(t).includes(q));
 
 const href = (m: Match) => (m.status === "live" && m.league ? "/play" : `/match/${m.id}`);
 const sort = (list: Match[]) =>
@@ -69,7 +77,11 @@ export function MatchDays({ matches, today }: { matches: Match[]; today?: string
   const [day, setDay] = useState("0");
   const [liveOnly, setLiveOnly] = useState(false);
   const listRef = useRef<HTMLDivElement>(null);
+  const [query, setQuery] = useState("");
   const live = matches.filter((m) => m.status === "live");
+  const q = norm(useDebounced(query, 300));
+  // a search looks through every loaded day at once, so the day strip steps aside
+  const found = q ? matches.filter((m) => hits(m, q) && (!liveOnly || m.status === "live")) : [];
 
   // start with Today centred in the strip
   useEffect(() => {
@@ -99,7 +111,33 @@ export function MatchDays({ matches, today }: { matches: Match[]; today?: string
         </div>
       </div>
 
-      {liveOnly ? (
+      <div className="relative">
+        <label htmlFor="live-search" className="sr-only">
+          جست‌وجوی بازی
+        </label>
+        <Search className="pointer-events-none absolute start-3.5 top-1/2 size-[18px] -translate-y-1/2 text-muted-foreground" aria-hidden="true" />
+        <Input
+          id="live-search"
+          type="search"
+          inputMode="search"
+          autoComplete="off"
+          placeholder="جست‌وجوی تیم یا لیگ"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          className="ps-10 pe-11 [&::-webkit-search-cancel-button]:hidden"
+        />
+        {query && (
+          <Button variant="ghost" size="icon-sm" className="absolute end-1.5 top-1/2 size-9 -translate-y-1/2 rounded-full" aria-label="پاک کردن جست‌وجو" onClick={() => setQuery("")}>
+            <X />
+          </Button>
+        )}
+      </div>
+
+      {q ? (
+        <div className="flex flex-col gap-3" aria-live="polite">
+          <Groups list={found} empty="بازی‌ای با این اسم پیدا نکردیم." />
+        </div>
+      ) : liveOnly ? (
         <div className="animate-in-up flex flex-col gap-3" aria-live="polite">
           <Groups list={live} empty="الان بازی زنده‌ای نیست. «فقط زنده» را خاموش کن تا بازی‌های امروز را ببینی." />
         </div>

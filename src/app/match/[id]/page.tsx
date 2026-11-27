@@ -3,6 +3,7 @@ import { Trophy } from "lucide-react";
 
 import { AppShell } from "@/components/footon/app-shell";
 import { BackButton } from "@/components/footon/back-button";
+import { ChallengeCta } from "@/components/footon/challenge-cta";
 import { CrowdPoll } from "@/components/footon/crowd-poll";
 import { LiveMatch } from "@/components/footon/live-match";
 import { RealMatch } from "@/components/footon/real-match";
@@ -150,6 +151,7 @@ export default async function MatchPage({ params }: PageProps<"/match/[id]">) {
   const predict = (
     <>
       {builder}
+      {m.boost && !pool && <ChallengeCta matchId={m.id} />}
       <MatchTables
         joinedFree={!!m.you?.calls || !!predictionSlips[m.id]?.length}
         coin={pool && { league: pool.name, entry: pool.entry, players: pool.members.length, href: `/challenges/${pool.id}` }}

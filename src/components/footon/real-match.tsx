@@ -12,6 +12,7 @@ import { MatchLineups } from "@/components/footon/match-lineups";
 import { MatchInfo, TeamForm } from "@/components/footon/match-preview";
 import { CompactScore, MatchScoreboard } from "@/components/footon/match-scoreboard";
 import { RealLiveQuestion } from "@/components/footon/real-live-question";
+import { ChallengeCta } from "@/components/footon/challenge-cta";
 import { PredictionBuilder } from "@/components/footon/prediction-builder";
 import { MatchStats } from "@/components/footon/match-stats";
 import { HeadToHead, MatchTable } from "@/components/footon/match-table";
@@ -20,7 +21,9 @@ import { dateKey } from "@/lib/football/fixtures";
 import { toMatchPage } from "@/lib/football/match";
 import { useMatchBundle } from "@/lib/football/queries";
 import { useProgress } from "@/lib/gamification/queries";
-import { useCrowd, useSaveSlip, useSlip, useVote } from "@/lib/slips/api";
+import Link from "next/link";
+import { useChallenges } from "@/lib/slips/challenges";
+import { useCrowd, useIsBig, useSaveSlip, useSlip, useVote } from "@/lib/slips/api";
 import type { Match } from "@/lib/mock-data";
 
 const noop = () => () => {};
@@ -31,7 +34,10 @@ export function RealPredict({ m }: { m: Match }) {
   const crowd = useCrowd(m.id);
   const save = useSaveSlip(m.id);
   const vote = useVote(m.id);
+  const big = useIsBig(m.id).data;
   const balance = useProgress().data?.coins.free ?? 0;
+  // you made a challenge on this match: your calls go there, not in a separate slip
+  const mine = useChallenges(m.today ?? null).all.find((c) => c.matchId === m.id && c.mine && c.status === "joined");
 
   if (slip.isPending && m.status !== "live") return <PageLoader />;
   const open = m.status === "upcoming" && (slip.data?.editable ?? true);
@@ -39,7 +45,15 @@ export function RealPredict({ m }: { m: Match }) {
   return (
     <>
       {m.status === "live" && m.kickoffAt && <RealLiveQuestion matchId={m.id} kickoffAt={m.kickoffAt} />}
-      {(open || slip.data?.picks.length) && (
+      {mine && m.status === "upcoming" && (
+        <p className="rounded-xl border border-dashed border-line-strong px-4 py-4 text-sm text-muted-foreground">
+          روی این بازی چالش «{mine.name}» رو ساختی، پس پیش‌بینی جدا نمیشه.{" "}
+          <Link href={`/challenges/${mine.id}`} className="font-semibold text-foreground underline underline-offset-4">
+            پیش‌بینی‌هات رو تو چالش ثبت کن
+          </Link>
+        </p>
+      )}
+      {!(mine && m.status === "upcoming") && (open || slip.data?.picks.length) && (
         <PredictionBuilder
           match={{ id: m.id, status: open ? "upcoming" : m.status === "live" ? "live" : "finished", kickoff: m.kickoff, kickoffAt: m.kickoffAt, home: m.home.name, away: m.away.name }}
           teams={{ home: m.home, away: m.away }}
@@ -48,6 +62,7 @@ export function RealPredict({ m }: { m: Match }) {
           onLock={save}
         />
       )}
+      {big && m.status === "upcoming" && !mine && <ChallengeCta matchId={m.id} />}
       {crowd.data && <CrowdPoll key={myPick ?? "none"} home={m.home} away={m.away} crowd={crowd.data} myPick={myPick} onVote={vote} />}
     </>
   );

@@ -1,0 +1,31 @@
+- generic [active] [ref=f1e1]:
+  - main [ref=f1e3]:
+    - generic [ref=f1e4]:
+      - generic [ref=f1e5]:
+        - list "مرحلهٔ ۱ از ۳" [ref=f1e6]:
+          - listitem
+          - listitem
+          - listitem
+        - generic [ref=f1e8]:
+          - generic [aria-hidden] [ref=f1e9]: C
+          - generic "۰" [ref=f1e11]
+          - generic [ref=f1e12]: سکه
+      - generic [ref=f1e14]:
+        - button "ادامه" [ref=f1e15] [cursor=pointer]
+        - paragraph [ref=f1e16]:
+          - text: قبلاً اینجا بودی؟
+          - link "برو به خانه" [ref=f1e17] [cursor=pointer]:
+            - /url: /
+  - status "لاکی فن داره باز میشه" [ref=f1e19]:
+    - generic [aria-hidden] [ref=f1e20]:
+      - paragraph [ref=f1e60]: لاکی فن
+      - paragraph [ref=f1e61]: لحظهٔ بعدی را پیش‌بینی کن.
+  - generic [ref=f1e66] [cursor=pointer]:
+    - button "Open Next.js Dev Tools" [ref=f1e67]
+    - generic [ref=f1e71]:
+      - button "Open issues overlay" [ref=f1e72]:
+        - generic [ref=f1e73]:
+          - generic [aria-hidden] [ref=f1e74]: "0"
+          - generic [ref=f1e75]: "1"
+        - generic [ref=f1e76]: Insight
+      - button "Collapse issues badge" [ref=f1e77]

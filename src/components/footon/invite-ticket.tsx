@@ -22,6 +22,8 @@ export type TicketData = {
   cap: number;
   slots: number;
   joined: number;
+  /** What the league plays on, as the form's switches have it (preview only; the Telegram image doesn't draw it). */
+  modes?: string[];
 };
 
 const fmt = formatNumber;
@@ -71,13 +73,16 @@ export function InviteTicket({ t, created = false, className }: { t: TicketData;
               <Check className="size-3" strokeWidth={3} aria-hidden="true" />
               ساخته شد
             </span>
-          ) : (
+          ) : t.code ? (
             <span dir="ltr" className="font-mono text-[11px]">
               #{t.code}
             </span>
+          ) : (
+            // nothing is made yet: no code to show
+            <span className="rounded-full border border-primary-foreground/40 px-2 py-0.5 text-[11px]">پیش‌نمایش</span>
           )}
         </div>
-        <p className="mt-3 truncate font-display text-[40px] leading-[1.15] font-black">{t.name || "لیگ تو"}</p>
+        <p className={cn("mt-3 truncate font-display text-[40px] leading-[1.15] font-black", !t.name && "opacity-40")}>{t.name || "اسم لیگ"}</p>
         <p className="mt-1 truncate text-sm font-semibold opacity-80">{t.match}</p>
       </div>
 
@@ -88,7 +93,7 @@ export function InviteTicket({ t, created = false, className }: { t: TicketData;
         <span className="absolute top-0 -right-[11px] size-[22px] -translate-y-1/2 rounded-full bg-background" />
       </div>
 
-      <dl className="grid grid-cols-3 gap-2 px-5 pt-3.5 pb-3">
+      <dl className="grid grid-cols-3 gap-2 px-5 pt-3.5 pb-2">
         <div>
           <dt className="text-[11px] font-semibold opacity-70">ورودی</dt>
           <dd className="font-display text-[22px] leading-tight font-bold">{fmt(t.entry)}</dd>
@@ -97,9 +102,23 @@ export function InviteTicket({ t, created = false, className }: { t: TicketData;
           <dt className="text-[11px] font-semibold opacity-70">هر پیش‌بینی</dt>
           <dd className="font-display text-[22px] leading-tight font-bold">{t.perCall ? fmt(t.perCall) : "آزاد"}</dd>
         </div>
-        <div className="flex flex-col items-end">
-          <dt className="sr-only">بازیکن‌ها</dt>
-          <dd className="flex -space-x-1.5 py-1" aria-hidden="true">
+        <div>
+          <dt className="text-[11px] font-semibold opacity-70">سقف شرط</dt>
+          <dd className="font-display text-[22px] leading-tight font-bold">{fmt(t.cap)}</dd>
+        </div>
+      </dl>
+
+      <div className="flex items-end justify-between gap-3 px-5 pb-3">
+        <ul aria-label="سر چی پیش‌بینی می‌کنید" className="flex min-w-0 flex-1 flex-wrap gap-1.5">
+          {t.modes?.map((m) => (
+            <li key={m} className="rounded-full bg-primary-foreground/12 px-2 py-0.5 text-[11px] font-semibold">
+              {m}
+            </li>
+          ))}
+        </ul>
+        <div className="flex shrink-0 flex-col items-end">
+          <p className="sr-only">بازیکن‌ها</p>
+          <div className="flex -space-x-1.5 py-1" aria-hidden="true">
             {Array.from({ length: t.slots }, (_, i) => (
               <span
                 key={i}
@@ -109,14 +128,15 @@ export function InviteTicket({ t, created = false, className }: { t: TicketData;
                 )}
               />
             ))}
-          </dd>
-          <dd className="text-[11px] font-semibold opacity-70">
+          </div>
+          <p className="text-[11px] font-semibold opacity-70">
             {fmt(t.joined)} از {fmt(t.slots)} اومدن
-          </dd>
+          </p>
         </div>
-      </dl>
+      </div>
 
       {/* the invite link, part of the ticket, with its own way out: send the ticket to a Telegram group */}
+      {t.link ? (
       <div className="mx-3 mb-3 flex h-12 items-center gap-2 rounded-md bg-primary-foreground/10 ps-3 pe-1.5">
         <span dir="ltr" className="min-w-0 flex-1 truncate font-mono text-[12px] font-medium rtl:text-end">
           {t.link}
@@ -132,6 +152,9 @@ export function InviteTicket({ t, created = false, className }: { t: TicketData;
           <span className="sr-only">: فرستادن دعوت لیگ توی تلگرام</span>
         </button>
       </div>
+      ) : (
+        <p className="mx-5 mb-4 text-xs font-semibold opacity-70">لینک دعوت بعد از ساختن لیگ اینجا میاد.</p>
+      )}
     </section>
   );
 }

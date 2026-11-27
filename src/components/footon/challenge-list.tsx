@@ -5,12 +5,14 @@ import Link from "next/link";
 import { ChevronRight, Clock } from "lucide-react";
 
 import { Avatar, AvatarFallback, AvatarGroup } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { formatCoins } from "@/lib/economy";
 import { challengeHref, type ChallengeWithMatch } from "@/lib/challenges";
 import { YOU_INITIAL, type Challenge } from "@/lib/mock-data";
 import { cn, ordinal } from "@/lib/utils";
 import { BoostBadge } from "./boost-badge";
+import { EmptyArt, type EmptyArtName } from "./empty-art";
 import { LeagueBadge } from "./league-badge";
 import { LiveDot } from "./live";
 import { SectionHeading } from "./section-heading";
@@ -25,11 +27,11 @@ const inSegment: Record<Segment, Challenge["status"][]> = {
   "دعوت‌شده": ["invited"],
   منقضی: ["expired"],
 };
-const empty: Record<Segment, string> = {
-  عضوی: "هنوز توی هیچ چالشی نیستی. یه دعوت را قبول کن یا خودت یکی بساز.",
-  "دعوت‌شده": "دعوتی در انتظار نیست.",
-  منقضی: "چیزی منقضی نشده. سریع جواب میدی.",
-};
+const empty = {
+  عضوی: { art: "goal", title: "هنوز توی هیچ چالشی نیستی", body: "یه دعوت را قبول کن یا خودت یکی بساز.", action: { label: "ساختن چالش", href: "/challenges/new" } },
+  "دعوت‌شده": { art: "invite", title: "دعوتی در انتظار نیست", body: "وقتی دوستات دعوتت کنن، اینجا میاد." },
+  منقضی: { art: "time", title: "چیزی منقضی نشده", body: "سریع جواب میدی." },
+} satisfies Record<Segment, { art: EmptyArtName; title: string; body: string; action?: { label: string; href: string } }>;
 
 /** One challenge as a divided row: name, who, match, entry, players, then your place or what's next. */
 export function ChallengeRow({ c }: { c: ChallengeWithMatch }) {
@@ -108,9 +110,25 @@ export function ChallengeList({ challenges }: { challenges: ChallengeWithMatch[]
             ))}
           </Card>
         ) : (
-          <p className="bg-dots rounded-[20px] border border-dashed border-line-strong px-6 py-10 text-center text-sm text-muted-foreground">{empty[seg]}</p>
+          <EmptyCard {...empty[seg]} />
         )}
       </div>
     </section>
+  );
+}
+
+/** A tab with nothing in it: icon, what's missing, one line, and the next step when there is one. */
+function EmptyCard({ art, title, body, action }: (typeof empty)[Segment] & { action?: { label: string; href: string } }) {
+  return (
+    <div className="bg-dots flex flex-col items-center gap-2 rounded-[20px] border border-dashed border-line-strong px-6 py-9 text-center">
+      <EmptyArt name={art} />
+      <p className="mt-1 text-[15px] font-semibold">{title}</p>
+      <p className="max-w-[28ch] text-sm text-muted-foreground">{body}</p>
+      {action && (
+        <Button asChild variant="secondary" size="sm" className="mt-2">
+          <Link href={action.href}>{action.label}</Link>
+        </Button>
+      )}
+    </div>
   );
 }

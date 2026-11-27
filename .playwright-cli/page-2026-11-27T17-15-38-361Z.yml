@@ -1,0 +1,61 @@
+- generic [active] [ref=f3e1]:
+  - generic [ref=f3e2]:
+    - link "۶٬۴۵۰ سکه. باز کردن کیف پول" [ref=f3e6] [cursor=pointer]:
+      - /url: /wallet
+      - generic [ref=f3e7]: ۶٬۴۵۰
+      - generic [aria-hidden] [ref=f3e8]: C
+    - main [ref=f3e10]:
+      - heading "خانه" [level=1] [ref=f3e11]
+      - region "شرکا" [ref=f3e12]:
+        - list [ref=f3e13]:
+          - listitem [ref=f3e14]:
+            - 'link "تبلیغ ورزشی کسترل: یک توپ امضاشده ببر. این هفته توی دسته‌ات جزو سه نفر اول باش. فقط امتیاز حساب میشه. دیدن جدول" [ref=f3e15] [cursor=pointer]':
+              - /url: /leaderboard
+              - generic [aria-hidden] [ref=f3e18]:
+                - generic [ref=f3e19]: ورزشی کسترل
+                - generic [ref=f3e20]: یک توپ امضاشده ببر
+                - generic [ref=f3e21]: این هفته توی دسته‌ات جزو سه نفر اول باش. فقط امتیاز حساب میشه.
+                - generic [ref=f3e22]: دیدن جدول
+              - generic [aria-hidden] [ref=f3e25]: تبلیغ
+          - listitem [ref=f3e71]:
+            - 'link "تبلیغ نورث‌پیچ: ساخته‌شده برای دقیقهٔ آخر. گلاید جدید. سبکه و روی توپ آرام. رفتن به نورث‌پیچ، سایت شریک باز میشه" [ref=f3e72] [cursor=pointer]':
+              - /url: https://example.com/northpitch
+              - generic [aria-hidden] [ref=f3e75]:
+                - generic [ref=f3e76]: نورث‌پیچ
+                - generic [ref=f3e77]: ساخته‌شده برای دقیقهٔ آخر
+                - generic [ref=f3e78]: گلاید جدید. سبکه و روی توپ آرام.
+                - generic [ref=f3e79]: رفتن به نورث‌پیچ
+              - generic [aria-hidden] [ref=f3e83]: تبلیغ
+          - listitem [ref=f3e94]:
+            - 'link "تبلیغ تلویزیون خط میانی: همهٔ بازی‌های لیگ برتر، زنده. آنجا ببین، اینجا پیش‌بینی کن. تماشا در خط میانی، سایت شریک باز میشه" [ref=f3e95] [cursor=pointer]':
+              - /url: https://example.com/halfwayline
+              - generic [aria-hidden] [ref=f3e98]:
+                - generic [ref=f3e99]: تلویزیون خط میانی
+                - generic [ref=f3e100]: همهٔ بازی‌های لیگ برتر، زنده
+                - generic [ref=f3e101]: آنجا ببین، اینجا پیش‌بینی کن.
+                - generic [ref=f3e102]: تماشا در خط میانی
+              - generic [aria-hidden] [ref=f3e106]: تبلیغ
+    - navigation "ناوبری اصلی" [ref=f3e118]:
+      - link "خانه" [ref=f3e119] [cursor=pointer]:
+        - /url: /
+      - link "چالش‌ها" [ref=f3e124] [cursor=pointer]:
+        - /url: /challenges
+      - link "پیش‌بینی‌ها" [ref=f3e131] [cursor=pointer]:
+        - /url: /predictions
+      - link "زنده" [ref=f3e139] [cursor=pointer]:
+        - /url: /live
+      - link "پروفایل" [ref=f3e147] [cursor=pointer]:
+        - /url: /me
+  - status "لاکی فن داره باز میشه" [ref=f3e153]:
+    - generic [aria-hidden] [ref=f3e154]:
+      - paragraph [ref=f3e194]: لاکی فن
+      - paragraph [ref=f3e195]: لحظهٔ بعدی را پیش‌بینی کن.
+  - generic [ref=f3e200] [cursor=pointer]:
+    - button "Open Next.js Dev Tools" [ref=f3e201]
+    - generic [ref=f3e205]:
+      - button "Open issues overlay" [ref=f3e206]:
+        - generic [ref=f3e207]:
+          - generic [aria-hidden] [ref=f3e208]: "0"
+          - generic [ref=f3e209]: "1"
+        - generic [ref=f3e210]: Insight
+      - button "Collapse issues badge" [ref=f3e211]

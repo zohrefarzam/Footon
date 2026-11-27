@@ -1,0 +1,33 @@
+- generic [active] [ref=f8e1]:
+  - generic [ref=f8e2]:
+    - link "۶٬۴۵۰ سکه. باز کردن کیف پول" [ref=f8e6] [cursor=pointer]:
+      - /url: /wallet
+      - generic [ref=f8e7]: ۶٬۴۵۰
+      - generic [aria-hidden] [ref=f8e8]: C
+    - status [ref=f8e10]:
+      - generic [ref=f8e11]: صبر کن…
+    - navigation "ناوبری اصلی" [ref=f8e67]:
+      - link "خانه" [ref=f8e68] [cursor=pointer]:
+        - /url: /
+      - link "چالش‌ها" [ref=f8e73] [cursor=pointer]:
+        - /url: /challenges
+      - link "پیش‌بینی‌ها" [ref=f8e80] [cursor=pointer]:
+        - /url: /predictions
+      - link "زنده" [ref=f8e88] [cursor=pointer]:
+        - /url: /live
+      - link "پروفایل" [ref=f8e96] [cursor=pointer]:
+        - /url: /me
+  - status "لاکی فن داره باز میشه" [ref=f8e102]:
+    - generic [aria-hidden] [ref=f8e103]:
+      - paragraph [ref=f8e135]: لاکی فن
+      - paragraph [ref=f8e136]: لحظهٔ بعدی را پیش‌بینی کن.
+  - generic [ref=f8e141] [cursor=pointer]:
+    - button "Open Next.js Dev Tools" [ref=f8e142]
+    - generic [ref=f8e146]:
+      - button "Open issues overlay" [ref=f8e147]:
+        - generic [ref=f8e148]:
+          - generic [aria-hidden] [ref=f8e149]: "0"
+          - generic [ref=f8e150]: "1"
+        - generic [ref=f8e151]: Insight
+      - button "Collapse issues badge" [ref=f8e152]
+  - alert [ref=f8e155]

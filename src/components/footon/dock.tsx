@@ -14,7 +14,7 @@ const items: Item[] = [
   { href: "/", label: "خانه", icon: HomeIcon, match: (p) => p === "/" },
   { href: "/challenges", label: "چالش‌ها", icon: ChallengesIcon, match: (p) => p.startsWith("/challenges") },
   { href: "/predictions", label: "پیش‌بینی‌ها", short: "پیش‌بینی", icon: PredictionsIcon, match: (p) => p.startsWith("/predictions") },
-  { href: "/live", label: "زنده", icon: LiveIcon, match: (p) => p.startsWith("/live") },
+  { href: "/live", label: "بازی ها", icon: LiveIcon, match: (p) => p.startsWith("/live") },
   { href: "/me", label: "پروفایل", icon: ProfileIcon, match: (p) => p.startsWith("/me") },
 ];
 
